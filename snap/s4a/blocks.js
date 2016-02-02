@@ -63,8 +63,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     } else {
                         return [];
                     }
-                },
-                true
+                }
         );
         break;
         case '%pwmPin':
@@ -81,8 +80,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     } else {
                         return [];
                     }
-                },
-                true
+                }
         );
         break;
         case '%analogPin':
@@ -99,8 +97,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     } else { 
                         return [];
                     } 
-                },
-                true
+                }
         );
         break;
         case '%digitalPin':
@@ -120,8 +117,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     } else {
                         return [];
                     }
-                },
-                true
+                }
         );
         break;
         default:

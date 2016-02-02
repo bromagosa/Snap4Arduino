@@ -500,7 +500,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino! 0.1.5-beta\n\n'
+    aboutTxt = 'Snap4Arduino! ' + require('fs').readFileSync('version') +'\n\n'
     + 'Copyright \u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
 
@@ -562,7 +562,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 IDE_Morph.prototype.getCostumesList = function (dirname) {
     var fs = require('fs'),
         dir,
-    costumes = [];
+        costumes = [];
 
     dir = fs.readdirSync(dirname);
     dir.forEach(
@@ -629,8 +629,10 @@ IDE_Morph.prototype.createLogo = function () {
 // Exporting
 
 IDE_Morph.prototype.exportProject = function (name, plain) {
-    var menu, str;
-    var myself = this;
+    var menu, 
+        str,
+        myself = this;
+
     if (name) {
         this.setProjectName(name);
         if (Process.prototype.isCatchingErrors) {
@@ -690,7 +692,7 @@ function homePath() {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + ((process.platform == 'win32') ? '\\' : '/')
 }
 
-/**
+/*
  * Override setLanguage function
  */
 
