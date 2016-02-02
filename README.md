@@ -1,6 +1,3 @@
-Snap4Arduino
-============
-
 ![Snap4Arduino Logo](http://s4a.cat/snap/img/logo-top.png)
 
 Snap4Arduino binds Snap! and Arduino together in a desktop application for GNU/Linux, MacOSX and MS Windows.
@@ -34,8 +31,8 @@ If you want to contribute to the project, you are going to need a working _nwjs_
 
 Take a look at the _buildAndRun.sh_ script to see an example of how to run the app and where to place these modules.
 
-Packager Scripts
-================
+## Packager Scripts
+
 The Snap4Arduino packager is not included in this repository because it contains lots of binaries, which would increase its size way too much.
 
 The packager, including all binaries and builder scripts, can be found [here](http://vps34736.ovh.net/snap4arduino/Snap4Arduino-builder.tar.gz), while the _nwjs_ source and binaries can be found [here](https://github.com/nwjs/nw.js).
@@ -51,7 +48,6 @@ The packager includes the following scripts:
 
 The Microsoft Windows packaging script depends on [Inno Setup](http://www.jrsoftware.org/isinfo.php), ran headless by Wine.
 
-Old Repository
-==============
+## Old Repository
 
 This repository contains only source files. The old, huge (2Gb+!) repository that contained all binaries can still be find for archaeologic purposes at: https://github.com/edutec/Snap4Arduino-old-huge
