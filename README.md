@@ -22,3 +22,8 @@ Of course, this project wouldn't exist without:
 
 ![Edutec Logo](http://edutec.citilab.eu/img/logo.gif)
 ![Citilab Logo](http://s4a.cat/img/citilab.png)
+
+Old Repository
+==============
+
+This repository contains only source files. The old, huge (2Gb+!) repository that contained all binaries can still be find for archaeologic purposes at: https://github.com/edutec/Snap4Arduino-old-huge
