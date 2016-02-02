@@ -27,10 +27,10 @@ Developers, read this
 =====================
 If you want to contribute to the project, you are going to need a working _nwjs_ version, plus the proper NodeJS modules for your platform. In particular, the serialport module is tricky to compile, which is why we provide you with the precompiled versions here:
 
-*[GNU64](http://vps34736.ovh.net/snap4arduino/serialport/serialport-gnu64.tar.gz)
-*[GNU32](http://vps34736.ovh.net/snap4arduino/serialport/serialport-gnu32.tar.gz)
-*[Win32](http://vps34736.ovh.net/snap4arduino/serialport/serialport-win32.zip)
-*[OSX](http://vps34736.ovh.net/snap4arduino/serialport/serialport-osx.zip)
+* [GNU64](http://vps34736.ovh.net/snap4arduino/serialport/serialport-gnu64.tar.gz)
+* [GNU32](http://vps34736.ovh.net/snap4arduino/serialport/serialport-gnu32.tar.gz)
+* [Win32](http://vps34736.ovh.net/snap4arduino/serialport/serialport-win32.zip)
+* [OSX](http://vps34736.ovh.net/snap4arduino/serialport/serialport-osx.zip)
 
 Take a look at the _buildAndRun.sh_ script to see an example of how to run the app and where to place these modules.
 
