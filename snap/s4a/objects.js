@@ -225,7 +225,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
     this.blocks.reportDigitalReading = 
     {
         only: SpriteMorph,
-        type: 'reporter',
+        type: 'predicate',
         category: 'arduino',
         spec: 'digital reading %digitalPin',
         translatable: true

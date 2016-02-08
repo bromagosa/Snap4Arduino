@@ -7,7 +7,6 @@
  */
 WorldMorph.prototype.Arduino = {
     firmata : require('firmata'),
-    serialport : require('serialport'),
     portList : [],
     usedPorts : []
 };
@@ -52,11 +51,11 @@ WorldMorph.prototype.Arduino.getSerialPorts = function (callback) {
     var portList = [];
     var portcheck = /usb|DevB|rfcomm|acm|^com/i; // Not sure about rfcomm! We must dig further how bluetooth works in Gnu/Linux
 
-    myself.serialport.list(function (err, ports) { 
-        if (ports) { 
-            ports.forEach(function(each) { 
-                if(!myself.isPortLocked(each.comName) && portcheck.test(each.comName)) {
-                    portList[each.comName] = each.comName; 
+    chrome.serial.getDevices(function (devices) { 
+        if (devices) { 
+            devices.forEach(function(device) { 
+                if(!myself.isPortLocked(device.path) && portcheck.test(device.path)) {
+                    portList[device.path] = device.path; 
                 }
             });
         }
