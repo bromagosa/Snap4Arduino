@@ -760,8 +760,10 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
                 document.body.removeChild(inp);
                 myself.filePicker = null;
 
-                var fs = require('fs');
-                fs.writeFileSync(e.target.files[0].path, contents);
+                var fs = require('fs'),
+                    fileName = e.target.files[0].path;
+
+                fs.writeFileSync(fileName.slice(-4) === '.xml' ? fileName : fileName + '.xml', contents);
                 myself.showMessage('Exported!', 1);
             },
             false
