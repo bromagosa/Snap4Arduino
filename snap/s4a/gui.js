@@ -10,6 +10,91 @@ SpriteIconMorph.prototype.userMenu = function () {
     return menu;
 }
 
+// HTTP protocol, based on S4A's
+
+IDE_Morph.prototype.originalInit = IDE_Morph.prototype.init;
+IDE_Morph.prototype.init = function(globals) {
+    this.originalInit(globals);
+
+    var myself = this;
+
+    if (this.httpServer) { this.httpServer.close() };
+    this.httpServer = require('http').createServer(function(request, response) { myself.handleHTTPRequest(request, response) });
+    this.httpServer.listen(42001, function() {});
+}
+
+IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
+
+    if (request.url.length > 0) {
+        var path = request.url.slice(1),
+            command = path.split('=');
+        switch (command[0]) {
+            case 'broadcast':
+                var message = command[1],
+                    stage = this.stage,
+                    hats = [];
+
+                if (message.length > 0) {
+                    
+                    stage.lastMessage = message;
+
+                    stage.children.concat(stage).forEach(function (morph) {
+                        if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
+                            hats = hats.concat(morph.allHatBlocksFor(message));
+                        }
+                    });
+
+                    hats.forEach(function (block) {
+                        stage.threads.startProcess(
+                                block,
+                                stage.isThreadSafe
+                                )});
+
+                    response.end('broadcasting ' + message);
+
+                } else {
+                    response.end('no message provided');
+                }
+                break;
+            case 'vars-update':
+                var varName = command[1],
+                    value = command[2],
+                    stage = this.stage;
+
+                stage.globalVariables().setVar(varName, value, stage);
+                response.end('updating variable ' + command[1] + ' to value ' + command[2]);
+                break;
+            case 'send-messages':
+                var contents = 'broadcast',
+                    stage = this.stage;
+
+                stage.children.concat(stage).forEach(function(morph) {
+                    if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
+                        morph.allMessageNames().forEach(function(message) {
+                            contents += ' "' + message + '"';
+                        });
+                    }
+                });
+
+                response.end(contents);
+                break;
+            case 'send-vars':
+                var contents = 'sensor-update',
+                    stage = this.stage;
+
+                Object.keys(stage.globalVariables().vars).forEach(function(varName) {
+                    contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value;
+                });
+
+                response.end(contents);
+                break;
+        }
+    }
+
+    response.end('Unknown command');
+}
+
+
 // Override Snap! menus
 // ToDo: Duplicate code! This is terrible style... we need to think of a better way 
 
