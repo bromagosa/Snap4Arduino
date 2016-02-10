@@ -19,7 +19,7 @@ SpriteMorph.prototype.init = function(globals) {
         if (myself.arduino.board.version.major !== undefined) {
             // Everything looks fine, let's try again
             myself.arduino.board.version = {};
-            myself.arduino.board.reportVersion(function(){});
+            myself.arduino.board.reportVersion(nop);
         } else {
             // Connection dropped! Let's disconnect!
             myself.arduino.disconnect(); 

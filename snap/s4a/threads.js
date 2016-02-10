@@ -28,7 +28,7 @@ Process.prototype.setPinMode = function (pin, mode) {
         this.pushContext('doYield');
         this.pushContext();
     } else {
-        throw new Error(localize("Arduino not connected"));	
+        throw new Error(localize('Arduino not connected'));	
     }
 }
 
@@ -45,13 +45,13 @@ Process.prototype.servoWrite = function (pin, value) {
 
         var numericValue;
         switch (value[0]) {
-            case "clockwise":
+            case 'clockwise':
                 numericValue = 1200;
             break;
-            case "counter-clockwise":
+            case 'counter-clockwise':
                 numericValue = 1700;
             break;
-            case "stopped":
+            case 'stopped':
                 numericValue = 1500;
             break;
             default:
@@ -61,7 +61,7 @@ Process.prototype.servoWrite = function (pin, value) {
         board.servoWrite(pin, numericValue);
         return null;
     } else {
-        throw new Error(localize("Arduino not connected"));			
+        throw new Error(localize('Arduino not connected'));			
     }
 }
 
@@ -91,7 +91,7 @@ Process.prototype.reportAnalogReading = function (pin) {
         this.pushContext();
 
     } else {
-        throw new Error(localize("Arduino not connected"));	
+        throw new Error(localize('Arduino not connected'));	
     }
 }
 
@@ -107,11 +107,10 @@ Process.prototype.reportDigitalReading = function (pin) {
         }
         return board.pins[pin].value == 1;
     } else {
-        throw new Error(localize("Arduino not connected"));		
+        throw new Error(localize('Arduino not connected'));		
     }
 
 }
-
 
 Process.prototype.digitalWrite = function (pin, booleanValue) {
     var sprite = this.homeContext.receiver;
@@ -130,7 +129,7 @@ Process.prototype.digitalWrite = function (pin, booleanValue) {
 
         return null;
     } else {
-        throw new Error(localize("Arduino not connected"));
+        throw new Error(localize('Arduino not connected'));
     }
 }
 
@@ -147,6 +146,6 @@ Process.prototype.pwmWrite = function (pin, value) {
         board.analogWrite(pin, value);
         return null;
     } else {
-        throw new Error(localize("Arduino not connected"));
+        throw new Error(localize('Arduino not connected'));
     }
 }

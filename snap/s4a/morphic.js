@@ -118,7 +118,16 @@ WorldMorph.prototype.Arduino.processC = function (body) {
     digitalOutputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', OUTPUT);\n' });
     digitalInputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', INPUT);\n' });
 
-    setup += '}\n\n';
+    body = body.replace('clockwise', 1200);
+    body = body.replace('stopped', 1500);
+    body = body.replace('counter-clockwise', 1700);
+
+    if (body.indexOf('void loop()' < 0)) {
+        setup += body.replace(/\n/g, '\n  ') + '\n';
+        body = '\n\nvoid loop() {}\n';
+    } 
+
+    setup += '}\n';
 
     return (header + setup + body);
 }
