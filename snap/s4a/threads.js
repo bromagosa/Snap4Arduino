@@ -54,6 +54,9 @@ Process.prototype.servoWrite = function (pin, value) {
             case 'stopped':
                 numericValue = 1500;
             break;
+            case 'disconnected':
+                this.digitalWrite(pin, false);
+                return null;
             default:
                 numericValue = value;
             break;

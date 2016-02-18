@@ -32,7 +32,8 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     'angle (0-180)' : 90,
                     'stopped' : ['stopped'], 
                     'clockwise' : ['clockwise'],
-                    'counter-clockwise' : ['counter-clockwise']
+                    'counter-clockwise' : ['counter-clockwise'],
+                    'disconnected' : ['disconnected']
                 }
         );
         break;
