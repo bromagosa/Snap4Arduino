@@ -261,7 +261,7 @@ BlockMorph.prototype.userMenu = function () {
         menu.addLine();
         menu.addItem(
             'export as Arduino sketch...',
-            'exportAsArduinoC'
+            'exportAsProcessing'
         );
     }
 
@@ -278,14 +278,15 @@ BlockMorph.prototype.userMenu = function () {
     return menu;
 };
 
-BlockMorph.prototype.exportAsArduinoC = function () {
+BlockMorph.prototype.exportAsProcessing = function () {
     var fs = require('fs'),
-        ide = this.parentThatIsA(IDE_Morph),
-        fileName = homePath() + (ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino') + '.ino';
-
+        ide = this.parentThatIsA(IDE_Morph);
     try {
-        fs.writeFileSync(fileName, this.world().Arduino.processC(this.mappedCode()));
-        ide.showMessage('Exported as ' + fileName, 1);
+        saveFile(
+                ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino',
+                this.world().Arduino.processProcessing(this.mappedCode()),
+                '.ino',
+                ide);
     } catch (error) {
         ide.inform('Error exporting to Arduino sketch!', error.message)
     }

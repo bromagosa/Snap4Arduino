@@ -770,7 +770,7 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
             try {
                 menu = this.showMessage('Exporting');
                 str = this.serializer.serialize(this.stage);
-                saveFile(name, str);
+                saveFile(name, str, '.xml', myself);
                 menu.destroy();
             } catch (err) {
                 this.showMessage('Export failed: ' + err);
@@ -778,18 +778,19 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
         } else {
             menu = this.showMessage('Exporting');
             str = this.serializer.serialize(this.stage);
-            saveFile(name, str);
+            saveFile(name, str, '.xml', myself);
             menu.destroy();
         }
     }
+};
 
-    function saveFile(name, contents) {
+function saveFile(name, contents, extension, target) {
         var inp = document.createElement('input');
-        if (myself.filePicker) {
-            document.body.removeChild(myself.filePicker);
-            myself.filePicker = null;
+        if (target.filePicker) {
+            document.body.removeChild(owner.filePicker);
+            target.filePicker = null;
         }
-        inp.nwsaveas = homePath() + name + '.xml';
+        inp.nwsaveas = homePath() + name + extension;
         inp.type = 'file';
         inp.style.color = "transparent";
         inp.style.backgroundColor = "transparent";
@@ -804,21 +805,24 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
             "change",
             function (e) {
                 document.body.removeChild(inp);
-                myself.filePicker = null;
+                target.filePicker = null;
 
                 var fs = require('fs'),
                     fileName = e.target.files[0].path;
 
-                fs.writeFileSync(fileName.slice(-4) === '.xml' ? fileName : fileName + '.xml', contents);
-                myself.showMessage('Exported!', 1);
+                if (fileName.slice(-4) != extension) {
+                    fileName += extension; 
+                }
+
+                fs.writeFileSync(fileName, contents);
+                target.showMessage('Exported as ' + fileName, 3);
             },
             false
         );
         document.body.appendChild(inp);
-        myself.filePicker = inp;
+        target.filePicker = inp;
         inp.click();
     }
-};
 
 
 function homePath() {
