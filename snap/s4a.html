@@ -34,6 +34,8 @@
             window.onload = function () {
                 world = new WorldMorph(document.getElementById('world'));
 
+                world.Arduino.keepAlive = true;
+
                 ide = new IDE_Morph();
                 ide.openIn(world);
 

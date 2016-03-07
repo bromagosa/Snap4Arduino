@@ -16,13 +16,15 @@ SpriteMorph.prototype.init = function(globals) {
 
     // This function just asks for the version and checks if we've received it after a timeout
     myself.arduino.keepAlive = function() {
-        if (myself.arduino.board.version.major !== undefined) {
-            // Everything looks fine, let's try again
-            myself.arduino.board.version = {};
-            myself.arduino.board.reportVersion(nop);
-        } else {
-            // Connection dropped! Let's disconnect!
-            myself.arduino.disconnect(); 
+        if (world.Arduino.keepAlive) {
+            if (myself.arduino.board.version.major !== undefined) {
+                // Everything looks fine, let's try again
+                myself.arduino.board.version = {};
+                myself.arduino.board.reportVersion(nop);
+            } else {
+                // Connection dropped! Let's disconnect!
+                myself.arduino.disconnect(); 
+            }
         }
     }
 
