@@ -574,6 +574,9 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     dlg.drawNew();
 };
 
+// we completely rewrite this one, but we still keep it so we can recover it in
+// the Chromebook version
+IDE_Morph.prototype.originalGetCostumesList = IDE_Morph.prototype.getCostumesList;
 IDE_Morph.prototype.getCostumesList = function (dirname) {
     var fs = require('fs'),
         dir,
