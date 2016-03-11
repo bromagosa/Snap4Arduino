@@ -238,7 +238,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
-        spec: 'connect arduino at %port'
+        spec: 'connect arduino at %s'
     };
 
     // Keeping this block spec, although it's not used anymore!
@@ -391,6 +391,8 @@ SpriteMorph.prototype.blockTemplates = function(category) {
     if (category === 'arduino') {
         blocks.push(arduinoConnectButton);
         blocks.push(arduinoDisconnectButton);
+        blocks.push('-');
+        blocks.push(blockBySelector('connectArduino'));
         blocks.push('-');
         blocks.push(blockBySelector('servoWrite'));
         blocks.push(blockBySelector('digitalWrite'));

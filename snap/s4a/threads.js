@@ -1,3 +1,26 @@
+Process.prototype.connectArduino = function (port) {
+    var sprite = this.homeContext.receiver;
+
+    if (!sprite.arduino.connecting) {
+        sprite.arduino.connecting = true;
+        if (sprite.arduino.board === undefined) {
+            sprite.arduino.connect(port);
+        }
+    }
+
+    if (sprite.arduino.justConnected) {
+        sprite.arduino.justConnected = undefined;
+        return;
+    }
+
+    if (sprite.arduino.board && sprite.arduino.board.connected) {
+        return;
+    }
+
+    this.pushContext('doYield');
+    this.pushContext();
+}
+
 Process.prototype.setPinMode = function (pin, mode) {
     var sprite = this.homeContext.receiver;
 
