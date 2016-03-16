@@ -541,7 +541,8 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Mareen Przybylla: Early testing, several bug reports,\n'
     + 'German translation\n'
     + 'Steven Tang: Simplified Chinese translation\n'
-    + 'Alberto Firpo: Italian Translation';
+    + 'Alberto Firpo: Italian translation\n';
+    + 'Yaroslav Kirov: Ukrainian and Russian translations';
 
     dlg = new DialogBoxMorph();
     dlg.inform('About Snap4Arduino', aboutTxt, world);
