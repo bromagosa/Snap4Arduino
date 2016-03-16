@@ -2867,3 +2867,18 @@ end - bulk of 151215
 ------
 * Blocks: Fixed a slight rendering glitch when deleting reporters via the context menu
 
+160224
+------
+* == v4.0.5 ==== - table views
+
+160306
+------
+* Objects: Reenable custom hat blocks when dropping a sprite
+
+160316
+------
+* Store, Objects, GUI: fixed #99 (saving linked lists)
+* Objects: fixed #1163
+* added web api / https reporter library
+* Blocks, Store: New “transient variable” feature
+* German translation update

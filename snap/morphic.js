@@ -8,7 +8,7 @@
     written by Jens Mönig
     jens@moenig.org
 
-    Copyright (C) 2015 by Jens Mönig
+    Copyright (C) 2016 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -974,7 +974,7 @@
     single submorph's changes tremendous performance improvements can be
     achieved by setting the trackChanges flag to false before propagating
     the layout changes, setting it to true again and then storing the full
-    bounds of the surrounding morph. An an example refer to the
+    bounds of the surrounding morph. As an example refer to the
 
         moveBy()
 
@@ -1057,7 +1057,7 @@
 /*global window, HTMLCanvasElement, getMinimumFontHeight, FileReader, Audio,
 FileList, getBlurredShadowSupport*/
 
-var morphicVersion = '2015-December-23';
+var morphicVersion = '2016-February-24';
 var modules = {}; // keep track of additional loaded modules
 var useBlurredShadows = getBlurredShadowSupport(); // check for Chrome-bug
 
@@ -2188,7 +2188,7 @@ Morph.uber = Node.prototype;
     single submorph's changes tremendous performance improvements can be
     achieved by setting the trackChanges flag to false before propagating
     the layout changes, setting it to true again and then storing the full
-    bounds of the surrounding morph. An an example refer to the
+    bounds of the surrounding morph. As an example refer to the
 
         fixLayout()
 
@@ -2733,11 +2733,10 @@ Morph.prototype.toggleVisibility = function () {
 // Morph full image:
 
 Morph.prototype.fullImageClassic = function () {
-    // why doesn't this work for all Morphs?
-    var fb = this.fullBounds(),
+    var fb = this.cachedFullBounds || this.fullBounds(), // use the cache since fullDrawOn() will
         img = newCanvas(fb.extent()),
         ctx = img.getContext('2d');
-    ctx.translate(-this.bounds.origin.x, -this.bounds.origin.y);
+    ctx.translate(-fb.origin.x, -fb.origin.y);
     this.fullDrawOn(img, fb);
     img.globalAlpha = this.alpha;
     return img;

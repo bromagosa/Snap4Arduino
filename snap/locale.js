@@ -42,7 +42,7 @@
 
 /*global modules, contains*/
 
-modules.locale = '2016-January-22';
+modules.locale = '2016-March-16';
 
 // Global stuff
 
@@ -161,7 +161,7 @@ SnapTranslator.dict.de = {
     'translator_e-mail':
         'jens@moenig.org',
     'last_changed':
-        '2015-12-22'
+        '2016-03-16'
 };
 
 SnapTranslator.dict.it = {
@@ -265,11 +265,11 @@ SnapTranslator.dict.fr = {
     'language_name':
         'Fran\u00E7ais',
     'language_translator':
-        'Jean-Jacques Valliet, Mark Rafter, Martin Quinson',
+        'Jean-Jacques Valliet, Mark Rafter, Martin Quinson, Damien Caselli',
     'translator_e-mail':
         'i.scool@mac.com',
     'last_changed':
-        '2015-06-25'
+        '2016-02-24'
 };
 
 SnapTranslator.dict.si = {
@@ -389,7 +389,7 @@ SnapTranslator.dict.ca = {
     'translator_e-mail':
         'bromagosa@citilab.eu',
     'last_changed':
-        '2015-09-23'
+        '2016-02-24'
 };
 
 SnapTranslator.dict.fi = {
@@ -565,5 +565,5 @@ SnapTranslator.dict.ar = {
     'translator_e-mail':
         'tarekgalal46@hotmail.com', // optional
     'last_changed':
-        '2016-01-17'
+        '2016-02-24'
 };

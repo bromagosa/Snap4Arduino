@@ -15,7 +15,6 @@ IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
     var myself = this;
 
     response.setHeader('Access-Control-Allow-Origin', '*');
-
     function parse(message) {
 
         if (message.length > 0) {
@@ -87,6 +86,22 @@ IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
                     });
 
                     response.end(contents);
+                    break;
+                case 'stage':
+                    var contents = '<html><img id="stage" src="' + myself.stage.fullImageClassic().toDataURL() + '" /><script>' +
+                        'var ajax = new XMLHttpRequest();' +
+                        'function getData() {' + 
+                            'var time = new Date();' +
+                            'ajax.open("GET", "stageimg", false); ajax.send();' +
+                            'document.getElementById("stage").src = ajax.responseText;' +
+                            'setTimeout(getData, Math.min(new Date() - time, 100));' + 
+                        '}; getData();' +
+                        '</script></html>';
+                    response.end(contents);
+                    break;
+                case 'stageimg':
+                    response.setHeader('Cache-Control', 'no-cache');
+                    response.end(myself.stage.fullImageClassic().toDataURL());
                     break;
             }
         }

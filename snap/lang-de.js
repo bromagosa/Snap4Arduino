@@ -6,7 +6,7 @@
 
     written by Jens Mönig
 
-    Copyright (C) 2015 by Jens Mönig
+    Copyright (C) 2016 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -185,7 +185,7 @@ SnapTranslator.dict.de = {
     'translator_e-mail':
         'jens@moenig.org', // optional
     'last_changed':
-        '2015-12-22', // this, too, will appear in the Translators tab
+        '2016-03-16', // this, too, will appear in the Translators tab
 
     // GUI
     // control bar:
@@ -815,6 +815,10 @@ SnapTranslator.dict.de = {
         'Helles Design',
     'Keyboard Editing':
         'Tastaturunterstützung',
+    'Table support':
+        'Tabellenunterstützung',
+    'Table lines':
+        'Tabellen mit Linien',
     'Thread safe scripts':
         'Threadsicherheit',
     'uncheck to allow\nscript reentrance':
@@ -877,6 +881,12 @@ SnapTranslator.dict.de = {
         'Umringen',
     'unringify':
         'Entringen',
+    'transient':
+        'nicht persistent',
+    'uncheck to save contents\nin the project':
+        'ausschalten, um den Inhalt\nim Projekt zu speichern',
+    'check to prevent contents\nfrom being saved':
+        'einschalten, um das Speichern des Inhalts\nim Projekt zu verhindern',
 
     // custom blocks:
     'delete block definition...':
@@ -941,6 +951,18 @@ SnapTranslator.dict.de = {
         'Los',
     'rename sound':
         'Klang umbenennen',
+
+    // lists and tables
+    'list view...':
+        'Listenansicht...',
+    'table view...':
+        'tabellarische Ansicht...',
+    'open in dialog...':
+        'in neuem Fenster \u00f6ffnen',
+    'reset columns':
+        'Spaltenbreiten zur\u00fccksetzen',
+    'items':
+        'Elemente',
 
     // dialogs
     // buttons
