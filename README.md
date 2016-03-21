@@ -12,7 +12,7 @@ Acknowledgements
 Of course, this project wouldn't exist without:
 
 * [Snap!](http://snap.berkeley.edu)
-* [Arduino](http://arduino.cc)
+* [Arduino](http://arduino.org)
 * [nw.js](http://nwjs.io)
 
 
