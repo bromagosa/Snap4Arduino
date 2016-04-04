@@ -672,7 +672,7 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
 function saveFile(name, contents, extension, target) {
         var inp = document.createElement('input');
         if (target.filePicker) {
-            document.body.removeChild(owner.filePicker);
+            document.body.removeChild(target.filePicker);
             target.filePicker = null;
         }
         inp.nwsaveas = homePath() + name + extension;
