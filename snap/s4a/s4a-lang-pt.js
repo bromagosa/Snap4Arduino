@@ -82,28 +82,28 @@ s4aTempDict = {
         'Desligar Arduino',
 
     'analog reading %analogPin':
-        'valor analógico no pino %analogPin',
+        'o valor analógico no pino %analogPin',
 
     'digital reading %digitalPin':
-        'valor booleano no pino digital %digitalPin',
+        'o valor booleano no pino digital %digitalPin é «verdadeiro»',
 
     'connect arduino at %port':
-        'ligar a Arduino em %port',
+        'liga ao Arduino em %port',
 
     'connect arduino at %s':
-        'ligar a Arduino em %s',
+        'liga ao Arduino em %s',
 
     'setup digital pin %digitalPin as %pinMode':
-        'configurar pino digital %digitalPin como %pinMode',
+        'configura o pino digital %digitalPin como %pinMode',
 
     'set digital pin %digitalPin to %b':
-        'colocar no pino digital %digitalPin o valor booleano %b',
+        'coloca no pino digital %digitalPin o valor booleano %b',
 
     'set servo %servoPin to %servoValue':
-        'colocar o servo %servoPin %servoValue',
+        'coloca o servo %servoPin %servoValue',
 
     'set PWM pin %pwmPin to %n':
-        'colocar no pino PWM %pwmPin o valor %n',
+        'coloca no pino PWM %pwmPin o valor %n',
 
     'Connecting board at port\n': 
         'Ligando placa no porto\n',
