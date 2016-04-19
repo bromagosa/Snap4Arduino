@@ -50,4 +50,4 @@ The Microsoft Windows packaging script depends on [Inno Setup](http://www.jrsoft
 
 ## Old Repository
 
-This repository contains only source files. The old, huge (2Gb+!) repository that contained all binaries can still be find for archaeologic purposes at: https://github.com/edutec/Snap4Arduino-old-huge
+This repository contains only source files. The old, huge (2Gb+!) repository that contained all binaries can still be found for archaeologic purposes at: https://github.com/edutec/Snap4Arduino-old-huge
