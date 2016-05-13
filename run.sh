@@ -1,2 +1,2 @@
 #!/bin/sh
-~/nw/beta/nw /tmp/app.nw
+~/bin/nw/nw /tmp/app.nw
