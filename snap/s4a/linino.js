@@ -1,6 +1,6 @@
 // Linino WebSockets protocol
 
-WorldMorph.prototype.ws = new WebSocket("ws://localhost:8080");
+WorldMorph.prototype.ws = new WebSocket("ws://arduino.local:8080");
 
 WorldMorph.prototype.ws.onopen = function() {
     this.send("Hello Tian!");
