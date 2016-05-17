@@ -122,7 +122,7 @@ WorldMorph.prototype.Arduino.processProcessing = function (body) {
     body = body.replace('stopped', 1500);
     body = body.replace('counter-clockwise', 1700);
 
-    if (body.indexOf('void loop()' < 0)) {
+    if (body.indexOf('void loop()') < 0) {
         setup += body.replace(/\n/g, '\n  ') + '\n';
         body = '\n\nvoid loop() {}\n';
     } 
