@@ -12,7 +12,7 @@ WorldMorph.prototype.Arduino = {
 };
 
 /**
- * Locks the given port to prevent its use in other connection (until it is unlocked)
+ * Locks the given port to prevent its use in other connections (until it is unlocked)
  */
 WorldMorph.prototype.Arduino.lockPort = function (port) {
     var usedPorts = this.usedPorts;
@@ -20,7 +20,7 @@ WorldMorph.prototype.Arduino.lockPort = function (port) {
     if (usedPorts.indexOf(port) === -1) {
         usedPorts.push(port);
     }
-}
+};
 
 /**
  * Unlocks a previously Locked port to permit its use in new connections
@@ -32,29 +32,28 @@ WorldMorph.prototype.Arduino.unlockPort = function (port) {
     if (usedPorts.indexOf(port) > -1) {
         usedPorts.splice(usedPorts.indexOf(port));
     }
-}
+};
 
 /**
  * Informs whether the port is locked or unlocked
  */
 WorldMorph.prototype.Arduino.isPortLocked = function (port) {
-    return (this.usedPorts.indexOf(port) > -1)
-}
+    return (this.usedPorts.indexOf(port) > -1);
+};
 
 
 /**
  * Gets a list of available serial ports (paths) and return it through callback function
  */
 WorldMorph.prototype.Arduino.getSerialPorts = function (callback) {
-    var myself = this;
-
-    var portList = [];
-    var portcheck = /usb|DevB|rfcomm|acm|^com/i; // Not sure about rfcomm! We must dig further how bluetooth works in Gnu/Linux
+    var myself = this,
+        portList = [],
+        portcheck = /usb|DevB|rfcomm|acm|^com/i; // Not sure about rfcomm! We must dig further how bluetooth works in Gnu/Linux
 
     chrome.serial.getDevices(function (devices) { 
         if (devices) { 
-            devices.forEach(function(device) { 
-                if(!myself.isPortLocked(device.path) && portcheck.test(device.path)) {
+            devices.forEach(function (device) { 
+                if (!myself.isPortLocked(device.path) && portcheck.test(device.path)) {
                     portList[device.path] = device.path; 
                 }
             });
@@ -92,10 +91,10 @@ WorldMorph.prototype.Arduino.processProcessing = function (body) {
     unique = function(anArray) {
         return anArray.filter(function(elem, pos) { 
             return anArray.indexOf(elem) == pos; 
-        })
+        });
     }
 
-    // let's find out what pins are we using, and for what purpose
+    // let's find out what pins we are using, and for what purpose
     servoLines = lines.filter(function(each) { return each.match(/servo[0-9]*\.write/)} );
     servoPins = unique(servoLines.map(function(each) { return each.replace(/.*servo([0-9]*)\.write.*/g, '$1') }));
 
@@ -118,6 +117,8 @@ WorldMorph.prototype.Arduino.processProcessing = function (body) {
     digitalOutputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', OUTPUT);\n' });
     digitalInputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', INPUT);\n' });
 
+    // of course, if someone's named their vars this way, we've destroyed their project
+    // sorry! :p
     body = body.replace('clockwise', 1200);
     body = body.replace('stopped', 1500);
     body = body.replace('counter-clockwise', 1700);
@@ -130,4 +131,4 @@ WorldMorph.prototype.Arduino.processProcessing = function (body) {
     setup += '}\n';
 
     return (header + setup + body);
-}
+};

@@ -12,7 +12,7 @@ SpriteMorph.prototype.init = function(globals) {
         disconnecting : false,  // Flag to avoid serialport communication when it is being closed
         justConnected: false,	// Flag to avoid double attempts
         keepAliveIntervalID: null,
-        hostname : "esp8266.local:23" // Default hostname and port for network connection
+        hostname : 'esp8266.local:23' // Default hostname and port for network connection
     };
 
     // This function just asks for the version and checks if we've received it after a timeout
@@ -31,14 +31,17 @@ SpriteMorph.prototype.init = function(globals) {
 
     myself.arduino.disconnect = function(silent) {
 
-        if (this.isBoardReady()) { // Prevent disconnection attempts before board is actually connected
+        if (this.isBoardReady()) {
+            // Prevent disconnection attempts before board is actually connected
             this.disconnecting = true;
-            if (this.port === 'network')
+            if (this.port === 'network') {
                 this.board.sp.destroy();
-            else
+            } else {
                 this.board.sp.close();
+            }
             this.closeHandler(silent);
-        } else if (!this.board) {  // Don't send info message if the board has been connected
+        } else if (!this.board) {
+            // Don't send info message if the board has been connected
             if (!silent) {
                 ide.inform(myself.name, localize('Board is not connected'))
             }
@@ -80,8 +83,7 @@ SpriteMorph.prototype.init = function(globals) {
         }
     }
 
-    myself.arduino.attemptConnection = function() {
-
+    myself.arduino.attemptConnection = function () {
         if (!this.connecting) {
             if (this.board === undefined) {
                 // Get list of ports (Arduino compatible)
@@ -95,8 +97,7 @@ SpriteMorph.prototype.init = function(globals) {
                         });
                         portMenu.addLine();
                     }
-                    portMenu.addItem("Network port", function() {
-                        //myself.arduino.connectNetwork();
+                    portMenu.addItem('Network port', function() {
                         myself.arduino.networkDialog();
                     });
                     portMenu.popUpAtHand(world);
@@ -110,10 +111,9 @@ SpriteMorph.prototype.init = function(globals) {
             this.justConnected = undefined;
             return;
         }
+    };
 
-    }
-
-    myself.arduino.closeHandler = function(silent) {
+    myself.arduino.closeHandler = function (silent) {
 
         var portName = 'unknown',
             thisArduino = myself.arduino;
@@ -135,23 +135,31 @@ SpriteMorph.prototype.init = function(globals) {
         thisArduino.disconnecting = false;
 
         if (thisArduino.disconnected & !silent) {
-            ide.inform(myself.name, localize('Board was disconnected from port\n') + portName + '\n\nIt seems that someone pulled the cable!');
+            ide.inform(
+                    myself.name,
+                    localize('Board was disconnected from port\n') 
+                    + portName 
+                    + '\n\nIt seems that someone pulled the cable!');
             thisArduino.disconnected = false;
         } else if (!silent) {
             ide.inform(myself.name, localize('Board was disconnected from port\n') + portName);
         }
-    }
+    };
 
-    myself.arduino.disconnectHandler = function() {
-        // This fires up when the cable is plugged, but only in recent versions of the serialport plugin
+    myself.arduino.disconnectHandler = function () {
+        // This fires up when the cable is unplugged
         myself.arduino.disconnected = true;
-    }
+    };
 
-    myself.arduino.errorHandler = function(err) {
-        ide.inform(myself.name, localize('An error was detected on the board\n\n') + err, myself.arduino.disconnect(true));
-    }
+    myself.arduino.errorHandler = function (err) {
+        ide.inform(
+                myself.name,
+                localize('An error was detected on the board\n\n')
+                + err,
+                myself.arduino.disconnect(true));
+    };
 
-    myself.arduino.networkDialog = function() {
+    myself.arduino.networkDialog = function () {
         new DialogBoxMorph(
             this, // target
             'connectNetwork', // action
@@ -161,55 +169,69 @@ SpriteMorph.prototype.init = function(globals) {
             myself.arduino.hostname, // default
             myself.world() // world
         );
-    }
+    };
 
-    myself.arduino.connectNetwork = function(host) {
-        var net = require('net');
+    myself.arduino.connectNetwork = function (host) {
+        var net = require('net'),
+            hostname = host.split(':')[0],
+            port = host.split(':')[1] ? ':' + host.split(':')[1] : '';
 
-        var hostname = host.split(":")[0];
-        var port = host.split(":")[1] ? host.split(":")[1] : 23;
-        myself.arduino.hostname = hostname + ":" + port;
+        myself.arduino.hostname = hostname + port;
 
         this.disconnect(true);
 
         this.showMessage(localize('Connecting to network port:\n' + myself.arduino.hostname + '\n\n' + localize('This may take a few seconds...')));
         this.connecting = true;
 
-        var client = net.connect({host: hostname,port: port}, function() {
-            var socket = this;
-            myself.arduino.board = new world.Arduino.firmata.Board(socket, function(err) {
-                if (!err) {
-                    // Clear timeout to avoid problems if connection is closed before timeout is completed
-                    clearTimeout(myself.arduino.connectionTimeout);
+        var client = net.connect(
+                { 
+                    host: hostname,
+                    port: port
+                },
+                function () {
+                    var socket = this;
+                    myself.arduino.board = new world.Arduino.firmata.Board(socket, function(err) {
+                        if (!err) {
+                            // Clear timeout to avoid problems if connection is closed before timeout is completed
+                            clearTimeout(myself.arduino.connectionTimeout);
 
-                    // Start the keepAlive interval
-                    myself.arduino.keepAliveIntervalID = setInterval(myself.arduino.keepAlive, 5000);
+                            // Start the keepAlive interval
+                            myself.arduino.keepAliveIntervalID = setInterval(myself.arduino.keepAlive, 5000);
 
-                    myself.arduino.board.sp.on('disconnect', myself.arduino.disconnectHandler);
-                    myself.arduino.board.sp.on('close', myself.arduino.closeHandler);
-                    myself.arduino.board.sp.on('error', myself.arduino.errorHandler);
+                            myself.arduino.board.sp.on('disconnect', myself.arduino.disconnectHandler);
+                            myself.arduino.board.sp.on('close', myself.arduino.closeHandler);
+                            myself.arduino.board.sp.on('error', myself.arduino.errorHandler);
 
-                    myself.arduino.port = "network";
-                    myself.arduino.connecting = false;
-                    myself.arduino.justConnected = true;
-                    myself.arduino.board.connected = true;
-                    myself.arduino.board.sp.path = myself.arduino.hostname;
+                            myself.arduino.port = 'network';
+                            myself.arduino.connecting = false;
+                            myself.arduino.justConnected = true;
+                            myself.arduino.board.connected = true;
+                            myself.arduino.board.sp.path = myself.arduino.hostname;
 
-                    myself.arduino.hideMessage();
-                    ide.inform(myself.name, localize('An Arduino board has been connected. Happy prototyping!'));
-                } else {
-                    myself.arduino.hideMessage();
-                    ide.inform(myself.name, localize('Error connecting the board.') + ' ' + err, myself.arduino.closeHandler(true));
-                }
-                return;
-            });
+                            myself.arduino.hideMessage();
+                            ide.inform(myself.name, localize('An Arduino board has been connected. Happy prototyping!'));
+                        } else {
+                            myself.arduino.hideMessage();
+                            ide.inform(myself.name, localize('Error connecting the board.\n') + err, myself.arduino.closeHandler(true));
+                        }
+                        return;
+                    });
         });
+
         client.on('error', function(err) {
             myself.arduino.hideMessage();
             if (err.code === 'EHOSTUNREACH') {
-                ide.inform(myself.name, localize('Unable to connect to board\n') + myself.arduino.hostname + '\n\n' + localize('Make sure the board is powered on'));
+                ide.inform(
+                        myself.name, 
+                        localize('Unable to connect to board\n')
+                        + myself.arduino.hostname + '\n\n'
+                        + localize('Make sure the board is powered on'));
             } else if (err.code === 'ECONNREFUSED') {
-                ide.inform(myself.name, localize('Unable to connect to board\n') + myself.arduino.hostname + '\n\n' + localize('Make sure the hostname and port are correct'));
+                ide.inform(
+                        myself.name,
+                        localize('Unable to connect to board\n')
+                        + myself.arduino.hostname + '\n\n'
+                        + localize('Make sure the hostname and port are correct'));
             } else {
                 ide.inform(myself.name, localize('Unable to connect to board\n') + myself.arduino.hostname);
             }
@@ -217,7 +239,7 @@ SpriteMorph.prototype.init = function(globals) {
             myself.arduino.connecting = false;
             myself.arduino.justConnected = false;
         });
-    }
+    };
 
     myself.arduino.connect = function(port) {
         this.disconnect(true);
@@ -255,25 +277,29 @@ SpriteMorph.prototype.init = function(globals) {
 
         // Set timeout to check if device does not speak firmata (in such case new Board callback was never called, but board object exists) 
         myself.arduino.connectionTimeout = setTimeout(function() {
-            // If board.versionReceived == false, the board has not established a firmata connection
+            // If !board.versionReceived, the board has not established a firmata connection
             if (myself.arduino.board && !myself.arduino.board.versionReceived) {
                 var port = myself.arduino.board.sp.path;
 
                 myself.arduino.hideMessage();
-                ide.inform(myself.name, localize('Could not talk to Arduino in port\n') + port + '\n\n' + localize('Check if firmata is loaded.'))
+                ide.inform(
+                        myself.name,
+                        localize('Could not talk to Arduino in port\n')
+                        + port + '\n\n' + localize('Check if firmata is loaded.')
+                        );
 
             // silently closing the connection attempt
             myself.arduino.disconnect(true); 
             }
-        }, 10000)
-    }
+        }, 10000);
+    };
 
     myself.arduino.isBoardReady = function() {
         return ((this.board !== undefined) 
                 && (this.board.pins.length>0) 
                 && (!this.disconnecting));
-    }
-}
+    };
+};
 
 
 
@@ -283,7 +309,7 @@ SpriteMorph.prototype.categories.push('arduino');
 SpriteMorph.prototype.blockColor['arduino'] = new Color(64, 136, 182);
 
 SpriteMorph.prototype.originalInitBlocks = SpriteMorph.prototype.initBlocks;
-SpriteMorph.prototype.initArduinoBlocks = function() {
+SpriteMorph.prototype.initArduinoBlocks = function () {
 
     this.blocks.reportAnalogReading = 
     {
@@ -420,14 +446,14 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
 SpriteMorph.prototype.initBlocks =  function() {
     this.originalInitBlocks();
     this.initArduinoBlocks();
-}
+};
 
 SpriteMorph.prototype.initBlocks();
 
 // blockTemplates decorator
 
 SpriteMorph.prototype.originalBlockTemplates = SpriteMorph.prototype.blockTemplates;
-SpriteMorph.prototype.blockTemplates = function(category) {
+SpriteMorph.prototype.blockTemplates = function (category) {
     var myself = this;
 
     var blocks = myself.originalBlockTemplates(category); 
@@ -452,7 +478,7 @@ SpriteMorph.prototype.blockTemplates = function(category) {
             'Disconnect Arduino'
             );
 
-    function blockBySelector(selector) {
+    function blockBySelector (selector) {
         var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
         newBlock.isTemplate = true;
         return newBlock;
@@ -473,4 +499,4 @@ SpriteMorph.prototype.blockTemplates = function(category) {
     };
 
     return blocks;
-}
+};
