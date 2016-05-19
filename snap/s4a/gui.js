@@ -5,10 +5,18 @@ SpriteIconMorph.prototype.userMenu = function () {
     menu = this.originalUserMenu();
     menu.addLine();
     var myself = this;
-    menu.addItem('connect to Arduino', function() { myself.object.arduino.attemptConnection() });
-    menu.addItem('disconnect Arduino', function() { myself.object.arduino.disconnect() });
+    menu.addItem(
+            'connect to Arduino',
+            function () { 
+                myself.object.arduino.attemptConnection();
+            });
+    menu.addItem(
+            'disconnect Arduino',
+            function () {
+                myself.object.arduino.disconnect();
+            });
     return menu;
-}
+};
 
 // Override Snap! menus
 // ToDo: Duplicate code! This is terrible style... we need to think of a better way 
@@ -287,6 +295,48 @@ IDE_Morph.prototype.settingsMenu = function () {
         'check to enable\nkeyboard editing support',
         false
     );
+    addPreference(
+        'Table support',
+        function () {
+            List.prototype.enableTables =
+                !List.prototype.enableTables;
+            if (List.prototype.enableTables) {
+                myself.saveSetting('tables', true);
+            } else {
+                myself.removeSetting('tables');
+            }
+        },
+        List.prototype.enableTables,
+        'uncheck to disable\nmulti-column list views',
+        'check for multi-column\nlist view support',
+        false
+    );
+    if (List.prototype.enableTables) {
+        addPreference(
+            'Table lines',
+            function () {
+                TableMorph.prototype.highContrast =
+                    !TableMorph.prototype.highContrast;
+                if (TableMorph.prototype.highContrast) {
+                    myself.saveSetting('tableLines', true);
+                } else {
+                    myself.removeSetting('tableLines');
+                }
+            },
+            TableMorph.prototype.highContrast,
+            'uncheck for less contrast\nmulti-column list views',
+            'check for higher contrast\ntable views',
+            false
+        );
+    }
+    menu.addLine();
+    addPreference(
+        'HTTP server',
+        'toggleServer',
+        myself.isServerOn,
+        'uncheck to stop\nHTTP server',
+        'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
+    )
     menu.addLine(); // everything below this line is stored in the project
     addPreference(
         'Thread safe scripts',
@@ -515,31 +565,36 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino! ' + require('fs').readFileSync('version') +'\n\n'
-    + 'Copyright \u24B8 2015 Citilab\n'
+    aboutTxt = 'Snap4Arduino ' + require('fs').readFileSync('version') +'\n'
+
+    + '\u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
 
-    + 'Snap4Arduino is a modification of Snap! developed by the\n'
-    + 'Edutec research group at the Citilab, Cornellà de Llobregat\n'
-    + '(Barcelona).\n\n'
-
-    + 'The Edutec research group is comprised of:\n'
-    + 'Víctor Casado\n'
-    + 'Jordi Delgado\n'
-    + 'Jose García\n'
-    + 'Joan Güell\n'
-    + 'Bernat Romagosa\n\n'
+    + 'Snap4Arduino is a modification of Snap! originally developed\n'
+    + 'by the Edutec research group at the Citilab, Cornellà de\n'
+    + 'Llobregat (Barcelona).\n\n'
 
     + 'For more information, please visit\n'
     + 'http://s4a.cat/snap\n'
-    + 'http://edutec.citilab.eu';
+    + 'http://edutec.citilab.eu\n\n'
+    + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
+    + 'bernat@arduino.org\n\n'
+
+    + 'As of 2016, Snap4Arduino is being developed by Bernat\n'
+    + 'Romagosa at Arduino.org';
 
     creditsTxt = localize('Contributors')
     + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
     + 'several features and bugfixes, Spanish translation\n'
+    + 'José García, Joan Güell and Víctor Casado: vision,\n'
+    + 'architectural decisions, several bug reports, testing and\n'
+    + 'unvaluable help in many other regards\n'
+    + 'Joan Guillén: Bugfixes, extensive testing, vision\n'
+    + 'Josep Ferràndiz: Extensive testing, vision\n'
     + 'Frank Hunleth: GNU/Linux 64b version\n'
+    + 'Ove Risberg: Network to serial port functionality\n'
     + 'Mareen Przybylla: Early testing, several bug reports,\n'
-    + 'German translation\n'
+    + 'German translation, architectural decisions\n'
     + 'Steven Tang: Simplified Chinese translation\n'
     + 'Alberto Firpo: Italian translation\n'
     + 'Yaroslav Kirov: Ukrainian and Russian translations\n'
@@ -648,8 +703,8 @@ IDE_Morph.prototype.createLogo = function () {
 
 IDE_Morph.prototype.exportProject = function (name, plain) {
     var menu, 
-        str,
-        myself = this;
+    str,
+    myself = this;
 
     if (name) {
         this.setProjectName(name);
@@ -672,30 +727,30 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
 };
 
 function saveFile(name, contents, extension, target) {
-        var inp = document.createElement('input');
-        if (target.filePicker) {
-            document.body.removeChild(target.filePicker);
-            target.filePicker = null;
-        }
-        inp.nwsaveas = homePath() + name + extension;
-        inp.type = 'file';
-        inp.style.color = "transparent";
-        inp.style.backgroundColor = "transparent";
-        inp.style.border = "none";
-        inp.style.outline = "none";
-        inp.style.position = "absolute";
-        inp.style.top = "0px";
-        inp.style.left = "0px";
-        inp.style.width = "0px";
-        inp.style.height = "0px";
-        inp.addEventListener(
+    var inp = document.createElement('input');
+    if (target.filePicker) {
+        document.body.removeChild(target.filePicker);
+        target.filePicker = null;
+    }
+    inp.nwsaveas = homePath() + name + extension;
+    inp.type = 'file';
+    inp.style.color = "transparent";
+    inp.style.backgroundColor = "transparent";
+    inp.style.border = "none";
+    inp.style.outline = "none";
+    inp.style.position = "absolute";
+    inp.style.top = "0px";
+    inp.style.left = "0px";
+    inp.style.width = "0px";
+    inp.style.height = "0px";
+    inp.addEventListener(
             "change",
             function (e) {
                 document.body.removeChild(inp);
                 target.filePicker = null;
 
                 var fs = require('fs'),
-                    fileName = e.target.files[0].path;
+                fileName = e.target.files[0].path;
 
                 if (fileName.slice(-4) != extension) {
                     fileName += extension; 
@@ -705,16 +760,16 @@ function saveFile(name, contents, extension, target) {
                 target.showMessage('Exported as ' + fileName, 3);
             },
             false
-        );
-        document.body.appendChild(inp);
-        target.filePicker = inp;
-        inp.click();
-    }
+            );
+    document.body.appendChild(inp);
+    target.filePicker = inp;
+    inp.click();
+};
 
 
 function homePath() {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + ((process.platform == 'win32') ? '\\' : '/')
-}
+};
 
 /*
  * Override setLanguage function
@@ -750,7 +805,7 @@ IDE_Morph.prototype.setLanguageS4A = function (lang, callback) {
 };
 
 // Fix problme with connected board when creating a new project 
-// If the board is connected (it is not freed for the new sprites)
+// while a board is connected (it is not freed for the new sprites)
 IDE_Morph.prototype.originalNewProject = IDE_Morph.prototype.newProject
 IDE_Morph.prototype.newProject = function () {
     // Disconnect each sprite before creating the new project
@@ -770,7 +825,7 @@ IDE_Morph.prototype.createNewArduinoProject = function() {
     this.confirm(
         'Replace the current project with a new one?',
         'New Arduino translatable Project',
-        function () { myself.newArduinoProject() })
+        function () { myself.newArduinoProject(); });
 }
 
 IDE_Morph.prototype.newArduinoProject = function() {
@@ -786,6 +841,7 @@ IDE_Morph.prototype.newArduinoProject = function() {
     console.log(StageMorph.prototype.codeMappings);
 
     // UI changes
+    // Ok, these decorator names are getting silly
     if (!this.isArduinoTranslationMode) {
         SpriteMorph.prototype.notSoOriginalBlockTemplates = SpriteMorph.prototype.blockTemplates;
         SpriteMorph.prototype.blockTemplates = function (category) {
@@ -833,7 +889,6 @@ IDE_Morph.prototype.createNewProject = function () {
         'New Project',
         function () {
             if (myself.isArduinoTranslationMode) {
-                // Ok, these names are getting silly
                 StageMorph.prototype.blockTemplates = StageMorph.prototype.notSoOriginalBlockTemplates;
                 SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
                 myself.isArduinoTranslationMode = false;
