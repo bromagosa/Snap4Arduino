@@ -174,9 +174,9 @@ SpriteMorph.prototype.init = function(globals) {
     myself.arduino.connectNetwork = function (host) {
         var net = require('net'),
             hostname = host.split(':')[0],
-            port = host.split(':')[1] ? ':' + host.split(':')[1] : '';
+            port = host.split(':')[1] || 80;
 
-        myself.arduino.hostname = hostname + port;
+        myself.arduino.hostname = hostname + ':' + port;
 
         this.disconnect(true);
 
