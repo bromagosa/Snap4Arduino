@@ -4,7 +4,7 @@
   "description": "Snap4Arduino",
   "window": {
     "title": "Snap4Arduino",
-    "icon": "s4a.ico",
+    "icon": "s4a/icon-128.png",
     "toolbar": false,
     "frame": true,
     "position": "mouse",
