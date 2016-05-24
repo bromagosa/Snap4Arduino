@@ -295,3 +295,21 @@ Arduino.prototype.isBoardReady = function () {
             && (this.board.pins.length > 0) 
             && (!this.disconnecting));
 };
+
+Arduino.prototype.pinsSettableToMode = function (aMode) {
+    // Retrieve a list of pins that support a particular mode
+    var myself = this,
+        pinNumbers = {};
+
+    this.board.pins.forEach(
+        function (each) { 
+            if (each.supportedModes.indexOf(aMode) > -1) { 
+                var number = myself.board.pins.indexOf(each).toString(); 
+                pinNumbers[number] = number;
+            }
+        }
+    );
+
+    return pinNumbers;
+};
+

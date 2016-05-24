@@ -1,23 +1,3 @@
-function pinsSettableToMode(aMode) {
-    // Retrieve a list of pins that support a particular mode
-    var sprite = ide.currentSprite,
-        board = sprite.arduino.board,
-        pinNumbers = {},
-        pins = board.pins;
-
-    pins.forEach(
-        function(each){ 
-            if (each.supportedModes.indexOf(aMode) > -1) { 
-                var number = pins.indexOf(each).toString(); 
-                pinNumbers[number] = number;
-            }
-        }
-    );
-
-    return pinNumbers;
-};
-
-
 // labelPart() proxy
 
 SyntaxElementMorph.prototype.originalLabelPart = SyntaxElementMorph.prototype.labelPart;
@@ -60,7 +40,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                             board = sprite.arduino.board;
 
                         if (board) {
-                            return pinsSettableToMode(board.MODES.SERVO);
+                            return sprite.arduino.pinsSettableToMode(board.MODES.SERVO);
                         } else {
                             return [];
                         }
@@ -77,7 +57,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                             board = sprite.arduino.board;
 
                         if (board) {
-                            return pinsSettableToMode(board.MODES.PWM);
+                            return sprite.arduino.pinsSettableToMode(board.MODES.PWM);
                         } else {
                             return [];
                         }
