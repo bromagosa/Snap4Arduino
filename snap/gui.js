@@ -65,11 +65,13 @@ BlockExportDialogMorph, BlockImportDialogMorph, SnapTranslator, localize,
 List, InputSlotMorph, SnapCloud, Uint8Array, HandleMorph, SVG_Costume,
 fontHeight, hex_sha512, sb, CommentMorph, CommandBlockMorph,
 BlockLabelPlaceHolderMorph, Audio, SpeechBubbleMorph, ScriptFocusMorph,
-XML_Element, WatcherMorph, BlockRemovalDialogMorph, saveAs, TableMorph*/
+XML_Element, WatcherMorph, BlockRemovalDialogMorph, saveAs, TableMorph,
+isSnapObject, isRetinaEnabled, disableRetinaSupport, enableRetinaSupport,
+isRetinaSupported*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.gui = '2016-March-16';
+modules.gui = '2016-May-13';
 
 // Declarations
 
@@ -1399,8 +1401,10 @@ IDE_Morph.prototype.createCorral = function () {
     frame.alpha = 0;
 
     this.sprites.asArray().forEach(function (morph) {
-        template = new SpriteIconMorph(morph, template);
-        frame.contents.add(template);
+        if (!morph.isClone) {
+            template = new SpriteIconMorph(morph, template);
+            frame.contents.add(template);
+        }
     });
 
     this.corral.frame = frame;
@@ -1795,6 +1799,20 @@ IDE_Morph.prototype.selectSprite = function (sprite) {
     this.currentSprite.scripts.fixMultiArgs();
 };
 
+// IDE_Morph retina display support
+
+IDE_Morph.prototype.toggleRetina = function () {
+    if (isRetinaEnabled()) {
+        disableRetinaSupport();
+    } else {
+        enableRetinaSupport();
+    }
+    this.world().fillPage();
+    IDE_Morph.prototype.scriptsPaneTexture = this.scriptsTexture();
+    this.drawNew();
+    this.refreshIDE();
+};
+
 // IDE_Morph skins
 
 IDE_Morph.prototype.defaultDesign = function () {
@@ -1988,6 +2006,7 @@ IDE_Morph.prototype.removeSprite = function (sprite) {
     sprite.parts.forEach(function (part) {myself.removeSprite(part); });
     idx = this.sprites.asArray().indexOf(sprite) + 1;
     this.stage.threads.stopAllForReceiver(sprite);
+    sprite.corpsify();
     sprite.destroy();
     this.stage.watchers().forEach(function (watcher) {
         if (watcher.object() === sprite) {
@@ -2261,6 +2280,15 @@ IDE_Morph.prototype.settingsMenu = function () {
         );
     }
     menu.addLine();
+    if (isRetinaSupported()) {
+        addPreference(
+            'Retina display support',
+            'toggleRetina',
+            isRetinaEnabled(),
+            'uncheck for lower resolution,\nsaves computing resources',
+            'check for higher resolution,\nuses more computing resources'
+        );
+    }
     addPreference(
         'Blurred shadows',
         'toggleBlurredShadows',
@@ -2422,6 +2450,20 @@ IDE_Morph.prototype.settingsMenu = function () {
         true
     );
     addPreference(
+        'First-Class Sprites',
+        function () {
+            SpriteMorph.prototype.enableFirstClass =
+                !SpriteMorph.prototype.enableFirstClass;
+            myself.currentSprite.blocksCache.sensing = null;
+            myself.currentSprite.paletteCache.sensing = null;
+            myself.refreshPalette();
+        },
+        SpriteMorph.prototype.enableFirstClass,
+        'uncheck to disable support\nfor first-class sprites',
+        'check to enable support\n for first-class sprite',
+        true
+    );
+    addPreference(
         'Keyboard Editing',
         function () {
             ScriptsMorph.prototype.enableKeyboard =
@@ -2471,6 +2513,17 @@ IDE_Morph.prototype.settingsMenu = function () {
             false
         );
     }
+    addPreference(
+        'Live coding support',
+        function () {
+            Process.prototype.enableLiveCoding =
+                !Process.prototype.enableLiveCoding;
+        },
+        Process.prototype.enableLiveCoding,
+        'EXPERIMENTAL! uncheck to disable live\ncustom control structures',
+        'EXPERIMENTAL! check to enable\n live custom control structures',
+        true
+    );
     menu.addLine(); // everything below this line is stored in the project
     addPreference(
         'Thread safe scripts',
@@ -2612,7 +2665,9 @@ IDE_Morph.prototype.projectMenu = function () {
 
     if (shiftClicked) {
         menu.addItem(
-            localize('Export project...') + ' ' + localize('(in a new window)'),
+            localize(
+                'Export project...') + ' ' + localize('(in a new window)'
+            ),
             function () {
                 if (myself.projectName) {
                     myself.exportProject(myself.projectName, shiftClicked);
@@ -2708,19 +2763,9 @@ IDE_Morph.prototype.projectMenu = function () {
 
     menu.addItem(
         localize(graphicsName) + '...',
-        createMediaMenu(
-            graphicsName,
-            function loadCostume(file, name) {
-                var url = myself.resourceURL(graphicsName, file),
-                    img = new Image();
-                img.onload = function () {
-                    var canvas = newCanvas(new Point(img.width, img.height));
-                    canvas.getContext('2d').drawImage(img, 0, 0);
-                    myself.droppedImage(canvas, name);
-                };
-                img.src = url;
-            }
-        ),
+        function () {
+            myself.importMedia(graphicsName);
+        },
         'Select a costume from the media library'
     );
     menu.addItem(
@@ -2799,6 +2844,109 @@ IDE_Morph.prototype.parseResourceFile = function (text) {
     return items;
 };
 
+IDE_Morph.prototype.importMedia = function (mediaType) {
+    // open a dialog box letting the user browse available "built-in"
+    // costumes or backgrounds
+
+    var dialog = new DialogBoxMorph().withKey('import' + mediaType),
+        frame = new ScrollFrameMorph(),
+        selectedIcon = null,
+        turtle = new SymbolMorph('turtle', 60),
+        items = this.getMediaList(mediaType),
+        myself = this,
+        world = this.world(),
+        handle;
+
+    frame.acceptsDrops = false;
+    frame.contents.acceptsDrops = false;
+    frame.color = myself.groupColor;
+    frame.fixLayout = nop;
+    dialog.labelString = mediaType;
+    dialog.createLabel();
+    dialog.addBody(frame);
+    dialog.addButton('ok', 'Import');
+    dialog.addButton('cancel', 'Cancel');
+
+    dialog.ok = function () {
+        if (selectedIcon) {
+            myself.droppedImage(
+                selectedIcon.object.contents,
+                selectedIcon.labelString
+            );
+        }
+    };
+
+    dialog.fixLayout = function () {
+        var th = fontHeight(this.titleFontSize) + this.titlePadding * 2,
+            x = 0,
+            y = 0,
+            fp, fw;
+        this.buttons.fixLayout();
+        this.body.setPosition(this.position().add(new Point(
+            this.padding,
+            th + this.padding
+        )));
+        this.body.setExtent(new Point(
+            this.width() - this.padding * 2,
+            this.height() - this.padding * 3 - th - this.buttons.height()
+        ));
+        fp = this.body.position();
+        fw = this.body.width();
+        frame.contents.children.forEach(function (icon) {
+              icon.setPosition(fp.add(new Point(x, y)));
+            x += icon.width();
+            if (x + icon.width() > fw) {
+                x = 0;
+                y += icon.height();
+            }
+        });
+        frame.contents.adjustBounds();
+        this.label.setCenter(this.center());
+        this.label.setTop(this.top() + (th - this.label.height()) / 2);
+        this.buttons.setCenter(this.center());
+        this.buttons.setBottom(this.bottom() - this.padding);
+    };
+
+    items.forEach(function (item) {
+        var url = myself.resourceURL(mediaType, item.file),
+            img = new Image(),
+            icon = new CostumeIconMorph(
+                new Costume(turtle.image, item.name)
+            );
+        icon.isDraggable = false;
+        icon.userMenu = nop;
+        icon.action = function () {
+            if (selectedIcon === icon) return;
+            var prevSelected = selectedIcon;
+            selectedIcon = icon;
+            if (prevSelected) prevSelected.refresh();
+        };
+        icon.doubleClickAction = dialog.ok;
+        icon.query = function () {
+            return icon === selectedIcon;
+        };
+        frame.addContents(icon);
+        img.onload = function () {
+            var canvas = newCanvas(new Point(img.width, img.height), true);
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            icon.object = new Costume(canvas, item.name);
+            icon.refresh();
+        };
+        img.src = url;
+    });
+    dialog.popUp(world);
+    dialog.setExtent(new Point(400, 300));
+    dialog.setCenter(world.center());
+    dialog.drawNew();
+
+    handle = new HandleMorph(
+        dialog,
+        300,
+        280,
+        dialog.corner,
+        dialog.corner
+    );
+};
 
 // IDE_Morph menu actions
 
@@ -2807,15 +2955,16 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 4.0.6\nBuild Your Own Blocks\n\n'
+    aboutTxt = 'Snap! 4.0.8 - dev -\nBuild Your Own Blocks\n\n'
         + 'Copyright \u24B8 2016 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
 
         + 'Snap! is developed by the University of California, Berkeley\n'
-        + '          with support from the National Science Foundation, '
-        + 'MioSoft,     \n'
-        + 'and the Communications Design Group at SAP Labs. \n'
+        + '          with support from the National Science Foundation (NSF), '
+        + 'MioSoft,          \n'
+        + 'the Communications Design Group (CDG) at SAP Labs, and the\n'
+        + 'Human Advancement Research Community (HARC) at YC Research.\n'
 
         + 'The design of Snap! is influenced and inspired by Scratch,\n'
         + 'from the Lifelong Kindergarten group at the MIT Media Lab\n\n'
@@ -2844,6 +2993,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\ncountless bugfixes and optimizations'
         + '\nKartik Chandra: Paint Editor'
         + '\nMichael Ball: Time/Date UI, many bugfixes'
+        + '\nBartosz Leper: Retina Display Support'
         + '\n"Ava" Yuan Yuan: Graphic Effects'
         + '\nKyle Hotchkiss: Block search design'
         + '\nIan Reynolds: UI Design, Event Bindings, '
@@ -3027,6 +3177,7 @@ IDE_Morph.prototype.newProject = function () {
     StageMorph.prototype.enableInheritance = false;
     StageMorph.prototype.enableSublistIDs = false;
     SpriteMorph.prototype.useFlatLineEnds = false;
+    Process.prototype.enableLiveCoding = false;
     this.setProjectName('');
     this.projectNotes = '';
     this.createStage();
@@ -3534,6 +3685,7 @@ IDE_Morph.prototype.rawOpenProjectString = function (str) {
     StageMorph.prototype.enableCodeMapping = false;
     StageMorph.prototype.enableInheritance = false;
     StageMorph.prototype.enableSublistIDs = false;
+    Process.prototype.enableLiveCoding = false;
     if (Process.prototype.isCatchingErrors) {
         try {
             this.serializer.openProject(
@@ -3578,6 +3730,7 @@ IDE_Morph.prototype.rawOpenCloudDataString = function (str) {
     StageMorph.prototype.enableCodeMapping = false;
     StageMorph.prototype.enableInheritance = false;
     StageMorph.prototype.enableSublistIDs = false;
+    Process.prototype.enableLiveCoding = false;
     if (Process.prototype.isCatchingErrors) {
         try {
             model = this.serializer.parse(str);
@@ -3811,15 +3964,19 @@ IDE_Morph.prototype.saveFileAs = function (
 
 IDE_Morph.prototype.saveCanvasAs = function (canvas, fileName, newWindow) {
     // Export a Canvas object as a PNG image
-    // cavas.toBlob() is currently only supported in Firefox and IE
-    var myself = this;
-    if (canvas.toBlob) {
-        canvas.toBlob(function (blob) {
-            myself.saveFileAs(blob, 'image/png', fileName, newWindow);
-        });
-    } else {
-        this.saveFileAs(canvas.toDataURL(), 'image/png', fileName, newWindow);
-    }
+    // Note: This commented out due to poor browser support.
+    // cavas.toBlob() is currently supported in Firefox, IE, Chrome but 
+    // browsers prevent easily saving the generated files.
+    // Do not re-enable without revisiting issue #1191
+    // if (canvas.toBlob) {
+    //     var myself = this;
+    //     canvas.toBlob(function (blob) {
+    //         myself.saveFileAs(blob, 'image/png', fileName, newWindow);
+    //     });
+    //     return;
+    // }
+    
+    this.saveFileAs(canvas.toDataURL(), 'image/png', fileName, newWindow);
 };
 
 IDE_Morph.prototype.saveXMLAs = function(xml, fileName, newWindow) {
@@ -3929,7 +4086,7 @@ IDE_Morph.prototype.toggleZebraColoring = function () {
 
     // select all scripts:
     this.stage.children.concat(this.stage).forEach(function (morph) {
-        if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
+        if (isSnapObject(morph)) {
             scripts = scripts.concat(
                 morph.scripts.children.filter(function (morph) {
                     return morph instanceof BlockMorph;
@@ -4807,7 +4964,7 @@ IDE_Morph.prototype.getURL = function (url) {
         }
         throw new Error('unable to retrieve ' + url);
     } catch (err) {
-        myself.showMessage(err);
+        myself.showMessage(err.toString());
         return;
     }
 };
@@ -6298,7 +6455,8 @@ CostumeIconMorph.prototype.editCostume = function () {
     } else {
         this.object.edit(
             this.world(),
-            this.parentThatIsA(IDE_Morph)
+            this.parentThatIsA(IDE_Morph),
+            false // not a new costume, retain existing rotation center
         );
     }
 };

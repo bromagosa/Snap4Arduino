@@ -1,6 +1,7 @@
 #!/bin/sh
-rm snap.zip 2> /dev/null
-wget http://snap.berkeley.edu/snapsource/snap.zip
-unzip -o snap.zip -d snap/
-rm snap.zip 
-rm -R snap/__MACOSX/
+rm master.zip 2> /dev/null
+wget https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/master.zip
+unzip master.zip
+rm master.zip 
+cp -rf Snap--Build-Your-Own-Blocks-master/* snap/
+rm -r Snap--Build-Your-Own-Blocks-master
