@@ -569,7 +569,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino ' + require('fs').readFileSync('version') +'\n'
+    aboutTxt = 'Snap4Arduino ' + this.version() +'\n'
 
     + '\u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
@@ -904,3 +904,6 @@ IDE_Morph.prototype.createNewProject = function () {
     );
 };
 
+IDE_Morph.prototype.version = function() {
+    return require('fs').readFileSync('version')
+};

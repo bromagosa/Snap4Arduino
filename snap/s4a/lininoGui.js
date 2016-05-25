@@ -72,7 +72,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino! ' + require('fs').readFileSync('version') +'\n\n'
+    aboutTxt = 'Snap4Arduino! ' + this.version() +'\n\n'
     + 'Copyright \u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
 
