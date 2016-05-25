@@ -19,8 +19,10 @@ SpriteIconMorph.prototype.userMenu = function () {
 };
 
 // Override Snap! menus
+// Keeping the original one because we may want to re-override it in web-based versions
 // ToDo: Duplicate code! This is terrible style... we need to think of a better way 
 
+IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
     var menu,
     world = this.world();
@@ -87,6 +89,7 @@ IDE_Morph.prototype.snapMenu = function () {
                 menu.popup(world, this.logo.bottomLeft());
 };
 
+IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
 IDE_Morph.prototype.settingsMenu = function () {
     var menu,
         stage = this.stage,
@@ -365,6 +368,7 @@ IDE_Morph.prototype.settingsMenu = function () {
     menu.popup(world, pos);
 };
 
+IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
 IDE_Morph.prototype.projectMenu = function () {
     var menu,
     myself = this,
@@ -632,6 +636,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     dlg.drawNew();
 };
 
+IDE_Morph.prototype.originalGetCostumesList = IDE_Morph.prototype.getCostumesList;
 IDE_Morph.prototype.getCostumesList = function (dirname) {
     var fs = require('fs'),
         dir,
@@ -701,6 +706,7 @@ IDE_Morph.prototype.createLogo = function () {
 
 // Exporting
 
+IDE_Morph.prototype.originalExportProject = IDE_Morph.prototype.exportProject;
 IDE_Morph.prototype.exportProject = function (name, plain) {
     var menu, 
     str,
