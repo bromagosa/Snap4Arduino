@@ -96,6 +96,7 @@ IDE_Morph.prototype.settingsMenu = function () {
         world = this.world(),
         myself = this,
         pos = this.controlBar.settingsButton.bottomLeft(),
+        networkPorts = this.getSetting('networkPorts'),
         shiftClicked = (world.currentKey === 16);
 
     function addPreference(label, toggle, test, onHint, offHint, hide) {
@@ -339,7 +340,17 @@ IDE_Morph.prototype.settingsMenu = function () {
         myself.isServerOn,
         'uncheck to stop\nHTTP server',
         'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
-    )
+    );
+    addPreference(
+        'Network serial ports',
+        function () {
+            Arduino.prototype.networkPortsEnabled =
+                !Arduino.prototype.networkPortsEnabled;
+        },
+        Arduino.prototype.networkPortsEnabled,
+        'uncheck to disable\nserial ports over\nnetwork',
+        'check to enable\nserial ports over\nnetwork'
+    );
     menu.addLine(); // everything below this line is stored in the project
     addPreference(
         'Thread safe scripts',
