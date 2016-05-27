@@ -613,6 +613,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Steven Tang: Simplified Chinese translation\n'
     + 'Alberto Firpo: Italian translation\n'
     + 'Yaroslav Kirov: Ukrainian and Russian translations\n'
+    + 'Sjoerd Dirk Meijer: Dutch translation\n'
     + 'Lior Assouline: Hebrew translation\n'
     + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation';
 
