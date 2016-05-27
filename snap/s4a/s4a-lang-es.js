@@ -95,8 +95,8 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'fijar servo %servoPin en %servoValue',
 
-    'set PWM pin %pwmPin to %n':
-        'fijar pin PWM %pwmPin en %n',
+    'set analog pin %pwmPin to %n':
+        'fijar pin analógico %pwmPin en %n',
 
     'Connecting board at port\n': 
         'Conectando tarjeta en la puerta\n',
