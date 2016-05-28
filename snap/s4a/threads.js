@@ -67,6 +67,7 @@ Process.prototype.servoWrite = function (pin, value) {
 
         if (board.pins[pin].mode != board.MODES.SERVO) {
             board.pinMode(pin, board.MODES.SERVO);
+			board.servoConfig(pin,600,2400);
         }
 
         switch (value[0]) {
@@ -74,13 +75,13 @@ Process.prototype.servoWrite = function (pin, value) {
                 numericValue = 1200;
             break;
             case 'counter-clockwise':
-                numericValue = 1700;
+                numericValue = 1800;
             break;
             case 'stopped':
                 numericValue = 1500;
             break;
             case 'disconnected':
-                this.digitalWrite(pin, false);
+                board.pinMode(pin, board.MODES.OUTPUT);
                 return null;
             default:
                 numericValue = value;
