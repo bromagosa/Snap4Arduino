@@ -55,13 +55,13 @@ s4aTempDict = {
     'servo':
         '',
 
-    'clockwise':
+    'clockwise (1500-1000)':
         '',
 
-    'counter-clockwise':
+    'counter-clockwise (1500-2000)':
         '',
 
-    'stopped':
+    'stopped (1500)':
         '',
 
     'disconnected':

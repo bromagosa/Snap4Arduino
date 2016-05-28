@@ -53,14 +53,14 @@ s4aTempDict = {
 	'servo':
 		'Servo',
 
-	'clockwise':
-		'im Uhrzeigersinn',
+	'clockwise (1500-1000)':
+		'im Uhrzeigersinn (1500-1000)',
 
-	'counter-clockwise':
-		'gegen den Uhrzeigersinn',
+	'counter-clockwise (1500-2000)':
+		'gegen den Uhrzeigersinn (1500-2000)',
 
-	'stopped':
-		'gestoppt',
+	'stopped (1500)':
+		'gestoppt (1500)',
 
 	'angle (0-180)':
 		'Winkel (0-180)',

@@ -10,9 +10,9 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     false,
                     {
                         'angle (0-180)' : 90,
-                        'stopped' : ['stopped'], 
-                        'clockwise' : ['clockwise'],
-                        'counter-clockwise' : ['counter-clockwise'],
+                        'stopped (1500)' : ['stopped'], 
+                        'clockwise (1500-1000)' : ['clockwise'],
+                        'counter-clockwise (1500-2000)' : ['counter-clockwise'],
                         'disconnected' : ['disconnected']
                     }
                     );
