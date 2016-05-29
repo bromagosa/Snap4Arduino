@@ -472,7 +472,7 @@ IDE_Morph.prototype.projectMenu = function () {
         'Import tools',
         function () {
             myself.droppedText(
-				myself.getURL('http://snap.berkeley.edu/snapsource/tools.xml'),
+		myself.getURL('http://snap.berkeley.edu/snapsource/tools.xml'),
                 'tools'
             );
         },
