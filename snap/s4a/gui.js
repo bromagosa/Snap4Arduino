@@ -472,9 +472,7 @@ IDE_Morph.prototype.projectMenu = function () {
         'Import tools',
         function () {
             myself.droppedText(
-                myself.getURLsbeOrRelative(
-                    'tools.xml'
-                ),
+				myself.getURL('http://snap.berkeley.edu/snapsource/tools.xml'),
                 'tools'
             );
         },
@@ -490,8 +488,7 @@ IDE_Morph.prototype.projectMenu = function () {
 
             function loadLib(name) {
                 var url = 'http://snap.berkeley.edu/snapsource/libraries/'
-                + name
-                + '.xml';
+                + name;
                 myself.droppedText(myself.getURL(url), name);
             }
 
