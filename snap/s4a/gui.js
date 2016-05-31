@@ -398,6 +398,10 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem('Save As...', 'saveProjectsBrowser');
     menu.addLine();
     menu.addItem(
+            'Send project to board',
+            'pushProject',
+            'Send this project\nto a Snap!-listener enabled\nboard.');
+    menu.addItem(
         'New Arduino translatable project', 
         'createNewArduinoProject',
         'Experimental feature!\nScripts written under this\nmode will be translatable\nas Arduino sketches');
@@ -833,9 +837,55 @@ IDE_Morph.prototype.newProject = function () {
     this.originalNewProject();
 };
 
+IDE_Morph.prototype.pushProject = function () {
+    var projectContents = this.serializer.serialize(this.stage),
+    myself = this;
+
+    new DialogBoxMorph(
+            null,
+            function (url) {
+                myself.doPushProject(projectContents, url);
+            }
+    ).withKey('pushProject').prompt(
+        'Push project',
+        'arduino.local:8080',
+        this.world()
+        );
+};
+
+IDE_Morph.prototype.doPushProject = function (contents, url) {
+    var myself = this,
+        http = require('http'),
+        splitUrl = url.replace('http://', '').split(':'),
+        options = {
+            hostname: splitUrl[0],
+            port: splitUrl[1],
+            path: '/',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': contents.length + 1
+            }
+        },
+        request = http.request(options, function (response) {
+            myself.inform(response.statusCode === 200 ? 'Done' : 'Error', response.statusMessage);
+        });
+
+    request.on('error', function (err) {
+        myself.inform('Error', err.message);
+    });
+
+    request.on('timeout', function () {
+        myself.inform('Cannot talk to the board', 'Please check the URL and port, and make\nsure the Snap! listener is running in the board');
+    });
+
+    request.write(contents);
+    request.end();
+};
+
 // EXPERIMENTAL: Arduino translation mode
 
-IDE_Morph.prototype.createNewArduinoProject = function() {
+IDE_Morph.prototype.createNewArduinoProject = function () {
     var myself = this;
     this.confirm(
         'Replace the current project with a new one?',
