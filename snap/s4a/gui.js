@@ -616,7 +616,8 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Yaroslav Kirov: Ukrainian and Russian translations\n'
     + 'Sjoerd Dirk Meijer: Dutch translation\n'
     + 'Lior Assouline: Hebrew translation\n'
-    + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation';
+    + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation\n'
+    + 'Hasso Tepper: Estonian translation';
 
     dlg = new DialogBoxMorph();
     dlg.inform('About Snap4Arduino', aboutTxt, world);
