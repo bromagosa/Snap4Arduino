@@ -2,7 +2,9 @@
 
 SyntaxElementMorph.prototype.originalLabelPart = SyntaxElementMorph.prototype.labelPart;
 SyntaxElementMorph.prototype.labelPart = function(spec) {
-    var part;
+    var part,
+        block = this;
+
     switch (spec) {
         case '%servoValue':
             part = new InputSlotMorph(
@@ -72,7 +74,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                         // Get board associated to currentSprite
                         var sprite = ide.currentSprite,
                             board = sprite.arduino.board;
-
+                        
                         if (board) { 
                             return board.analogPins.map(
                                     function (each){
@@ -83,6 +85,8 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                         } 
                     }
                     );
+            part.originalChanged = part.changed;
+            part.changed = function () { part.originalChanged(); block.toggle.refresh(); };
             break;
         case '%digitalPin':
             part = new InputSlotMorph(
@@ -112,6 +116,8 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                         }
                     }
                     );
+            part.originalChanged = part.changed;
+            part.changed = function () { part.originalChanged(); block.toggle.refresh(); };
             break;
         default:
             part = this.originalLabelPart(spec);

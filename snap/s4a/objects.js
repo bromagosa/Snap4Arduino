@@ -181,11 +181,55 @@ SpriteMorph.prototype.blockTemplates = function (category) {
             'Disconnect Arduino'
             );
 
+    function arduinoWatcherToggle (selector) {
+        if (StageMorph.prototype.hiddenPrimitives[selector]) {
+            return null;
+        }
+        var info = SpriteMorph.prototype.blocks[selector];
+
+        return new ToggleMorph(
+            'checkbox',
+            this,
+            function () {
+                var reporter = detect(blocks, function (each) {
+                        return (each.selector === selector)
+                    }),
+                    pin = reporter.inputs()[0].contents().text;
+
+                if (!pin) { return };
+
+                myself.arduinoWatcher(
+                    selector,
+                    localize(info.spec),
+                    myself.blockColor[info.category],
+                    pin
+                );
+            },
+            null,
+            function () {
+                var reporter = detect(blocks, function (each) {
+                    return (each.selector === selector)
+                });
+
+                return reporter &&
+                    myself.showingArduinoWatcher(selector, reporter.inputs()[0].contents().text);
+            },
+            null
+        );
+    }
     function blockBySelector (selector) {
         var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
         newBlock.isTemplate = true;
         return newBlock;
     };
+
+    var analogToggle = arduinoWatcherToggle('reportAnalogReading'),
+        reportAnalog = blockBySelector('reportAnalogReading'),
+        digitalToggle = arduinoWatcherToggle('reportDigitalReading'),
+        reportDigital = blockBySelector('reportDigitalReading');
+
+    reportAnalog.toggle = analogToggle;
+    reportDigital.toggle = digitalToggle;
 
     if (category === 'arduino') {
         blocks.push(arduinoConnectButton);
@@ -197,9 +241,128 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(blockBySelector('digitalWrite'));
         blocks.push(blockBySelector('pwmWrite'));
         blocks.push('-');
-        blocks.push(blockBySelector('reportAnalogReading'));
+        blocks.push(analogToggle);
+        blocks.push(reportAnalog);
+        blocks.push(arduinoWatcherToggle('reportDigitalReading'));
         blocks.push(blockBySelector('reportDigitalReading'));
     };
 
     return blocks;
 };
+
+SpriteMorph.prototype.reportAnalogReading = function (pin) {
+    if (this.arduino.isBoardReady()) {
+        var board = this.arduino.board;
+
+        if (!pin) { return 0 };
+
+        if (board.pins[board.analogPins[pin]].mode != board.MODES.ANALOG) {
+            board.pinMode(board.analogPins[pin], board.MODES.ANALOG);
+        }
+
+        return board.pins[board.analogPins[pin]].value;
+
+    } else {
+        return 0;
+    }
+};
+
+SpriteMorph.prototype.reportDigitalReading = function (pin) {
+    if (this.arduino.isBoardReady()) {
+        var board = this.arduino.board;
+
+        if (!pin) { return false };
+
+        if (board.pins[pin].mode != board.MODES.INPUT) {
+            board.pinMode(pin, board.MODES.INPUT);
+            board.digitalRead(pin, function(value) { board.pins[pin].value = value });
+        }
+        return board.pins[pin].value == 1;
+    } else {
+        return false;
+    }
+};
+
+SpriteMorph.prototype.arduinoWatcher = function (selector, label, color, pin) {
+    var stage = this.parentThatIsA(StageMorph),
+        watcher,
+        others;
+    if (!stage) { return; }
+    watcher = this.arduinoWatcherFor(stage, selector, pin);
+    if (watcher) {
+        if (watcher.isVisible) {
+            watcher.hide();
+        } else {
+            watcher.show();
+            watcher.fixLayout(); // re-hide hidden parts
+            watcher.keepWithin(stage);
+        }
+        return;
+    }
+
+    // if no watcher exists, create a new one
+    watcher = new WatcherMorph(
+        label.replace(/%.*\s*/, pin),
+        color,
+        WatcherMorph.prototype.isGlobal(selector) ? stage : this,
+        selector
+    );
+    watcher.pin = pin;
+    watcher.update = function () {
+        var newValue, sprite, num;
+
+        this.updateLabel();
+        newValue = this.target[this.getter](pin);
+
+        if (newValue !== '' && !isNil(newValue)) {
+            num = +newValue;
+            if (typeof newValue !== 'boolean' && !isNaN(num)) {
+                newValue = Math.round(newValue * 1000000000) / 1000000000;
+            }
+        }
+        if (newValue !== this.currentValue) {
+            this.changed();
+            this.cellMorph.contents = newValue;
+            this.cellMorph.drawNew();
+            if (!isNaN(newValue)) {
+                this.sliderMorph.value = newValue;
+                this.sliderMorph.drawNew();
+            }
+            this.fixLayout();
+            this.currentValue = newValue;
+        }
+    };
+
+    watcher.setPosition(stage.position().add(10));
+    others = stage.watchers(watcher.left());
+    if (others.length > 0) {
+        watcher.setTop(others[others.length - 1].bottom());
+    }
+    stage.add(watcher);
+    watcher.fixLayout();
+    watcher.keepWithin(stage);
+};
+
+SpriteMorph.prototype.arduinoWatcherFor = function (stage, selector, pin) {
+    var myself = this;
+    return detect(stage.children, function (morph) {
+        return morph instanceof WatcherMorph &&
+            morph.getter === selector &&
+            morph.target === (morph.isGlobal(selector) ? stage : myself) &&
+            morph.pin === pin; 
+    });
+};
+
+SpriteMorph.prototype.showingArduinoWatcher = function (selector, pin) {
+    var stage = this.parentThatIsA(StageMorph),
+        watcher;
+    if (stage === null) {
+        return false;
+    }
+    watcher = this.arduinoWatcherFor(stage, selector, pin);
+    if (watcher) {
+        return watcher.isVisible;
+    }
+    return false;
+};
+
