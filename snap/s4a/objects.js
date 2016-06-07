@@ -243,8 +243,8 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push('-');
         blocks.push(analogToggle);
         blocks.push(reportAnalog);
-        blocks.push(arduinoWatcherToggle('reportDigitalReading'));
-        blocks.push(blockBySelector('reportDigitalReading'));
+        blocks.push(digitalToggle);
+        blocks.push(reportDigital);
     };
 
     return blocks;
