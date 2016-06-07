@@ -865,7 +865,7 @@ IDE_Morph.prototype.doPushProject = function (contents, url) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': contents.length + 1
+                'Content-Length': Buffer.byteLength(contents)
             }
         },
         request = http.request(options, function (response) {

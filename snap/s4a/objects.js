@@ -208,7 +208,7 @@ SpriteMorph.prototype.blockTemplates = function (category) {
             null,
             function () {
                 var reporter = detect(blocks, function (each) {
-                    return (each.selector === selector)
+                    return (each && each.selector === selector)
                 });
 
                 return reporter &&
