@@ -86,7 +86,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     }
                     );
             part.originalChanged = part.changed;
-            part.changed = function () { part.originalChanged(); block.toggle.refresh(); };
+            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
             break;
         case '%digitalPin':
             part = new InputSlotMorph(
@@ -117,7 +117,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     }
                     );
             part.originalChanged = part.changed;
-            part.changed = function () { part.originalChanged(); block.toggle.refresh(); };
+            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
             break;
         default:
             part = this.originalLabelPart(spec);
