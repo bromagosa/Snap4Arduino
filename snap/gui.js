@@ -71,7 +71,7 @@ isRetinaSupported*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.gui = '2016-May-13';
+modules.gui = '2016-June-01';
 
 // Declarations
 
@@ -460,6 +460,7 @@ IDE_Morph.prototype.openIn = function (world) {
     }
 
     if (this.userLanguage) {
+        this.loadNewProject = true;
         this.setLanguage(this.userLanguage, interpretUrlAnchors);
     } else {
         interpretUrlAnchors.call(this);

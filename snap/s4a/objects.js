@@ -101,8 +101,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.reportAnd.translatable = true;
     this.blocks.reportOr.translatable = true;
     this.blocks.reportNot.translatable = true;
-    this.blocks.reportTrue.translatable = true;
-    this.blocks.reportFalse.translatable = true;
+    this.blocks.reportBoolean.translatable = true;
     this.blocks.reportJoinWords.translatable = true;
     this.blocks.doSetVar.translatable = true;
     this.blocks.doChangeVar.translatable = true;
@@ -131,8 +130,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportAnd'] = '(<#1> && <#2>)';
     StageMorph.prototype.codeMappings['reportOr'] = '(<#1> || <#2>)';
     StageMorph.prototype.codeMappings['reportNot'] = '!(<#1>)';
-    StageMorph.prototype.codeMappings['reportTrue'] = 'true';
-    StageMorph.prototype.codeMappings['reportFalse'] = 'false';
+    StageMorph.prototype.codeMappings['reportBoolean'] = '<#1>';
 
     StageMorph.prototype.codeMappings['doSetVar'] = '<#1> = <#2>;';
     StageMorph.prototype.codeMappings['doChangeVar'] = '<#1> += <#2>;';
