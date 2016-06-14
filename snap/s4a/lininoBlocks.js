@@ -1,10 +1,7 @@
 function pinsSettableToMode(aMode) {
-    // Retrieve a list of pins that support a particular mode
-    var sprite = world.children[0].currentSprite,
-        board = sprite.arduino.board;
+    var pinNumbers = {},
+        pins = world.board.pins;
 
-    var pinNumbers = {};
-    var pins = board.pins;
     pins.forEach(
         function(each){ 
             if (each.supportedModes.indexOf(aMode) > -1) { 
@@ -13,6 +10,7 @@ function pinsSettableToMode(aMode) {
             }
         }
     );
+
     return pinNumbers;
 }
 
@@ -55,15 +53,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                 null,
                 true,
                 function() { 
-                    // Get board associated to currentSprite
-                    var sprite = world.children[0].currentSprite,
-                        board = sprite.arduino.board;
-
-                    if (board) {
-                        return pinsSettableToMode(board.MODES.SERVO);
-                    } else {
-                        return [];
-                    }
+                    return pinsSettableToMode('servo');
                 }
         );
         break;
@@ -72,15 +62,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                 null,
                 true,
                 function() { 
-                    // Get board associated to currentSprite
-                    var sprite = world.children[0].currentSprite,
-                        board = sprite.arduino.board;
-
-                    if (board) {
-                        return pinsSettableToMode(board.MODES.PWM);
-                    } else {
-                        return [];
-                    }
+                    return pinsSettableToMode('pwm');
                 }
         );
         break;
@@ -88,17 +70,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
             part = new InputSlotMorph(
                 null,
                 true,
-                function() { 
-                    // Get board associated to currentSprite
-                    var sprite = world.children[0].currentSprite,
-                        board = sprite.arduino.board;
-
-                    if (board) { 
-                        return board.analogPins.map(function(each){ return (each - board.analogPins[0]).toString() });
-                    } else { 
-                        return [];
-                    } 
-                }
+                world.board.analogPins
         );
         break;
         case '%digitalPin':
@@ -106,18 +78,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                 null,
                 true,
                 function() {
-                    // Get board associated to currentSprite
-                    var sprite = world.children[0].currentSprite,
-                        board = sprite.arduino.board;
-
-                    if (board) {
-                        var pinNumbers = [];
-                        var pins = board.pins.filter(function(each){ return each.analogChannel == 127 });
-                        pins.forEach(function(each){ pinNumbers.push(pins.indexOf(each).toString()) });
-                        return pinNumbers;
-                    } else {
-                        return [];
-                    }
+                    return pinsSettableToMode('digital');
                 }
         );
         break;

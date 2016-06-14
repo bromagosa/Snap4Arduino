@@ -9,12 +9,16 @@ WorldMorph.prototype.send = function (array) {
 };
 
 WorldMorph.prototype.ws.onmessage = function (evt) { 
-    try {
-        var data = JSON.parse(evt.data);
-        world.board.pins[data[0]] = data[1];
-    } catch (err) {
-        console.log('Unparseable message!\n' + err);
-        return;
+    if (!WorldMorph.prototype.board) {
+        WorldMorph.prototype.initBoard(JSON.parse(evt.data));
+    } else {
+        try {
+            var data = JSON.parse(evt.data);
+            world.board.pins[data[0]] = data[1];
+        } catch (err) {
+            console.log('Unparseable message!\n' + err);
+            return;
+        }
     }
 };
 
@@ -22,4 +26,33 @@ WorldMorph.prototype.ws.onclose = function () {
     ide.inform('Connection error', 'WebSockets connection dropped!');
 };
 
-WorldMorph.prototype.board = { pins: {} };
+WorldMorph.prototype.initBoard = function (pinConfig) {
+    var myself = this;
+    this.board = { 
+        pins: [ 
+            { supportedModes: [] },
+            { supportedModes: [] }
+        ]
+    };
+
+    Object.keys(pinConfig.digital).forEach(
+            function (each) {
+                if (each === Number(each).toString()) {
+                    myself.board.pins[Number(each)] = { supportedModes: ['digital'] };
+                }
+            });
+
+    myself.board.analogPins = Object.keys(pinConfig.analog).filter(
+            function (pinName) {
+                return pinName === Number(pinName).toString();
+            });
+
+    ['servo', 'pwm'].forEach(function (modeName) {
+        Object.keys(pinConfig[modeName]).forEach(
+                function (each) {
+                    if (each === Number(each).toString()) {
+                        myself.board.pins[Number(each)].supportedModes.push(modeName);
+                    }
+                });
+    });
+};
