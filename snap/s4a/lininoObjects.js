@@ -48,7 +48,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
-        spec: 'set PWM pin %pwmPin to %n',
+        spec: 'set analog pin %pwmPin to %n',
         translatable: true
     };
 };

@@ -4,6 +4,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Snap4Arduino @AppVersion</title>
         <link rel="shortcut icon" href="http://snap.berkeley.edu/fav3.gif" type="image/gif">
+        <script type="text/javascript" src="http://rawgit.com/binaryjs/binaryjs/master/dist/binary.min.js"></script>
         <script type="text/javascript" src="morphic.js"></script>
         <script type="text/javascript" src="s4a/linino.js"></script>
         <script type="text/javascript" src="widgets.js"></script>
@@ -37,7 +38,7 @@
                 ide = new IDE_Morph();
                 ide.openIn(world);
 
-                setInterval(loop, 1);
+                setInterval(loop, 50);
             };
 
             function loop() {
