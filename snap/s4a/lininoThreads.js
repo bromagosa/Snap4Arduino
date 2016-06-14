@@ -24,12 +24,12 @@ Process.prototype.servoWrite = function (pin, value) {
 
 Process.prototype.reportDigitalReading = function (pin) {
     world.send([3, pin]);
-    return world.board.pins[pin] || false;
+    return world.board.pins[pin].value || false;
 };
 
 Process.prototype.reportAnalogReading = function (pin) {
     world.send([4, pin]);
-    return world.board.pins['A' + pin] || 0;
+    return world.board.pins['A' + pin].value || 0;
 };
 
 Process.prototype.setPinMode = function (pin, mode) {

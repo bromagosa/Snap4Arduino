@@ -14,9 +14,9 @@ WorldMorph.prototype.ws.onmessage = function (evt) {
     } else {
         try {
             var data = JSON.parse(evt.data);
-            world.board.pins[data[0]] = data[1];
+            world.board.pins[data[0]].value = data[1];
         } catch (err) {
-            console.log('Unparseable message!\n' + err);
+            console.error('Unparseable message!\n' + evt.data + '\n' + err);
             return;
         }
     }
@@ -44,6 +44,7 @@ WorldMorph.prototype.initBoard = function (pinConfig) {
 
     myself.board.analogPins = Object.keys(pinConfig.analog).filter(
             function (pinName) {
+                myself.board.pins['A' + Number(pinName)] = { supportedModes: ['analog'] };
                 return pinName === Number(pinName).toString();
             });
 
