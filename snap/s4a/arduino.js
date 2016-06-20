@@ -27,19 +27,21 @@ Arduino.prototype.keepAlive = function () {
 };
 
 Arduino.prototype.disconnect = function (silent) {
-    if (this.isBoardReady()) {
+    if (this.board) {
         // Prevent disconnection attempts before board is actually connected
         this.disconnecting = true;
         if (this.port === 'network') {
             this.board.sp.destroy();
         } else {
-            if (!this.board.sp.disconnected) {
-                this.board.sp.close();
+            if (!this.board.sp.disconnected && this.board.sp) {
+                // otherwise something went wrong in the middle of a connection attempt
+                if (!this.connecting) {
+                    this.board.sp.close();
+                } 
             }
         }
         this.closeHandler(silent);
-    } else if (!this.board) {
-        // Don't send info message if the board has been connected
+    } else {
         if (!silent) {
             ide.inform(this.owner.name, localize('Board is not connected'))
         }
@@ -88,7 +90,7 @@ Arduino.prototype.attemptConnection = function () {
     if (!this.connecting) {
         if (this.board === undefined) {
             // Get list of ports (Arduino compatible)
-            var ports = world.Arduino.getSerialPorts(function (ports) {
+            world.Arduino.getSerialPorts(function (ports) {
                 var portMenu = new MenuMorph(this, 'select a port'),
                     portCount = Object.keys(ports).length;
 
@@ -126,29 +128,28 @@ Arduino.prototype.closeHandler = function (silent) {
 
     var portName = 'unknown';
 
+    clearInterval(this.keepAliveIntervalID);
+
     if (this.board) {
         portName = this.board.sp.path;
 
-        this.board.sp.removeListener('disconnect', this.disconnectHandler);
-        this.board.sp.removeListener('close', this.closeHandler);
-        this.board.sp.removeListener('error', this.errorHandler);
+        this.board.sp.removeAllListeners();
+        this.board.sp = undefined;
 
         this.board = undefined;
     };
-
-    clearInterval(this.keepAliveIntervalID);
 
     world.Arduino.unlockPort(this.port);
     this.connecting = false;
     this.disconnecting = false;
 
-    if (this.disconnected & !silent) {
+    if (this.gotUnplugged & !silent) {
         ide.inform(
                 this.owner.name,
                 localize('Board was disconnected from port\n') 
                 + portName 
                 + '\n\nIt seems that someone pulled the cable!');
-        this.disconnected = false;
+        this.gotUnplugged = false;
     } else if (!silent) {
         ide.inform(this.owner.name, localize('Board was disconnected from port\n') + portName);
     }
@@ -156,7 +157,7 @@ Arduino.prototype.closeHandler = function (silent) {
 
 Arduino.prototype.disconnectHandler = function () {
     // This fires up when the cable is unplugged
-    this.disconnected = true;
+    this.gotUnplugged = true;
 };
 
 Arduino.prototype.errorHandler = function (err) {
@@ -258,12 +259,10 @@ Arduino.prototype.connect = function (port) {
     this.showMessage(localize('Connecting board at port\n') + port);
     this.connecting = true;
 
-    this.board = new world.Arduino.firmata.Board(port, function (err) { 
+    myself.board = new world.Arduino.firmata.Board(port, function (err) { 
+        // Clear timeout to avoid problems if connection is closed before timeout is completed
+        clearTimeout(myself.connectionTimeout); 
         if (!err) { 
-
-            // Clear timeout to avoid problems if connection is closed before timeout is completed
-            clearTimeout(myself.connectionTimeout); 
-
             // Start the keepAlive interval
             myself.keepAliveIntervalID = setInterval(function() { myself.keepAlive() }, 5000);
 

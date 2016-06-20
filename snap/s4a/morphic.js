@@ -11,6 +11,28 @@ WorldMorph.prototype.Arduino = {
     usedPorts : []
 };
 
+// We need to override reportVersion and queryFirmware so that, in the event that the
+// cable is unplugged during a connection attempt, it does not try to write to the serial.
+// For some reason, the chrome.serial API freezes the serial port forever otherwise.
+
+WorldMorph.prototype.originalInit = WorldMorph.prototype.init;
+WorldMorph.prototype.init = function (aCanvas, fillPage) {
+    this.originalInit(aCanvas, fillPage);
+
+    this.Arduino.firmata.prototype.originalReportVersion = this.Arduino.firmata.prototype.reportVersion;
+    this.Arduino.firmata.prototype.reportVersion = function (callback) {
+        if (this.transport.connectionId > 0) {
+            this.originalReportVersion(callback);
+        }
+    };
+    this.Arduino.firmata.prototype.originalQueryFirmware = this.Arduino.firmata.prototype.queryFirmware;
+    this.Arduino.firmata.prototype.queryFirmware = function (callback) {
+        if (this.transport.connectionId > 0) {
+            this.originalQueryFirmware(callback);
+        }
+    };
+}
+
 /**
  * Locks the given port to prevent its use in other connections (until it is unlocked)
  */
