@@ -5,7 +5,7 @@ function Arduino (owner) {
     this.disconnecting = false;  // Flag to avoid serialport communication when it is being closed
     this.justConnected = false;	// Flag to avoid double attempts
     this.keepAliveIntervalID = null;
-    this.hostname = 'esp8266.local:23'; // Default hostname and port for network connection
+    this.hostname = 'arduino.local:23'; // Default hostname and port for network connection
 };
 
 // This function just asks for the version and checks if we've received it after a timeout
@@ -14,7 +14,11 @@ Arduino.prototype.keepAlive = function () {
         if (this.board.version.major !== undefined) {
             // Everything looks fine, let's try again
             this.board.version = {};
-            this.board.reportVersion(nop);
+            try {
+                this.board.reportVersion(nop);
+            } catch (err) {
+                this.disconnect();
+            }
         } else {
             // Connection dropped! Let's disconnect!
             this.disconnect(); 
@@ -29,7 +33,9 @@ Arduino.prototype.disconnect = function (silent) {
         if (this.port === 'network') {
             this.board.sp.destroy();
         } else {
-            this.board.sp.close();
+            if (!this.board.sp.disconnected) {
+                this.board.sp.close();
+            }
         }
         this.closeHandler(silent);
     } else if (!this.board) {
