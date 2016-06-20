@@ -251,7 +251,41 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(reportAnalog);
         blocks.push(digitalToggle);
         blocks.push(reportDigital);
-    };
+
+    } else if (category === 'other') {
+        button = new PushButtonMorph(
+                null,
+                function () {
+                    var ide = myself.parentThatIsA(IDE_Morph),
+                    stage = myself.parentThatIsA(StageMorph);
+                    new BlockDialogMorph(
+                        null,
+                        function (definition) {
+                            if (definition.spec !== '') {
+                                if (definition.isGlobal) {
+                                    stage.globalBlocks.push(definition);
+                                } else {
+                                    myself.customBlocks.push(definition);
+                                }
+                                ide.flushPaletteCache();
+                                ide.refreshPalette();
+                                new BlockEditorMorph(definition, myself).popUp();
+                            }
+                        },
+                        myself
+                        ).prompt(
+                            'Make a block',
+                            null,
+                            myself.world()
+                            );
+                },
+                'Make a block'
+            );
+//        button.userMenu = helpMenu;
+        button.selector = 'addCustomBlock';
+        button.showHelp = BlockMorph.prototype.showHelp;
+        blocks.push(button);
+    }
 
     return blocks;
 };
