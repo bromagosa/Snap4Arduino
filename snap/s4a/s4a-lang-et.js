@@ -55,11 +55,20 @@ s4aTempDict = {
     'servo':
         'servo',
 
+    'clockwise':
+        'päripäeva',
+
     'clockwise (1500-1000)':
         'päripäeva (1500-1000)',
 
+    'counter-clockwise':
+        'vastupäeva',
+
     'counter-clockwise (1500-2000)':
         'vastupäeva (1500-2000)',
+
+    'stopped':
+        'peatatud',
 
     'stopped (1500)':
         'peatatud (1500)',
