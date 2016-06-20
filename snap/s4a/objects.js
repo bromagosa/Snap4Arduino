@@ -216,6 +216,9 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         );
     }
     function blockBySelector (selector) {
+        if (StageMorph.prototype.hiddenPrimitives[selector]) {
+            return null;
+        }
         var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
         newBlock.isTemplate = true;
         return newBlock;
@@ -225,9 +228,14 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         reportAnalog = blockBySelector('reportAnalogReading'),
         digitalToggle = arduinoWatcherToggle('reportDigitalReading'),
         reportDigital = blockBySelector('reportDigitalReading');
+    
+    if (reportAnalog) {
+        reportAnalog.toggle = analogToggle;
+    }
 
-    reportAnalog.toggle = analogToggle;
-    reportDigital.toggle = digitalToggle;
+    if (reportDigital) {
+        reportDigital.toggle = digitalToggle;
+    }
 
     if (category === 'arduino') {
         blocks.push(arduinoConnectButton);
