@@ -1,6 +1,6 @@
 // Linino WebSockets protocol
 
-WorldMorph.prototype.ws = new WebSocket('ws://arduino.local:8888');
+WorldMorph.prototype.ws = new WebSocket('ws://' + window.location.hostname + ':8888');
 
 WorldMorph.prototype.ws.binaryType = 'arraybuffer';
 
