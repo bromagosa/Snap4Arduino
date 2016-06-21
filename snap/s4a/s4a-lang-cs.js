@@ -53,11 +53,20 @@ s4aTempDict = {
 	'servo':
 		'servo',
 
+	'clockwise':
+		'po směru hodin',
+
 	'clockwise (1500-1000)':
 		'po směru hodin (1500-1000)',
 
+	'counter-clockwise':
+		'proti směru hodin',
+
 	'counter-clockwise (1500-2000)':
 		'proti směru hodin (1500-2000)',
+
+	'stopped':
+		'zastaveno',
 
 	'stopped (1500)':
 		'zastaveno (1500)',

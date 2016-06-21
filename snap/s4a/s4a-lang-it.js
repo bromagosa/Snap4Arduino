@@ -56,11 +56,20 @@ s4aTempDict = {
 	'servo':
 		'servo',
 
+	'clockwise':
+		'senso orario',
+
 	'clockwise (1500-1000)':
 		'senso orario (1500-1000)',
 
+	'counter-clockwise':
+		'senso anti-orario',
+
 	'counter-clockwise (1500-2000)':
 		'senso anti-orario (1500-2000)',
+
+	'stopped':
+		'fermo',
 
 	'stopped (1500)':
 		'fermo (1500)',
