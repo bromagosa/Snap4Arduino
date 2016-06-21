@@ -27,15 +27,15 @@ Arduino.prototype.keepAlive = function () {
 };
 
 Arduino.prototype.disconnect = function (silent) {
-    if (this.board) {
-        // Prevent disconnection attempts before board is actually connected
+    // Prevent disconnection attempts before board is actually connected
+    if (this.board && this.isBoardReady()) {
         this.disconnecting = true;
         if (this.port === 'network') {
             this.board.sp.destroy();
         } else {
             if (!this.board.sp.disconnected && this.board.sp) {
-                // otherwise something went wrong in the middle of a connection attempt
                 if (!this.connecting) {
+                    // otherwise something went wrong in the middle of a connection attempt
                     this.board.sp.close();
                 } 
             }
@@ -174,7 +174,7 @@ Arduino.prototype.networkDialog = function () {
             'connectNetwork', // action
             this // environment
             ).prompt(
-                "Enter hostname or ip address:", // title
+                'Enter hostname or ip address:', // title
                 this.hostname, // default
                 this.owner.world() // world
                 );
@@ -251,6 +251,33 @@ Arduino.prototype.connectNetwork = function (host) {
     });
 };
 
+Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
+    // The only way to know if this is a proper serial port is to attempt a connection
+    try {
+        console.log('about to try');
+        chrome.serial.connect(
+                port, 
+                { bitrate: 57600 },
+                function (info) { 
+                    console.log('just tried');
+                    if (info) { 
+                        console.log('did work');
+                        chrome.serial.disconnect( info.connectionId, okCallback);
+                    } else {
+                        console.log('did not work');
+                        if (chrome.runtime.lastError) {
+                            console.log(chrome.runtime.lastError.message);
+                        }
+                        failCallback('Port ' + port + ' does not seem to exist');
+                    }
+                });
+        console.log('tried already');
+    } catch(err) {
+        console.log('failed miserably');
+        failCallback(err);
+    }
+};
+
 Arduino.prototype.connect = function (port) {
     var myself = this;
 
@@ -259,49 +286,69 @@ Arduino.prototype.connect = function (port) {
     this.showMessage(localize('Connecting board at port\n') + port);
     this.connecting = true;
 
-    myself.board = new world.Arduino.firmata.Board(port, function (err) { 
-        // Clear timeout to avoid problems if connection is closed before timeout is completed
-        clearTimeout(myself.connectionTimeout); 
-        if (!err) { 
-            // Start the keepAlive interval
-            myself.keepAliveIntervalID = setInterval(function() { myself.keepAlive() }, 5000);
+    this.verifyPort(port, doConnect, fail);
 
-            myself.board.sp.on('disconnect', myself.disconnectHandler);
-            myself.board.sp.on('close', myself.closeHandler);
-            myself.board.sp.on('error', myself.errorHandler);
+    function fail (err, shouldClose) {
+        myself.hideMessage();
+        myself.owner.parentThatIsA(StageMorph).threads.processes.forEach(
+                function (process) {
+                    if (process.topBlock.selector === 'connectArduino') {
+                        process.stop(); 
+                    }
+                });
+        ide.inform(
+                myself.owner.name,
+                localize('Error connecting the board.') + ' ' + err,
+                function () {
+                    myself.closeHandler(true); 
 
-            world.Arduino.lockPort(port);
-            myself.port = myself.board.sp.path;
-            myself.connecting = false;
-            myself.justConnected = true;
-            myself.board.connected = true;
+                });
+    };
 
-            myself.hideMessage();
-            ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));   
-        } else {
-            myself.hideMessage();
-            ide.inform(myself.owner.name, localize('Error connecting the board.') + ' ' + err, myself.closeHandler(true));
-        }
-        return;
-    });
+    function doConnect () {
+        myself.board = new world.Arduino.firmata.Board(port, function (err) { 
+            // Clear timeout to avoid problems if connection is closed before timeout is completed
+            clearTimeout(myself.connectionTimeout); 
+            if (!err) { 
+                // Start the keepAlive interval
+                myself.keepAliveIntervalID = setInterval(function() { myself.keepAlive() }, 5000);
 
-    // Set timeout to check if device does not speak firmata (in such case new Board callback was never called, but board object exists) 
-    this.connectionTimeout = setTimeout(function () {
-        // If !board.versionReceived, the board has not established a firmata connection
-        if (myself.board && !myself.board.versionReceived) {
-            var port = myself.board.sp.path;
+                myself.board.sp.on('disconnect', myself.disconnectHandler);
+                myself.board.sp.on('close', myself.closeHandler);
+                myself.board.sp.on('error', myself.errorHandler);
 
-            myself.hideMessage();
-            ide.inform(
-                    myself.owner.name,
-                    localize('Could not talk to Arduino in port\n')
-                    + port + '\n\n' + localize('Check if firmata is loaded.')
-                    );
+                world.Arduino.lockPort(port);
+                myself.port = myself.board.sp.path;
+                myself.connecting = false;
+                myself.justConnected = true;
+                myself.board.connected = true;
 
-            // silently closing the connection attempt
-            myself.disconnect(true); 
-        }
-    }, 10000);
+                myself.hideMessage();
+                ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));   
+            } else {
+                fail(err);
+            }
+            return;
+        });
+
+        // Set timeout to check if device does not speak firmata (in such case new Board callback was never called, but board object exists) 
+        this.connectionTimeout = setTimeout(function () {
+            // If !board.versionReceived, the board has not established a firmata connection
+            if (myself.board && !myself.board.versionReceived) {
+                var port = myself.board.sp.path;
+
+                myself.hideMessage();
+                ide.inform(
+                        myself.owner.name,
+                        localize('Could not talk to Arduino in port\n')
+                        + port + '\n\n' + localize('Check if firmata is loaded.')
+                        );
+
+                // silently closing the connection attempt
+                myself.disconnect(true); 
+            }
+        }, 10000);
+    };
 };
 
 Arduino.prototype.isBoardReady = function () {

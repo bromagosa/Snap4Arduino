@@ -161,7 +161,7 @@ SpriteMorph.prototype.blockTemplates = function (category) {
 
     //  Button that triggers a connection attempt 
 
-    var arduinoConnectButton = new PushButtonMorph(
+    this.arduinoConnectButton = new PushButtonMorph(
             null,
             function () {
                 myself.arduino.attemptConnection();
@@ -171,7 +171,7 @@ SpriteMorph.prototype.blockTemplates = function (category) {
 
     //  Button that triggers a disconnection from board
 
-    var arduinoDisconnectButton = new PushButtonMorph(
+    this.arduinoDisconnectButton = new PushButtonMorph(
             null,
             function () {
                 myself.arduino.disconnect();;
@@ -238,8 +238,8 @@ SpriteMorph.prototype.blockTemplates = function (category) {
     }
 
     if (category === 'arduino') {
-        blocks.push(arduinoConnectButton);
-        blocks.push(arduinoDisconnectButton);
+        blocks.push(this.arduinoConnectButton);
+        blocks.push(this.arduinoDisconnectButton);
         blocks.push('-');
         blocks.push(blockBySelector('connectArduino'));
         blocks.push('-');
