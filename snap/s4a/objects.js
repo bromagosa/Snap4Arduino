@@ -37,7 +37,8 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
-        spec: 'connect arduino at %s'
+        spec: 'connect arduino at %s',
+		translatable: true
     };
 
     // Keeping this block spec, although it's not used anymore!
@@ -47,7 +48,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'setup digital pin %digitalPin as %pinMode',
-        defaults: [null, 'servo'],
+        defaults: [null, localize('servo')],
         translatable: true
     };
 
@@ -66,7 +67,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'set servo %servoPin to %servoValue',
-        defaults: [null, 'clockwise'],
+        defaults: [null, localize('clockwise')],
         translatable: true
     };
 
