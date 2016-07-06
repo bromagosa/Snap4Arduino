@@ -97,8 +97,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'digitaallugem viigult %digitalPin',
 
-    'connect arduino at %port':
-        'tekita ühendus arduinoga pordis %port',
+    'connect arduino at %s':
+        'tekita ühendus arduinoga pordis %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'määra digitaalviigu %digitalPin režiimiks %pinMode',

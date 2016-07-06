@@ -38,7 +38,6 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'connect arduino at %s',
-		translatable: true
     };
 
     // Keeping this block spec, although it's not used anymore!

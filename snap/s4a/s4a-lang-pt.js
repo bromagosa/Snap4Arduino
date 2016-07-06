@@ -96,9 +96,6 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'o valor booleano no pino digital %digitalPin é «verdadeiro»',
 
-    'connect arduino at %port':
-        'liga ao Arduino em %port',
-
     'connect arduino at %s':
         'liga ao Arduino em %s',
 
