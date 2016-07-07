@@ -79,16 +79,16 @@ s4aTempDict = {
         'angle (0-180)',
 
     'connect to Arduino':
-        'connectar a Arduino',
+        'connecta a Arduino',
 
     'disconnect Arduino':
-        'desconnectar Arduino',
+        'desconnecta Arduino',
 
     'Connect Arduino':
-        'Connectar Arduino',
+        'Connecta Arduino',
 
     'Disconnect Arduino':
-        'Desconnectar Arduino',
+        'Desconnecta Arduino',
 
     'analog reading %analogPin':
         'lectura analògica %analogPin',
@@ -100,16 +100,16 @@ s4aTempDict = {
         "connecta l'Arduino al port %s",
 
     'setup digital pin %digitalPin as %pinMode':
-        'configurar pin %digitalPin com a %pinMode',
+        'configura pin %digitalPin com a %pinMode',
 
     'set digital pin %digitalPin to %b':
-        'posar pin digital %digitalPin a %b',
+        'posa el pin digital %digitalPin a %b',
 
     'set servo %servoPin to %servoValue':
-        'posar servo %servoPin a %servoValue',
+        'posar el servo %servoPin a %servoValue',
 
-    'set analog pin %pwmPin to %n':
-        'posar pin analògic %pwmPin a %n',
+    'set pin %pwmPin to %n value':
+        'posar el pin analògic %pwmPin al valor %n',
 
     'Connecting board at port\n': 
         'Connectant placa al port\n',
