@@ -85,8 +85,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'цифровое значение %digitalPin',
 
-    'connect arduino at %port':
-        'подключиться к arduino через %port',
+    'connect arduino at %s':
+        'подключиться к arduino через %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'настроить режим цифрового разъема %digitalPin как %pinMode',

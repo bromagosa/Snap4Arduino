@@ -62,7 +62,7 @@
     'Disconnect Arduino':  'התנתק מהארדוינו',
     'analog reading %analogPin': '%analogPin מ אנלוגית קריאה',
     'digital reading %digitalPin': '%digitalPin מ ספרתית קריאה' ,
-    'connect arduino at %port': '%port לפורט ארדוינו חבר',
+    'connect arduino at %s': '%s לפורט ארדוינו חבר',
     'setup digital pin %digitalPin as %pinMode':  '%pinMode -ב %digitalPin  רגל קבע',
     
     'set digital pin %digitalPin to %b':  '%b -ל %digitalPin דיגיטליית רגל שנה',

@@ -92,8 +92,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'digitální vstup %digitalPin',
 
-    'connect arduino at %port':
-        'připojit Arduino na portu %port',
+    'connect arduino at %s':
+        'připojit Arduino na portu %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'nastav digitální pin %digitalPin jako %pinMode',

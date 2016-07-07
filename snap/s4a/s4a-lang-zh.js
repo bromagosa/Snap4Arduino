@@ -53,8 +53,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         '数字信号针脚 %digitalPin 读取中',
 
-    'connect arduino at %port':
-        '连接arduino端口 %port',
+    'connect arduino at %s':
+        '连接arduino端口 %s',
 
     'setup digital pin %digitalPin as %pinMode':
         '配置数字针脚 %digitalPin 为 %pinMode',
