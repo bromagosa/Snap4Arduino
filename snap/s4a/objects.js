@@ -40,6 +40,14 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         spec: 'connect arduino at %s'
     };
 
+    this.blocks.disconnectArduino =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'disconnect arduino'
+    };
+
     // Keeping this block spec, although it's not used anymore!
     this.blocks.setPinMode =
     {
@@ -242,6 +250,7 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(this.arduinoDisconnectButton);
         blocks.push('-');
         blocks.push(blockBySelector('connectArduino'));
+        blocks.push(blockBySelector('disconnectArduino'));
         blocks.push('-');
         blocks.push(blockBySelector('servoWrite'));
         blocks.push(blockBySelector('digitalWrite'));

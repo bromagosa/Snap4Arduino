@@ -80,7 +80,7 @@ s4aTempDict = {
     'disconnect Arduino':
         'odpojit Arduino',
 
-	'Connect Arduino':
+    'Connect Arduino':
         'Připojit Arduino',
 
     'Disconnect Arduino':
@@ -94,6 +94,9 @@ s4aTempDict = {
 
     'connect arduino at %port':
         'připojit Arduino na portu %port',
+
+    'disconnect arduino':
+        'odpojit Arduino',
 
     'setup digital pin %digitalPin as %pinMode':
         'nastav digitální pin %digitalPin jako %pinMode',

@@ -21,6 +21,14 @@ Process.prototype.connectArduino = function (port) {
     this.pushContext();
 };
 
+Process.prototype.disconnectArduino = function (port) {
+    var sprite = this.homeContext.receiver;
+
+    if (sprite.arduino.board && sprite.arduino.board.connected) {
+        sprite.arduino.disconnect(true); // silent
+    }
+};
+
 Process.prototype.setPinMode = function (pin, mode) {
     var sprite = this.homeContext.receiver;
 

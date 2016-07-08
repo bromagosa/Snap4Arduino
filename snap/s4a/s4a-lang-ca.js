@@ -99,6 +99,9 @@ s4aTempDict = {
     'connect arduino at %port':
         'connectar arduino al port %port',
 
+    'disconnect arduino':
+        'desconnectar arduino',
+
     'setup digital pin %digitalPin as %pinMode':
         'configurar pin %digitalPin com a %pinMode',
 
