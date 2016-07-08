@@ -62,12 +62,12 @@
     'Disconnect Arduino':  'התנתק מהארדוינו',
     'analog reading %analogPin': '%analogPin מ אנלוגית קריאה',
     'digital reading %digitalPin': '%digitalPin מ ספרתית קריאה' ,
-    'connect arduino at %port': '%port לפורט ארדוינו חבר',
+    'connect arduino at %s': '%s לפורט ארדוינו חבר',
     'setup digital pin %digitalPin as %pinMode':  '%pinMode -ב %digitalPin  רגל קבע',
     
     'set digital pin %digitalPin to %b':  '%b -ל %digitalPin דיגיטליית רגל שנה',
     'set servo %servoPin to %servoValue': '%servoValue -ל %servoPin ברגל מנוע הבא',
-    'set analog pin %pwmPin to %n': '%n -ל %pwmPin ברגל PWM קבע',
+    'sset pin %pwmPin to %n value': '%n -ל %pwmPin ברגל PWM קבע',
     'Connecting board at port\n':  'חבר לכניסה\n',
     'An Arduino board has been connected. Happy prototyping!': 'ארדוינו חובר  בהצלחה!',
     

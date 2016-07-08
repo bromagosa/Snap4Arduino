@@ -95,8 +95,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'lettura digitale %digitalPin',
 
-    'connect arduino at %port':
-        'collega arduino alla porta %port',
+    'connect arduino at %s':
+        'collega arduino alla porta %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'imposta il pin %digitalPin come %pinMode',
@@ -107,8 +107,8 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'imposta servo %servoPin a %servoValue',
 
-    'set analog pin %pwmPin to %n':
-        'imposta il pin analogico %pwmPin a %n',
+    'set pin %pwmPin to %n value':
+        'imposta il pin %pwmPin a %n',
 
     'Connecting board at port\n': 
         'Sto collegando la scheda alla porta\n',

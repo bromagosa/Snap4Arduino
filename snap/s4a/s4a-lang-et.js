@@ -97,8 +97,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'digitaallugem viigult %digitalPin',
 
-    'connect arduino at %port':
-        'tekita ühendus arduinoga pordis %port',
+    'connect arduino at %s':
+        'tekita ühendus arduinoga pordis %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'määra digitaalviigu %digitalPin režiimiks %pinMode',
@@ -109,8 +109,8 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'määra servoviigule %servoPin väärtus %servoValue',
 
-    'set analog pin %pwmPin to %n':
-        'määra analoogviigule %pwmPin väärtus %n',
+    'set pin %pwmPin to %n value':
+        'määra viigule %pwmPin väärtus %n',
 
     'Connecting board at port\n': 
         'Ühenduse loomine plaadiga pordis\n',

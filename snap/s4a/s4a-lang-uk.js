@@ -85,8 +85,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'цифрове значення %digitalPin',
 
-    'connect arduino at %port':
-        'З\u2019єднатися з arduino використовуючи %port',
+    'connect arduino at %s':
+        'З\u2019єднатися з arduino використовуючи %s',
 
     'setup digital pin %digitalPin as %pinMode':
         'налаштувати режим цифрового роз\u2019єму %digitalPin як %pinMode',
@@ -97,7 +97,7 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'змінити статус роз\u2019єму серво %servoPin нa %servoValue',
 
-    'set analog pin %pwmPin to %n':
+    'set pin %pwmPin to %n value':
         'змінити статус роз\u2019єму PWM %pwmPin на %n',
 
     'Connecting board at port\n': 

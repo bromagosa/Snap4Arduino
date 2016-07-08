@@ -55,7 +55,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'setup digital pin %digitalPin as %pinMode',
-        defaults: [null, 'servo'],
+        defaults: [null, localize('servo')],
         translatable: true
     };
 
@@ -74,7 +74,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'set servo %servoPin to %servoValue',
-        defaults: [null, 'clockwise'],
+        defaults: [null, localize('clockwise')],
         translatable: true
     };
 
@@ -83,7 +83,8 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
-        spec: 'set analog pin %pwmPin to %n',
+        spec: 'set pin %pwmPin to %n value',
+	defaults: [128],
         translatable: true
     };
 

@@ -92,8 +92,8 @@ s4aTempDict = {
     'digital reading %digitalPin':
         'lies digitalen Pin %digitalPin',
 
-    'connect arduino at %port':
-        'verbinde Arduino an Port %port',
+    'connect arduino at %s':
+        'verbinde Arduino an Port %s',
 
     'disconnect arduino':
         'verbindung zu Arduino trennen',
@@ -107,8 +107,8 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'Setze Servo %servoPin auf %servoValue',
 
-    'set analog pin %pwmPin to %n':
-        'Setze analogen Pin %pwmPin auf %n',
+    'set pin %pwmPin to %n value':
+        'Setze Pin %pwmPin auf %n',
 
     'Connecting board at port\n': 
         'Verbinde mit Board an Port\n',
