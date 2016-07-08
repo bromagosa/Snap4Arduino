@@ -67,7 +67,7 @@
     
     'set digital pin %digitalPin to %b':  '%b -ל %digitalPin דיגיטליית רגל שנה',
     'set servo %servoPin to %servoValue': '%servoValue -ל %servoPin ברגל מנוע הבא',
-    'set analog pin %pwmPin to %n': '%n -ל %pwmPin ברגל PWM קבע',
+    'sset pin %pwmPin to %n value': '%n -ל %pwmPin ברגל PWM קבע',
     'Connecting board at port\n':  'חבר לכניסה\n',
     'An Arduino board has been connected. Happy prototyping!': 'ארדוינו חובר  בהצלחה!',
     
