@@ -56,6 +56,9 @@ s4aTempDict = {
     'connect arduino at %s':
         '连接arduino端口 %s',
 
+    'disconnect arduino':
+        '断开与arduino的连接',
+
     'setup digital pin %digitalPin as %pinMode':
         '配置数字针脚 %digitalPin 为 %pinMode',
 

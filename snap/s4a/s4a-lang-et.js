@@ -100,6 +100,9 @@ s4aTempDict = {
     'connect arduino at %s':
         'tekita ühendus arduinoga pordis %s',
 
+    'disconnect arduino':
+        'katkesta ühendus arduinoga',
+
     'setup digital pin %digitalPin as %pinMode':
         'määra digitaalviigu %digitalPin režiimiks %pinMode',
 

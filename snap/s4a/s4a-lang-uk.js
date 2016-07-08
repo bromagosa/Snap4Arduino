@@ -88,6 +88,9 @@ s4aTempDict = {
     'connect arduino at %s':
         'З\u2019єднатися з arduino використовуючи %s',
 
+    'disconnect arduino':
+        'Від\u2019єднатися від arduino',
+
     'setup digital pin %digitalPin as %pinMode':
         'налаштувати режим цифрового роз\u2019єму %digitalPin як %pinMode',
 
