@@ -83,8 +83,8 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
-        spec: 'set pin %pwmPin to %n value',
-	defaults: [128],
+        spec: 'set pin %pwmPin to value %n',
+	defaults: [null, 128],
         translatable: true
     };
 

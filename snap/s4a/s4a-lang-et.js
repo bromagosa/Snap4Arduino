@@ -112,7 +112,7 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'määra servoviigule %servoPin väärtus %servoValue',
 
-    'set pin %pwmPin to %n value':
+    'set pin %pwmPin to value %n':
         'määra viigule %pwmPin väärtus %n',
 
     'Connecting board at port\n': 

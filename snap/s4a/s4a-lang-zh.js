@@ -68,7 +68,7 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         '设置伺服针脚 %servoPin 为 %servoValue',
 
-    'set pin %pwmPin to %n value':
+    'set pin %pwmPin to value %n':
         '设置PWM %pwmPin 为 %n',
 
     'Connecting board at port\n': 
