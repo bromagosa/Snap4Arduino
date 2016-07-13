@@ -4,7 +4,10 @@ Process.prototype.connectArduino = function (port) {
     if (!sprite.arduino.connecting) {
         sprite.arduino.connecting = true;
         if (sprite.arduino.board === undefined) {
-            sprite.arduino.connect(port);
+            // Second parameter tells `connect` to verify port before connecting
+            // Since one can enter arbitrary text in this block, it is important
+            // to do so!
+            sprite.arduino.connect(port, true);
         }
     }
 

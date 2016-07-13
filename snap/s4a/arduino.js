@@ -254,31 +254,25 @@ Arduino.prototype.connectNetwork = function (host) {
 Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
     // The only way to know if this is a proper serial port is to attempt a connection
     try {
-        console.log('about to try');
         chrome.serial.connect(
                 port, 
                 { bitrate: 57600 },
                 function (info) { 
-                    console.log('just tried');
                     if (info) { 
-                        console.log('did work');
                         chrome.serial.disconnect( info.connectionId, okCallback);
                     } else {
-                        console.log('did not work');
                         if (chrome.runtime.lastError) {
                             console.log(chrome.runtime.lastError.message);
                         }
                         failCallback('Port ' + port + ' does not seem to exist');
                     }
                 });
-        console.log('tried already');
     } catch(err) {
-        console.log('failed miserably');
         failCallback(err);
     }
 };
 
-Arduino.prototype.connect = function (port) {
+Arduino.prototype.connect = function (port, verify) {
     var myself = this;
 
     this.disconnect(true);
@@ -286,7 +280,11 @@ Arduino.prototype.connect = function (port) {
     this.showMessage(localize('Connecting board at port\n') + port);
     this.connecting = true;
 
-    this.verifyPort(port, doConnect, fail);
+    if (verify) {
+        this.verifyPort(port, doConnect, fail);
+    } else {
+        doConnect();
+    }
 
     function fail (err, shouldClose) {
         myself.hideMessage();
