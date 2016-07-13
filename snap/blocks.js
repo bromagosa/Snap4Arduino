@@ -149,7 +149,7 @@ isSnapObject, copy, PushButtonMorph, SpriteIconMorph*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.blocks = '2016-June-05';
+modules.blocks = '2016-July-06';
 
 var SyntaxElementMorph;
 var BlockMorph;
@@ -857,7 +857,8 @@ SyntaxElementMorph.prototype.labelPart = function (spec) {
             part.isUnevaluated = true;
             break;
         case '%txt':
-            part = new InputSlotMorph();
+            part = new InputSlotMorph(); // supports whitespace dots
+            // part = new TextSlotMorph(); // multi-line, no whitespace dots
             part.minWidth = part.height() * 1.7; // "landscape"
             part.fixLayout();
             break;
@@ -1052,12 +1053,18 @@ SyntaxElementMorph.prototype.labelPart = function (spec) {
             part = new InputSlotMorph(
                 null,
                 false,
-                {   brightness : ['brightness'],
-                    ghost : ['ghost'],
+                {   color: ['color'],
+                    fisheye: ['fisheye'],
+                    whirl: ['whirl'],
+                    pixelate: ['pixelate'],
+                    mosaic: ['mosaic'],
+                    duplicate: ['duplicate'],
                     negative : ['negative'],
                     comic: ['comic'],
-                    duplicate: ['duplicate'],
-                    confetti: ['confetti']
+                    confetti: ['confetti'],
+                    saturation: ['saturation'],
+                    brightness : ['brightness'],
+                    ghost: ['ghost']
                 },
                 true
             );
@@ -3425,17 +3432,9 @@ BlockMorph.prototype.scriptPic = function () {
         pic = newCanvas(fb.extent()),
         ctx = pic.getContext('2d');
     this.allComments().forEach(function (comment) {
-        var anchor = comment.anchor;
-        if (anchor) {
-            ctx.drawImage(
-                anchor.image,
-                anchor.left() - fb.left() - 4,
-                anchor.top() - fb.top()
-            );
-        }
         ctx.drawImage(
             comment.fullImageClassic(),
-            comment.left() - fb.left() - 4,
+            comment.fullBounds().left() - fb.left(),
             comment.top() - fb.top()
         );
     });
@@ -3515,6 +3514,12 @@ BlockMorph.prototype.destroy = function () {
     this.allComments().forEach(function (comment) {
         comment.destroy();
     });
+
+    if (!this.parent || !this.parent.topBlock
+            && this.activeProcess()) {
+        this.activeProcess().stop();
+    }
+
     BlockMorph.uber.destroy.call(this);
 };
 
@@ -3730,6 +3735,9 @@ CommandBlockMorph.prototype.allAttachTargets = function (newParent) {
         answer = [],
         topBlocks;
 
+    if (this instanceof HatBlockMorph && newParent.rejectsHats) {
+        return answer;
+    }
     topBlocks = target.children.filter(function (child) {
         return (child !== myself) &&
             child instanceof SyntaxElementMorph &&
@@ -5203,6 +5211,7 @@ ScriptsMorph.prototype.init = function (owner) {
     this.owner = owner || null;
     this.feedbackColor = SyntaxElementMorph.prototype.feedbackColor;
     this.feedbackMorph = new BoxMorph();
+    this.rejectsHats = false;
 
     // "undrop" attributes:
     this.lastDroppedBlock = null;
@@ -5634,7 +5643,7 @@ ScriptsMorph.prototype.scriptsPicture = function () {
     pic = newCanvas(boundingBox.extent());
     ctx = pic.getContext('2d');
     this.children.forEach(function (child) {
-        var pos = child.position();
+        var pos = child.fullBounds().origin;
         if (child.isVisible) {
             ctx.drawImage(
                 child.fullImageClassic(),
@@ -5734,6 +5743,9 @@ ScriptsMorph.prototype.fixMultiArgs = function () {
 
 ScriptsMorph.prototype.wantsDropOf = function (aMorph) {
     // override the inherited method
+    if (aMorph instanceof HatBlockMorph) {
+        return !this.rejectsHats;
+    }
     return aMorph instanceof SyntaxElementMorph ||
         aMorph instanceof CommentMorph;
 };
@@ -5798,6 +5810,40 @@ ArgMorph.prototype.init = function (type, silently) {
     this.color = new Color(0, 17, 173);
     this.setExtent(new Point(50, 50), silently);
 };
+
+// ArgMorph preferences settings:
+
+ArgMorph.prototype.executeOnSliderEdit = false;
+
+// ArgMorph events:
+
+ArgMorph.prototype.reactToSliderEdit = function () {
+/*
+    directly execute the stack of blocks I'm part of if my
+    "executeOnSliderEdit" setting is turned on, obeying the stage's
+    thread safety setting. This feature allows for "Bret Victor" style
+    interactive coding.
+*/
+    var block, top, receiver, stage;
+    if (!this.executeOnSliderEdit) {return; }
+    block = this.parentThatIsA(BlockMorph);
+    if (block) {
+        top = block.topBlock();
+        receiver = top.receiver();
+        if (top instanceof PrototypeHatBlockMorph) {
+            return;
+        }
+        if (receiver) {
+            stage = receiver.parentThatIsA(StageMorph);
+            if (stage && stage.isThreadSafe) {
+                stage.threads.startProcess(top, stage.isThreadSafe);
+            } else {
+                top.mouseClickLeft();
+            }
+        }
+    }
+};
+
 
 // ArgMorph drag & drop: for demo puposes only
 
@@ -6934,10 +6980,6 @@ InputSlotMorph.prototype = new ArgMorph();
 InputSlotMorph.prototype.constructor = InputSlotMorph;
 InputSlotMorph.uber = ArgMorph.prototype;
 
-// InputSlotMorph preferences settings:
-
-InputSlotMorph.prototype.executeOnSliderEdit = false;
-
 // InputSlotMorph instance creation:
 
 function InputSlotMorph(text, isNumeric, choiceDict, isReadOnly) {
@@ -7516,33 +7558,6 @@ InputSlotMorph.prototype.reactToEdit = function () {
     this.contents().clearSelection();
 };
 
-InputSlotMorph.prototype.reactToSliderEdit = function () {
-/*
-    directly execute the stack of blocks I'm part of if my
-    "executeOnSliderEdit" setting is turned on, obeying the stage's
-    thread safety setting. This feature allows for "Bret Victor" style
-    interactive coding.
-*/
-    var block, top, receiver, stage;
-    if (!this.executeOnSliderEdit) {return; }
-    block = this.parentThatIsA(BlockMorph);
-    if (block) {
-        top = block.topBlock();
-        receiver = top.receiver();
-        if (top instanceof PrototypeHatBlockMorph) {
-            return;
-        }
-        if (receiver) {
-            stage = receiver.parentThatIsA(StageMorph);
-            if (stage && stage.isThreadSafe) {
-                stage.threads.startProcess(top, stage.isThreadSafe);
-            } else {
-                top.mouseClickLeft();
-            }
-        }
-    }
-};
-
 // InputSlotMorph menu:
 
 InputSlotMorph.prototype.userMenu = function () {
@@ -8033,7 +8048,7 @@ BooleanSlotMorph.prototype.isEmptySlot = function () {
 };
 
 BooleanSlotMorph.prototype.setContents = function (boolOrNull, silently) {
-    this.value = boolOrNull;
+    this.value = (typeof boolOrNull === 'boolean') ? boolOrNull : null;
     if (silently) {return; }
     this.drawNew();
     this.changed();
@@ -8082,6 +8097,8 @@ BooleanSlotMorph.prototype.toggleValue = function () {
 
 BooleanSlotMorph.prototype.mouseClickLeft = function () {
     this.toggleValue();
+    if (isNil(this.value)) {return; }
+    this.reactToSliderEdit();
 };
 
 BooleanSlotMorph.prototype.mouseEnter = function () {
@@ -10348,6 +10365,12 @@ MultiArgMorph.prototype.removeInput = function () {
 // MultiArgMorph events:
 
 MultiArgMorph.prototype.mouseClickLeft = function (pos) {
+    // prevent expansion in the palette
+    // (because it can be hard or impossible to collapse again)
+    if (!this.parentThatIsA(ScriptsMorph)) {
+        this.escalateEvent('mouseClickLeft', pos);
+        return;
+    }
     // if the <shift> key is pressed, repeat action 5 times
     var arrows = this.arrows(),
         leftArrow = arrows.children[0],

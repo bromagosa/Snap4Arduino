@@ -59,7 +59,10 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                             board = sprite.arduino.board;
 
                         if (board) {
-                            return sprite.arduino.pinsSettableToMode(board.MODES.PWM);
+                            // Can't use map because we need to construct keys dynamically
+                            var pins = {};
+                            Object.keys(sprite.arduino.pinsSettableToMode(board.MODES.PWM)).forEach(function (each) { pins[each + '~'] = each });
+                            return pins;
                         } else {
                             return [];
                         }
