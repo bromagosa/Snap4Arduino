@@ -300,6 +300,207 @@ SpriteMorph.prototype.blockTemplates = function (category) {
     return blocks;
 };
 
+// Removing 'other' blocks from 'variables' category
+SpriteMorph.prototype.freshPalette = function (category) {
+    var palette = new ScrollFrameMorph(null, null, this.sliderColor),
+        unit = SyntaxElementMorph.prototype.fontSize,
+        x = 0,
+        y = 5,
+        ry = 0,
+        blocks,
+        hideNextSpace = false,
+        myself = this,
+        stage = this.parentThatIsA(StageMorph),
+        oldFlag = Morph.prototype.trackChanges;
+
+    Morph.prototype.trackChanges = false;
+
+    palette.owner = this;
+    palette.padding = unit / 2;
+    palette.color = this.paletteColor;
+    palette.growth = new Point(0, MorphicPreferences.scrollBarSize);
+
+    // menu:
+
+    palette.userMenu = function () {
+        var menu = new MenuMorph(),
+            ide = this.parentThatIsA(IDE_Morph),
+            more = {
+                operators:
+                    ['reifyScript', 'reifyReporter', 'reifyPredicate'],
+                control:
+                    ['doWarp'],
+                variables:
+                    [
+                        'doDeclareVariables',
+                        'reportNewList',
+                        'reportCONS',
+                        'reportListItem',
+                        'reportCDR',
+                        'reportListLength',
+                        'reportListContainsItem',
+                        'doAddToList',
+                        'doDeleteFromList',
+                        'doInsertInList',
+                        'doReplaceInList'
+                    ]
+            };
+
+        function hasHiddenPrimitives() {
+            var defs = SpriteMorph.prototype.blocks,
+                hiddens = StageMorph.prototype.hiddenPrimitives;
+            return Object.keys(hiddens).some(function (any) {
+                return !isNil(defs[any]) && (defs[any].category === category
+                    || contains((more[category] || []), any));
+            });
+        }
+
+        function canHidePrimitives() {
+            return palette.contents.children.some(function (any) {
+                return contains(
+                    Object.keys(SpriteMorph.prototype.blocks),
+                    any.selector
+                );
+            });
+        }
+
+        menu.addItem('find blocks...', function () {myself.searchBlocks(); });
+        if (canHidePrimitives()) {
+            menu.addItem(
+                'hide primitives',
+                function () {
+                    var defs = SpriteMorph.prototype.blocks;
+                    Object.keys(defs).forEach(function (sel) {
+                        if (defs[sel].category === category) {
+                            StageMorph.prototype.hiddenPrimitives[sel] = true;
+                        }
+                    });
+                    (more[category] || []).forEach(function (sel) {
+                        StageMorph.prototype.hiddenPrimitives[sel] = true;
+                    });
+                    ide.flushBlocksCache(category);
+                    ide.refreshPalette();
+                }
+            );
+        }
+        if (hasHiddenPrimitives()) {
+            menu.addItem(
+                'show primitives',
+                function () {
+                    var hiddens = StageMorph.prototype.hiddenPrimitives,
+                        defs = SpriteMorph.prototype.blocks;
+                    Object.keys(hiddens).forEach(function (sel) {
+                        if (defs[sel] && (defs[sel].category === category)) {
+                            delete StageMorph.prototype.hiddenPrimitives[sel];
+                        }
+                    });
+                    (more[category] || []).forEach(function (sel) {
+                        delete StageMorph.prototype.hiddenPrimitives[sel];
+                    });
+                    ide.flushBlocksCache(category);
+                    ide.refreshPalette();
+                }
+            );
+        }
+        return menu;
+    };
+
+    // primitives:
+
+    blocks = this.blocksCache[category];
+    if (!blocks) {
+        blocks = myself.blockTemplates(category);
+        if (this.isCachingPrimitives) {
+            myself.blocksCache[category] = blocks;
+        }
+    }
+
+    blocks.forEach(function (block) {
+        if (block === null) {
+            return;
+        }
+        if (block === '-') {
+            if (hideNextSpace) {return; }
+            y += unit * 0.8;
+            hideNextSpace = true;
+        } else if (block === '=') {
+            if (hideNextSpace) {return; }
+            y += unit * 1.6;
+            hideNextSpace = true;
+        } else if (block === '#') {
+            x = 0;
+            y = ry;
+        } else {
+            hideNextSpace = false;
+            if (x === 0) {
+                y += unit * 0.3;
+            }
+            block.setPosition(new Point(x, y));
+            palette.addContents(block);
+            if (block instanceof ToggleMorph
+                    || (block instanceof RingMorph)) {
+                x = block.right() + unit / 2;
+                ry = block.bottom();
+            } else {
+                // if (block.fixLayout) {block.fixLayout(); }
+                x = 0;
+                y += block.height();
+            }
+        }
+    });
+
+    // global custom blocks:
+
+    if (stage) {
+        y += unit * 1.6;
+
+        stage.globalBlocks.forEach(function (definition) {
+            var block;
+            if (definition.category === category ||
+                    (category === 'variables'
+                        && contains(
+                            ['lists'],
+                            definition.category
+                        ))) {
+                block = definition.templateInstance();
+                y += unit * 0.3;
+                block.setPosition(new Point(x, y));
+                palette.addContents(block);
+                x = 0;
+                y += block.height();
+            }
+        });
+    }
+
+    // local custom blocks:
+
+    y += unit * 1.6;
+    this.customBlocks.forEach(function (definition) {
+        var block;
+        if (definition.category === category ||
+                (category === 'variables'
+                    && contains(
+                        ['lists'],
+                        definition.category
+                    ))) {
+            block = definition.templateInstance();
+            y += unit * 0.3;
+            block.setPosition(new Point(x, y));
+            palette.addContents(block);
+            x = 0;
+            y += block.height();
+        }
+    });
+
+    //layout
+
+    palette.scrollX(palette.padding);
+    palette.scrollY(palette.padding);
+
+    Morph.prototype.trackChanges = oldFlag;
+    return palette;
+};
+
 SpriteMorph.prototype.reportAnalogReading = function (pin) {
     if (this.arduino.isBoardReady()) {
         var board = this.arduino.board;
