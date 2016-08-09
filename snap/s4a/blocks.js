@@ -286,7 +286,7 @@ BlockMorph.prototype.exportAsProcessing = function () {
     try {
         saveFile(
                 ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino',
-                this.world().Arduino.processProcessing(this.mappedCode()),
+                this.world().Arduino.transpile(this.mappedCode()),
                 '.ino',
                 ide);
     } catch (error) {

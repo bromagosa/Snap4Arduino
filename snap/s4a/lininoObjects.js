@@ -12,7 +12,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         type: 'reporter',
         category: 'arduino',
         spec: 'analog reading %analogPin',
-        translatable: true
+        transpilable: true
     };
 
     this.blocks.reportDigitalReading = 
@@ -21,7 +21,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         type: 'predicate',
         category: 'arduino',
         spec: 'digital reading %digitalPin',
-        translatable: true
+        transpilable: true
     };
 
     this.blocks.digitalWrite =
@@ -30,7 +30,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         type: 'command',
         category: 'arduino',
         spec: 'set digital pin %digitalPin to %b',
-        translatable: true
+        transpilable: true
     };
 
     this.blocks.servoWrite =
@@ -40,7 +40,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         category: 'arduino',
         spec: 'set servo %servoPin to %servoValue',
         defaults: [null, 'clockwise'],
-        translatable: true
+        transpilable: true
     };
 
     this.blocks.pwmWrite =
@@ -49,7 +49,7 @@ SpriteMorph.prototype.initArduinoBlocks = function() {
         type: 'command',
         category: 'arduino',
         spec: 'set analog pin %pwmPin to %n',
-        translatable: true
+        transpilable: true
     };
 };
 

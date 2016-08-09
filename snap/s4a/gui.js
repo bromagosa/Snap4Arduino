@@ -45,7 +45,7 @@ IDE_Morph.prototype.snapMenu = function () {
     );
     menu.addItem('Snap4Arduino website', 
                  function() {
-                     window.open('http://s4a.cat/snap', 'Snap4ArduinoWebsite'); 
+                     window.open('http://snap4arduino.org', 'Snap4ArduinoWebsite'); 
                  }
                 );
                 menu.addItem(
@@ -904,8 +904,6 @@ IDE_Morph.prototype.newArduinoProject = function() {
     StageMorph.prototype.enableCodeMapping = true;
     this.currentSprite.blocksCache.variables = null;
 
-    console.log(StageMorph.prototype.codeMappings);
-
     // UI changes
     // Ok, these decorator names are getting silly
     if (!this.isArduinoTranslationMode) {
@@ -935,12 +933,31 @@ IDE_Morph.prototype.newArduinoProject = function() {
    
     SpriteMorph.prototype.categories.forEach(function(category) { 
         Object.keys(defs).forEach(function (sel) {
-            if (!defs[sel].translatable) {
+            if (!defs[sel].transpilable) {
                 StageMorph.prototype.hiddenPrimitives[sel] = true;
             }
         });
         myself.flushBlocksCache(category) 
     });
+
+
+    // hide empty categories
+    if (!this.isArduinoTranslationMode) {
+        this.categories.children.forEach(function (each) { each.originalPosition = each.position() });
+        this.categories.children[9].setPosition(this.categories.children[4].position());
+        this.categories.children[8].setPosition(this.categories.children[3].position());
+        this.categories.children[7].setPosition(this.categories.children[2].position());
+        this.categories.children[5].setPosition(this.categories.children[1].position());
+        this.categories.children[1].setPosition(this.categories.children[0].position());
+
+        this.categories.children[0].hide(); // Motion
+        this.categories.children[2].hide(); // Looks
+        this.categories.children[3].hide(); // Sensing
+        this.categories.children[4].hide(); // Sound
+        this.categories.children[6].hide(); // Pen
+
+        this.categories.setHeight(this.categories.height() - 30);
+    }
 
     this.isArduinoTranslationMode = true;
 
@@ -951,17 +968,25 @@ IDE_Morph.prototype.newArduinoProject = function() {
 IDE_Morph.prototype.createNewProject = function () {
     var myself = this;
     this.confirm(
-        'Replace the current project with a new one?',
-        'New Project',
-        function () {
-            if (myself.isArduinoTranslationMode) {
-                StageMorph.prototype.blockTemplates = StageMorph.prototype.notSoOriginalBlockTemplates;
-                SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
-                myself.isArduinoTranslationMode = false;
+            'Replace the current project with a new one?',
+            'New Project',
+            function () {
+                if (myself.isArduinoTranslationMode) {
+                    StageMorph.prototype.blockTemplates = StageMorph.prototype.notSoOriginalBlockTemplates;
+                    SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
+                    myself.isArduinoTranslationMode = false;
+                    // show all categories
+                    
+                    myself.categories.children.forEach(function (each) {
+                        each.setPosition(each.originalPosition);
+                        each.show();
+                    });
+                    
+                    myself.categories.setHeight(myself.categories.height() + 30);
+                }
+                myself.newProject();
             }
-            myself.newProject();
-        }
-    );
+            );
 };
 
 IDE_Morph.prototype.version = function() {
@@ -984,33 +1009,33 @@ IDE_Morph.prototype.createCategories = function () {
 
     function addCategoryButton(category) {
         var labelWidth = 75,
-            colors = [
-                myself.frameColor,
-                myself.frameColor.darker(50),
-                SpriteMorph.prototype.blockColor[category]
-            ],
-            button;
+        colors = [
+            myself.frameColor,
+            myself.frameColor.darker(50),
+            SpriteMorph.prototype.blockColor[category]
+        ],
+        button;
 
         button = new ToggleButtonMorph(
-            colors,
-            myself, // the IDE is the target
-            function () {
-                myself.currentCategory = category;
-                myself.categories.children.forEach(function (each) {
-                    each.refresh();
-                });
-                myself.refreshPalette(true);
-            },
-            category[0].toUpperCase().concat(category.slice(1)), // label
-            function () {  // query
-                return myself.currentCategory === category;
-            },
-            null, // env
-            null, // hint
-            null, // template cache
-            labelWidth, // minWidth
-            true // has preview
-        );
+                colors,
+                myself, // the IDE is the target
+                function () {
+                    myself.currentCategory = category;
+                    myself.categories.children.forEach(function (each) {
+                        each.refresh();
+                    });
+                    myself.refreshPalette(true);
+                },
+                category[0].toUpperCase().concat(category.slice(1)), // label
+                function () {  // query
+                    return myself.currentCategory === category;
+                },
+                null, // env
+                null, // hint
+                null, // template cache
+                labelWidth, // minWidth
+                true // has preview
+                );
 
         button.corner = 8;
         button.padding = 0;
@@ -1025,34 +1050,34 @@ IDE_Morph.prototype.createCategories = function () {
 
     function fixCategoriesLayout() {
         var buttonWidth = myself.categories.children[0].width(),
-            buttonHeight = myself.categories.children[0].height(),
-            border = 3,
-            rows =  Math.ceil((myself.categories.children.length) / 2),
-            xPadding = (myself.categories.width()
+        buttonHeight = myself.categories.children[0].height(),
+        border = 3,
+        rows =  Math.ceil((myself.categories.children.length) / 2),
+        xPadding = (myself.categories.width()
                 - border
                 - buttonWidth * 2) / 3,
-            yPadding = 2,
-            l = myself.categories.left(),
-            t = myself.categories.top(),
-            i = 0,
-            row,
-            col;
+        yPadding = 2,
+        l = myself.categories.left(),
+        t = myself.categories.top(),
+        i = 0,
+        row,
+        col;
 
         myself.categories.children.forEach(function (button) {
             i += 1;
             row = Math.ceil(i / 2);
             col = 2 - (i % 2);
             button.setPosition(new Point(
-                l + (col * xPadding + ((col - 1) * buttonWidth)),
-                t + (row * yPadding + ((row - 1) * buttonHeight) + border)
-            ));
+                        l + (col * xPadding + ((col - 1) * buttonWidth)),
+                        t + (row * yPadding + ((row - 1) * buttonHeight) + border)
+                        ));
         });
 
         myself.categories.setHeight(
-            (rows + 1) * yPadding
+                (rows + 1) * yPadding
                 + rows * buttonHeight
                 + 2 * border
-        );
+                );
     }
 
     SpriteMorph.prototype.categories.forEach(function (cat) {
