@@ -97,13 +97,13 @@ WorldMorph.prototype.Arduino.transpile = function (body) {
                + ' * This is an experimental feature, and there\n'
                + ' * are _several_ Snap!-related functionalities\n'
                + ' * that are, by definition, untranslatable to\n'
-               + ' * static languages.\n'
+               + ' * static, compiled languages.\n'
                + ' *\n'
                + ' * There is NO WARRANTY whatsoever that this\n'
                + ' * sketch is going to work exactly in the same\n'
                + ' * way as the original Snap4Arduino script.\n'
                + ' */\n\n',
-        setup = 'void setup() {\n',
+        setupHeader = '',
         servoLines,
         servoPins,
         digitalOutputLines,
@@ -127,31 +127,38 @@ WorldMorph.prototype.Arduino.transpile = function (body) {
     digitalInputLines = lines.filter(function(each) { return each.match(/digitalRead/)});
     digitalInputPins = unique(digitalInputLines.map(function(each) { return each.replace(/.*digitalRead\(([0-9]*)\).*/g, '$1') }));
 
-    // now let's construct the header and the setup body
+    // now let's construct the program header and the setup header
     if (servoLines.length > 0) { header += '#include <Servo.h>\n\n' };
 
     servoPins.forEach( function(pin) { 
         header += 'Servo servo' + pin + ';\n'
-        setup += '  servo' + pin + '.attach(' + pin + ');\n'
+        setupHeader += '\n  servo' + pin + '.attach(' + pin + ');'
+    });
+
+    // variables should be defined in the program header and taken out from setup
+    varLines = body.match(/int .* = 0;/g);
+    body = body.replace(/int .* = 0;\n/g, '');
+    varLines.forEach(function (each) {
+        header += each + '\n';
     });
 
     header += '\n';
 
-    digitalOutputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', OUTPUT);\n' });
-    digitalInputPins.forEach( function(pin){ setup += '  pinMode(' + pin + ', INPUT);\n' });
+    digitalOutputPins.forEach( function(pin){ setupHeader += '\n  pinMode(' + pin + ', OUTPUT);' });
+    digitalInputPins.forEach( function(pin){ setupHeader += '\n  pinMode(' + pin + ', INPUT);' });
 
     // of course, if someone's named their vars this way, we've destroyed their project
     // sorry! :p
-    body = body.replace('clockwise', 1200);
-    body = body.replace('stopped', 1500);
-    body = body.replace('counter-clockwise', 1700);
+    body = body.replace('"clockwise"', 1200);
+    body = body.replace('"stopped"', 1500);
+    body = body.replace('"counter-clockwise"', 1700);
+
+    // We add the setup header right after "void setup() {"
+    body = body.replace('void setup() {', '$&' + setupHeader);
 
     if (body.indexOf('void loop()') < 0) {
-        setup += body.replace(/\n/g, '\n  ') + '\n';
-        body = '\n\nvoid loop() {}\n';
+        body += '\n}\n\nvoid loop() {}\n';
     }
 
-    setup += '}\n';
-
-    return (header + setup + body);
+    return header + body;
 };

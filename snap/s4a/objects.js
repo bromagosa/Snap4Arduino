@@ -120,11 +120,13 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['tempvars_delim'] = ', ';
     StageMorph.prototype.codeMappings['string'] = '"<#1>"';
 
-    StageMorph.prototype.codeMappings['doWait'] = 'delay(<#1> * 1000);';
-    StageMorph.prototype.codeMappings['doForever'] = 'void loop() {\n  <#1>\n}';
-    StageMorph.prototype.codeMappings['doRepeat'] = 'for (int i = 0; i < <#1>; i++) {\n  <#2>\n}';
-    StageMorph.prototype.codeMappings['doIf'] = 'if (<#1>) {\n  <#2>\n}';
-    StageMorph.prototype.codeMappings['doIfElse'] = 'if (<#1>) {\n  <#2>\n} else {\n  <#3>\n}';
+    StageMorph.prototype.codeMappings['receiveGo'] = 'void setup() {';
+
+    StageMorph.prototype.codeMappings['doWait'] = '  delay(<#1> * 1000);';
+    StageMorph.prototype.codeMappings['doForever'] = '}\n\nvoid loop() {\n  <#1>\n}';
+    StageMorph.prototype.codeMappings['doRepeat'] = '  for (int i = 0; i < <#1>; i++) {\n  <#2>\n}';
+    StageMorph.prototype.codeMappings['doIf'] = '  if (<#1>) {\n  <#2>\n}';
+    StageMorph.prototype.codeMappings['doIfElse'] = '  if (<#1>) {\n  <#2>\n} else {\n  <#3>\n}';
 
     StageMorph.prototype.codeMappings['reportSum'] = '(<#1> + <#2>)';
     StageMorph.prototype.codeMappings['reportDifference'] = '(<#1> - <#2>)';
@@ -141,16 +143,16 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportNot'] = '!(<#1>)';
     StageMorph.prototype.codeMappings['reportBoolean'] = '<#1>';
 
-    StageMorph.prototype.codeMappings['doSetVar'] = '<#1> = <#2>;';
-    StageMorph.prototype.codeMappings['doChangeVar'] = '<#1> += <#2>;';
+    StageMorph.prototype.codeMappings['doSetVar'] = '  <#1> = <#2>;';
+    StageMorph.prototype.codeMappings['doChangeVar'] = '  <#1> += <#2>;';
     StageMorph.prototype.codeMappings['doDeclareVariables'] = 'int <#1> = 0;'; // How do we deal with types? Damn types...
 
     StageMorph.prototype.codeMappings['reportAnalogReading'] = 'analogRead(<#1>)';
     StageMorph.prototype.codeMappings['reportDigitalReading'] = 'digitalRead(<#1>)';
-    StageMorph.prototype.codeMappings['setPinMode'] = 'pinMode(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['digitalWrite'] = 'digitalWrite(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['servoWrite'] = 'servo<#1>.write(<#2>);';
-    StageMorph.prototype.codeMappings['pwmWrite'] = 'analogWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['setPinMode'] = '  pinMode(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['digitalWrite'] = '  digitalWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['servoWrite'] = '  servo<#1>.write(<#2>);';
+    StageMorph.prototype.codeMappings['pwmWrite'] = '  analogWrite(<#1>, <#2>);';
 }
 
 SpriteMorph.prototype.initBlocks =  function() {
