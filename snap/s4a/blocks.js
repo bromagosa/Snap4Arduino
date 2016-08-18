@@ -263,7 +263,7 @@ BlockMorph.prototype.userMenu = function () {
         menu.addLine();
         menu.addItem(
                 'export as Arduino sketch...',
-                'exportAsProcessing'
+                'transpileToC'
                 );
     }
 
@@ -280,18 +280,22 @@ BlockMorph.prototype.userMenu = function () {
     return menu;
 };
 
-BlockMorph.prototype.exportAsProcessing = function () {
+BlockMorph.prototype.transpileToC = function () {
     var fs = require('fs'),
         ide = this.parentThatIsA(IDE_Morph);
     try {
         saveFile(
                 ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino',
-                this.world().Arduino.transpile(this.mappedCode()),
+                this.world().Arduino.transpile(
+                    this.mappedCode(),
+                    this.parentThatIsA(ScriptsMorph).children.filter(
+                        function (each) {
+                            return each instanceof HatBlockMorph &&
+                                each.selector == 'receiveMessage';
+                        })),
                 '.ino',
                 ide);
     } catch (error) {
         ide.inform('Error exporting to Arduino sketch!', error.message)
     }
 };
-
-

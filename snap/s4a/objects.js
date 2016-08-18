@@ -92,6 +92,8 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     // Whatever, let's dumb this language down:
 
     this.blocks.receiveGo.transpilable = true;
+    this.blocks.receiveMessage.transpilable = true;
+    this.blocks.doBroadcastAndWait.transpilable = true;
     this.blocks.doWait.transpilable = true;
     this.blocks.doForever.transpilable = true;
     this.blocks.doRepeat.transpilable = true;
@@ -121,10 +123,12 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['string'] = '"<#1>"';
 
     StageMorph.prototype.codeMappings['receiveGo'] = 'void setup() {';
+    StageMorph.prototype.codeMappings['doBroadcastAndWait'] = '  !call!<#1>();';
+    StageMorph.prototype.codeMappings['receiveMessage'] = 'void <#1>() {';
 
     StageMorph.prototype.codeMappings['doWait'] = '  delay(<#1> * 1000);';
     StageMorph.prototype.codeMappings['doForever'] = '}\n\nvoid loop() {\n  <#1>\n}';
-    StageMorph.prototype.codeMappings['doRepeat'] = '  for (int i = 0; i < <#1>; i++) {\n  <#2>\n}';
+    StageMorph.prototype.codeMappings['doRepeat'] = '  for (i = 0; i < <#1>; i++) {\n  <#2>\n  }';
     StageMorph.prototype.codeMappings['doIf'] = '  if (<#1>) {\n  <#2>\n}';
     StageMorph.prototype.codeMappings['doIfElse'] = '  if (<#1>) {\n  <#2>\n} else {\n  <#3>\n}';
 

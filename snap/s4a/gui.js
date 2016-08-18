@@ -346,6 +346,11 @@ IDE_Morph.prototype.settingsMenu = function () {
         function () {
             Arduino.prototype.networkPortsEnabled =
                 !Arduino.prototype.networkPortsEnabled;
+            if (Arduino.prototype.networkPortsEnabled) {
+                myself.saveSetting('network-ports-enabled', true);
+            } else {
+                myself.removeSetting('network-ports-enabled');
+            }
         },
         Arduino.prototype.networkPortsEnabled,
         'uncheck to disable\nserial ports over\nnetwork',
@@ -377,6 +382,19 @@ IDE_Morph.prototype.settingsMenu = function () {
         'check for flat ends of lines'
     );
     menu.popup(world, pos);
+};
+
+IDE_Morph.prototype.originalApplySavedSettings = IDE_Morph.prototype.applySavedSettings;
+IDE_Morph.prototype.applySavedSettings = function () {
+    this.originalApplySavedSettings();
+
+    if (this.getSetting('network-ports-enabled')) {
+        Arduino.prototype.networkPortsEnabled = true;
+    } else {
+        Arduino.prototype.networkPortsEnabled = false;
+    }
+
+    Arduino.prototype.hostname = this.getSetting('network-serial-hostname') || 'arduino.local:23';
 };
 
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
