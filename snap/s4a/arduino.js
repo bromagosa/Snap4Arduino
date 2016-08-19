@@ -195,9 +195,10 @@ Arduino.prototype.connectNetwork = function (host) {
 
     if (host.indexOf('tcp://') === 0) {
         host = host.slice(6);
-        hostname = host.split(':')[0];
-        port = host.split(':')[1] || 23;
     }
+
+    hostname = host.split(':')[0];
+    port = host.split(':')[1] || 23;
 
     this.hostname = 'tcp://' + hostname + ':' + port;
 
