@@ -394,7 +394,7 @@ IDE_Morph.prototype.applySavedSettings = function () {
         Arduino.prototype.networkPortsEnabled = false;
     }
 
-    Arduino.prototype.hostname = this.getSetting('network-serial-hostname') || 'arduino.local:23';
+    Arduino.prototype.hostname = this.getSetting('network-serial-hostname') || 'tcp://arduino.local:23';
 };
 
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
@@ -910,7 +910,7 @@ IDE_Morph.prototype.createNewArduinoProject = function () {
         'Replace the current project with a new one?',
         'New Arduino translatable Project',
         function () { myself.newArduinoProject(); });
-}
+};
 
 IDE_Morph.prototype.newArduinoProject = function() {
     var myself = this;
@@ -981,7 +981,7 @@ IDE_Morph.prototype.newArduinoProject = function() {
 
     this.currentSprite.paletteCache.variables = null;
     this.refreshPalette();
-}
+};
 
 IDE_Morph.prototype.createNewProject = function () {
     var myself = this;

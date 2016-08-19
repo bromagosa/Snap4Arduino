@@ -190,10 +190,16 @@ Arduino.prototype.networkDialog = function () {
 Arduino.prototype.connectNetwork = function (host) {
     var myself = this,
         net = require('net'),
-        hostname = host.split(':')[0],
-        port = host.split(':')[1] || 80;
+        hostname,
+        port;
 
-    this.hostname = hostname + ':' + port;
+    if (host.indexOf('tcp://') === 0) {
+        host = host.slice(6);
+        hostname = host.split(':')[0];
+        port = host.split(':')[1] || 23;
+    }
+
+    this.hostname = 'tcp://' + hostname + ':' + port;
 
     this.owner.parentThatIsA(IDE_Morph).saveSetting('network-serial-hostname', this.hostname);
 
@@ -482,12 +488,13 @@ Arduino.transpile = function (body, hatBlocks) {
         broadcasts = this.processBroadcasts(hatBlocks, body);
     }
 
-    lines = body.split('\n') + broadcasts.split('\n');
+    lines = [].concat(body.split('\n')).concat(broadcasts.split('\n'));
+    console.log(lines);
 
     // Let's find out what pins we are using, and for what purpose
-    servoPins = getServoPins(lines);
-    digitalOutputPins = getDigitalOutputPins(lines);
-    digitalInputPins = getDigitalInputPins(lines);
+    servoPins = this.getServoPins(lines);
+    digitalOutputPins = this.getDigitalOutputPins(lines);
+    digitalInputPins = this.getDigitalInputPins(lines);
 
     // Now let's construct the program header and the setup header
     if (servoPins.length > 0) { header += '#include <Servo.h>\n\n' };

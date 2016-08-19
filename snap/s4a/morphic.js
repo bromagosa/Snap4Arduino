@@ -10,13 +10,13 @@ WorldMorph.prototype.init = function (aCanvas, fillPage) {
 
     this.Arduino.firmata.prototype.originalReportVersion = this.Arduino.firmata.prototype.reportVersion;
     this.Arduino.firmata.prototype.reportVersion = function (callback) {
-        if (this.transport.connectionId > 0) {
+        if (this.transport.connectionId === undefined || this.transport.connectionId > 0) {
             this.originalReportVersion(callback);
         }
     };
     this.Arduino.firmata.prototype.originalQueryFirmware = this.Arduino.firmata.prototype.queryFirmware;
     this.Arduino.firmata.prototype.queryFirmware = function (callback) {
-        if (this.transport.connectionId > 0) {
+        if (this.transport.connectionId === undefined || this.transport.connectionId > 0) {
             this.originalQueryFirmware(callback);
         }
     };
