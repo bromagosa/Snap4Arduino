@@ -11,15 +11,15 @@ IDE_Morph.prototype.init = function (globals) {
     this.httpServer.setTimeout(500);
 
     this.isServerOn = false;
-}
+};
 
-IDE_Morph.prototype.toggleServer = function() {
+IDE_Morph.prototype.toggleServer = function () {
     if (this.isServerOn) {
         this.stopServer();
     } else {
         this.startServer();
     }
-}
+};
 
 IDE_Morph.prototype.startServer = function () {
     var myself = this,
@@ -42,7 +42,7 @@ IDE_Morph.prototype.startServer = function () {
             });
 };
 
-IDE_Morph.prototype.stopServer = function() {
+IDE_Morph.prototype.stopServer = function () {
     var myself = this;
     myself.isServerOn = false;
     this.httpServer.close(
@@ -51,7 +51,7 @@ IDE_Morph.prototype.stopServer = function() {
             });
 };
 
-IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
+IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
     if (!this.isServerOn) { return; };
 
     var myself = this;
@@ -108,9 +108,9 @@ IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
                     var contents = 'broadcast',
                         stage = myself.stage;
 
-                    stage.children.concat(stage).forEach(function(morph) {
+                    stage.children.concat(stage).forEach(function (morph) {
                         if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
-                            morph.allMessageNames().forEach(function(message) {
+                            morph.allMessageNames().forEach(function (message) {
                                 contents += ' "' + message + '"';
                             });
                         }
@@ -123,12 +123,20 @@ IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
                     var contents = 'sensor-update',
                         stage = myself.stage;
 
-                    Object.keys(stage.globalVariables().vars).forEach(function(varName) {
+                    Object.keys(stage.globalVariables().vars).forEach(function (varName) {
                         contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value;
                     });
 
                     response.end(contents);
                     break;
+
+                case 'send-var':
+                    var stage = myself.stage,
+                        varName = command[1];
+
+                    response.end(stage.globalVariables().vars[varName].value);
+                    break;
+
                 case 'stage':
                     var contents = '<html><img id="stage" src="' + myself.stage.fullImageClassic().toDataURL() + '" /><script>' +
                         'var ajax = new XMLHttpRequest();' +
@@ -141,12 +149,14 @@ IDE_Morph.prototype.handleHTTPRequest = function(request, response) {
                         '</script></html>';
                     response.end(contents);
                     break;
+
                 case 'stageimg':
                     response.setHeader('Cache-Control', 'no-cache');
                     response.end(myself.stage.fullImageClassic().toDataURL());
                     break;
+
                 case 'push':
-                    response.end('Project pushed to file system');
+                    response.end('Pushing project to file system');
                     var str = myself.serializer.serialize(myself.stage);
                     require('fs').writeFile(homePath() + 'autorun.xml', str);
                     break;
