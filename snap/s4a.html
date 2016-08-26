@@ -63,7 +63,7 @@
             };
 
             require('nw.gui').Window.get().on('close', function () {
-                if (confirm('Are you sure you want to leave?')) {
+                if (confirm(localize('Are you sure you want to leave?'))) {
                     this.close(true);
                 } 
             });

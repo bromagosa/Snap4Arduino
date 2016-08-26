@@ -148,8 +148,25 @@ s4aTempDict = {
         'La placa no està connectada',
 
     'New Arduino translatable project':
-        'Nou projecte traduïble a Arduino' 
+        'Nou projecte traduïble a Arduino', 
 
+    'select a port':
+        'selecciona un port',
+
+    'Network port':
+        'Port de xarxa',
+
+    'Enter hostname or ip address:':
+        'Introdueix el nom de l\'host o adreça IP',
+
+    'Connecting to network port:\n':
+        'Connectant a port de xarxa:\n',
+
+    'This may take a few seconds...':
+        'Aquesta operació pot trigar uns segons...',
+
+    'Network serial ports':
+        'Ports sèrie sobre xarxa'
 };
 
 // Add attributes to original SnapTranslator.dict.ca

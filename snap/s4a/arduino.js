@@ -40,7 +40,7 @@ Arduino.prototype.disconnect = function (silent) {
         if (this.port === 'network') {
             this.board.sp.destroy();
         } else {
-            if (!this.board.sp.disconnected && this.board.sp) {
+            if (this.board.sp && !this.board.sp.disconnected) {
                 if (!this.connecting) {
                     // otherwise something went wrong in the middle of a connection attempt
                     this.board.sp.close();
@@ -206,7 +206,7 @@ Arduino.prototype.connectNetwork = function (host) {
 
     this.disconnect(true);
 
-    this.showMessage(localize('Connecting to network port:\n' + this.hostname + '\n\n' + localize('This may take a few seconds...')));
+    this.showMessage(localize('Connecting to network port:\n') + this.hostname + '\n\n' + localize('This may take a few seconds...'));
     this.connecting = true;
 
     var client = net.connect(
@@ -224,9 +224,9 @@ Arduino.prototype.connectNetwork = function (host) {
                         // Start the keepAlive interval
                         myself.keepAliveIntervalID = setInterval(function () { myself.keepAlive }, 5000);
 
-                        myself.board.sp.on('disconnect', myself.disconnectHandler);
-                        myself.board.sp.on('close', myself.closeHandler);
-                        myself.board.sp.on('error', myself.errorHandler);
+                        myself.board.sp.on('disconnect', function () { myself.disconnectHandler.call(myself) });
+                        myself.board.sp.on('close', function () { myself.closeHandler.call(myself) } );
+                        myself.board.sp.on('error', function () { myself.errorHandler.call(myself) } );
 
                         myself.port = 'network';
                         myself.connecting = false;
@@ -277,9 +277,6 @@ Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
                     if (info) { 
                         chrome.serial.disconnect( info.connectionId, okCallback);
                     } else {
-                        if (chrome.runtime.lastError) {
-                            console.log(chrome.runtime.lastError.message);
-                        }
                         failCallback('Port ' + port + ' does not seem to exist');
                     }
                 });
@@ -327,9 +324,9 @@ Arduino.prototype.connect = function (port, verify) {
                 // Start the keepAlive interval
                 myself.keepAliveIntervalID = setInterval(function() { myself.keepAlive() }, 5000);
 
-                myself.board.sp.on('disconnect', myself.disconnectHandler);
-                myself.board.sp.on('close', myself.closeHandler);
-                myself.board.sp.on('error', myself.errorHandler);
+                myself.board.sp.on('disconnect', function () { myself.disconnectHandler.call(myself) });
+                myself.board.sp.on('close', function () { myself.closeHandler.call(myself) } );
+                myself.board.sp.on('error', function () { myself.errorHandler.call(myself) } );
 
                 Arduino.lockPort(port);
                 myself.port = myself.board.sp.path;
@@ -490,7 +487,6 @@ Arduino.transpile = function (body, hatBlocks) {
     }
 
     lines = [].concat(body.split('\n')).concat(broadcasts.split('\n'));
-    console.log(lines);
 
     // Let's find out what pins we are using, and for what purpose
     servoPins = this.getServoPins(lines);
