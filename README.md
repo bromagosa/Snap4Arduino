@@ -38,7 +38,7 @@ If you haven't, please first run the ``prepare`` script with the ``--all`` param
 
 The command line parameters for the ``prepare`` script are:
 
-usage: ./prepare [options]
+    usage: ./prepare [options]
 
     --snap              Pulls the latest Snap! version.
     --nwjs              Pulls the latest nwjs.io stable version.
@@ -47,7 +47,7 @@ usage: ./prepare [options]
 
 Once your local setup is ready, you can use the ``build`` script as follows:
 
-usage: ./build [options]
+    usage: ./build [options]
 
     --platform=TARGET   Selects a platform, accepts both generic platform names (
                         (all, mobile, desktop, desktop/gnu) and specific names
