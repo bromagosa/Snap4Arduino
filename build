@@ -1,0 +1,54 @@
+#!/bin/sh
+
+print_help() {
+    echo "--platform=TARGET   Selects a platform, accepts both generic platform names ("
+    echo "                    (all, mobile, desktop, desktop/gnu) and specific names"
+    echo "                    (desktop/gnu/64)."
+    echo
+    echo "--run               Builds and runs Snap4Arduino for the specified architecture."
+    echo "                    Only for desktop Gnu/Linux."
+    echo
+    echo "--rerun             Runs the last built version of Snap4Arduino, if it exists."
+    echo "                    Only for desktop Gnu/Linux."
+    echo
+    echo "--deploy=URL        Tries to deploy the build version(s) to a server."
+    echo
+    echo "                    --username=USRNAME  Specifies a username for the deploy"
+    echo "                                        server."
+    echo "                    --dir=PATH          Specifies a path for deploying built"
+    echo "                                        files in the deploy server."
+    echo "                                        If unspecified, the default /var/www"
+    echo "                                        directory will be used."
+    echo
+}
+
+if test $# -eq 0; then
+    print_help
+fi
+
+# parse parameters
+
+while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/=.*//g' | tr -d '\012')=$( echo $1 | sed 's/.*=//g' | tr -d '\012'); shift; done
+
+if test -n "$help"; then
+    print_help
+fi
+
+# build function
+
+build() {
+#    if echo "$platform" | grep -q "desktop"; then
+#        echo
+
+    if test "$platform" = "all"; then
+        platform=""
+    fi
+
+    platforms=`find src/platforms/$platform -type d -links 2 | cut -c 15-`
+
+    echo "Building for the following platforms:\n\n$platforms"
+}
+
+if test -n "$platform"; then
+    build
+fi
