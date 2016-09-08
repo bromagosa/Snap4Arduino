@@ -34,45 +34,39 @@ This project is built by a single shell script that takes care of everything, bu
 
 If you haven't, please first run the ``prepare`` script with the ``--all`` parameter:
 
-``
-./prepare --all
-``
+    ./prepare --all
 
 The command line parameters for the ``prepare`` script are:
 
-``
 usage: ./prepare [options]
 
---snap              Pulls the latest Snap! version.
---nwjs              Pulls the latest nwjs.io stable version.
---nwjs-sdk          Pulls the latest nwjs.io SDK stable version.
---all               Does all of the above.
-``
+    --snap              Pulls the latest Snap! version.
+    --nwjs              Pulls the latest nwjs.io stable version.
+    --nwjs-sdk          Pulls the latest nwjs.io SDK stable version.
+    --all               Does all of the above.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
 
-``
 usage: ./build [options]
 
---platform=TARGET   Selects a platform, accepts both generic platform names (
-                    (all, mobile, desktop, desktop/gnu) and specific names
-                    (desktop/gnu/64).
+    --platform=TARGET   Selects a platform, accepts both generic platform names (
+                        (all, mobile, desktop, desktop/gnu) and specific names
+                        (desktop/gnu/64).
 
---run               Builds and runs Snap4Arduino for the specified architecture.
-                    Only for desktop Gnu/Linux.
+    --run               Builds and runs Snap4Arduino for the specified architecture.
+                        Only for desktop Gnu/Linux.
 
---rerun             Runs the last built version of Snap4Arduino, if it exists.
-                    Only for desktop Gnu/Linux.
+    --rerun             Runs the last built version of Snap4Arduino, if it exists.
+                        Only for desktop Gnu/Linux.
 
---deploy=URL        Tries to deploy the build version(s) to a server.
+    --deploy=URL        Tries to deploy the build version(s) to a server.
 
-                    --username=USRNAME  Specifies a username for the deploy
-                                        server.
-                    --dir=PATH          Specifies a path for deploying built
-                                        files in the deploy server.
-                                        If unspecified, the default /var/www
-                                        directory will be used.
-``
+                        --username=USRNAME  Specifies a username for the deploy
+                                            server.
+                        --dir=PATH          Specifies a path for deploying built
+                                            files in the deploy server.
+                                            If unspecified, the default /var/www
+                                            directory will be used.
 
 ## Old Repository
 
