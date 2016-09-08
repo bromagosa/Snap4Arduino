@@ -157,6 +157,14 @@ Process.prototype.reportDigitalReading = function (pin) {
 
 Process.prototype.digitalWrite = function (pin, booleanValue) {
     var sprite = this.homeContext.receiver;
+    
+    this.popContext();
+    sprite.startWarp();
+    this.pushContext('doYield');
+
+    if (!this.isAtomic) {
+        this.pushContext('doStopWarping');
+    }
 
     if (sprite.arduino.isBoardReady()) {
         var board = sprite.arduino.board,
@@ -165,13 +173,14 @@ Process.prototype.digitalWrite = function (pin, booleanValue) {
         if (board.pins[pin].mode != board.MODES.OUTPUT) {
             board.pinMode(pin, board.MODES.OUTPUT);
         }
-
         board.digitalWrite(pin, val);
-
-        return null;
     } else {
         throw new Error(localize('Arduino not connected'));
     }
+
+    this.isAtomic = true;
+
+    this.pushContext();
 };
 
 Process.prototype.pwmWrite = function (pin, value) {
