@@ -49,7 +49,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
 
     usage: ./build [options]
 
-    --platform=TARGET   Selects a platform, accepts both generic platform names (
+    --platform=TARGET   Selects a platform. Accepts both generic platform names
                         (all, mobile, desktop, desktop/gnu) and specific names
                         (desktop/gnu/64).
 

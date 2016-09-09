@@ -1,7 +1,7 @@
 #!/bin/sh
 
 print_help() {
-    echo "--platform=TARGET   Selects a platform, accepts both generic platform names ("
+    echo "--platform=TARGET   Selects a platform. Accepts both generic platform names"
     echo "                    (all, mobile, desktop, desktop/gnu) and specific names"
     echo "                    (desktop/gnu/64)."
     echo
