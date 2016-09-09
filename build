@@ -1,4 +1,7 @@
 #!/bin/sh
+# I build Snap4Arduino for several platforms.
+# If I fail, you may need to run the prepare script first.
+# Check out prepare --help for instructions
 
 print_help() {
     echo "--platform=TARGET   Selects a platform. Accepts both generic platform names"
@@ -37,16 +40,26 @@ fi
 # build function
 
 build() {
-#    if echo "$platform" | grep -q "desktop"; then
-#        echo
 
     if test "$platform" = "all"; then
         platform=""
     fi
 
-    platforms=`find src/platforms/$platform -type d -links 2 | cut -c 15-`
+    allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
+    platforms=`echo "$allplatforms" | grep $platform`
 
     echo "Building for the following platforms:\n\n$platforms"
+
+    for each in $platforms; do
+        rm -rf tmp
+        cp -r src/snap tmp
+        cp -r src/s4a tmp
+        cp -r src/platforms/$each/overrides/* tmp
+        cp assets/* tmp
+        cp src/version tmp
+        src/platforms/$each/build $each
+        rm -rf tmp
+    done
 }
 
 if test -n "$platform"; then

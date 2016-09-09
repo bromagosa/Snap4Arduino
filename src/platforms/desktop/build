@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Particular build script for nwjs.io-based versions.
+# First parameter contains the platform name in the form desktop/gnu/32,
+# which needs transforming into linux32
+
+platform=`echo $1 | sed 's/gnu/linux/' | sed 's/desktop\///' | sed 's/\///'`
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/desktop/node_modules tmp
+
+echo
+echo "======="
+echo "Setting version name..."
+echo "======="
+echo
+
+sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' src/platforms/desktop/overrides/package.json 
+
+echo
+echo "======="
+echo "Asking nwbuilder to build Snap4Arduino for $platform"
+echo "======="
+echo
+
+environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases

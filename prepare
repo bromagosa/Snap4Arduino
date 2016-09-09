@@ -1,0 +1,66 @@
+#!/bin/sh
+# I prepare your local repo to be able to build Snap4Arduino.
+
+print_help() {
+    echo "    --snap              Pulls the latest Snap! version."
+    echo "    --nwjs              Pulls the latest nwjs.io stable version."
+    echo "    --nodemodules       Pulls all NodeJS modules needed for all desktop versions."
+    echo "    --all               Does all of the above."
+    echo
+}
+
+if test $# -eq 0; then
+    print_help
+fi
+
+# parse parameters
+
+while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/=.*//g' | tr -d '\012')=$( echo $1 | sed 's/.*=//g' | tr -d '\012'); shift; done
+
+if test -n "$help"; then
+    print_help
+fi
+
+pull_snap() {
+    cd src/snap
+    git checkout master
+    git pull
+    cd ../..
+}
+
+pull_nwjs() {
+    mkdir -p environments
+    cd environments
+    npm install nw-builder
+    cd ..
+}
+
+pull_nodemodules() {
+    cd environments
+    rm -rf desktop
+    mkdir desktop
+    cd desktop
+    wget http://vps34736.ovh.net/snap4arduino/node_modules.zip
+    unzip node_modules.zip
+    rm node_modules.zip
+    cd ../../..
+}
+
+if test -n "$all"; then
+    pull_snap
+    pull_nwjs
+    pull_nodemodules
+    exit 0
+fi
+
+if test -n "$snap"; then
+    pull_snap
+fi
+
+if test -n "$nwjs"; then
+    pull_nwjs
+fi
+
+if test -n "$nodemodules"; then
+    pull_nodemodules
+fi
