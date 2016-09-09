@@ -22,6 +22,7 @@ if test -n "$help"; then
 fi
 
 pull_snap() {
+    git submodule update --init --recursive
     cd src/snap
     git checkout master
     git pull
