@@ -48,16 +48,28 @@ build() {
     allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
     platforms=`echo "$allplatforms" | grep $platform`
 
-    echo "Building for the following platforms:\n\n$platforms"
+    echo "Will build for the following platforms:\n\n$platforms"
 
     for each in $platforms; do
+        echo
+        echo "======="
+        echo "Building for $each..."
+        echo "======="
+        echo
         rm -rf tmp
+        echo "Fetching Snap! sources..."
         cp -r src/snap tmp
+        echo "Fetching Snap4Arduino core..."
         cp -r src/s4a tmp
-        cp -r src/platforms/$each/overrides/* tmp
+        echo "Fetching platform-specific sources..."
+        cp -r src/platforms/$each/root/* tmp
+        echo "Fetching assets..."
         cp assets/* tmp
+        echo "Fetching version file..."
         cp src/version tmp
+        echo "Running platform-specifig build script..."
         src/platforms/$each/build $each
+        echo "Done!"
         rm -rf tmp
     done
 }

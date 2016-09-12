@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Particular build script for nwjs.io-based versions.
+
 # First parameter contains the platform name in the form desktop/gnu/32,
 # which needs transforming into linux32
 
@@ -20,7 +21,7 @@ echo "Setting version name..."
 echo "======="
 echo
 
-sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' src/platforms/desktop/overrides/package.json 
+sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' src/platforms/desktop/root/package.json 
 
 echo
 echo "======="
