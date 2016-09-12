@@ -42,7 +42,7 @@ The command line parameters for the ``prepare`` script are:
 
     --snap              Pulls the latest Snap! version.
     --nwjs              Pulls the latest nwjs.io stable version.
-    --nwjs-sdk          Pulls the latest nwjs.io SDK stable version.
+    --nodemodules       Pulls all NodeJS modules needed for all desktop versions.
     --all               Does all of the above.
 
 Once your local setup is ready, you can use the ``build`` script as follows:

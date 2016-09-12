@@ -21,19 +21,48 @@ if test -n "$help"; then
     print_help
 fi
 
+# helper functions
+
+print_ok() {
+   echo "\033[32m$1\033[0m" 
+}
+
+print_warning() {
+   echo "\033[30;43mWARNING:\033[0;33m $1\033[0m" 
+}
+
+print_error() {
+    (>&2 echo "\033[37;41mERROR:\033[0m \033[1;31m$1\033[0m");
+}
+
+# prepare functions
+
 pull_snap() {
-    git submodule update --init --recursive
+    if ! git submodule update --init --recursive; then
+        print_error "Could not set up Snap! git submodule.\nPlease make sure that you have access to the Internet and git is installed in your system."
+        exit 1
+    fi
     cd src/snap
     git checkout master
-    git pull
+    if ! git pull; then
+        print_error "Could not pull latest Snap! version from Git.\nPlease make sure that you have access to the Internet and git is installed in your system."
+        cd ../..
+        exit 1
+    fi
     cd ../..
+    print_ok "Snap! sources up to date."
 }
 
 pull_nwjs() {
     mkdir -p environments
     cd environments
-    npm install nw-builder
+    if ! npm install nw-builder; then
+        print_error "Could not install nw-builder. Won't be able to build any desktop version.\nPlease make sure that you have access to the Internet and both NodeJS and npm are installed in your system."
+        cd ..
+        exit 1
+    fi
     cd ..
+    print_ok "nwjs.io installed."
 }
 
 pull_nodemodules() {
@@ -42,9 +71,20 @@ pull_nodemodules() {
     mkdir desktop
     cd desktop
     wget http://vps34736.ovh.net/snap4arduino/node_modules.zip
-    unzip node_modules.zip
+    if ! test -e node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../../..
+        exit 1
+    fi
+    if ! unzip node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm node_modules.zip
+        cd ../../..
+        exit 1
+    fi 
     rm node_modules.zip
     cd ../../..
+    print_ok "Node modules fetched."
 }
 
 if test -n "$all"; then
