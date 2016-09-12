@@ -4,13 +4,15 @@
 print_help() {
     echo "    --snap              Pulls the latest Snap! version."
     echo "    --nwjs              Pulls the latest nwjs.io stable version."
-    echo "    --nodemodules       Pulls all NodeJS modules needed for all desktop versions."
+    echo "    --desktop           Pulls all NodeJS modules needed for desktop versions."
+    echo "    --cli               Pulls all NodeJS modules needed for command-line version."
     echo "    --all               Does all of the above."
     echo
 }
 
 if test $# -eq 0; then
     print_help
+    exit 0
 fi
 
 # parse parameters
@@ -19,6 +21,7 @@ while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/
 
 if test -n "$help"; then
     print_help
+    exit 0
 fi
 
 # helper functions
@@ -65,32 +68,55 @@ pull_nwjs() {
     print_ok "nwjs.io installed."
 }
 
-pull_nodemodules() {
+pull_desktop_modules() {
     cd environments
     rm -rf desktop
     mkdir desktop
     cd desktop
-    wget http://vps34736.ovh.net/snap4arduino/node_modules.zip
-    if ! test -e node_modules.zip; then
+    wget http://vps34736.ovh.net/snap4arduino/desktop_node_modules.zip
+    if ! test -e desktop_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
-        cd ../../..
+        cd ../..
         exit 1
     fi
-    if ! unzip node_modules.zip; then
+    if ! unzip desktop_node_modules.zip; then
         print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
-        rm node_modules.zip
-        cd ../../..
+        rm desktop_node_modules.zip
+        cd ../..
         exit 1
     fi 
-    rm node_modules.zip
+    rm desktop_node_modules.zip
+    cd ../..
+    print_ok "Desktop NodeJS modules fetched."
+}
+
+pull_cli_modules() {
+    cd environments
+    rm -rf embedded/cli
+    mkdir embedded/cli
+    cd cli
+    wget http://vps34736.ovh.net/snap4arduino/cli_node_modules.zip
+    if ! test -e cli_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../..
+        exit 1
+    fi
+    if ! unzip cli_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm cli_node_modules.zip
+        cd ../..
+        exit 1
+    fi 
+    rm cli_node_modules.zip
     cd ../../..
-    print_ok "Node modules fetched."
+    print_ok "Command line NodeJS modules fetched."
 }
 
 if test -n "$all"; then
     pull_snap
     pull_nwjs
-    pull_nodemodules
+    pull_desktop_modules
+    pull_cli_modules
     exit 0
 fi
 
@@ -102,6 +128,12 @@ if test -n "$nwjs"; then
     pull_nwjs
 fi
 
-if test -n "$nodemodules"; then
-    pull_nodemodules
+if test -n "$desktop"; then
+    echo $desktop
+    pull_desktop_modules
+fi
+
+if test -n "$cli"; then
+    echo $cli
+    pull_cli_modules
 fi

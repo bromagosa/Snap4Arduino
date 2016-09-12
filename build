@@ -11,10 +11,10 @@ print_help() {
     echo "                    (desktop/gnu/64). See --help=platform for details."
     echo
     echo "--run               Builds and runs Snap4Arduino for the specified architecture."
-    echo "                    Only for desktop Gnu/Linux."
+    echo "                    Only for desktop GNU/Linux."
     echo
     echo "--rerun             Runs the last built version of Snap4Arduino, if it exists."
-    echo "                    Only for desktop Gnu/Linux."
+    echo "                    Only for desktop GNU/Linux."
     echo
     echo "--deploy=URL        Tries to deploy the build version(s) to a server."
     echo
@@ -69,7 +69,7 @@ print_error() {
     (>&2 echo "\033[37;41mERROR:\033[0m \033[1;31m$1\033[0m");
 }
 
-# build and run functions
+# build script functions
 
 build() {
 
@@ -132,18 +132,26 @@ build() {
 
 run() {
     if test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
-        if ! releases/Snap4Arduino/linux64/Snap4Arduino; then
+        if ! releases/desktop/Snap4Arduino/linux64/Snap4Arduino; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
     elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
-        if ! releases/Snap4Arduino/linux32/Snap4Arduino; then
+        if ! releases/desktop/Snap4Arduino/linux32/Snap4Arduino; then
             print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
     else
         print_error "Auto-running is not supported for your current architecture or operating system.\rYour system reports this is an `arch` machine. This script can only auto-run for x86_64 and i386 under GNU/Linux.\nIn other systems, please build Snap4Arduino by using\n./build --platform=TARGET\nand then manually navigate to the releases directory."
     fi
+}
+
+deploy() {
+    if test -z $dir; then
+        dir="/var/www"
+    fi
+    # Need to do this for each package that has just been built
+    scp package $username@$deploy:$dir
 }
 
 # parameter assessing
@@ -163,3 +171,6 @@ if test -n "$rerun"; then
     run
 fi
 
+if test -n "$deploy"; then
+    deploy
+fi

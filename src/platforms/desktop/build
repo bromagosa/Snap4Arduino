@@ -21,7 +21,7 @@ echo "Setting version name..."
 echo "======="
 echo
 
-sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' src/platforms/desktop/root/package.json 
+sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' tmp/package.json 
 
 echo
 echo "======="
@@ -29,4 +29,4 @@ echo "Asking nwbuilder to build Snap4Arduino for $platform"
 echo "======="
 echo
 
-environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases
+environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop

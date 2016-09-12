@@ -21,7 +21,7 @@ Of course, this project wouldn't exist without:
 
 * [Snap!](http://snap.berkeley.edu)
 * [Arduino](http://arduino.org)
-* [nw.js](http://nwjs.io)
+* [nwjs.io](http://nwjs.io)
 
 
 ![Edutec Logo](http://edutec.citilab.eu/img/logo.gif)
@@ -51,13 +51,13 @@ Once your local setup is ready, you can use the ``build`` script as follows:
 
     --platform=TARGET   Selects a platform. Accepts both generic platform names
                         (all, mobile, desktop, desktop/gnu) and specific names
-                        (desktop/gnu/64).
+                        (desktop/gnu/64). See --help=platform for details.
 
     --run               Builds and runs Snap4Arduino for the specified architecture.
-                        Only for desktop Gnu/Linux.
+                        Only for desktop GNU/Linux.
 
     --rerun             Runs the last built version of Snap4Arduino, if it exists.
-                        Only for desktop Gnu/Linux.
+                        Only for desktop GNU/Linux.
 
     --deploy=URL        Tries to deploy the build version(s) to a server.
 
