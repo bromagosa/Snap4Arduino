@@ -4,9 +4,11 @@
 # Check out prepare --help for instructions
 
 print_help() {
+    echo "Usage: ./build [OPTIONS]"
+    echo
     echo "--platform=TARGET   Selects a platform. Accepts both generic platform names"
     echo "                    (all, mobile, desktop, desktop/gnu) and specific names"
-    echo "                    (desktop/gnu/64)."
+    echo "                    (desktop/gnu/64). See --help=platform for details."
     echo
     echo "--run               Builds and runs Snap4Arduino for the specified architecture."
     echo "                    Only for desktop Gnu/Linux."
@@ -16,13 +18,25 @@ print_help() {
     echo
     echo "--deploy=URL        Tries to deploy the build version(s) to a server."
     echo
-    echo "                    --username=USRNAME  Specifies a username for the deploy"
+    echo "                    --username=USERNAME Specifies a username for the deploy"
     echo "                                        server."
     echo "                    --dir=PATH          Specifies a path for deploying built"
     echo "                                        files in the deploy server."
     echo "                                        If unspecified, the default /var/www"
     echo "                                        directory will be used."
     echo
+}
+
+print_help_platforms() {
+    echo "Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]"
+    echo
+    echo "Available platforms are:"
+    echo "`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`"
+    echo
+    echo "Generic names are also accepted, such as:"
+    echo "desktop"
+    echo "desktop/gnu"
+    echo "mobile"
 }
 
 if test $# -eq 0; then
@@ -34,8 +48,26 @@ fi
 while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/=.*//g' | tr -d '\012')=$( echo $1 | sed 's/.*=//g' | tr -d '\012'); shift; done
 
 if test -n "$help"; then
-    print_help
+    if test "$help" = "platform"; then
+        print_help_platforms
+    else
+        print_help
+    fi
 fi
+
+# helper functions
+
+print_ok() {
+   echo "\033[32m$1\033[0m" 
+}
+
+print_warning() {
+   echo "\033[30;43mWARNING:\033[0;33m $1\033[0m" 
+}
+
+print_error() {
+    (>&2 echo "\033[37;41mERROR:\033[0m \033[1;31m$1\033[0m");
+}
 
 # build and run functions
 
@@ -57,28 +89,60 @@ build() {
         echo "======="
         echo
         rm -rf tmp
+
         echo "Fetching Snap! sources..."
-        cp -r src/snap tmp
+        if ! cp -r src/snap tmp; then
+            print_error "Could not find Snap! sources.\nPlease run prepare --snap first."
+            exit 1
+        fi
+        
         echo "Fetching Snap4Arduino core..."
-        cp -r src/s4a tmp
+        if ! cp -r src/s4a tmp; then
+            print_error "Could not find Snap4Arduino core. Please make sure a src/s4a exists and contains the Snap4Arduino core files."
+            exit 1
+        fi
+        
         echo "Fetching platform-specific sources..."
-        cp -r src/platforms/$each/root/* tmp
+        if ! cp -r src/platforms/$each/root/* tmp; then
+            print_warning "Could not find any platform-specific files for $each."
+        fi
+        
         echo "Fetching assets..."
-        cp assets/* tmp
+        if ! cp assets/* tmp; then
+            print_warning "Could not find assets folder."
+        fi
+        
         echo "Fetching version file..."
-        cp src/version tmp
+        if ! cp src/version tmp; then
+            print_warning "Could not find version file. This may cause the build script to fail further ahead!"
+        fi
+        
         echo "Running platform-specifig build script..."
         src/platforms/$each/build $each
-        echo "Done!"
+        
+        if test $? = 0; then # no errors occurred during platform-specific build
+            print_ok "Done!"
+        else
+            print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
+        fi
+
         rm -rf tmp
     done
 }
 
 run() {
-    if arch | grep 64; then
-        releases/Snap4Arduino/linux64/Snap4Arduino
+    if test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
+        if ! releases/Snap4Arduino/linux64/Snap4Arduino; then
+            print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
+    elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
+        if ! releases/Snap4Arduino/linux32/Snap4Arduino; then
+            print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
     else
-        releases/Snap4Arduino/linux32/Snap4Arduino
+        print_error "Auto-running is not supported for your current architecture or operating system.\rYour system reports this is an `arch` machine. This script can only auto-run for x86_64 and i386 under GNU/Linux.\nIn other systems, please build Snap4Arduino by using\n./build --platform=TARGET\nand then manually navigate to the releases directory."
     fi
 }
 
@@ -95,6 +159,7 @@ if test -n "$platform"; then
 fi
 
 if test -n "$rerun"; then
+    run=$rerun
     run
 fi
 

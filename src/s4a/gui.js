@@ -825,7 +825,7 @@ IDE_Morph.prototype.setLanguage = function(lang, callback) {
 IDE_Morph.prototype.setLanguageS4A = function (lang, callback) {
     // Load language script for s4a related functions
     var s4aTranslation = document.getElementById('s4a-language'),
-        s4aSrc = 's4a/s4a-lang-' + lang + '.js',
+        s4aSrc = 's4a/lang-' + lang + '.js',
         myself = this;
     if (s4aTranslation) {
         document.head.removeChild(s4aTranslation);

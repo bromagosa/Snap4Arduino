@@ -12,4 +12,4 @@ SnapSerializer.prototype.openProject = function (project, ide) {
     this.originalOpenProject(project, ide);
 };
 
-SnapSerializer.prototype.app = 'Snap4Arduino 1.0.6 beta http://s4a.cat/snap';
+SnapSerializer.prototype.app = IDE_Morph.prototype.version() + ' http://snap4arduino.org';
