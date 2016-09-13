@@ -15,19 +15,19 @@ mv tmp/* tmp/www 2>/dev/null
 
 echo
 echo "======="
-echo "Setting up Node dependencies..."
-echo "======="
-echo
-
-cp -rv environments/web/chromium/node_modules tmp
-
-echo
-echo "======="
 echo "Fetching more platform-specific files"
 echo "======="
 echo
 
 cp -r src/platforms/web/chromium/crx tmp
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/web/chromium/node_modules tmp/crx
 
 echo
 echo "======="
