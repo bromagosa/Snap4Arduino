@@ -5,6 +5,8 @@
 . ./print_utils
 
 print_help() {
+    echo "Usage: ./prepare [options]"
+    echo
     echo "    --snap              Pulls the latest Snap! version."
     echo "    --nwjs              Pulls the latest nwjs.io stable version."
     echo "    --desktop           Pulls all NodeJS modules needed for desktop versions."

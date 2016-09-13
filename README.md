@@ -42,7 +42,9 @@ The command line parameters for the ``prepare`` script are:
 
     --snap              Pulls the latest Snap! version.
     --nwjs              Pulls the latest nwjs.io stable version.
-    --nodemodules       Pulls all NodeJS modules needed for all desktop versions.
+    --desktop           Pulls all NodeJS modules needed for desktop versions.
+    --chromium          Pulls all NodeJS modules needed for the web extension.
+    --cli               Pulls all NodeJS modules needed for command-line version.
     --all               Does all of the above.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
@@ -67,6 +69,29 @@ Once your local setup is ready, you can use the ``build`` script as follows:
                                             files in the deploy server.
                                             If unspecified, the default /var/www
                                             directory will be used.
+
+To find out which platforms are supported by the build script, just run ``./build --help=platform``.
+
+    ./build --help=platform 
+    Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]
+
+    Available platforms are:
+    embedded/cli
+    desktop/win/32
+    desktop/win/64
+    desktop/osx/32
+    desktop/osx/64
+    desktop/gnu/32
+    desktop/gnu/64
+    web/chromium
+    mobile/android
+
+    Generic names are also accepted, such as:
+    desktop
+    desktop/gnu
+    mobile
+    all
+
 
 ## Old Repository
 
