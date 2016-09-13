@@ -1,10 +1,14 @@
 #!/bin/sh
 # I prepare your local repo to be able to build Snap4Arduino.
 
+# Include print_utils
+. ./print_utils
+
 print_help() {
     echo "    --snap              Pulls the latest Snap! version."
     echo "    --nwjs              Pulls the latest nwjs.io stable version."
     echo "    --desktop           Pulls all NodeJS modules needed for desktop versions."
+    echo "    --chromium          Pulls all NodeJS modules needed for the web extension."
     echo "    --cli               Pulls all NodeJS modules needed for command-line version."
     echo "    --all               Does all of the above."
     echo
@@ -23,20 +27,6 @@ if test -n "$help"; then
     print_help
     exit 0
 fi
-
-# helper functions
-
-print_ok() {
-   echo "\033[32m$1\033[0m" 
-}
-
-print_warning() {
-   echo "\033[30;43mWARNING:\033[0;33m $1\033[0m" 
-}
-
-print_error() {
-    (>&2 echo "\033[37;41mERROR:\033[0m \033[1;31m$1\033[0m");
-}
 
 # prepare functions
 
@@ -93,18 +83,18 @@ pull_desktop_modules() {
 pull_cli_modules() {
     cd environments
     rm -rf embedded/cli
-    mkdir embedded/cli
-    cd cli
+    mkdir -p embedded/cli
+    cd embedded/cli
     wget http://vps34736.ovh.net/snap4arduino/cli_node_modules.zip
     if ! test -e cli_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
-        cd ../..
+        cd ../../..
         exit 1
     fi
     if ! unzip cli_node_modules.zip; then
         print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
         rm cli_node_modules.zip
-        cd ../..
+        cd ../../..
         exit 1
     fi 
     rm cli_node_modules.zip
@@ -112,11 +102,38 @@ pull_cli_modules() {
     print_ok "Command line NodeJS modules fetched."
 }
 
+pull_chromium_modules() {
+    cd environments
+    rm -rf web/chromium/node_modules
+    mkdir -p web/chromium
+    cd web/chromium
+    wget http://vps34736.ovh.net/snap4arduino/chromium_node_modules.zip
+    if ! test -e chromium_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../../..
+        exit 1
+    fi
+    if ! unzip chromium_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm chromium_node_modules.zip
+        cd ../../..
+        exit 1
+    fi 
+    rm chromium_node_modules.zip
+    cd ../../..
+    print_ok "Chromium extension NodeJS modules fetched."
+    if ! test -e environments/web/chromium/Snap4Arduino.pem; then
+        print_warning "Please make sure to place your Snap4Arduino.pem Chromium extension private key under environments/web/chromium"
+        echo "I cannot do this for you because, you know, it's a private key ;)"
+    fi
+}
+
 if test -n "$all"; then
     pull_snap
     pull_nwjs
     pull_desktop_modules
     pull_cli_modules
+    pull_chromium_modules
     exit 0
 fi
 
@@ -129,11 +146,13 @@ if test -n "$nwjs"; then
 fi
 
 if test -n "$desktop"; then
-    echo $desktop
     pull_desktop_modules
 fi
 
 if test -n "$cli"; then
-    echo $cli
     pull_cli_modules
+fi
+
+if test -n "$chromium"; then
+    pull_chromium_modules
 fi
