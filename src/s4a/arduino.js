@@ -388,7 +388,12 @@ Arduino.prototype.pinsSettableToMode = function (aMode) {
 
 // Class attributes and methods
 
-Arduino.firmata = require('firmata');
+try {
+    Arduino.firmata = require('firmata');
+} catch (err) {
+    console.log('Could not require "firmata", hopefully you are overriding this somewhere');
+}
+
 Arduino.portList = [];
 Arduino.usedPorts = [];
 

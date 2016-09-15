@@ -21,7 +21,7 @@ echo "Setting version name..."
 echo "======="
 echo
 
-sed -r 's/.*version.*/  "version": "'`cat src\/version`'"/' tmp/package.json 
+sed -r 's/.*version.*/  "version": "'`cat src\/version`'",/' src/desktop/root/package.json > tmp/package.json
 
 echo
 echo "======="

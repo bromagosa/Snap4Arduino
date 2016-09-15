@@ -20,11 +20,11 @@ Postal.prototype.commandSender = function () {
         callback = typeof args[args.length - 1] === 'function' ? args.splice(args.length - 1) : null;
 
     return function () { myself.sendCommand(command, args, callback); };
-}
+};
 
 Postal.prototype.sendCommand = function (command, args, callback) {
     chrome.runtime.sendMessage(extensionId, { command: command, args: args }, callback);
-}
+};
 
 chrome.serial = {
     getDevices: function (callback) { postal.sendCommand('getDevices', null, callback) }

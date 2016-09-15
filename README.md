@@ -38,14 +38,15 @@ If you haven't, please first run the ``prepare`` script with the ``--all`` param
 
 The command line parameters for the ``prepare`` script are:
 
-    usage: ./prepare [options]
+    Usage: ./prepare [options]
 
-    --snap              Pulls the latest Snap! version.
-    --nwjs              Pulls the latest nwjs.io stable version.
-    --desktop           Pulls all NodeJS modules needed for desktop versions.
-    --chromium          Pulls all NodeJS modules needed for the web extension.
-    --cli               Pulls all NodeJS modules needed for command-line version.
-    --all               Does all of the above.
+        --snap              Pulls the latest Snap! version.
+        --nwjs              Pulls the latest nwjs.io stable version.
+        --desktop           Pulls all NodeJS modules needed for desktop versions.
+        --chromeos          Pulls all NodeJS modules needed for the ChromeOS app.
+        --chromium          Pulls all NodeJS modules needed for the web extension.
+        --cli               Pulls all NodeJS modules needed for command-line version.
+        --all               Does all of the above.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
 
@@ -72,7 +73,6 @@ Once your local setup is ready, you can use the ``build`` script as follows:
 
 To find out which platforms are supported by the build script, just run ``./build --help=platform``.
 
-    ./build --help=platform 
     Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]
 
     Available platforms are:
@@ -83,6 +83,7 @@ To find out which platforms are supported by the build script, just run ``./buil
     desktop/osx/64
     desktop/gnu/32
     desktop/gnu/64
+    desktop/chromeos
     web/chromium
     mobile/android
 
@@ -91,7 +92,6 @@ To find out which platforms are supported by the build script, just run ``./buil
     desktop/gnu
     mobile
     all
-
 
 ## Old Repository
 
