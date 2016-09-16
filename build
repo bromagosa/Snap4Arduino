@@ -23,10 +23,7 @@ print_help() {
     echo
     echo "                    --username=USERNAME Specifies a username for the deploy"
     echo "                                        server."
-    echo "                    --dir=PATH          Specifies a path for deploying built"
-    echo "                                        files in the deploy server."
-    echo "                                        If unspecified, the default /var/www"
-    echo "                                        directory will be used."
+    echo "                    --password=PASSWD   Specifies a password for that user."
     echo
 }
 
@@ -59,16 +56,16 @@ if test -n "$help"; then
     fi
 fi
 
+if test "$platform" = "all"; then
+    platform=""
+fi
+
+allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
+platforms=`echo "$allplatforms" | grep $platform`
+
 # build script functions
 
 build() {
-
-    if test "$platform" = "all"; then
-        platform=""
-    fi
-
-    allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
-    platforms=`echo "$allplatforms" | grep $platform`
 
     echo "Will build for the following platforms:\n\n$platforms"
 
@@ -137,11 +134,10 @@ run() {
 }
 
 deploy() {
-    if test -z $dir; then
-        dir="/var/www"
-    fi
-    # Need to do this for each package that has just been built
-    scp package $username@$deploy:$dir
+    # not yet working!
+    for each in $platforms; do
+        curl -T releases/$each/* ftp://$deploy --user $user:secret
+    done
 }
 
 # parameter assessing
