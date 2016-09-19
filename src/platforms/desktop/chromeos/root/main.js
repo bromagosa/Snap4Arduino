@@ -1,0 +1,1 @@
+firmata = require('./firmata.js');

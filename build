@@ -1,0 +1,165 @@
+#!/bin/sh
+# I build Snap4Arduino for several platforms.
+# If I fail, you may need to run the prepare script first.
+# Check out prepare --help for instructions
+
+# Include print_utils
+. ./print_utils
+
+print_help() {
+    echo "Usage: ./build [OPTIONS]"
+    echo
+    echo "--platform=TARGET   Selects a platform. Accepts both generic platform names"
+    echo "                    (all, mobile, desktop, desktop/gnu) and specific names"
+    echo "                    (desktop/gnu/64). See --help=platform for details."
+    echo
+    echo "--run               Builds and runs Snap4Arduino for the specified architecture."
+    echo "                    Only for desktop GNU/Linux."
+    echo
+    echo "--makeinstaller     Attempts to create an installer for the Microsoft Windows"
+    echo "                    versions. Needs Inno Setup, check prepare script for info."
+    echo
+    echo "--rerun             Runs the last built version of Snap4Arduino, if it exists."
+    echo "                    Only for desktop GNU/Linux."
+    echo
+    echo "--deploy=URL        Tries to deploy the build version(s) to a server."
+    echo
+    echo "                    --username=USERNAME Specifies a username for the deploy"
+    echo "                                        server."
+    echo "                    --password=PASSWD   Specifies a password for that user."
+    echo
+}
+
+print_help_platforms() {
+    echo "Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]"
+    echo
+    echo "Available platforms are:"
+    echo "`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`"
+    echo
+    echo "Generic names are also accepted, such as:"
+    echo "desktop"
+    echo "desktop/gnu"
+    echo "mobile"
+    echo "all"
+}
+
+if test $# -eq 0; then
+    print_help
+fi
+
+# parse parameters
+
+while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/=.*//g' | tr -d '\012')=$( echo $1 | sed 's/.*=//g' | tr -d '\012'); shift; done
+
+if test -n "$help"; then
+    if test "$help" = "platform"; then
+        print_help_platforms
+    else
+        print_help
+    fi
+fi
+
+if test "$platform" = "all"; then
+    platform=""
+fi
+
+allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
+platforms=`echo "$allplatforms" | grep $platform`
+
+# build script functions
+
+build() {
+
+    echo "Will build for the following platforms:\n\n$platforms"
+
+    for each in $platforms; do
+        echo
+        echo "======="
+        echo "Building for $each..."
+        echo "======="
+        echo
+        rm -rf tmp
+
+        echo "Fetching Snap! sources..."
+        if ! cp -r src/snap tmp; then
+            print_error "Could not find Snap! sources.\nPlease run prepare --snap first."
+            exit 1
+        fi
+        
+        echo "Fetching Snap4Arduino core..."
+        if ! cp -r src/s4a tmp; then
+            print_error "Could not find Snap4Arduino core. Please make sure a src/s4a exists and contains the Snap4Arduino core files."
+            exit 1
+        fi
+        
+        echo "Fetching platform-specific sources..."
+        if ! cp -r src/platforms/$each/root/* tmp; then
+            print_warning "Could not find any platform-specific files for $each."
+        fi
+        
+        echo "Fetching assets..."
+        if ! cp assets/* tmp; then
+            print_warning "Could not find assets folder."
+        fi
+        
+        echo "Fetching version file..."
+        if ! cp src/version tmp; then
+            print_warning "Could not find version file. This may cause the build script to fail further ahead!"
+        fi
+        
+        echo "Running platform-specifig build script..."
+        src/platforms/$each/build $each $makeinstaller
+        
+        if test $? = 0; then # no errors occurred during platform-specific build
+            print_ok "Done!"
+        else
+            print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
+        fi
+
+#        rm -rf tmp
+    done
+}
+
+run() {
+    if test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
+        if ! releases/desktop/Snap4Arduino/linux64/Snap4Arduino; then
+            print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
+    elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
+        if ! releases/desktop/Snap4Arduino/linux32/Snap4Arduino; then
+            print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
+    else
+        print_error "Auto-running is not supported for your current architecture or operating system.\rYour system reports this is an `arch` machine. This script can only auto-run for x86_64 and i386 under GNU/Linux.\nIn other systems, please build Snap4Arduino by using\n./build --platform=TARGET\nand then manually navigate to the releases directory."
+    fi
+}
+
+deploy() {
+    # not yet working!
+    for each in $platforms; do
+        curl -T releases/$each/* ftp://$deploy --user $user:secret
+    done
+}
+
+# parameter assessing
+
+if test -n "$run"; then
+    build
+    run
+    exit 0
+fi
+
+if test -n "$platform"; then
+    build
+fi
+
+if test -n "$rerun"; then
+    run=$rerun
+    run
+fi
+
+if test -n "$deploy"; then
+    deploy
+fi

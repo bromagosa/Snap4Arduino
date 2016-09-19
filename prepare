@@ -1,0 +1,220 @@
+#!/bin/sh
+# I prepare your local repo to be able to build Snap4Arduino.
+
+# Include print_utils
+. ./print_utils
+
+print_help() {
+    echo "Usage: ./prepare [options]"
+    echo
+    echo "    --snap              Pulls the latest Snap! version."
+    echo "    --nwjs              Pulls the latest nwjs.io stable version."
+    echo "    --desktop           Pulls all NodeJS modules needed for desktop versions."
+    echo "    --chromeos          Pulls all NodeJS modules needed for the ChromeOS app."
+    echo "    --chromium          Pulls all NodeJS modules needed for the web extension."
+    echo "    --cli               Pulls all NodeJS modules needed for command-line version."
+    echo "    --all               Does all of the above."
+    echo "    --inno              Attempts to install Inno Setup under Wine, required to"
+    echo "                        build an installer for the Microsoft Windows versions."
+    echo
+}
+
+if test $# -eq 0; then
+    print_help
+    exit 0
+fi
+
+# parse parameters
+
+while echo $1 | grep ^- > /dev/null; do eval $( echo $1 | sed 's/-//g' | sed 's/=.*//g' | tr -d '\012')=$( echo $1 | sed 's/.*=//g' | tr -d '\012'); shift; done
+
+if test -n "$help"; then
+    print_help
+    exit 0
+fi
+
+# prepare functions
+
+pull_snap() {
+    echo "Pulling Snap! sources"
+    if ! git submodule update --init --recursive; then
+        print_error "Could not set up Snap! git submodule.\nPlease make sure that you have access to the Internet and git is installed in your system."
+        exit 1
+    fi
+    cd src/snap
+    git checkout master
+    if ! git pull; then
+        print_error "Could not pull latest Snap! version from Git.\nPlease make sure that you have access to the Internet and git is installed in your system."
+        cd ../..
+        exit 1
+    fi
+    cd ../..
+    print_ok "Snap! sources up to date."
+}
+
+pull_nwjs() {
+    echo "Pulling nwjs.io builder (nw-builder)"
+    mkdir -p environments
+    cd environments
+    if ! npm install nw-builder; then
+        print_error "Could not install nw-builder. Won't be able to build any desktop version.\nPlease make sure that you have access to the Internet and both NodeJS and npm are installed in your system."
+        cd ..
+        exit 1
+    fi
+    cd ..
+    print_ok "nwjs.io installed."
+}
+
+pull_desktop_modules() {
+    echo "Pulling desktop NodeJS modules"
+    cd environments
+    rm -rf desktop/node_modules
+    mkdir -p desktop
+    cd desktop
+    wget http://snap4arduino.org/downloads/desktop_node_modules.zip
+    if ! test -e desktop_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../..
+        exit 1
+    fi
+    if ! unzip desktop_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm desktop_node_modules.zip
+        cd ../..
+        exit 1
+    fi 
+    rm desktop_node_modules.zip
+    cd ../..
+    print_ok "Desktop NodeJS modules fetched."
+}
+
+pull_chromeos_modules() {
+    echo "Pulling ChromeOS NodeJS modules"
+    cd environments
+    rm -rf desktop/chromeos/node_modules
+    mkdir -p desktop/chromeos
+    cd desktop/chromeos
+    wget http://snap4arduino.org/downloads/chromeos_node_modules.zip
+    if ! test -e chromeos_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../../..
+        exit 1
+    fi
+    if ! unzip chromeos_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm chromeos_node_modules.zip
+        cd ../../..
+        exit 1
+    fi 
+    rm chromeos_node_modules.zip
+    cd ../..
+    print_ok "ChromeOS NodeJS modules fetched."
+}
+
+pull_cli_modules() {
+    echo "Pulling command line version NodeJS modules"
+    cd environments
+    rm -rf embedded/cli/node_modules
+    mkdir -p embedded/cli
+    cd embedded/cli
+    wget http://snap4arduino.org/downloads/cli_node_modules.zip
+    if ! test -e cli_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../../..
+        exit 1
+    fi
+    if ! unzip cli_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm cli_node_modules.zip
+        cd ../../..
+        exit 1
+    fi 
+    rm cli_node_modules.zip
+    cd ../../..
+    print_ok "Command line NodeJS modules fetched."
+}
+
+pull_chromium_modules() {
+    echo "Pulling NodeJS modules for the Chromium extension"
+    cd environments
+    rm -rf web/chromium/node_modules
+    mkdir -p web/chromium
+    cd web/chromium
+    wget http://snap4arduino.org/downloads/chromium_node_modules.zip
+    if ! test -e chromium_node_modules.zip; then
+        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
+        cd ../../..
+        exit 1
+    fi
+    if ! unzip chromium_node_modules.zip; then
+        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
+        rm chromium_node_modules.zip
+        cd ../../..
+        exit 1
+    fi 
+    rm chromium_node_modules.zip
+    cd ../../..
+    print_ok "Chromium extension NodeJS modules fetched."
+    if ! test -e environments/web/chromium/Snap4Arduino.pem; then
+        print_warning "Please make sure to place your Snap4Arduino.pem Chromium extension private key under environments/web/chromium"
+        echo "I cannot do this for you because, you know, it's a private key ;)"
+    fi
+}
+
+pull_inno_setup() {
+    if command -v wine; then
+        mkdir -p tmp/innosetup  
+        cd tmp/innosetup  
+        wget http://files.jrsoftware.org/ispack/ispack-5.2.3.exe  
+        wine ./ispack-5.2.3.exe
+        cd ../..
+        rm -rf tmp
+        if find ~/.wine/drive_c/ | grep Inno; then
+            print_ok "Inno Setup installed successfully."
+        else
+            print_error "Inno Setup installation seems to have failed."
+            exit 1
+        fi
+    else
+        print_error "Wine is not installed in this system.\nWine is a prerequisite for installing Inno Setup. Please get it from your distro package manager, or head to https://www.winehq.org/download"
+        exit 1
+    fi
+}
+
+if test -n "$all"; then
+    pull_snap
+    pull_nwjs
+    pull_desktop_modules
+    pull_chromeos_modules
+    pull_cli_modules
+    pull_chromium_modules
+    exit 0
+fi
+
+if test -n "$snap"; then
+    pull_snap
+fi
+
+if test -n "$nwjs"; then
+    pull_nwjs
+fi
+
+if test -n "$desktop"; then
+    pull_desktop_modules
+fi
+
+if test -n "$chromeos"; then
+    pull_chromeos_modules
+fi
+
+if test -n "$cli"; then
+    pull_cli_modules
+fi
+
+if test -n "$chromium"; then
+    pull_chromium_modules
+fi
+
+if test -n "$inno"; then
+    pull_inno_setup
+fi

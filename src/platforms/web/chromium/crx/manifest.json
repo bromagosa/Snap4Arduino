@@ -1,0 +1,24 @@
+{
+    "name": "Snap4Arduino connector",
+    "description": "Connect Berkeley Snap! to Arduino boards",
+    "version": "0.1",
+    "manifest_version": 2,
+    "app": {
+        "background": {
+            "page": "background.html"
+        }
+    },
+    "permissions": [
+        "serial"
+    ],
+    "externally_connectable": {
+        "matches": [
+            "http://dev.arduino.org/*",
+            "http://arduino.org/*",
+            "http://46.140.176.36/*",
+            "http://localhost:8080/*"
+        ],
+        "accepts_tls_channel_id": false
+    },
+    "icons": { "16": "icon-16.png", "128": "icon-128.png" }
+}

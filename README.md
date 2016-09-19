@@ -1,10 +1,18 @@
 ![Snap4Arduino Logo](http://s4a.cat/snap/img/logo-top.png)
 
-Snap4Arduino binds Snap! and Arduino together in a desktop application for GNU/Linux, MacOSX and MS Windows.
+Snap4Arduino binds Snap! and Arduino together and is available in several flavors:
+
+* A desktop application for GNU/Linux, MacOSX and MS Windows.
+* A web application that makes use of a special Chrome extension.
+* A command line interpreter for embedded GNU/Linux machines.
+* A websockets-powered version for Linino boards.
+
+Other versions in the horizon, and hopefully coming soon, are:
+* A mobile app for Android
 
 Please check out our official website for further info:
 
-[s4a.cat/snap](http://s4a.cat/snap)
+[snap4arduino.org](http://snap4arduino.org)
 
 Acknowledgements
 ================
@@ -13,7 +21,7 @@ Of course, this project wouldn't exist without:
 
 * [Snap!](http://snap.berkeley.edu)
 * [Arduino](http://arduino.org)
-* [nw.js](http://nwjs.io)
+* [nwjs.io](http://nwjs.io)
 
 
 ![Edutec Logo](http://edutec.citilab.eu/img/logo.gif)
@@ -22,32 +30,73 @@ Of course, this project wouldn't exist without:
 
 Developers, read this
 =====================
-If you want to contribute to the project, you are going to need a working _nwjs.io_ version.
+This project is built by a single shell script that takes care of everything, but it takes for granted you have first prepared your local setup.
 
-Take a look at the _buildAndRun.sh_ script to see an example of how to run the app and where to place it.
+If you haven't, please first run the ``prepare`` script with the ``--all`` parameter:
 
-Additionally, you'll need to have the Firmata Node module installed in your nwjs.io location. You can do that by just running:
+    ./prepare --all
 
-``npm install firmata``
+The command line parameters for the ``prepare`` script are:
 
-In the corresponding directory.
+    Usage: ./prepare [options]
 
-## Packager Scripts
+        --snap              Pulls the latest Snap! version.
+        --nwjs              Pulls the latest nwjs.io stable version.
+        --desktop           Pulls all NodeJS modules needed for desktop versions.
+        --chromeos          Pulls all NodeJS modules needed for the ChromeOS app.
+        --chromium          Pulls all NodeJS modules needed for the web extension.
+        --cli               Pulls all NodeJS modules needed for command-line version.
+        --all               Does all of the above.
+        --inno              Attempts to install Inno Setup under Wine, required to
+                            build an installer for the Microsoft Windows versions.
 
-The Snap4Arduino packager is not included in this repository because it contains lots of binaries, which would increase its size way too much.
+Once your local setup is ready, you can use the ``build`` script as follows:
 
-The packager, including all binaries and builder scripts, can be found [here](http://vps34736.ovh.net/snap4arduino/Snap4Arduino-builder.tar.gz), while the _nwjs_ source and binaries can be found [here](http://nwjs.io).
+    usage: ./build [options]
 
-The packager includes the following scripts:
+    --platform=TARGET   Selects a platform. Accepts both generic platform names
+                        (all, mobile, desktop, desktop/gnu) and specific names
+                        (desktop/gnu/64). See --help=platform for details.
 
-* **update.sh** → Updates the packager to the latest Snap4Arduino version available in this repository
-* **build-gnu32.sh** → Builds the GNU/Linux 32b package based on the Snap4Arduino version in the packager
-* **build-gnu64.sh** → Builds the GNU/Linux 64b package based on the Snap4Arduino version in the packager
-* **build-osx.sh** → Builds the MacOSX package based on the Snap4Arduino version in the packager
-* **build-win32.sh** → Builds the Microsoft Windows package based on the Snap4Arduino version in the packager
-* **update-build-all.sh** → Updates the packager to the latest Snap4Arduino version available in this repository and builds packages for all platforms. Additionally, it copies these ready-to-download packages into _/var/www/snap4arduino_, which should exist.
+    --run               Builds and runs Snap4Arduino for the specified architecture.
+                        Only for desktop GNU/Linux.
 
-The Microsoft Windows packaging script depends on [Inno Setup](http://www.jrsoftware.org/isinfo.php), ran headless by Wine.
+    --makeinstaller     Attempts to create an installer for the Microsoft Windows
+                        versions. Needs Inno Setup, check prepare script for info.
+
+    --rerun             Runs the last built version of Snap4Arduino, if it exists.
+                        Only for desktop GNU/Linux.
+
+    --deploy=URL        Tries to deploy the build version(s) to a server.
+
+                        --username=USRNAME  Specifies a username for the deploy
+                                            server.
+                        --dir=PATH          Specifies a path for deploying built
+                                            files in the deploy server.
+                                            If unspecified, the default /var/www
+                                            directory will be used.
+
+To find out which platforms are supported by the build script, just run ``./build --help=platform``.
+
+    Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]
+
+    Available platforms are:
+    embedded/cli
+    desktop/win/32
+    desktop/win/64
+    desktop/osx/32
+    desktop/osx/64
+    desktop/gnu/32
+    desktop/gnu/64
+    desktop/chromeos
+    web/chromium
+    mobile/android
+
+    Generic names are also accepted, such as:
+    desktop
+    desktop/gnu
+    mobile
+    all
 
 ## Old Repository
 

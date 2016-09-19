@@ -1,0 +1,59 @@
+#!/bin/sh
+# Particular build script for ChromeOS App.
+
+# Include print_utils
+. ./print_utils
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/desktop/chromeos/node_modules tmp
+
+echo
+echo "======="
+echo "Setting version name"
+echo "======="
+echo
+
+sed -r 's/.*"version".*/  "version": "'`cat src\/version | sed -r "s/[a-z]|-//g" `'",/' src/platforms/desktop/chromeos/root/manifest.json | sed -r 's/.*version_name.*/  "version_name": "'`cat src\/version`'",/' > tmp/manifest.json
+
+echo
+echo "======="
+echo "Changing all occurrences of localStorage for chrome.storage.local"
+echo "======="
+echo
+
+sed -i.bak -r 's/localStorage/chrome\.storage\.local/g' tmp/*.js 
+rm tmp/*.bak
+
+echo
+echo "======="
+echo "Building ChromeOS app"
+echo "======="
+echo
+
+if ! test -e environments/desktop/chromeos/Snap4Arduino.pem; then
+    print_error "Could not find a valid private key.\nPlease make sure Snap4Arduino.pem is located under environments/desktop/chromeos/"
+else
+    if command -v chromium-browser; then
+        chromium-browser --pack-extension=tmp --pack-extension-key=environments/desktop/chromeos/Snap4Arduino.pem
+    elif command -v google-chrome; then
+        google-chrome --pack-extension=tmp --pack-extension-key=environments/desktop/chromeos/Snap4Arduino.pem
+    fi
+    if test $? = 1; then
+        print_error "The extension could not be packaged.\nMake sure the Chromium browser or Google Chrome are installed in the system, and also that the extension private key can be found under environments/desktop/chromeos/"
+    fi
+fi
+
+echo
+echo "======="
+echo "Creating release for desktop/chromeos"
+echo "======="
+echo
+
+rm -rf releases/desktop/chromeos
+mkdir -p releases/desktop/chromeos
+mv tmp.crx releases/desktop/chromeos/Snap4Arduino.crx

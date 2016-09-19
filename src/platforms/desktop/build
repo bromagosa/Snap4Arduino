@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Particular build script for nwjs.io-based versions.
+
+# First parameter contains the platform name in the form desktop/gnu/32,
+# which needs transforming into linux32
+
+platform=`echo $1 | sed 's/gnu/linux/' | sed 's/desktop\///' | sed 's/\///'`
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/desktop/node_modules tmp
+
+echo
+echo "======="
+echo "Setting version name..."
+echo "======="
+echo
+
+sed -r 's/.*version.*/  "version": "'`cat src\/version`'",/' src/platforms/desktop/root/package.json > tmp/package.json
+
+echo
+echo "======="
+echo "Asking nwbuilder to build Snap4Arduino for $platform"
+echo "======="
+echo
+
+rm -rf releases/desktop/Snap4Arduino/$platform
+rm -rf releases/desktop/$platform
+
+environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
+
+cp -rf releases/desktop/Snap4Arduino/* releases/desktop
+rm -rf releases/desktop/Snap4Arduino
+
+if echo $platform | grep win; then
+    if test "$2" = "--makeinstaller"; then
+        echo
+        echo "======="
+        echo "Building Microsoft Windows installer for $platform"
+        echo "======="
+        echo
+        src/platforms/$1/../pack $platform
+    fi
+fi

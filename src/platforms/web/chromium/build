@@ -1,0 +1,60 @@
+#!/bin/sh
+# Particular build script for Chromium extension and web-based version.
+
+# Include print_utils
+. ./print_utils
+
+echo
+echo "======="
+echo "Reorganizing directory tree"
+echo "======="
+echo
+
+mkdir tmp/www
+mv tmp/* tmp/www 2>/dev/null
+
+echo
+echo "======="
+echo "Fetching more platform-specific files"
+echo "======="
+echo
+
+cp -r src/platforms/web/chromium/crx tmp
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/web/chromium/node_modules tmp/crx
+
+echo
+echo "======="
+echo "Building Chromium extension"
+echo "======="
+echo
+
+if ! test -e environments/web/chromium/Snap4Arduino.pem; then
+    print_error "Could not find a valid private key.\nPlease make sure Snap4Arduino.pem is located under environments/web/chromium/"
+else
+    if command -v chromium-browser; then
+        chromium-browser --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
+    elif command -v google-chrome; then
+        google-chrome --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
+    fi
+    if test $? = 1; then
+        print_error "The extension could not be packaged.\nMake sure the Chromium browser or Google Chrome are installed in the system, and also that the extension private key can be found under environments/web/chromium/"
+    fi
+fi
+
+echo
+echo "======="
+echo "Creating release for web/chromium"
+echo "======="
+echo
+
+rm -rf releases/web/chromium
+mkdir -p releases/web/chromium
+mv tmp/www releases/web/chromium/
+mv tmp/crx.crx releases/web/chromium/Snap4Arduino.crx
