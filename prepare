@@ -14,6 +14,8 @@ print_help() {
     echo "    --chromium          Pulls all NodeJS modules needed for the web extension."
     echo "    --cli               Pulls all NodeJS modules needed for command-line version."
     echo "    --all               Does all of the above."
+    echo "    --inno              Attempts to install Inno Setup under Wine, required to"
+    echo "                        build an installer for the Microsoft Windows versions."
     echo
 }
 
@@ -159,6 +161,26 @@ pull_chromium_modules() {
     fi
 }
 
+pull_inno_setup() {
+    if command -v wine; then
+        mkdir -p tmp/innosetup  
+        cd tmp/innosetup  
+        wget http://files.jrsoftware.org/ispack/ispack-5.2.3.exe  
+        wine ./ispack-5.2.3.exe
+        cd ../..
+        rm -rf tmp
+        if find ~/.wine/drive_c/ | grep Inno; then
+            print_ok "Inno Setup installed successfully."
+        else
+            print_error "Inno Setup installation seems to have failed."
+            exit 1
+        fi
+    else
+        print_error "Wine is not installed in this system.\nWine is a prerequisite for installing Inno Setup. Please get it from your distro package manager, or head to https://www.winehq.org/download"
+        exit 1
+    fi
+}
+
 if test -n "$all"; then
     pull_snap
     pull_nwjs
@@ -191,4 +213,8 @@ fi
 
 if test -n "$chromium"; then
     pull_chromium_modules
+fi
+
+if test -n "$inno"; then
+    pull_inno_setup
 fi

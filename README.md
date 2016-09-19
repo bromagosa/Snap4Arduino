@@ -47,6 +47,8 @@ The command line parameters for the ``prepare`` script are:
         --chromium          Pulls all NodeJS modules needed for the web extension.
         --cli               Pulls all NodeJS modules needed for command-line version.
         --all               Does all of the above.
+        --inno              Attempts to install Inno Setup under Wine, required to
+                            build an installer for the Microsoft Windows versions.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
 
@@ -58,6 +60,9 @@ Once your local setup is ready, you can use the ``build`` script as follows:
 
     --run               Builds and runs Snap4Arduino for the specified architecture.
                         Only for desktop GNU/Linux.
+
+    --makeinstaller     Attempts to create an installer for the Microsoft Windows
+                        versions. Needs Inno Setup, check prepare script for info.
 
     --rerun             Runs the last built version of Snap4Arduino, if it exists.
                         Only for desktop GNU/Linux.

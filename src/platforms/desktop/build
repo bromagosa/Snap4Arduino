@@ -29,4 +29,21 @@ echo "Asking nwbuilder to build Snap4Arduino for $platform"
 echo "======="
 echo
 
+rm -rf releases/desktop/Snap4Arduino/$platform
+rm -rf releases/desktop/$platform
+
 environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
+
+cp -rf releases/desktop/Snap4Arduino/* releases/desktop
+rm -rf releases/desktop/Snap4Arduino
+
+if echo $platform | grep win; then
+    if test "$2" = "--makeinstaller"; then
+        echo
+        echo "======="
+        echo "Building Microsoft Windows installer for $platform"
+        echo "======="
+        echo
+        src/platforms/$1/../pack $platform
+    fi
+fi

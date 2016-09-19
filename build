@@ -16,6 +16,9 @@ print_help() {
     echo "--run               Builds and runs Snap4Arduino for the specified architecture."
     echo "                    Only for desktop GNU/Linux."
     echo
+    echo "--makeinstaller     Attempts to create an installer for the Microsoft Windows"
+    echo "                    versions. Needs Inno Setup, check prepare script for info."
+    echo
     echo "--rerun             Runs the last built version of Snap4Arduino, if it exists."
     echo "                    Only for desktop GNU/Linux."
     echo
@@ -105,7 +108,7 @@ build() {
         fi
         
         echo "Running platform-specifig build script..."
-        src/platforms/$each/build $each
+        src/platforms/$each/build $each $makeinstaller
         
         if test $? = 0; then # no errors occurred during platform-specific build
             print_ok "Done!"
@@ -113,7 +116,7 @@ build() {
             print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
         fi
 
-        rm -rf tmp
+#        rm -rf tmp
     done
 }
 
