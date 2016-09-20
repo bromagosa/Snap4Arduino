@@ -3,6 +3,7 @@
 Snap4Arduino binds Snap! and Arduino together and is available in several flavors:
 
 * A desktop application for GNU/Linux, MacOSX and MS Windows.
+* A Chrome App for Chromebooks and any other device that can run the Chromium browser or Google Chrome.
 * A web application that makes use of a special Chrome extension.
 * A command line interpreter for embedded GNU/Linux machines.
 * A websockets-powered version for Linino boards.
