@@ -1,4 +1,4 @@
-![Snap4Arduino Logo](http://s4a.cat/snap/img/logo-top.png)
+[![Snap4Arduino Logo](http://snap4arduino.org/img/logo.png)](http://snap4arduino.org)
 
 Snap4Arduino binds Snap! and Arduino together and is available in several flavors:
 
@@ -8,6 +8,7 @@ Snap4Arduino binds Snap! and Arduino together and is available in several flavor
 * A websockets-powered version for Linino boards.
 
 Other versions in the horizon, and hopefully coming soon, are:
+* [nwjs.io](http://nwjs.io)
 * A mobile app for Android
 
 Please check out our official website for further info:
@@ -22,11 +23,6 @@ Of course, this project wouldn't exist without:
 * [Snap!](http://snap.berkeley.edu)
 * [Arduino](http://arduino.org)
 * [nwjs.io](http://nwjs.io)
-
-
-![Edutec Logo](http://edutec.citilab.eu/img/logo.gif)
-
-![Citilab Logo](http://s4a.cat/img/citilab.png)
 
 Developers, read this
 =====================
@@ -47,7 +43,7 @@ The command line parameters for the ``prepare`` script are:
         --chromium          Pulls all NodeJS modules needed for the web extension.
         --cli               Pulls all NodeJS modules needed for command-line version.
         --all               Does all of the above.
-        --inno              Attempts to install Inno Setup under Wine, required to
+        --inno              Attempts to install [Inno Setup](http://www.jrsoftware.org/isinfo.php) under Wine, required to
                             build an installer for the Microsoft Windows versions.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
@@ -62,7 +58,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
                         Only for desktop GNU/Linux.
 
     --makeinstaller     Attempts to create an installer for the Microsoft Windows
-                        versions. Needs Inno Setup, check prepare script for info.
+                        versions. Needs [Inno Setup](http://www.jrsoftware.org/isinfo.php), check prepare script for info.
 
     --rerun             Runs the last built version of Snap4Arduino, if it exists.
                         Only for desktop GNU/Linux.
@@ -101,3 +97,9 @@ To find out which platforms are supported by the build script, just run ``./buil
 ## Old Repository
 
 This repository contains only source files. The old, huge (2Gb+!) repository that contained all binaries can still be found for archaeologic purposes at: https://github.com/edutec/Snap4Arduino-old-huge
+
+## History
+
+Snap4Arduino was started in 2013 as a side project in the [Edutec](http://edutec.citilab.eu) research group from [Citilab](http://citilab.eu) (Cornellà, Barcelona), but was soon turned into a full fledged project when it began to gain user base and became clear that it had potential. Since then, it has been used in primary schools, high schools, universities, code clubs, artistic installations and individuals from all around the world. It has received localization contributions for 13 different languages, and projects such as Phiro (India), SmartBlock (Turkey), First Makers (Chile) or ROKIT Brick (South Korea) have based their software solutions in modified versions of Snap4Arduino. Since June 2016, it is being developed at Arduino.org.
+
+![Arduino logo](http://www.arduino.org/images/arduino_official_Logo.png) ![Citilab Logo](http://s4a.cat/img/citilab.png) ![Edutec Logo](http://edutec.citilab.eu/img/edutec-tiny.gif) ![](http://edutec.citilab.eu/img/edutec-text-tiny.png)
