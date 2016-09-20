@@ -9,7 +9,6 @@ Snap4Arduino binds Snap! and Arduino together and is available in several flavor
 * A websockets-powered version for Linino boards.
 
 Other versions in the horizon, and hopefully coming soon, are:
-* [nwjs.io](http://nwjs.io)
 * A mobile app for Android
 
 Please check out our official website for further info:
@@ -24,6 +23,8 @@ Of course, this project wouldn't exist without:
 * [Snap!](http://snap.berkeley.edu)
 * [Arduino](http://arduino.org)
 * [nwjs.io](http://nwjs.io)
+
+To build installers for Microsoft Windows OSes, we are making use of [Inno Setup](http://www.jrsoftware.org/isinfo.php), ran headless under [Wine](http://winehq.org).
 
 Developers, read this
 =====================
@@ -44,7 +45,7 @@ The command line parameters for the ``prepare`` script are:
         --chromium          Pulls all NodeJS modules needed for the web extension.
         --cli               Pulls all NodeJS modules needed for command-line version.
         --all               Does all of the above.
-        --inno              Attempts to install [Inno Setup](http://www.jrsoftware.org/isinfo.php) under Wine, required to
+        --inno              Attempts to install Inno Setup under Wine, required to
                             build an installer for the Microsoft Windows versions.
 
 Once your local setup is ready, you can use the ``build`` script as follows:
@@ -59,7 +60,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
                         Only for desktop GNU/Linux.
 
     --makeinstaller     Attempts to create an installer for the Microsoft Windows
-                        versions. Needs [Inno Setup](http://www.jrsoftware.org/isinfo.php), check prepare script for info.
+                        versions. Needs Inno Setup, check prepare script for info.
 
     --rerun             Runs the last built version of Snap4Arduino, if it exists.
                         Only for desktop GNU/Linux.
