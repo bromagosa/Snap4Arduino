@@ -122,12 +122,12 @@ build() {
 
 run() {
     if test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
-        if ! releases/desktop/Snap4Arduino/linux64/Snap4Arduino; then
+        if ! releases/desktop/linux64/Snap4Arduino; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
     elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
-        if ! releases/desktop/Snap4Arduino/linux32/Snap4Arduino; then
+        if ! releases/desktop/linux32/Snap4Arduino; then
             print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
