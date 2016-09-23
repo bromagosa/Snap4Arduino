@@ -4,20 +4,20 @@
 
 echo
 echo "======="
-echo "Setting up Node dependencies..."
-echo "======="
-echo
-
-cp -rv environments/embedded/cli/node_modules tmp
-
-echo
-echo "======="
 echo "Reorganizing directory tree"
 echo "======="
 echo
 
 mkdir tmp/snap
 mv tmp/* tmp/snap 2>/dev/null
+
+echo
+echo "======="
+echo "Setting up Node dependencies..."
+echo "======="
+echo
+
+cp -rv environments/embedded/cli/node_modules tmp
 
 echo
 echo "======="
