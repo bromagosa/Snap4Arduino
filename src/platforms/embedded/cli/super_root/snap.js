@@ -40,7 +40,7 @@ if (!projectFileName) {
     process.exit(1);
 }
 
-if (!serialPort && !lininoMode &&!snapMode) {
+if (!snapMode && !serialPort && !lininoMode) {
     console.error('Please either specify a path to your serial port or run the interpreter in Linino mode');
     printHelp();
     process.exit(1);
@@ -94,11 +94,12 @@ if (!Object.assign) {
     require('es6-shim');
 }
 
-includeInThisContext(canvasMode ? 'canvas.js' : 'nodify.js');
+includeInThisContext(canvasMode ? 'canvas.js' : 'nodify.js', true);
 
 includeInThisContext('snap/morphic.js');
 
 if (!snapMode) {
+    includeInThisContext('snap/s4a/arduino.js', true);
     includeInThisContext('snap/s4a/morphic.js', true);
     WorldMorph.prototype.init = WorldMorph.prototype.originalInit;
 }
@@ -119,7 +120,6 @@ if (!snapMode) {
 includeInThisContext('snap/objects.js');
 
 if (!snapMode) {
-    includeInThisContext('snap/s4a/arduino.js');
     includeInThisContext('snap/s4a/objects.js');
 }
 
@@ -135,21 +135,34 @@ includeInThisContext('snap/tables.js');
 includeInThisContext('snap/xml.js');
 includeInThisContext('snap/store.js');
 
+IDE_Morph.prototype.version = function() {
+    var version = 'unknown';
+    try {
+        version = fs.readFileSync('/usr/share/snap-interpreter/version');
+    } catch (err) {
+        try {
+            version = fs.readFileSync('version');
+        } catch (err) {
+            console.log('Could not determine Snap4Arduino version. Will default to "unknown".')
+        }
+    }
+};
+
 if (!snapMode) {
     includeInThisContext('snap/s4a/store.js');
 }
 
 includeInThisContext('snap/cloud.js');
 
+// Some decorations and overrides
+
+includeInThisContext('decorators.js');
+
 // One World
 
 Morph.prototype.world = function () {
     return world;
 }
-
-// Some decorations and overrides
-
-includeInThisContext('decorators.js');
 
 // Actual world and IDE construction
 
@@ -179,7 +192,7 @@ if (lininoMode) {
         console.log('Board connected via LininoIO');
         startUp();
     });
-} else if (!snapMode){
+} else if (!snapMode) {
     ide.currentSprite.arduino.connect(serialPort, startUp);
 } else {
     startUp();

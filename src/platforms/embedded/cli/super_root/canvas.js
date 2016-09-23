@@ -1,11 +1,15 @@
 // Let's tweak some files a bit (really dirty stuff!)
 
-if (!fs.readFileSync('node_modules/canvas/lib/context2d.js', {encoding: 'utf-8'}).match('SNAP4ARDUINO')) {
-    fs.appendFileSync('node_modules/canvas/lib/context2d.js','\n\n// ADDED BY SNAP4ARDUINO\n\nCanvasGradient.prototype.oldAddColorStop = CanvasGradient.prototype.addColorStop;\nCanvasGradient.prototype.addColorStop = function(where, color) {\n\tthis.oldAddColorStop(where, color.toString());\n};');
-}
+try {
+    if (!fs.readFileSync('node_modules/canvas/lib/context2d.js', {encoding: 'utf-8'}).match('SNAP4ARDUINO')) {
+        fs.appendFileSync('node_modules/canvas/lib/context2d.js','\n\n// ADDED BY SNAP4ARDUINO\n\nCanvasGradient.prototype.oldAddColorStop = CanvasGradient.prototype.addColorStop;\nCanvasGradient.prototype.addColorStop = function(where, color) {\n\tthis.oldAddColorStop(where, color.toString());\n};');
+    }
 
-if (!fs.readFileSync('node_modules/canvas/lib/canvas.js', {encoding: 'utf-8'}).match('SNAP4ARDUINO')) {
-    fs.appendFileSync('node_modules/canvas/lib/canvas.js','\n\n// ADDED BY SNAP4ARDUINO\n\nCanvas.prototype.addEventListener = function() {};\nCanvas.prototype.focus = function() {};');
+    if (!fs.readFileSync('node_modules/canvas/lib/canvas.js', {encoding: 'utf-8'}).match('SNAP4ARDUINO')) {
+        fs.appendFileSync('node_modules/canvas/lib/canvas.js','\n\n// ADDED BY SNAP4ARDUINO\n\nCanvas.prototype.addEventListener = function() {};\nCanvas.prototype.focus = function() {};');
+    }
+} catch (err) {
+    
 }
 
 Canvas = include('canvas');
