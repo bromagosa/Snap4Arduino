@@ -22,7 +22,9 @@ print_help() {
     echo "--rerun             Runs the last built version of Snap4Arduino, if it exists."
     echo "                    Only for desktop GNU/Linux."
     echo
-    echo "--deploy=URL        Tries to deploy the build version(s) to a server."
+    echo "--keeptmp           Do not remove the temporal build directory afterwards."
+    echo
+    echo "--deploy=URL        Tries to deploy the built version(s) to a server."
     echo
     echo "                    --username=USERNAME Specifies a username for the deploy"
     echo "                                        server."
@@ -116,7 +118,9 @@ build() {
             print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
         fi
 
-        rm -rf tmp
+        if ! test -n "$keeptmp"; then
+            rm -rf tmp
+        fi
     done
 }
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget 
     id="arduino.org.snap4arduino"
-    version=""
+  version="1.1.6-beta-rc3"
     xmlns="http://www.w3.org/ns/widgets"
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Snap4Arduino</name>
@@ -29,4 +29,5 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-bluetooth-serial" spec="~0.4.6" />
+    <preference name="Orientation" value="landscape" />
 </widget>
