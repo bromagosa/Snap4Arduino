@@ -14,7 +14,6 @@ echo "======="
 echo
 
 cp -rv environments/desktop/node_modules tmp
-cat tmp/node_modules/firmata/lib/firmata.js | grep hi
 
 echo
 echo "======="

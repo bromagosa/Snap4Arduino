@@ -14,7 +14,7 @@ print_help() {
     echo "                    (desktop/gnu/64). See --help=platform for details."
     echo
     echo "--run               Builds and runs Snap4Arduino for the specified architecture."
-    echo "                    Only for desktop GNU/Linux."
+    echo "                    Only for desktop GNU/Linux and Android."
     echo
     echo "--makeinstaller     Attempts to create an installer for the Microsoft Windows"
     echo "                    versions. Needs Inno Setup, check prepare script for info."
@@ -116,12 +116,20 @@ build() {
             print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
         fi
 
-#        rm -rf tmp
+        rm -rf tmp
     done
 }
 
 run() {
-    if test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
+    if test "$platform" = "mobile/android"; then
+        if ! test -e releases/mobile/android/Snap4Arduino.apk; then
+            print_error "Failed to run Snap4Arduino for Android. Make sure your device is in USB debug mode, connected to this computer (check the output of adb devices), and the APK has been properly built and placed into releases/mobile/android/Snap4Arduino.apk"
+            exit 1
+        else
+            adb install -r releases/mobile/android/Snap4Arduino.apk
+            adb shell monkey -p arduino.org.snap4arduino -c android.intent.category.LAUNCHER 1
+        fi
+    elif test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
         if ! releases/desktop/linux64/Snap4Arduino; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
