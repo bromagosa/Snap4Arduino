@@ -7,9 +7,7 @@ Snap4Arduino binds Snap! and Arduino together and is available in several flavor
 * A web application that makes use of a special Chrome extension.
 * A command line interpreter for embedded GNU/Linux machines.
 * A websockets-powered version for Linino boards.
-
-Other versions in the horizon, and hopefully coming soon, are:
-* A mobile app for Android
+* A mobile app for Android. :boom: **EXPERIMENTAL!** BARELY USABLE! :boom:
 
 Please check out our official website for further info:
 
@@ -25,6 +23,8 @@ Of course, this project wouldn't exist without:
 * [nwjs.io](http://nwjs.io)
 
 To build installers for Microsoft Windows OSes, we are making use of [Inno Setup](http://www.jrsoftware.org/isinfo.php), ran headless under [Wine](http://winehq.org).
+
+The mobile version is powered by [Cordova](https://cordova.apache.org/).
 
 Developers, read this
 =====================
@@ -57,7 +57,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
                         (desktop/gnu/64). See --help=platform for details.
 
     --run               Builds and runs Snap4Arduino for the specified architecture.
-                        Only for desktop GNU/Linux.
+                        Only for desktop GNU/Linux and Android.
 
     --makeinstaller     Attempts to create an installer for the Microsoft Windows
                         versions. Needs Inno Setup, check prepare script for info.
@@ -65,7 +65,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
     --rerun             Runs the last built version of Snap4Arduino, if it exists.
                         Only for desktop GNU/Linux.
 
-    --deploy=URL        Tries to deploy the build version(s) to a server.
+    --deploy=URL        Tries to deploy the built version(s) to a server.
 
                         --username=USRNAME  Specifies a username for the deploy
                                             server.
