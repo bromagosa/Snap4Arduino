@@ -34,7 +34,8 @@ rm -rf releases/desktop/$platform
 
 environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
 
-cp -rf releases/desktop/Snap4Arduino/* releases/desktop
+mkdir -p releases/$1
+mv releases/desktop/Snap4Arduino/$platform/* releases/$1
 rm -rf releases/desktop/Snap4Arduino
 
 if echo $platform | grep win; then

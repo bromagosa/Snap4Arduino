@@ -517,7 +517,6 @@ SpriteMorph.prototype.fullCopy = function (forClone) {
         c.arduino = new Arduino(c);
     }
 
-    console.log('yay!');
     return c;
 };
 
