@@ -507,6 +507,20 @@ SpriteMorph.prototype.freshPalette = function (category) {
     return palette;
 };
 
+// Sprite duplicates shouldn't share Arduino instances
+
+SpriteMorph.prototype.originalFullCopy = SpriteMorph.prototype.fullCopy;
+SpriteMorph.prototype.fullCopy = function (forClone) {
+    var c = this.originalFullCopy(forClone);
+   
+    if (!forClone) {
+        c.arduino = new Arduino(c);
+    }
+
+    console.log('yay!');
+    return c;
+};
+
 SpriteMorph.prototype.reportAnalogReading = function (pin) {
     if (this.arduino.isBoardReady()) {
         var board = this.arduino.board;
