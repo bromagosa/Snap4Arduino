@@ -66,7 +66,10 @@ if test "$platform" = "all"; then
 fi
 
 allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
-platforms=`echo "$allplatforms" | grep $platform`
+
+if test -n "$platform"; then
+    platforms=`echo "$allplatforms" | grep $platform`
+fi
 
 # build script functions
 
@@ -100,8 +103,11 @@ build() {
         fi
         
         echo "Fetching assets..."
-        if ! cp assets/* tmp; then
-            print_warning "Could not find assets folder."
+        if ! cp assets/s4a.ico tmp; then
+            print_warning "Could not find Snap4Arduino icon."
+        fi
+        if ! cp assets/s4a_logo_sm.png tmp; then
+            print_warning "Could not find Snap4Arduino logo file."
         fi
         
         echo "Fetching version file..."

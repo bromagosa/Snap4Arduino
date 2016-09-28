@@ -30,7 +30,7 @@ echo "======="
 echo
 
 rm -rf releases/desktop/Snap4Arduino/$platform
-rm -rf releases/desktop/$platform
+rm -rf releases/$1
 
 environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
 
@@ -38,7 +38,7 @@ mkdir -p releases/$1
 mv releases/desktop/Snap4Arduino/$platform/* releases/$1
 rm -rf releases/desktop/Snap4Arduino
 
-if echo $platform | grep win; then
+if echo $1 | grep win; then
     if test "$2" = "--makeinstaller"; then
         echo
         echo "======="
@@ -47,4 +47,19 @@ if echo $platform | grep win; then
         echo
         src/platforms/$1/../pack $platform
     fi
+elif echo $1 | grep osx; then
+    echo
+    echo "======="
+    echo "Copying OS X .icns files over..."
+    echo "======="
+    echo
+    cp assets/*.icns releases/$1/Snap4Arduino.app/Contents/Resources
+elif echo $1 | grep gnu; then
+    echo
+    echo "======="
+    echo "Copying icon files over..."
+    echo "======="
+    echo
+    cp -r assets/icons releases/$1
 fi
+
