@@ -170,7 +170,7 @@ pack() {
     for each in $platforms; do
         echo "Packing $each version"
         cd releases/$each
-        name='Snap4Arduino_'`echo "$each" | sed -r "s/\//-/g"`
+        name='Snap4Arduino_'`echo "$each" | sed -r "s/\//-/g"`"_$version"
         if echo "$each" | grep win && test -n "$makeinstaller"; then
             filename=$name.zip
             zip $filename Snap4Arduino-$version*.exe
