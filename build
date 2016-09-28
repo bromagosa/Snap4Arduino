@@ -24,7 +24,11 @@ print_help() {
     echo
     echo "--keeptmp           Do not remove the temporal build directory afterwards."
     echo
+    echo "--pack              Compresses the resulting files into a properly named"
+    echo "                    package."
+    echo
     echo "--deploy=URL        Tries to deploy the built version(s) to a server."
+    echo "                    Implicitly runs --pack."
     echo
     echo "                    --username=USERNAME Specifies a username for the deploy"
     echo "                                        server."
@@ -117,20 +121,22 @@ build() {
         
         echo "Running platform-specifig build script..."
         src/platforms/$each/build $each $makeinstaller
+        platform_build_result=$?
+
+        if ! test -n "$keeptmp"; then
+            echo "Removing temporary files..."
+            rm -rf tmp
+        fi
 
         echo "Copying license file over..."
-
         cp LICENSE releases/$each
 
-        if test $? = 0; then # no errors occurred during platform-specific build
+        if test $platform_build_result = 0; then # no errors occurred during platform-specific build
             print_ok "Done!"
         else
             print_warning "Platform-specific build script for $each returned an error!\nBuild process may not have been successful!"
         fi
 
-        if ! test -n "$keeptmp"; then
-            rm -rf tmp
-        fi
     done
 }
 
@@ -158,6 +164,36 @@ run() {
     fi
 }
 
+pack() {
+    version=`cat src/version`
+    mkdir -p releases/packages
+    for each in $platforms; do
+        echo "Packing $each version"
+        cd releases/$each
+        name='Snap4Arduino_'`echo "$each" | sed -r "s/\//-/g"`
+        if echo "$each" | grep win && test -n "$makeinstaller"; then
+            filename=$name.zip
+            zip $filename Snap4Arduino-$version*.exe
+        elif echo "$each" | grep gnu; then
+            filename=$name.tar.gz
+            mkdir ../$name
+            cp -r * ../$name
+            mv ../$name .
+            tar -czf $filename $name
+            rm -rf $name
+        else
+            filename=$name.zip
+            mkdir ../$name
+            cp -r * ../$name
+            mv ../$name .
+            zip -r $filename $name
+            rm -rf $name
+        fi
+        cd -
+        mv releases/$each/$filename releases/packages
+    done
+}
+
 deploy() {
     # not yet working!
     for each in $platforms; do
@@ -166,6 +202,12 @@ deploy() {
 }
 
 # parameter assessing
+
+if test -n "$rerun"; then
+    run=$rerun
+    run
+    exit 0
+fi
 
 if test -n "$run"; then
     build
@@ -177,11 +219,12 @@ if test -n "$platform"; then
     build
 fi
 
-if test -n "$rerun"; then
-    run=$rerun
-    run
+if test -n "$deploy"; then
+    pack
+    deploy
+    exit 0
 fi
 
-if test -n "$deploy"; then
-    deploy
+if test -n "$pack"; then
+    pack
 fi

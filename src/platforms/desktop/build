@@ -45,7 +45,7 @@ if echo $1 | grep win; then
         echo "Building Microsoft Windows installer for $platform"
         echo "======="
         echo
-        src/platforms/$1/../pack $platform
+        src/platforms/$1/../makeinstaller $1
     fi
 elif echo $1 | grep osx; then
     echo
@@ -62,4 +62,3 @@ elif echo $1 | grep gnu; then
     echo
     cp -r assets/icons releases/$1
 fi
-

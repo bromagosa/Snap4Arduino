@@ -1,0 +1,11 @@
+#!/bin/sh
+
+unset DISPLAY  
+
+# set the version and platform architecture in the corresponding template fields in the Inno Setup file
+cat src/platforms/desktop/win/Snap4Arduino.iss | sed -r 's/@AppVersion/'`cat src\/version`'/' | sed -r 's/@Architecture/'`echo $1 | tail -c 3`'/' > releases/$1/Snap4Arduino.iss
+
+cp assets/s4a.ico releases/$1
+cd releases/$1
+wine "`find ~/.wine/drive_c | grep ISCC.exe`" ./Snap4Arduino.iss
+cd -

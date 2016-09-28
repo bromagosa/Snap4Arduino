@@ -1,8 +1,0 @@
-#!/bin/sh
-
-unset DISPLAY  
-sed -r 's/@AppVersion/'`cat src\/version`'/' src/platforms/desktop/win/Snap4Arduino.iss > releases/desktop/$1/Snap4Arduino.iss
-cp assets/s4a.ico releases/desktop/$1
-cd releases/desktop/$1
-wine "`find ~/.wine/drive_c | grep ISCC.exe`" ./Snap4Arduino.iss
-cd ../../..
