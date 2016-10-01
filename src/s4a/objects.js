@@ -114,7 +114,6 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.reportOr.transpilable = true;
     this.blocks.reportNot.transpilable = true;
     this.blocks.reportBoolean.transpilable = true;
-    this.blocks.reportJoinWords.transpilable = true;
     this.blocks.doSetVar.transpilable = true;
     this.blocks.doChangeVar.transpilable = true;
     this.blocks.doDeclareVariables.transpilable = true;
