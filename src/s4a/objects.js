@@ -142,7 +142,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportQuotient'] = '(<#1> / <#2>)';
     StageMorph.prototype.codeMappings['reportModulus'] = '(<#1> % <#2>)';
     StageMorph.prototype.codeMappings['reportRound'] = 'round(<#1>)';
-    StageMorph.prototype.codeMappings['reportMonadic'] = '<#1>(<#2>)';
+    StageMorph.prototype.codeMappings['reportMonadic'] = 'S4Amath(<#1>,<#2>)';
     StageMorph.prototype.codeMappings['reportRandom'] = 'random(<#1>, <#2>+1)';
     StageMorph.prototype.codeMappings['reportLessThan'] = '(<#1> < <#2>)';
     StageMorph.prototype.codeMappings['reportEquals'] = '(<#1> == <#2>)';
