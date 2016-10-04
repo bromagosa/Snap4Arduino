@@ -74,7 +74,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         type: 'command',
         category: 'arduino',
         spec: 'set servo %servoPin to %servoValue',
-        defaults: [null, localize('clockwise')],
+        defaults: [null, ['clockwise']],
         transpilable: true
     };
 
