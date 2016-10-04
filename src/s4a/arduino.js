@@ -514,10 +514,10 @@ Arduino.transpile = function (body, hatBlocks) {
     setupHeader += '\n  for (byte i = 0; i < TOTAL_PINS; i++) {servoPinMap[i] = 255;}  //This generic setup line is required\n';
     body = body.replace('void setup() {', '$&' + setupHeader);
 
-    body = body.replace(',clockwise)', ',1200)');
-    body = body.replace(',stopped)', ',1500)');
-    body = body.replace(',counter-clockwise)', ',1800)');
-    body = body.replace(',disconnected)', ',-1)');
+    body = body.replace(', clockwise)', ', 1200)');
+    body = body.replace(', stopped)', ', 1500)');
+    body = body.replace(', counter-clockwise)', ', 1800)');
+    body = body.replace(', disconnected)', ', -1)');
 
     // If there's no loop function, we need to add an empty one
     if (body.indexOf('void loop()') < 0) {
