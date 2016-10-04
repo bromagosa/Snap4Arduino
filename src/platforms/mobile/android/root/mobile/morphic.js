@@ -29,19 +29,39 @@ HandMorph.prototype.init = function (aWorld) {
     this.translateStyle = '0px, 0px';
 };
 
-HandMorph.prototype.originalProcessTouchStart = HandMorph.prototype.processTouchStart;
 HandMorph.prototype.processTouchStart = function (event) {
-    if (event.touches.length === 2) {
+    var myself = this;
+
+    MorphicPreferences.isTouchDevice = true;
+    clearInterval(this.touchHoldTimeout);
+    
+    if (event.touches.length === 1) {
+        this.touchHoldTimeout = setInterval( // simulate mouseRightClick
+            function () {
+                myself.processMouseDown({button: 2});
+                myself.processMouseUp({button: 2});
+                event.preventDefault();
+                clearInterval(myself.touchHoldTimeout);
+            },
+            400
+        );
+        this.processMouseMove(event.touches[0]); // update my position
+        this.processMouseDown({button: 0});
+        event.preventDefault();
+    } else if (event.touches.length === 2) {
         this.pinchDistance = 0;
     } else if (event.touches.length === 3) {
         this.translateStartPoint = (new Point(event.touches[0].pageX, event.touches[0].pageY)).subtract(this.translation);
     }
-    this.originalProcessTouchStart(event);
 };
 
-HandMorph.prototype.originalProcessTouchMove = HandMorph.prototype.processTouchMove;
 HandMorph.prototype.processTouchMove = function (event) {
-    if (event.touches.length === 2) {
+    MorphicPreferences.isTouchDevice = true;
+
+    if (event.touches.length === 1) {
+        this.processMouseMove(event.touches[0]);
+        clearInterval(this.touchHoldTimeout);
+    } else if (event.touches.length === 2) {
         var distance =
             Math.sqrt(
                     Math.pow(event.touches[0].pageX - event.touches[1].pageX, 2) +
@@ -51,13 +71,34 @@ HandMorph.prototype.processTouchMove = function (event) {
         } else {
             this.zoom = Math.max(this.zoom - distance * 0.0001, 1);
         }
-        worldElement.style.transform = 'scale(' + this.zoom + ') translate(' + this.translateStyle + ')';
         this.pinchDistance = distance;
+        worldElement.style.transform = 'scale(' + this.zoom + ');
     } else if (event.touches.length === 3) {
         this.translation = (new Point(event.touches[0].pageX, event.touches[0].pageY)).subtract(this.translateStartPoint);
-        this.translateStyle = this.translation.x + 'px, ' + this.translation.y + 'px';
-        worldElement.style.transform = 'scale(' + this.zoom + ') translate(' + this.translateStyle + ')';
+        worldElement.style.left = this.translation.x + 'px';
+        worldElement.style.top = this.translation.y + 'px';
     }
-    this.originalProcessTouchMove(event);
 };
+
+// Need to factor zoom in here:
+function getDocumentPositionOf(aDOMelement) {
+    // answer the absolute coordinates of a DOM element in the document
+    var pos, offsetParent;
+    if (aDOMelement === null) {
+        return {x: 0, y: 0};
+    }
+    pos = {x: aDOMelement.offsetLeft, y: aDOMelement.offsetTop};
+    offsetParent = aDOMelement.offsetParent;
+    while (offsetParent !== null) {
+        pos.x += offsetParent.offsetLeft;
+        pos.y += offsetParent.offsetTop;
+        if (offsetParent !== document.body &&
+                offsetParent !== document.documentElement) {
+            pos.x -= offsetParent.scrollLeft;
+            pos.y -= offsetParent.scrollTop;
+        }
+        offsetParent = offsetParent.offsetParent;
+    }
+    return pos;
+}
 
