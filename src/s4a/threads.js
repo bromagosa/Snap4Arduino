@@ -80,16 +80,16 @@ Process.prototype.servoWrite = function (pin, value) {
         var board = sprite.arduino.board,
             numericValue;
 
-	if (value[0] == 'disconnected'){
-	    if (board.pins[pin].mode != board.MODES.OUTPUT) {
-	        board.pinMode(pin, board.MODES.OUTPUT);
-	    }
+        if (value[0] == 'disconnected') {
+            if (board.pins[pin].mode != board.MODES.OUTPUT) {
+                board.pinMode(pin, board.MODES.OUTPUT);
+            }
             return null;
-	}
+        }
 
         if (board.pins[pin].mode != board.MODES.SERVO) {
             board.pinMode(pin, board.MODES.SERVO);
-	    board.servoConfig(pin,600,2400);
+            board.servoConfig(pin, 600, 2400);
         }
 
         switch (value[0]) {

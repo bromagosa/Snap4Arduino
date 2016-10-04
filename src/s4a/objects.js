@@ -142,7 +142,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportQuotient'] = '(<#1> / <#2>)';
     StageMorph.prototype.codeMappings['reportModulus'] = '(<#1> % <#2>)';
     StageMorph.prototype.codeMappings['reportRound'] = 'round(<#1>)';
-    StageMorph.prototype.codeMappings['reportMonadic'] = 'S4Amath(<#1>,<#2>)';
+    StageMorph.prototype.codeMappings['reportMonadic'] = 's4a.math(<#1>,<#2>)';
     StageMorph.prototype.codeMappings['reportRandom'] = 'random(<#1>, <#2>+1)';
     StageMorph.prototype.codeMappings['reportLessThan'] = '(<#1> < <#2>)';
     StageMorph.prototype.codeMappings['reportEquals'] = '(<#1> == <#2>)';
@@ -156,12 +156,12 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['doChangeVar'] = '  <#1> += <#2>;';
     StageMorph.prototype.codeMappings['doDeclareVariables'] = 'int <#1> = 0;'; // How do we deal with types? Damn types...
 
-    StageMorph.prototype.codeMappings['reportAnalogReading'] = 'S4AanalogRead(<#1>)';
-    StageMorph.prototype.codeMappings['reportDigitalReading'] = 'S4AdigitalRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportAnalogReading'] = 's4a.analogRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportDigitalReading'] = 's4a.digitalRead(<#1>)';
     StageMorph.prototype.codeMappings['setPinMode'] = '  pinMode(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['digitalWrite'] = '  S4AdigitalWrite(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['servoWrite'] = '  S4AservoWrite(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['pwmWrite'] = '  S4AanalogWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['digitalWrite'] = '  s4a.digitalWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['servoWrite'] = '  s4a.servoWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['pwmWrite'] = '  s4a.analogWrite(<#1>, <#2>);';
 }
 
 SpriteMorph.prototype.initBlocks =  function() {
