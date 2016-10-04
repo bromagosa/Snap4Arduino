@@ -61,4 +61,11 @@ elif echo $1 | grep gnu; then
     echo "======="
     echo
     cp -r assets/icons releases/$1
+    echo
+    echo "======="
+    echo "Copying desktop entry over..."
+    echo "======="
+    echo
+    cp src/platforms/desktop/gnu/Snap4Arduino.desktop releases/$1
+    cp src/platforms/desktop/gnu/launcher.sh releases/$1
 fi

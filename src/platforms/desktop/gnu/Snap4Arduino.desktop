@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Icon=
+Exec=sh -c 'cd $(dirname %k) && ./launcher.sh'
+Name=Snap4Arduino
+Name[en]=Snap4Arduino
+GenericName[en]=Use Snap! to control Arduino boards. Arduino goes lambda!
