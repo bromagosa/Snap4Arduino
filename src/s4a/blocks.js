@@ -156,13 +156,33 @@ BlockMorph.prototype.userMenu = function () {
                     );
         }
     }
+
     if (this.isTemplate) {
         if (!(this.parent instanceof SyntaxElementMorph)) {
-            if (this.selector !== 'evaluateCustomBlock') {
+            if (this.selector === 'reportGetVar') {
+                addOption(
+                    'transient',
+                    'toggleTransientVariable',
+                    myself.isTransientVariable(),
+                    'uncheck to save contents\nin the project',
+                    'check to prevent contents\nfrom being saved'
+                );
+            } else if (this.selector !== 'evaluateCustomBlock') {
                 menu.addItem(
-                        "hide",
-                        'hidePrimitive'
-                        );
+                    "hide",
+                    'hidePrimitive'
+                );
+            }
+            if (StageMorph.prototype.enableCodeMapping) {
+                menu.addLine();
+                menu.addItem(
+                    'header mapping...',
+                    'mapToHeader'
+                );
+                menu.addItem(
+                    'code mapping...',
+                    'mapToCode'
+                );
             }
         }
         return menu;

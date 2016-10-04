@@ -490,10 +490,10 @@ Arduino.transpile = function (body, hatBlocks) {
     header +=
       '\n'
     + '/* ============================================\n'
-    + ' *              General CONFIG                 \n'
+    + ' *              General Config                 \n'
     + ' * ============================================\n'
     + ' */\n'
-    + '#include "Boards.h"  /* Hardware Abstraction Layer + Wiring/Arduino */\n'
+    + '#include "Boards.h"\n'
     + '#include <Servo.h>\n'
     + 'Servo servos[MAX_SERVOS];\n'
     + 'byte servoPinMap[TOTAL_PINS];\n'
@@ -501,7 +501,6 @@ Arduino.transpile = function (body, hatBlocks) {
     + 'byte detachedServoCount = 0;\n'
     + 'byte servoCount = 0;\n\n';
 
-    // Variables should be defined in the program header and taken out from setup
     varLines = body.match(/int .* = 0;/g) || [];
     body = body.replace(/int .* = 0;\n/g, '');
     varLines.forEach(function (each) {
@@ -511,7 +510,7 @@ Arduino.transpile = function (body, hatBlocks) {
     header += '\n';
 
     // adding setupHeader right after "void setup() {"
-    setupHeader += '\n  for (byte i = 0; i < TOTAL_PINS; i++) {servoPinMap[i] = 255;}  //This generic setup line is required\n';
+    setupHeader += '\n  for (byte i = 0; i < TOTAL_PINS; i++) { servoPinMap[i] = 255; }\n';
     body = body.replace('void setup() {', '$&' + setupHeader);
 
     body = body.replace(',clockwise)', ',1200)');
@@ -556,7 +555,6 @@ Arduino.processBroadcasts = function (hatBlocks) {
 };
 
 Arduino.processBroadcast = function (hatBlock, body) {
-    // Need to deal with possible pinModes here too, so servoPins etc need to be refactored.
     var code = hatBlock.mappedCode().replace(/void "(.*)"\(\) {/g, 'void $1() {') + '\n}\n\n';
     return code;
 };
@@ -631,28 +629,28 @@ Arduino.S4Afunctions =
     + '      pinMode(pin,OUTPUT);\n'
     + '      pins[pin] = 1;\n'
     + '    }\n'
-    + '    digitalWrite(pin, level);\n'
+    + '    ::digitalWrite(pin, level);\n'
     + '  }\n\n'
     + '  void analogWrite(int pin, int value) {\n'
     + '    if (!pins[pin]){\n'
     + '      pinMode(pin,OUTPUT);\n'
     + '      pins[pin] = 1;\n'
     + '    }\n'
-    + '    analogWrite(pin, value);\n'
+    + '    ::analogWrite(pin, value);\n'
     + '  }\n\n'
     + '  boolean digitalRead(int pin) {\n'
     + '    if (pins[pin]){\n'
     + '      pinMode(pin,INPUT);\n'
     + '      pins[pin] = 0;\n'
     + '    }\n'
-    + '    return digitalRead(pin);\n'
+    + '    return ::digitalRead(pin);\n'
     + '  }\n\n'
     + '  int analogRead(int pin) {\n'
     + '    if (pins[pin]){\n'
     + '      pinMode(pin,INPUT);\n'
     + '      pins[pin] = 0;\n'
     + '    }\n'
-    + '   return analogRead(pin);\n'
+    + '   return ::analogRead(pin);\n'
     + '  }\n\n'
     + '  void servoWrite(int pin, int value) {\n'
     + '    if (value == -1) {\n'

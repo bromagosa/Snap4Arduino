@@ -122,7 +122,25 @@ IDE_Morph.prototype.settingsMenu = function () {
         'Stage size...',
         'userSetStageSize'
     );
+    if (shiftClicked) {
+        menu.addItem(
+            'Dragging threshold...',
+            'userSetDragThreshold',
+            'specify the distance the hand has to move\n' +
+                'before it picks up an object',
+            new Color(100, 0, 0)
+        );
+    }
     menu.addLine();
+    if (isRetinaSupported()) {
+        addPreference(
+            'Retina display support',
+            'toggleRetina',
+            isRetinaEnabled(),
+            'uncheck for lower resolution,\nsaves computing resources',
+            'check for higher resolution,\nuses more computing resources'
+        );
+    }
     addPreference(
         'Blurred shadows',
         'toggleBlurredShadows',
@@ -284,6 +302,20 @@ IDE_Morph.prototype.settingsMenu = function () {
         true
     );
     addPreference(
+        'First-Class Sprites',
+        function () {
+            SpriteMorph.prototype.enableFirstClass =
+                !SpriteMorph.prototype.enableFirstClass;
+            myself.currentSprite.blocksCache.sensing = null;
+            myself.currentSprite.paletteCache.sensing = null;
+            myself.refreshPalette();
+        },
+        SpriteMorph.prototype.enableFirstClass,
+        'uncheck to disable support\nfor first-class sprites',
+        'check to enable support\n for first-class sprite',
+        true
+    );
+    addPreference(
         'Keyboard Editing',
         function () {
             ScriptsMorph.prototype.enableKeyboard =
@@ -333,6 +365,17 @@ IDE_Morph.prototype.settingsMenu = function () {
             false
         );
     }
+    addPreference(
+        'Live coding support',
+        function () {
+            Process.prototype.enableLiveCoding =
+                !Process.prototype.enableLiveCoding;
+        },
+        Process.prototype.enableLiveCoding,
+        'EXPERIMENTAL! uncheck to disable live\ncustom control structures',
+        'EXPERIMENTAL! check to enable\n live custom control structures',
+        true
+    );
     menu.addLine();
     addPreference(
         'HTTP server',
@@ -381,6 +424,48 @@ IDE_Morph.prototype.settingsMenu = function () {
         'uncheck for round ends of lines',
         'check for flat ends of lines'
     );
+    if (shiftClicked) {
+        addPreference(
+                'Codification support',
+                function () {
+                    StageMorph.prototype.enableCodeMapping =
+                        !StageMorph.prototype.enableCodeMapping;
+                    myself.currentSprite.blocksCache.variables = null;
+                    myself.currentSprite.paletteCache.variables = null;
+                    myself.refreshPalette();
+                },
+                StageMorph.prototype.enableCodeMapping,
+                'uncheck to disable\nblock to text mapping features',
+                'check for block\nto text mapping features',
+                false
+                );
+    }
+    addPreference(
+        'Inheritance support',
+        function () {
+            StageMorph.prototype.enableInheritance =
+                !StageMorph.prototype.enableInheritance;
+            myself.currentSprite.blocksCache.variables = null;
+            myself.currentSprite.paletteCache.variables = null;
+            myself.refreshPalette();
+        },
+        StageMorph.prototype.enableInheritance,
+        'uncheck to disable\nsprite inheritance features',
+        'check for sprite\ninheritance features',
+        false
+    );
+    addPreference(
+        'Persist linked sublist IDs',
+        function () {
+            StageMorph.prototype.enableSublistIDs =
+                !StageMorph.prototype.enableSublistIDs;
+        },
+        StageMorph.prototype.enableSublistIDs,
+        'uncheck to disable\nsaving linked sublist identities',
+        'check to enable\nsaving linked sublist identities',
+        true
+    );
+
     menu.popup(world, pos);
 };
 
