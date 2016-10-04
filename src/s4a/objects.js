@@ -95,8 +95,10 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.receiveMessage.transpilable = true;
     this.blocks.doBroadcastAndWait.transpilable = true;
     this.blocks.doWait.transpilable = true;
+    this.blocks.doWaitUntil.transpilable = true;
     this.blocks.doForever.transpilable = true;
     this.blocks.doRepeat.transpilable = true;
+    this.blocks.doUntil.transpilable = true;
     this.blocks.doIf.transpilable = true;
     this.blocks.doIfElse.transpilable = true;
     this.blocks.reportSum.transpilable = true;
@@ -104,6 +106,7 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.reportProduct.transpilable = true;
     this.blocks.reportQuotient.transpilable = true;
     this.blocks.reportModulus.transpilable = true;
+    this.blocks.reportRound.transpilable = true;
     this.blocks.reportMonadic.transpilable = true;
     this.blocks.reportRandom.transpilable = true;
     this.blocks.reportLessThan.transpilable = true;
@@ -113,7 +116,6 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.reportOr.transpilable = true;
     this.blocks.reportNot.transpilable = true;
     this.blocks.reportBoolean.transpilable = true;
-    this.blocks.reportJoinWords.transpilable = true;
     this.blocks.doSetVar.transpilable = true;
     this.blocks.doChangeVar.transpilable = true;
     this.blocks.doDeclareVariables.transpilable = true;
@@ -127,8 +129,10 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['receiveMessage'] = 'void <#1>() {';
 
     StageMorph.prototype.codeMappings['doWait'] = '  delay(<#1> * 1000);';
+    StageMorph.prototype.codeMappings['doWaitUntil'] = '  while(!<#1>){\n  }\n';
     StageMorph.prototype.codeMappings['doForever'] = '}\n\nvoid loop() {\n  <#1>\n}';
     StageMorph.prototype.codeMappings['doRepeat'] = '  for (int i = 0; i < <#1>; i++) {\n  <#2>\n  }';
+    StageMorph.prototype.codeMappings['doUntil'] = '  while(!<#1>){\n  <#2>\n  }';
     StageMorph.prototype.codeMappings['doIf'] = '  if (<#1>) {\n  <#2>\n}';
     StageMorph.prototype.codeMappings['doIfElse'] = '  if (<#1>) {\n  <#2>\n} else {\n  <#3>\n}';
 
@@ -137,8 +141,9 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportProduct'] = '(<#1> * <#2>)';
     StageMorph.prototype.codeMappings['reportQuotient'] = '(<#1> / <#2>)';
     StageMorph.prototype.codeMappings['reportModulus'] = '(<#1> % <#2>)';
-    StageMorph.prototype.codeMappings['reportMonadic'] = '<#1>(<#2>)';
-    StageMorph.prototype.codeMappings['reportRandom'] = 'random(<#1>, <#2>)';
+    StageMorph.prototype.codeMappings['reportRound'] = 'round(<#1>)';
+    StageMorph.prototype.codeMappings['reportMonadic'] = 'S4Amath(<#1>,<#2>)';
+    StageMorph.prototype.codeMappings['reportRandom'] = 'random(<#1>, <#2>+1)';
     StageMorph.prototype.codeMappings['reportLessThan'] = '(<#1> < <#2>)';
     StageMorph.prototype.codeMappings['reportEquals'] = '(<#1> == <#2>)';
     StageMorph.prototype.codeMappings['reportGreaterThan'] = '(<#1> > <#2>)';
@@ -151,12 +156,12 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['doChangeVar'] = '  <#1> += <#2>;';
     StageMorph.prototype.codeMappings['doDeclareVariables'] = 'int <#1> = 0;'; // How do we deal with types? Damn types...
 
-    StageMorph.prototype.codeMappings['reportAnalogReading'] = 'analogRead(<#1>)';
-    StageMorph.prototype.codeMappings['reportDigitalReading'] = 'digitalRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportAnalogReading'] = 'S4AanalogRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportDigitalReading'] = 'S4AdigitalRead(<#1>)';
     StageMorph.prototype.codeMappings['setPinMode'] = '  pinMode(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['digitalWrite'] = '  digitalWrite(<#1>, <#2>);';
-    StageMorph.prototype.codeMappings['servoWrite'] = '  servo<#1>.write(<#2>);';
-    StageMorph.prototype.codeMappings['pwmWrite'] = '  analogWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['digitalWrite'] = '  S4AdigitalWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['servoWrite'] = '  S4AservoWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['pwmWrite'] = '  S4AanalogWrite(<#1>, <#2>);';
 }
 
 SpriteMorph.prototype.initBlocks =  function() {
