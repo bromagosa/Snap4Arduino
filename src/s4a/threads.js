@@ -80,27 +80,30 @@ Process.prototype.servoWrite = function (pin, value) {
         var board = sprite.arduino.board,
             numericValue;
 
+	if (value[0] == 'disconnected'){
+	    if (board.pins[pin].mode != board.MODES.OUTPUT) {
+	        board.pinMode(pin, board.MODES.OUTPUT);
+	    }
+            return null;
+	}
+
         if (board.pins[pin].mode != board.MODES.SERVO) {
             board.pinMode(pin, board.MODES.SERVO);
-			board.servoConfig(pin,600,2400);
+	    board.servoConfig(pin,600,2400);
         }
 
         switch (value[0]) {
             case 'clockwise':
                 numericValue = 1200;
-            break;
+                break;
             case 'counter-clockwise':
                 numericValue = 1800;
-            break;
+                break;
             case 'stopped':
                 numericValue = 1500;
-            break;
-            case 'disconnected':
-                board.pinMode(pin, board.MODES.OUTPUT);
-                return null;
+                break;
             default:
                 numericValue = value;
-            break;
         }
         board.servoWrite(pin, numericValue);
         return null;
