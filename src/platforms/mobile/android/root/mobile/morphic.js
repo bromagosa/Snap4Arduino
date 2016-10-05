@@ -72,16 +72,47 @@ HandMorph.prototype.processTouchMove = function (event) {
             this.zoom = Math.max(this.zoom - distance * 0.0001, 1);
         }
         this.pinchDistance = distance;
-        worldElement.style.transform = 'scale(' + this.zoom + ')'
+        worldElement.style.transform = 'scale(' + this.zoom + ')';
+        this.fitIntoView();
+
     } else if (event.touches.length === 3) {
         var x = event.touches[0].pageX - this.translateStartPoint.x,
             y = event.touches[0].pageY - this.translateStartPoint.y;
 
-        worldElement.style.left = x + 'px';
-        worldElement.style.top = y + 'px';
-
-        this.translation = new Point(x, y);
+        this.applyTranslationStyle(x, y);
+        this.fitIntoView(x, y);
     }
+};
+
+HandMorph.prototype.applyTranslationStyle = function (x, y) {
+    worldElement.style.left = x + 'px';
+    worldElement.style.top = y + 'px';
+};
+
+HandMorph.prototype.fitIntoView = function (x, y) {
+    var cr = worldElement.getClientRects()[0],
+        x = x || this.translation.x,
+        y = y || this.translation.y;
+
+    if (cr.left > 0) {
+        x = (worldElement.width * (this.zoom - 1)) * 0.5;
+        this.applyTranslationStyle(x, y);
+    }
+    if (cr.right < worldElement.width) {
+        x = (worldElement.width * (this.zoom - 1)) * -0.5;
+        this.applyTranslationStyle(x, y);
+    }
+    if (cr.top > 0) {
+        y = (worldElement.height * (this.zoom - 1)) * 0.5;
+        this.applyTranslationStyle(x, y);
+    }
+    if (cr.bottom < worldElement.height) {
+        y = (worldElement.height * (this.zoom - 1)) * -0.5;
+        this.applyTranslationStyle(x, y);
+    }
+
+    this.translation.x = x;
+    this.translation.y = y;
 };
 
 HandMorph.prototype.transformTouch = function (touch) {
@@ -94,6 +125,6 @@ HandMorph.prototype.transformTouch = function (touch) {
    return { pageX: x, pageY: y };
 };
 
-function getDocumentPositionOf(aDOMelement) {
+function getDocumentPositionOf (aDOMelement) {
     return { x: 0, y: 0 };
-}
+};
