@@ -22,4 +22,4 @@ Cloud.prototype.resetPassword = function (username, callBack, errorCall) {
     this.overrideUrl();
     this.originalResetPassword(username, callBack, errorCall);
     this.revertUrl();
-}
+};
