@@ -45,7 +45,7 @@ HandMorph.prototype.processTouchStart = function (event) {
             },
             400
         );
-        this.processMouseMove(event.touches[0]); // update my position
+        this.processMouseMove(this.transformTouch(event.touches[0])); // update my position
         this.processMouseDown({button: 0});
         event.preventDefault();
     } else if (event.touches.length === 2) {
@@ -59,7 +59,7 @@ HandMorph.prototype.processTouchMove = function (event) {
     MorphicPreferences.isTouchDevice = true;
 
     if (event.touches.length === 1) {
-        this.processMouseMove(event.touches[0]);
+        this.processMouseMove(this.transformTouch(event.touches[0]));
         clearInterval(this.touchHoldTimeout);
     } else if (event.touches.length === 2) {
         var distance =
@@ -72,33 +72,28 @@ HandMorph.prototype.processTouchMove = function (event) {
             this.zoom = Math.max(this.zoom - distance * 0.0001, 1);
         }
         this.pinchDistance = distance;
-        worldElement.style.transform = 'scale(' + this.zoom + ');
+        worldElement.style.transform = 'scale(' + this.zoom + ')'
     } else if (event.touches.length === 3) {
-        this.translation = (new Point(event.touches[0].pageX, event.touches[0].pageY)).subtract(this.translateStartPoint);
-        worldElement.style.left = this.translation.x + 'px';
-        worldElement.style.top = this.translation.y + 'px';
+        var x = event.touches[0].pageX - this.translateStartPoint.x,
+            y = event.touches[0].pageY - this.translateStartPoint.y;
+
+        worldElement.style.left = x + 'px';
+        worldElement.style.top = y + 'px';
+
+        this.translation = new Point(x, y);
     }
 };
 
-// Need to factor zoom in here:
-function getDocumentPositionOf(aDOMelement) {
-    // answer the absolute coordinates of a DOM element in the document
-    var pos, offsetParent;
-    if (aDOMelement === null) {
-        return {x: 0, y: 0};
-    }
-    pos = {x: aDOMelement.offsetLeft, y: aDOMelement.offsetTop};
-    offsetParent = aDOMelement.offsetParent;
-    while (offsetParent !== null) {
-        pos.x += offsetParent.offsetLeft;
-        pos.y += offsetParent.offsetTop;
-        if (offsetParent !== document.body &&
-                offsetParent !== document.documentElement) {
-            pos.x -= offsetParent.scrollLeft;
-            pos.y -= offsetParent.scrollTop;
-        }
-        offsetParent = offsetParent.offsetParent;
-    }
-    return pos;
-}
+HandMorph.prototype.transformTouch = function (touch) {
+    var screenWidth = worldElement.width,
+        screenHeight = worldElement.height,
+        cr = worldElement.getClientRects()[0],
+        x = (touch.pageX / this.zoom) - (cr.left / this.zoom),
+        y = (touch.pageY / this.zoom) - (cr.top / this.zoom);
 
+   return { pageX: x, pageY: y };
+};
+
+function getDocumentPositionOf(aDOMelement) {
+    return { x: 0, y: 0 };
+}
