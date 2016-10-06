@@ -698,12 +698,13 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     aboutTxt = 'Snap4Arduino ' + this.version() +'\n'
 
     + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
-    + 'bernat@arduino.org\n\n'
+    + 'bernat@arduino.org\n'
+    + 'http://snap4arduino.org\n\n'
 
     + 'As of 2016, Snap4Arduino is being developed by Bernat\n'
-    + 'Romagosa at Arduino.org';
+    + 'Romagosa at Arduino.org\n\n'
 
-    + '\u24B8 2015 Citilab\n'
+    + 'Copyright \u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
 
     + 'Snap4Arduino is a modification of Snap! originally developed\n'
@@ -712,7 +713,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 
     + 'For more information, please visit\n'
     + 'http://s4a.cat/snap\n'
-    + 'http://edutec.citilab.eu\n\n'
+    + 'http://edutec.citilab.eu'
     
     creditsTxt = localize('Contributors')
     + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
