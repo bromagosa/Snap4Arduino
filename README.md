@@ -13,6 +13,13 @@ Please check out our official website for further info:
 
 [snap4arduino.org](http://snap4arduino.org)
 
+Downloads
+=========
+
+You can get the latest pre-built versions for all platforms at:
+
+[snap4arduino.org/#download](http://snap4arduino.org/#download)
+
 Acknowledgements
 ================
 
