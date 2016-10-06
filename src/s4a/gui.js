@@ -485,12 +485,33 @@ IDE_Morph.prototype.applySavedSettings = function () {
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
 IDE_Morph.prototype.projectMenu = function () {
     var menu,
-    myself = this,
+        myself = this,
         world = this.world(),
         pos = this.controlBar.projectButton.bottomLeft(),
         graphicsName = this.currentSprite instanceof SpriteMorph ?
-        'Costumes' : 'Backgrounds',
-    shiftClicked = (world.currentKey === 16);
+            'Costumes' : 'Backgrounds',
+        shiftClicked = (world.currentKey === 16);
+
+    // Utility for creating Costumes, etc menus.
+    // loadFunction takes in two parameters: a file URL, and a canonical name
+    function createMediaMenu(mediaType, loadFunction) {
+        return function () {
+            var names = this.getMediaList(mediaType),
+                mediaMenu = new MenuMorph(
+                    myself,
+                    localize('Import') + ' ' + localize(mediaType)
+                );
+
+            names.forEach(function (item) {
+                mediaMenu.addItem(
+                    item.name,
+                    function () {loadFunction(item.file, item.name); },
+                    item.help
+                );
+            });
+            mediaMenu.popup(world, pos);
+        };
+    };
 
     menu = new MenuMorph(this);
     menu.addItem('Project notes...', 'editProjectNotes');
@@ -507,7 +528,8 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem(
         'New Arduino translatable project', 
         'createNewArduinoProject',
-        'Experimental feature!\nScripts written under this\nmode will be translatable\nas Arduino sketches');
+        'Experimental feature!\nScripts written under this\n'
+        + 'mode will be translatable\nas Arduino sketches');
     menu.addLine();
     menu.addItem(
         'Import...',
@@ -543,29 +565,73 @@ IDE_Morph.prototype.projectMenu = function () {
         'file menu import hint' // looks up the actual text in the translator
     );
 
+    if (shiftClicked) {
+        menu.addItem(
+            localize(
+                'Export project...') + ' ' + localize('(in a new window)'
+            ),
+            function () {
+                if (myself.projectName) {
+                    myself.exportProject(myself.projectName, shiftClicked);
+                } else {
+                    myself.prompt('Export Project As...', function (name) {
+                        // false - override the shiftClick setting to use XML
+                        // true - open XML in a new tab
+                        myself.exportProject(name, false, true);
+                    }, null, 'exportProject');
+                }
+            },
+            'show project data as XML\nin a new browser window',
+            new Color(100, 0, 0)
+        );
+    }
     menu.addItem(
         shiftClicked ?
-            'Export project as plain text...' : 'Export project...',
+                'Export project as plain text...' : 'Export project...',
         function () {
             if (myself.projectName) {
                 myself.exportProject(myself.projectName, shiftClicked);
             } else {
                 myself.prompt('Export Project As...', function (name) {
-                    myself.exportProject(name);
+                    myself.exportProject(name, shiftClicked);
                 }, null, 'exportProject');
             }
         },
-        'show project data as XML\nin a new browser window',
+        'save project data as XML\nto your downloads folder',
         shiftClicked ? new Color(100, 0, 0) : null
     );
 
+    if (this.stage.globalBlocks.length) {
+        menu.addItem(
+            'Export blocks...',
+            function () {myself.exportGlobalBlocks(); },
+            'show global custom block definitions as XML' +
+                '\nin a new browser window'
+        );
+        menu.addItem(
+            'Unused blocks...',
+            function () {myself.removeUnusedBlocks(); },
+            'find unused global custom blocks' +
+                '\nand remove their definitions'
+        );
+    }
+
     menu.addItem(
-        'Export blocks...',
-        function () {myself.exportGlobalBlocks(); },
-        'show global custom block definitions as XML\nin a new browser window'
+        'Export summary...',
+        function () {myself.exportProjectSummary(); },
+        'open a new browser browser window\n with a summary of this project'
     );
 
     if (shiftClicked) {
+        menu.addItem(
+            'Export summary with drop-shadows...',
+            function () {myself.exportProjectSummary(true); },
+            'open a new browser browser window' +
+                '\nwith a summary of this project' +
+                '\nwith drop-shadows on all pictures.' +
+                '\nnot supported by all browsers',
+            new Color(100, 0, 0)
+        );
         menu.addItem(
             'Export all scripts as pic...',
             function () {myself.exportScriptsPicture(); },
@@ -575,107 +641,52 @@ IDE_Morph.prototype.projectMenu = function () {
     }
 
     menu.addLine();
+
+
+    menu.addItem(
+        'Libraries...',
+        createMediaMenu(
+            'libraries',
+            function loadLib(file, name) {
+                var url = myself.resourceURL('libraries', file);
+                myself.droppedText(myself.getURL(url), name);
+            }
+        ),
+        'Select categories of additional blocks to add to this project.'
+    );
     menu.addItem(
         'Import tools',
         function () {
             myself.droppedText(
-		myself.getURL('http://snap.berkeley.edu/snapsource/tools.xml'),
+                myself.getURL(myself.resourceURL('tools.xml')),
                 'tools'
             );
         },
         'load the official library of\npowerful blocks'
     );
     menu.addItem(
-        'Libraries...',
-        function () {
-            // read a list of libraries from an external file,
-            var libMenu = new MenuMorph(this, 'Import library'),
-                libUrl = 'http://snap.berkeley.edu/snapsource/libraries/' +
-            'LIBRARIES';
-
-            function loadLib(name) {
-                var url = 'http://snap.berkeley.edu/snapsource/libraries/'
-                + name;
-                myself.droppedText(myself.getURL(url), name);
-            }
-
-            myself.getURL(libUrl).split('\n').forEach(function (line) {
-                if (line.length > 0) {
-                    libMenu.addItem(
-                        line.substring(line.indexOf('\t') + 1),
-                        function () {
-                            loadLib(
-                                line.substring(0, line.indexOf('\t'))
-                            );
-                        }
-                    );
-                }
-            });
-
-            libMenu.popup(world, pos);
-        },
-        'Select categories of additional blocks to add to this project.'
-    );
-
-    menu.addItem(
         localize(graphicsName) + '...',
         function () {
-            var dir = graphicsName,
-                names = myself.getCostumesList(dir),
-                libMenu = new MenuMorph(
-                    myself,
-                    localize('Import') + ' ' + localize(dir)
-            );
-
-            function loadCostume(name) {
-                var url = dir + '/' + name,
-                    img = new Image();
-                img.onload = function () {
-                    var canvas = newCanvas(new Point(img.width, img.height));
-                    canvas.getContext('2d').drawImage(img, 0, 0);
-                    myself.droppedImage(canvas, name);
-                };
-                img.src = url;
-            }
-
-            names.forEach(function (line) {
-                if (line.length > 0) {
-                    libMenu.addItem(
-                        line,
-                        function () {loadCostume(line); }
-                    );
-                }
-            });
-            libMenu.popup(world, pos);
+            myself.importMedia(graphicsName);
         },
         'Select a costume from the media library'
     );
+
     menu.addItem(
         localize('Sounds') + '...',
-        function () {
-            var names = this.getCostumesList('Sounds'),
-                libMenu = new MenuMorph(this, 'Import sound');
-
-            function loadSound(name) {
-                var url = 'Sounds/' + name,
+        createMediaMenu(
+            'Sounds',
+            function loadSound(file, name) {
+                var url = myself.resourceURL('Sounds', file),
                     audio = new Audio();
                 audio.src = url;
                 audio.load();
                 myself.droppedAudio(audio, name);
             }
-
-            names.forEach(function (line) {
-                if (line.length > 0) {
-                    libMenu.addItem(
-                        line,
-                        function () {loadSound(line); }
-                    );
-                }
-            });
-            libMenu.popup(world, pos);
-        },
+        ),
         'Select a sound from the media library'
     );
+
     menu.popup(world, pos);
 };
 
@@ -685,6 +696,12 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     world = this.world();
 
     aboutTxt = 'Snap4Arduino ' + this.version() +'\n'
+
+    + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
+    + 'bernat@arduino.org\n\n'
+
+    + 'As of 2016, Snap4Arduino is being developed by Bernat\n'
+    + 'Romagosa at Arduino.org';
 
     + '\u24B8 2015 Citilab\n'
     + 'edutec@citilab.eu\n\n'
@@ -696,19 +713,14 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'For more information, please visit\n'
     + 'http://s4a.cat/snap\n'
     + 'http://edutec.citilab.eu\n\n'
-    + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
-    + 'bernat@arduino.org\n\n'
-
-    + 'As of 2016, Snap4Arduino is being developed by Bernat\n'
-    + 'Romagosa at Arduino.org';
-
+    
     creditsTxt = localize('Contributors')
     + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
     + 'several features and bugfixes, Spanish translation\n'
     + 'José García, Joan Güell and Víctor Casado: vision,\n'
     + 'architectural decisions, several bug reports, testing and\n'
     + 'unvaluable help in many other regards\n'
-    + 'Joan Guillén: Bugfixes, extensive testing, vision\n'
+    + 'Joan Guillén: Too many contributions to fit in here, thanks!\n'
     + 'Josep Ferràndiz: Extensive testing, vision\n'
     + 'Frank Hunleth: GNU/Linux 64b version\n'
     + 'Ove Risberg: Network to serial port functionality\n'
@@ -972,7 +984,9 @@ IDE_Morph.prototype.doPushProject = function (contents, url) {
             }
         },
         request = http.request(options, function (response) {
-            myself.inform(response.statusCode === 200 ? 'Done' : 'Error', response.statusMessage);
+            myself.inform(
+                    response.statusCode === 200 ? 'Done' : 'Error',
+                    response.statusMessage);
         });
 
     request.on('error', function (err) {
@@ -1034,15 +1048,14 @@ IDE_Morph.prototype.newArduinoProject = function() {
     // toggle unusable blocks
     var defs = SpriteMorph.prototype.blocks;
    
-    SpriteMorph.prototype.categories.forEach(function(category) { 
-        Object.keys(defs).forEach(function (sel) {
-            if (!defs[sel].transpilable) {
-                StageMorph.prototype.hiddenPrimitives[sel] = true;
+    SpriteMorph.prototype.categories.forEach(function (category) { 
+        Object.keys(defs).forEach(function (selector) {
+            if (!defs[selector].transpilable) {
+                StageMorph.prototype.hiddenPrimitives[selector] = true;
             }
         });
         myself.flushBlocksCache(category) 
     });
-
 
     // hide empty categories
     if (!this.isArduinoTranslationMode) {
@@ -1097,10 +1110,9 @@ IDE_Morph.prototype.version = function() {
 };
 
 
-// Can't be decorated
-
+// Can't be decorated, and we need to make sure the "other" category
+// shows up
 IDE_Morph.prototype.createCategories = function () {
-    // assumes the logo has already been created
     var myself = this;
 
     if (this.categories) {
@@ -1112,12 +1124,12 @@ IDE_Morph.prototype.createCategories = function () {
 
     function addCategoryButton(category) {
         var labelWidth = 75,
-        colors = [
-            myself.frameColor,
-            myself.frameColor.darker(50),
-            SpriteMorph.prototype.blockColor[category]
-        ],
-        button;
+            colors = [
+                myself.frameColor,
+                myself.frameColor.darker(50),
+                SpriteMorph.prototype.blockColor[category]
+            ],
+            button;
 
         button = new ToggleButtonMorph(
                 colors,
