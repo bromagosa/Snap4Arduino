@@ -57,29 +57,33 @@ The command line parameters for the ``prepare`` script are:
 
 Once your local setup is ready, you can use the ``build`` script as follows:
 
-    usage: ./build [options]
+    Usage: ./build [OPTIONS]
 
-    --platform=TARGET   Selects a platform. Accepts both generic platform names
-                        (all, mobile, desktop, desktop/gnu) and specific names
-                        (desktop/gnu/64). See --help=platform for details.
+        --platform=TARGET   Selects a platform. Accepts both generic platform names
+                            (all, mobile, desktop, desktop/gnu) and specific names
+                            (desktop/gnu/64). See --help=platform for details.
 
-    --run               Builds and runs Snap4Arduino for the specified architecture.
-                        Only for desktop GNU/Linux and Android.
+        --run               Builds and runs Snap4Arduino for the specified architecture.
+                            Only for desktop GNU/Linux and Android.
 
-    --makeinstaller     Attempts to create an installer for the Microsoft Windows
-                        versions. Needs Inno Setup, check prepare script for info.
+        --makeinstaller     Attempts to create an installer for the Microsoft Windows
+                            versions. Needs Inno Setup, check prepare script for info.
 
-    --rerun             Runs the last built version of Snap4Arduino, if it exists.
-                        Only for desktop GNU/Linux.
+        --rerun             Runs the last built version of Snap4Arduino, if it exists.
+                            Only for desktop GNU/Linux.
 
-    --deploy=URL        Tries to deploy the built version(s) to a server.
+        --keeptmp           Do not remove the temporal build directory afterwards.
 
-                        --username=USRNAME  Specifies a username for the deploy
-                                            server.
-                        --dir=PATH          Specifies a path for deploying built
-                                            files in the deploy server.
-                                            If unspecified, the default /var/www
-                                            directory will be used.
+        --pack              Compresses the resulting files into a properly named
+                            package.
+
+        --deploy=URL        Tries to deploy the built version(s) to a server.
+                            Implicitly runs --pack.
+
+                            --username=USERNAME Specifies a username for the deploy
+                                                server.
+                            --password=PASSWD   Specifies a password for that user.
+
 
 To find out which platforms are supported by the build script, just run ``./build --help=platform``.
 

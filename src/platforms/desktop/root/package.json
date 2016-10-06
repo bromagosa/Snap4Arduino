@@ -1,21 +1,40 @@
 {
-  "main": "index.html",
-  "version": "override_me",
-  "name": "Snap4Arduino",
-  "description": "Snap4Arduino",
-  "window": {
-    "title": "Snap4Arduino",
-    "icon": "s4a/icon-128.png",
-    "toolbar": false,
-    "frame": true,
-    "position": "mouse",
-    "width": 960,
-    "height": 640,
-    "min_width": 960,
-    "min_height": 640
-  },
-  "dependencies": {
-    "firmata": "~0.3.3",
-    "serialport": ">=0.7.5"
-  }
+    "main": "index.html",
+    "version": "override_me",
+    "name": "Snap4Arduino",
+    "description": "Snap4Arduino",
+    "window": {
+        "title": "Snap4Arduino",
+        "icon": "s4a/icon-128.png",
+        "toolbar": false,
+        "frame": true,
+        "position": "center",
+        "width": 960,
+        "height": 640,
+        "min_width": 960,
+        "min_height": 640
+    },
+    "dependencies": {
+        "firmata": "~0.3.3",
+        "serialport": ">=0.7.5"
+    },
+    "licenses": [
+        {
+            "type": "AGPLv2",
+            "url": "https://raw.githubusercontent.com/edutec/Snap4Arduino/master/LICENSE"
+        }
+    ],
+    "maintainers":[
+        {
+            "name": "Bernat Romagosa",
+            "email": "bernat@arduino.org",
+            "web": "http://bromagosa.github.io"
+        }
+    ],
+    "repositories": [
+       {
+            "type": "git", 
+            "url": "https://github.com/edutec/Snap4Arduino.git"
+       }
+    ]
 }
