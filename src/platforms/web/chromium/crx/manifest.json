@@ -16,7 +16,9 @@
             "http://dev.arduino.org/*",
             "http://arduino.org/*",
             "http://46.140.176.36/*",
-            "http://localhost:8080/*"
+            "http://localhost:8080/*",
+            "http://localhost/*",
+            "http://snap4arduino.org/*"
         ],
         "accepts_tls_channel_id": false
     },

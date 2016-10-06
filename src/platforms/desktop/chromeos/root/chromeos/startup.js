@@ -3,13 +3,19 @@ var world,
 
 // We rewrite some functions
 
-BlockMorph.prototype.exportAsProcessing = function () {
+BlockMorph.prototype.transpileToC = function () {
     var ide = this.parentThatIsA(IDE_Morph);
 
     try {
         saveFile(
                 ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino',
-                this.world().Arduino.processProcessing(this.mappedCode()),
+                this.world().Arduino.transpile(
+                    this.mappedCode(),
+                    this.parentThatIsA(ScriptsMorph).children.filter(
+                        function (each) {
+                            return each instanceof HatBlockMorph &&
+                                each.selector == 'receiveMessage';
+                        })),
                 '.ino',
                 ide);
     } catch (error) {
@@ -41,10 +47,11 @@ IDE_Morph.prototype.getURL = function (url) {
 };
 
 IDE_Morph.prototype.asyncGetURL = function (url, callback) {
-    var request = new XMLHttpRequest();
+    var myself = this,
+        request = new XMLHttpRequest();
 
     try {
-        request.open('GET', url, false);
+        request.open('GET', url, true);
         request.onload = function(event) {
             if (request.status === 200) {
                 callback(request.responseText);
