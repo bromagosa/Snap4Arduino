@@ -150,12 +150,12 @@ run() {
             adb shell monkey -p arduino.org.snap4arduino -c android.intent.category.LAUNCHER 1
         fi
     elif test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
-        if ! releases/desktop/gnu/64/Snap4Arduino; then
+        if ! releases/desktop/gnu/64/run; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
     elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
-        if ! releases/desktop/gnu/32/Snap4Arduino; then
+        if ! releases/desktop/gnu/32/run; then
             print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
