@@ -72,6 +72,6 @@ elif echo $1 | grep gnu; then
     echo "Copying desktop entry over..."
     echo "======="
     echo
-    sed -r 's/Version.*/Version='`cat src\/version`'/' src/platforms/desktop/gnu/Snap4Arduino.desktop > releases/$1/Snap4Arduino.desktop
+    cp src/platforms/desktop/gnu/Snap4Arduino.desktop releases/$1
     cp src/platforms/desktop/gnu/launcher.sh releases/$1
 fi
