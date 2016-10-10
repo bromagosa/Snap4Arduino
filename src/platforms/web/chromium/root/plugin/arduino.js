@@ -90,12 +90,15 @@ Arduino.prototype.connect = function (port) {
 Arduino.prototype.populateBoard = function (board) {
     board.sp.close = postal.commandSender('closeSerial', board.id);
     board.sp.removeListener = nop;
+    board.sp.removeAllListeners = nop;
+
+    board.sp.write = function (contents) { postal.sendCommand('closeSerial', [ board.id, contents ]); };
 
     // pin is already converted to absolute position, we don't care whether it's analog or not
-    board.pinMode = function (pin, mode) { postal.sendCommand('pinMode', [ board.id, pin, mode ], function() { board.pins[pin].mode = mode }) };
-    board.digitalWrite = function (pin, value) { postal.sendCommand('digitalWrite', [ board.id, pin, value ]) };
-    board.servoWrite = function (pin, value) { postal.sendCommand('servoWrite', [ board.id, pin, value ]) };
-    board.analogWrite = function (pin, value) { postal.sendCommand('analogWrite', [ board.id, pin, value ]) };
-    board.digitalRead = function (pin, callback) { postal.sendCommand('digitalRead', [ board.id, pin ], callback) };
-    board.analogRead = function (pin, callback) { postal.sendCommand('analogRead', [ board.id, pin ], callback) };
+    board.pinMode = function (pin, mode) { postal.sendCommand('pinMode', [ board.id, pin, mode ], function() { board.pins[pin].mode = mode; }); };
+    board.digitalWrite = function (pin, value) { postal.sendCommand('digitalWrite', [ board.id, pin, value ]); };
+    board.servoWrite = function (pin, value) { postal.sendCommand('servoWrite', [ board.id, pin, value ]); };
+    board.analogWrite = function (pin, value) { postal.sendCommand('analogWrite', [ board.id, pin, value ]); };
+    board.digitalRead = function (pin, callback) { postal.sendCommand('digitalRead', [ board.id, pin ], callback); };
+    board.analogRead = function (pin, callback) { postal.sendCommand('analogRead', [ board.id, pin ], callback); };
 };

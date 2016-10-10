@@ -46,6 +46,10 @@ Dispatcher.prototype.closeSerial = function (boardId) {
     Boards[boardId] = null;
 };
 
+Dispatcher.prototype.serialWrite = function (boardId, contents) {
+    Boards[boardId].sp.write(contents);
+};
+
 Dispatcher.prototype.pinMode = function (boardId, pin, mode) {
     Boards[boardId].pinMode(pin, mode);
 };

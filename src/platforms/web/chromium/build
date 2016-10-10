@@ -23,6 +23,14 @@ cp -r src/platforms/web/chromium/crx tmp
 
 echo
 echo "======="
+echo "Setting version name..."
+echo "======="
+echo
+
+sed -r 's/.*"version".*/  "version": "'`cat src\/version`'",/' src/platforms/web/chromium/crx/manifest.json > tmp/crx/manifest.json
+
+echo
+echo "======="
 echo "Setting up Node dependencies..."
 echo "======="
 echo
