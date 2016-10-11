@@ -35,6 +35,8 @@ The mobile version is powered by [Cordova](https://cordova.apache.org/).
 
 Developers, read this
 =====================
+Before trying to build Snap4Arduino, make sure you have `node`, `npm`, `sed`, `git`, `wget`, `zip` and `unzip` installed in your system.
+
 This project is built by a single shell script that takes care of everything, but it takes for granted you have first prepared your local setup.
 
 If you haven't, please first run the ``prepare`` script with the ``--all`` parameter:
