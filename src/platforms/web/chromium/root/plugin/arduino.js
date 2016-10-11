@@ -94,6 +94,8 @@ Arduino.prototype.populateBoard = function (board) {
 
     board.sp.write = function (contents) { postal.sendCommand('closeSerial', [ board.id, contents ]); };
 
+    board.transport = board.sp;
+
     // pin is already converted to absolute position, we don't care whether it's analog or not
     board.pinMode = function (pin, mode) { postal.sendCommand('pinMode', [ board.id, pin, mode ], function() { board.pins[pin].mode = mode; }); };
     board.digitalWrite = function (pin, value) { postal.sendCommand('digitalWrite', [ board.id, pin, value ]); };
