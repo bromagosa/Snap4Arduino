@@ -712,7 +712,6 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Llobregat (Barcelona).\n\n'
 
     + 'For more information, please visit\n'
-    + 'http://s4a.cat/snap\n'
     + 'http://edutec.citilab.eu'
     
     creditsTxt = localize('Contributors')
