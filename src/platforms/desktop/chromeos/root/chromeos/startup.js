@@ -84,6 +84,10 @@ function initLoop() {
         ide = new IDE_Morph();
         ide.openIn(world);
 
+        ide.asyncGetURL('version', function (version) {
+            ide.versionName = version;
+        });
+
         ide.inform = function(title, message, callback) { 
             var myself = this;
             if (!myself.informing) {
