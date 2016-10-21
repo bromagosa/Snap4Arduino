@@ -65,14 +65,13 @@ if test -n "$help"; then
     fi
 fi
 
-if test "$platform" = "all"; then
-    platform=""
-fi
-
 allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
 
 if test -n "$platform"; then
-    platforms=`echo "$allplatforms" | grep $platform`
+    if test "$platform" = "all"; then
+        platform=""
+    fi
+    platforms=`echo "$allplatforms" | grep "$platform"`
 fi
 
 # build script functions
@@ -215,7 +214,7 @@ if test -n "$run"; then
     exit 0
 fi
 
-if test -n "$platform"; then
+if test -n "$platforms"; then
     build
 fi
 
