@@ -91,9 +91,9 @@ pull_desktop_modules() {
 pull_chromeos_modules() {
     echo "Pulling ChromeOS NodeJS modules"
     cd environments
-    rm -rf desktop/chromeos/node_modules
-    mkdir -p desktop/chromeos
-    cd desktop/chromeos
+    rm -rf web/chromeos/node_modules
+    mkdir -p web/chromeos
+    cd web/chromeos
     wget http://snap4arduino.org/downloads/chromeos_node_modules.zip
     if ! test -e chromeos_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."

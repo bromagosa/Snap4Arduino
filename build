@@ -101,7 +101,7 @@ build() {
         fi
         
         echo "Fetching platform-specific sources..."
-        if ! cp -r src/platforms/$each/root/* tmp; then
+        if ! cp -r -L src/platforms/$each/root/* tmp; then
             print_warning "Could not find any platform-specific files for $each."
         fi
         
