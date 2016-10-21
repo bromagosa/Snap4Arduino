@@ -38,3 +38,34 @@ Arduino.prototype.attemptConnection = function () {
         return;
     }
 };
+
+Arduino.prototype.closeHandler = function (silent) {
+
+    var portName = 'unknown';
+
+    clearInterval(this.keepAliveIntervalID);
+
+    if (this.board) {
+        portName = this.board.sp.path;
+
+        this.board.sp = undefined;
+
+        this.board = undefined;
+    };
+
+    Arduino.unlockPort(this.port);
+    this.connecting = false;
+    this.disconnecting = false;
+
+    if (this.gotUnplugged & !silent) {
+        ide.inform(
+                this.owner.name,
+                localize('Board was disconnected from port\n') 
+                + portName 
+                + '\n\nIt seems that someone pulled the cable!');
+        this.gotUnplugged = false;
+    } else if (!silent) {
+        ide.inform(this.owner.name, localize('Board was disconnected from port\n') + portName);
+    }
+};
+

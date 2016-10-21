@@ -27,6 +27,7 @@ var PIN_MODE = 0xF4,
     ANALOG_MESSAGE = 0xE0,
     CAPABILITY_QUERY = 0x6B,
     CAPABILITY_RESPONSE = 0x6C,
+    SERVO_CONFIG = 0x70,
     PIN_STATE_QUERY = 0x6D,
     PIN_STATE_RESPONSE = 0x6E,
     ANALOG_MAPPING_QUERY = 0x69,
@@ -406,11 +407,37 @@ Board.prototype.analogWrite = function(pin, value) {
     this.sp.write([ANALOG_MESSAGE | pin, value & 0x7F, (value >> 7) & 0x7F]);
 };
 
+Board.prototype.servoConfig = function(pin, min, max) {
+  // [0]  START_SYSEX  (0xF0)
+  // [1]  SERVO_CONFIG (0x70)
+  // [2]  pin number   (0-127)
+  // [3]  minPulse LSB (0-6)
+  // [4]  minPulse MSB (7-13)
+  // [5]  maxPulse LSB (0-6)
+  // [6]  maxPulse MSB (7-13)
+  // [7]  END_SYSEX    (0xF7)
+
+  var data = [
+    START_SYSEX,
+    SERVO_CONFIG,
+    pin,
+    min & 0x7F,
+    (min >> 7) & 0x7F,
+    max & 0x7F,
+    (max >> 7) & 0x7F,
+    END_SYSEX
+  ];
+
+  this.pins[pin].mode = this.MODES.SERVO;
+  this.sp.write(data);
+};
+
 /**
  * Asks the arduino to move a servo
  * @param {number} pin The pin the servo is connected to
  * @param {number} value The degrees to move the servo to.
  */
+
 
 Board.prototype.servoWrite = function(pin, value) {
     this.analogWrite.apply(this, arguments);

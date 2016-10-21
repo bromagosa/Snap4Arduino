@@ -128,3 +128,86 @@ HandMorph.prototype.transformTouch = function (touch) {
 function getDocumentPositionOf (aDOMelement) {
     return { x: 0, y: 0 };
 };
+
+// Virtual Keyboard Input
+
+WorldMorph.prototype.initVirtualKeyboard = function () {
+    var myself = this;
+
+    if (this.virtualKeyboard) {
+        document.body.removeChild(this.virtualKeyboard);
+        this.virtualKeyboard = null;
+    }
+    if (!MorphicPreferences.isTouchDevice
+            || !MorphicPreferences.useVirtualKeyboard) {
+        return;
+    }
+    this.virtualKeyboard = document.createElement("input");
+    this.virtualKeyboard.type = "text";
+    this.virtualKeyboard.style.color = "transparent";
+    this.virtualKeyboard.style.backgroundColor = "transparent";
+    this.virtualKeyboard.style.border = "none";
+    this.virtualKeyboard.style.outline = "none";
+    this.virtualKeyboard.style.position = "absolute";
+    this.virtualKeyboard.style.top = "0px";
+    this.virtualKeyboard.style.left = "0px";
+    this.virtualKeyboard.style.width = "0px";
+    this.virtualKeyboard.style.height = "0px";
+    this.virtualKeyboard.autocapitalize = "none"; // iOS specific
+
+    document.body.appendChild(this.virtualKeyboard);
+
+    this.virtualKeyboard.addEventListener(
+        "keydown",
+        function (event) {
+            // remember the keyCode in the world's currentKey property
+            myself.currentKey = event.keyCode;
+            if (myself.keyboardReceiver) {
+                myself.keyboardReceiver.processKeyDown(event);
+            }
+            // supress backspace override
+            if (event.keyCode === 8) {
+                myself.cursor.slot --;
+                event.preventDefault();
+            }
+            // supress tab override and make sure tab gets
+            // received by all browsers
+            if (event.keyCode === 9) {
+                if (myself.keyboardReceiver) {
+                    myself.keyboardReceiver.processKeyPress(event);
+                }
+                event.preventDefault();
+            }
+        },
+        false
+    );
+
+    this.virtualKeyboard.addEventListener(
+        "keyup",
+        function (event) {
+            // flush the world's currentKey property
+            myself.currentKey = null;
+            // dispatch to keyboard receiver
+            if (myself.keyboardReceiver) {
+                if (myself.keyboardReceiver.processKeyUp) {
+                    myself.keyboardReceiver.processKeyUp(event);
+                }
+            }
+            this.lastValue = this.value;
+            event.preventDefault();
+        },
+        false
+    );
+};
+
+CursorMorph.prototype.processKeyUp = function (event) {
+    var world = this.world();
+
+    world.currentKey = null;
+    this.target.escalateEvent('reactToKeystroke', event);
+    
+    if (world.virtualKeyboard) {
+        this.insert(world.virtualKeyboard.value.slice(-1));
+        world.virtualKeyboard.value = '';
+    }
+};

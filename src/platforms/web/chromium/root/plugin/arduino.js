@@ -92,7 +92,7 @@ Arduino.prototype.populateBoard = function (board) {
     board.sp.removeListener = nop;
     board.sp.removeAllListeners = nop;
 
-    board.sp.write = function (contents) { postal.sendCommand('closeSerial', [ board.id, contents ]); };
+    board.sp.write = function (contents) { postal.sendCommand('serialWrite', [ board.id, contents ]); };
 
     board.transport = board.sp;
 
