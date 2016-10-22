@@ -3,7 +3,11 @@ Process.prototype.reportJSFunction = function (parmNames, body) {
 		return document.getElementById("sandboxFrame").contentWindow.reportJSFunction(this, parmNames, body);
 	}
 	catch(error) {
-		throw new Error("To run JS in this ChomeOS app, you must launch Chrome/Chromium with this parameters: --disable-web-security --user-data-dir");
+		if (error.toString().indexOf("from accessing a cross-origin") != -1) {
+			throw new Error("To run JS in this ChomeOS app, you must launch Chrome/Chromium with this parameters: --disable-web-security --user-data-dir");
+		} else {
+			throw new Error(error);
+		}
 	}
 	
 };
