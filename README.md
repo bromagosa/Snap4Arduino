@@ -135,7 +135,7 @@ For other systems, please refer to https://github.com/Automattic/node-canvas#ins
 
 ### System-wide installation
 
-_If you don't want to perform a system-wide install, just clone Snap4Arduino and move its ``snap`` folder into the ``snap-interpreter`` root folder._
+**You do not need to install Snap4Arduino, you can just run the command line interpreter by running** `./snap.js`
 
 To install the snap-interpreter in your system, just run the ``install.sh`` script with root privileges.
 
