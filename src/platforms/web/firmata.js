@@ -279,6 +279,57 @@ SYSEX_RESPONSE[PULSE_IN] = function(board){
     board.emit('pulse-in-'+pin,duration);
 };
 /**
+ * Responses for SA5Firmata
+ */
+SYSEX_RESPONSE[0xC0] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("joyX", value);
+};
+SYSEX_RESPONSE[0xC1] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("joyY", value);
+};
+SYSEX_RESPONSE[0xC2] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F);
+    board.emit("butZ", value);
+};
+SYSEX_RESPONSE[0xC3] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F);
+    board.emit("butC", value);
+};
+SYSEX_RESPONSE[0xC4] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accX", value);
+};
+SYSEX_RESPONSE[0xC5] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accY", value);
+};
+SYSEX_RESPONSE[0xC6] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accZ", value);
+};
+SYSEX_RESPONSE[0xC8] = function(board) {
+    var pulse = (board.currentBuffer[2] & 0x7F) << 25| (board.currentBuffer[3] & 0x7F) << 18 | (board.currentBuffer[4] & 0x7F) << 11 | (board.currentBuffer[5] & 0x7F) << 4 | (board.currentBuffer[6] & 0x7F) >> 3;
+    var pin = (board.currentBuffer[6] & parseInt("0111",2)) << 5 | (board.currentBuffer[7] & parseInt("011111",2));
+    board.emit("pulseIn-"+pin, pulse);
+};
+SYSEX_RESPONSE[0xCA] = function(board) {
+    var pulse = (board.currentBuffer[2] & 0x7F) << 9| (board.currentBuffer[3] & 0x7F) << 2 | (board.currentBuffer[4] & parseInt("01100000",2)) >> 5;
+    var pin = (board.currentBuffer[4] & parseInt("011111",2)) << 3 | (board.currentBuffer[5] & parseInt("0111",2));
+    board.emit("ping-"+pin, pulse);
+}
+SYSEX_RESPONSE[0xCB] = function(board) {
+    var irResult = (board.currentBuffer[2] & 0x7F) << 25| (board.currentBuffer[3] & 0x7F) << 18 | (board.currentBuffer[4] & 0x7F) << 11 | (board.currentBuffer[5] & 0x7F) << 4 | (board.currentBuffer[6] & 0x7F) >> 3;
+    board.emit("IRrec", irResult);
+};
+SYSEX_RESPONSE[0xCF] = function(board) {
+    var response = (board.currentBuffer[2] & 0x7F) << 1 | (board.currentBuffer[3] & 0x01);
+    var pin = board.currentBuffer[4] >> 1;
+    var param = board.currentBuffer[4] & 0x01;
+    board.emit("DHT11-"+pin+"-"+param, response);
+};
+/**
  * @class The Board object represents an arduino board.
  * @augments EventEmitter
  * @param {String} port This is the serial port the arduino is connected to.
