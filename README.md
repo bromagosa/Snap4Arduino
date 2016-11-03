@@ -74,7 +74,7 @@ Once your local setup is ready, you can use the ``build`` script as follows:
         --rerun             Runs the last built version of Snap4Arduino, if it exists.
                             Only for desktop GNU/Linux.
 
-        --keeptmp           Do not remove the temporal build directory afterwards.
+        --keeptmp           Do not remove the temporary build directory afterwards.
 
         --pack              Compresses the resulting files into a properly named
                             package.
