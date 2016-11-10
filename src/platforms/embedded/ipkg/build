@@ -1,0 +1,55 @@
+#!/bin/bash
+# Based on Anders Evenrud's script for OS.js
+
+# First of all, build the CLI version
+src/platforms/embedded/cli/build
+
+PWD="${0%/*}"
+
+if [ -z $ARCH ]
+then
+    ARCH="ar71xx"
+fi
+
+VERSION="`cat src\/version`"
+
+PKGNAME="snap4arduino_${VERSION}_${ARCH}.ipk"
+SRCDIR="tmp"
+OUTDIR="releases/packages"
+
+# Create package files
+mkdir -p $OUTDIR/ipkg/
+mkdir -p $OUTDIR/data/usr/share/snap4arduino
+mkdir -p $OUTDIR/data/usr/bin
+
+# Create data directory tree structure
+cp -r tmp/* $OUTDIR/data/usr/share/snap4arduino/
+ln -s /usr/share/snap4arduino/snap.js $OUTDIR/data/usr/bin/snap
+
+# Create control file
+cp $PWD/src/templates/ipkg-control $OUTDIR/ipkg/control_tmpl
+
+# adding custom scripts
+cp $PWD/src/templates/post* $OUTDIR/ipkg/
+cp $PWD/src/templates/prerm $OUTDIR/ipkg/
+
+awk '{gsub("ARCH", "'"$ARCH"'", $0); print }' $OUTDIR/ipkg/control_tmpl | awk '{gsub("VER", "'"${VERSION}"'", $0); print }' > $OUTDIR/ipkg/control
+
+# Create control file
+tar -C $OUTDIR/ipkg -czf $OUTDIR/control.tar.gz ./control ./prerm ./postinst ./postinst-pkg ./postrm
+
+# Create data image
+tar -C $OUTDIR/data -czf $OUTDIR/data.tar.gz ./usr
+
+# Create debian binary file
+echo "2.0" > $OUTDIR/debian-binary
+
+# Create ipkg
+tar -C $OUTDIR -cz ./debian-binary ./data.tar.gz ./control.tar.gz > $OUTDIR/$PKGNAME
+
+# Clean up
+rm -rf $OUTDIR/ipkg
+rm -rf $OUTDIR/data
+rm $OUTDIR/debian-binary
+rm $OUTDIR/data.tar.gz
+rm $OUTDIR/control.tar.gz

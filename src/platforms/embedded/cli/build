@@ -34,4 +34,4 @@ echo "======="
 echo
 
 rm -rf releases/embedded/cli
-mv tmp releases/embedded/cli
+cp -r tmp releases/embedded/cli
