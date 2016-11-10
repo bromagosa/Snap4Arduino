@@ -1,0 +1,4 @@
+if [ -d /usr/share/snap4arduino ]
+then
+	ln -s /usr/share/snap4arduino/snap /osjs/dist/snap
+fi

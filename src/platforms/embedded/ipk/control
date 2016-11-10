@@ -1,0 +1,8 @@
+Package: snap4arduino
+Version: v1.2
+Depends: libc, node, node-canvas, node-firmata, node-ws, node-ideino-linino-lib, node-es6-shim
+Source: package/linino/snap4arduino
+Section: lang
+Architecture: ar71xx
+Installed-Size: 16604029
+Description: Program the virtual and physical world with Snap4Arduino.
