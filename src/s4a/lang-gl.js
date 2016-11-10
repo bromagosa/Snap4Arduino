@@ -155,5 +155,5 @@ s4aTempDict = {
         'Portos serie sobre rede'
 };
 
-// Add attributes to original SnapTranslator.dict.es
-for (var attrname in s4aTempDict) { SnapTranslator.dict.es[attrname] = s4aTempDict[attrname]; }
+// Add attributes to original SnapTranslator.dict.gl
+for (var attrname in s4aTempDict) { SnapTranslator.dict.gl[attrname] = s4aTempDict[attrname]; }
