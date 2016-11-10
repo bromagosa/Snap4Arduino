@@ -19,7 +19,7 @@ echo "Fetching more platform-specific files"
 echo "======="
 echo
 
-cp -r src/platforms/web/chromium/crx tmp
+cp -rL src/platforms/web/chromium/crx tmp
 
 echo
 echo "======="

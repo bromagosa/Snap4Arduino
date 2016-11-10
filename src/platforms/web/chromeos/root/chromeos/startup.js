@@ -108,4 +108,8 @@ function initLoop() {
 
 function loop() {
     world.doOneCycle();
-}
+};
+
+function Buffer(data) {
+    return data;
+};

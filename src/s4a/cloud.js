@@ -23,3 +23,23 @@ Cloud.prototype.resetPassword = function (username, callBack, errorCall) {
     this.originalResetPassword(username, callBack, errorCall);
     this.revertUrl();
 };
+
+Cloud.prototype.originalGetPublicProject = Cloud.prototype.getPublicProject;
+Cloud.prototype.getPublicProject = function (id, callBack, errorCall) {
+    this.overrideUrl();
+    this.originalGetPublicProject(id, callBack, errorCall);
+    this.revertUrl();
+};
+
+Cloud.prototype.urlForMyProject = function (projectName) {
+    if (!this.username) {
+        ide.showMessage('You are not logged in:\n' + err);
+        throw new Error('You are not logged in:\n' + err);
+        return;
+    }
+
+    return 'http://snap4arduino.org/run#present:Username=' + 
+        encodeURIComponent(this.username) + '&ProjectName=' + 
+        encodeURIComponent(projectName);
+};
+

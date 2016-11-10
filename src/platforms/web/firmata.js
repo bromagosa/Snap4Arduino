@@ -16,29 +16,54 @@ var bops = require('bops');
  * constants
  */
 
-var PIN_MODE = 0xF4,
-    REPORT_DIGITAL = 0xD0,
-    REPORT_ANALOG = 0xC0,
-    DIGITAL_MESSAGE = 0x90,
-    START_SYSEX = 0xF0,
-    END_SYSEX = 0xF7,
-    QUERY_FIRMWARE = 0x79,
-    REPORT_VERSION = 0xF9,
+var ANALOG_MAPPING_QUERY = 0x69,
+    ANALOG_MAPPING_RESPONSE = 0x6A,
     ANALOG_MESSAGE = 0xE0,
     CAPABILITY_QUERY = 0x6B,
     CAPABILITY_RESPONSE = 0x6C,
-    SERVO_CONFIG = 0x70,
+    DIGITAL_MESSAGE = 0x90,
+    END_SYSEX = 0xF7,
+    EXTENDED_ANALOG = 0x6F,
+    I2C_CONFIG = 0x78,
+    I2C_REPLY = 0x77,
+    I2C_REQUEST = 0x76,
+    ONEWIRE_CONFIG_REQUEST = 0x41,
+    ONEWIRE_DATA = 0x73,
+    ONEWIRE_DELAY_REQUEST_BIT = 0x10,
+    ONEWIRE_READ_REPLY = 0x43,
+    ONEWIRE_READ_REQUEST_BIT = 0x08,
+    ONEWIRE_RESET_REQUEST_BIT = 0x01,
+    ONEWIRE_SEARCH_ALARMS_REPLY = 0x45,
+    ONEWIRE_SEARCH_ALARMS_REQUEST = 0x44,
+    ONEWIRE_SEARCH_REPLY = 0x42,
+    ONEWIRE_SEARCH_REQUEST = 0x40,
+    ONEWIRE_WITHDATA_REQUEST_BITS = 0x3C,
+    ONEWIRE_WRITE_REQUEST_BIT = 0x20,
+    PIN_MODE = 0xF4,
     PIN_STATE_QUERY = 0x6D,
     PIN_STATE_RESPONSE = 0x6E,
-    ANALOG_MAPPING_QUERY = 0x69,
-    ANALOG_MAPPING_RESPONSE = 0x6A,
-    I2C_REQUEST = 0x76,
-    I2C_REPLY = 0x77,
-    I2C_CONFIG = 0x78,
+    PING_READ = 0x75,
+    PULSE_IN = 0x74,
+    PULSE_OUT = 0x73,
+    QUERY_FIRMWARE = 0x79,
+    REPORT_ANALOG = 0xC0,
+    REPORT_DIGITAL = 0xD0,
+    REPORT_VERSION = 0xF9,
+    SAMPLING_INTERVAL = 0x7A,
+    SERVO_CONFIG = 0x70,
+    SERIAL_MESSAGE = 0x60,
+    SERIAL_CONFIG = 0x10,
+    SERIAL_WRITE = 0x20,
+    SERIAL_READ = 0x30,
+    SERIAL_REPLY = 0x40,
+    SERIAL_CLOSE = 0x50,
+    SERIAL_FLUSH = 0x60,
+    SERIAL_LISTEN = 0x70,
+    START_SYSEX = 0xF0,
+    STEPPER = 0x72,
     STRING_DATA = 0x71,
     SYSTEM_RESET = 0xFF,
-    PULSE_OUT = 0x73,
-    PULSE_IN = 0x74;
+    MAX_PIN_COUNT = 128;
 
     /**
      * MIDI_RESPONSE contains functions to be called when we receive a MIDI message from the arduino.
@@ -254,6 +279,57 @@ SYSEX_RESPONSE[PULSE_IN] = function(board){
     board.emit('pulse-in-'+pin,duration);
 };
 /**
+ * Responses for SA5Firmata
+ */
+SYSEX_RESPONSE[0xC0] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("joyX", value);
+};
+SYSEX_RESPONSE[0xC1] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("joyY", value);
+};
+SYSEX_RESPONSE[0xC2] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F);
+    board.emit("butZ", value);
+};
+SYSEX_RESPONSE[0xC3] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F);
+    board.emit("butC", value);
+};
+SYSEX_RESPONSE[0xC4] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accX", value);
+};
+SYSEX_RESPONSE[0xC5] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accY", value);
+};
+SYSEX_RESPONSE[0xC6] = function(board) {
+    var value = (board.currentBuffer[2] & 0x7F) | ((board.currentBuffer[3] & 0x7F) << 7);
+    board.emit("accZ", value);
+};
+SYSEX_RESPONSE[0xC8] = function(board) {
+    var pulse = (board.currentBuffer[2] & 0x7F) << 25| (board.currentBuffer[3] & 0x7F) << 18 | (board.currentBuffer[4] & 0x7F) << 11 | (board.currentBuffer[5] & 0x7F) << 4 | (board.currentBuffer[6] & 0x7F) >> 3;
+    var pin = (board.currentBuffer[6] & parseInt("0111",2)) << 5 | (board.currentBuffer[7] & parseInt("011111",2));
+    board.emit("pulseIn-"+pin, pulse);
+};
+SYSEX_RESPONSE[0xCA] = function(board) {
+    var pulse = (board.currentBuffer[2] & 0x7F) << 9| (board.currentBuffer[3] & 0x7F) << 2 | (board.currentBuffer[4] & parseInt("01100000",2)) >> 5;
+    var pin = (board.currentBuffer[4] & parseInt("011111",2)) << 3 | (board.currentBuffer[5] & parseInt("0111",2));
+    board.emit("ping-"+pin, pulse);
+}
+SYSEX_RESPONSE[0xCB] = function(board) {
+    var irResult = (board.currentBuffer[2] & 0x7F) << 25| (board.currentBuffer[3] & 0x7F) << 18 | (board.currentBuffer[4] & 0x7F) << 11 | (board.currentBuffer[5] & 0x7F) << 4 | (board.currentBuffer[6] & 0x7F) >> 3;
+    board.emit("IRrec", irResult);
+};
+SYSEX_RESPONSE[0xCF] = function(board) {
+    var response = (board.currentBuffer[2] & 0x7F) << 1 | (board.currentBuffer[3] & 0x01);
+    var pin = board.currentBuffer[4] >> 1;
+    var param = board.currentBuffer[4] & 0x01;
+    board.emit("DHT11-"+pin+"-"+param, response);
+};
+/**
  * @class The Board object represents an arduino board.
  * @augments EventEmitter
  * @param {String} port This is the serial port the arduino is connected to.
@@ -277,7 +353,15 @@ var Board = function(port, callback) {
             OUTPUT: 0x01,
             ANALOG: 0x02,
             PWM: 0x03,
-            SERVO: 0x04
+            SERVO: 0x04,
+            SHIFT: 0x05,
+            I2C: 0x06,
+            ONEWIRE: 0x07,
+            STEPPER: 0x08,
+            SERIAL: 0x0A,
+            IGNORE: 0x7F,
+            PING_READ: 0x75,
+            UNKOWN: 0x10
         };
         this.I2C_MODES = {
             WRITE: 0x00,
@@ -301,6 +385,11 @@ var Board = function(port, callback) {
                 buffersize: 1
             });
         }
+
+        this.transport = this.sp;
+
+		this.sp.removeAllListeners = nop;
+
         this.sp.on('error', function(string) {
             callback(string);
         });

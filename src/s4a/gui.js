@@ -518,8 +518,10 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addLine();
     menu.addItem('New', 'createNewProject');
     menu.addItem('Open...', 'openProjectsBrowser');
+    menu.addItem('Open from URL...', 'openFromUrl');
     menu.addItem('Save', "save");
     menu.addItem('Save As...', 'saveProjectsBrowser');
+    menu.addItem('Save and share', 'saveAndShare');
     menu.addLine();
     menu.addItem(
             'Send project to board',
@@ -999,6 +1001,62 @@ IDE_Morph.prototype.doPushProject = function (contents, url) {
 
     request.write(contents);
     request.end();
+};
+
+IDE_Morph.prototype.openFromUrl = function () {
+    this.prompt('Enter project URL', function (url) {
+        window.location.href = '#' + url.replace(/.*#/g,'') + '&editMode';
+        window.onbeforeunload = nop;
+        window.location.reload();
+    });
+};
+
+IDE_Morph.prototype.saveAndShare = function () {
+    var myself = this;
+
+    if (!this.projectName) {
+        myself.prompt(
+                'Please enter a name for your project', 
+                function (name) { 
+                    myself.projectName = name;
+                    myself.doSaveAndShare();
+                });
+    } else {
+        this.doSaveAndShare();
+    }
+};
+
+IDE_Morph.prototype.doSaveAndShare = function () {
+    var myself = this,
+        projectName = this.projectName;
+
+    this.showMessage('Saving project\nto the cloud...');
+    this.setProjectName(projectName);
+
+    SnapCloud.saveProject(
+            this,
+            function () {
+                myself.showMessage('sharing\nproject...');
+                SnapCloud.reconnect(
+                    function () {
+                        SnapCloud.callService(
+                            'publishProject',
+                            function () {
+                                myself.showMessage('shared.', 2);
+                            },
+                            myself.cloudError(),
+                            [
+                            projectName,
+                            myself.stage.thumbnail(SnapSerializer.prototype.thumbnailSize).toDataURL('image/png')
+                            ]
+                            );
+                    },
+                    myself.cloudError()
+                    );
+                prompt('This project is now public at the following URL:', SnapCloud.urlForMyProject(projectName));
+            },
+            this.cloudError()
+                )
 };
 
 // EXPERIMENTAL: Arduino translation mode
