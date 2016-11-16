@@ -113,7 +113,6 @@ commands[3] = function (pin, ws) {
         if (debugMode) { console.log('setting pin mode to digital input'); }
         commands[5](pin, board.MODES.INPUT);
         board.digitalRead(lininoMode ? 'D' + pin : pin, function(value) { 
-            console.log('digital change');
             board.pins[pin].value = value === 1;
             ws.send('[' + pin + ',' + board.pins[pin].value + ']');
         });

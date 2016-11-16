@@ -34,4 +34,5 @@ echo "======="
 echo
 
 rm -rf releases/embedded/cli
+mkdir -p releases/embedded
 cp -r tmp releases/embedded/cli

@@ -33,6 +33,7 @@ Dispatcher.prototype.connectBoard = function (serialPort) {
                 lastId ++;
             });
     board.id = lastId;
+    board.events = {};
     return board.id;
 };
 
@@ -66,14 +67,20 @@ Dispatcher.prototype.analogWrite = function (boardId, pin, value) {
     Boards[boardId].analogWrite(pin, value);
 };
 
-Dispatcher.prototype.digitalRead = function (boardId, pin, sendResponse) {
+Dispatcher.prototype.digitalRead = function (boardId, pin) {
     var board = Boards[boardId];
-    board.digitalRead( pin, function (value) { board.pins[pin].value = value });
+    board.digitalRead(pin, function (value) { board.pins[pin].value = value; });
     return board.pins[pin].value;
 };
 
-Dispatcher.prototype.analogRead = function (boardId, pin, sendResponse) {
+Dispatcher.prototype.analogRead = function (boardId, pin) {
     var board = Boards[boardId];
-    board.analogRead( pin, function (value) { board.pins[board.analogPins[pin]].value = value });
+    board.analogRead(pin, function (value) { board.pins[board.analogPins[pin]].value = value; });
     return board.pins[board.analogPins[pin]].value;
+};
+
+Dispatcher.prototype.once = function (boardId, name) {
+    var board = Boards[boardId];
+    board.events[name] = null;
+    board.once(name, function (data) { console.log('once retorna: ' + data); board.events[name] = data; });
 };

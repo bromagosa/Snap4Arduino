@@ -7,12 +7,6 @@ var extensionId = 'meajklokhjoflbimamdbhpdjlondmgpi',
     },
     require = function () {};
 
-// Fake Buffer definition, needed by some Firmata extensions
-
-function Buffer(data) {
-    return data;
-};
-
 // Messaging between web client and plugin
 
 function Postal() {};

@@ -388,7 +388,7 @@ var Board = function(port, callback) {
 
         this.transport = this.sp;
 
-		this.sp.removeAllListeners = nop;
+        this.sp.removeAllListeners = function () {};
 
         this.sp.on('error', function(string) {
             callback(string);

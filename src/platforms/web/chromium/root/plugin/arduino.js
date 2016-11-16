@@ -88,6 +88,8 @@ Arduino.prototype.connect = function (port) {
 };
 
 Arduino.prototype.populateBoard = function (board) {
+    board.events = {};
+
     board.sp.close = postal.commandSender('closeSerial', board.id);
     board.sp.removeListener = nop;
     board.sp.removeAllListeners = nop;
@@ -103,4 +105,11 @@ Arduino.prototype.populateBoard = function (board) {
     board.analogWrite = function (pin, value) { postal.sendCommand('analogWrite', [ board.id, pin, value ]); };
     board.digitalRead = function (pin, callback) { postal.sendCommand('digitalRead', [ board.id, pin ], callback); };
     board.analogRead = function (pin, callback) { postal.sendCommand('analogRead', [ board.id, pin ], callback); };
+    board.once = function (name, callback) { postal.sendCommand('once', [ board.id, name ], function (data) { console.log(data) }); };
+};
+
+// Fake Buffer definition, needed by some Firmata extensions
+
+function Buffer (data) {
+    return data;
 };
