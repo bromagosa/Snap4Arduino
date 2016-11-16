@@ -2,7 +2,7 @@
 # Based on Anders Evenrud's script for OS.js
 
 # First of all, build the CLI version
-src/platforms/embedded/cli/build
+./build --platform=embedded/cli --keeptmp
 
 PWD="${0%/*}"
 
@@ -21,6 +21,10 @@ OUTDIR="releases/packages"
 mkdir -p $OUTDIR/ipkg/
 mkdir -p $OUTDIR/data/usr/share/snap4arduino
 mkdir -p $OUTDIR/data/usr/bin
+
+# Remove node_modules and symlink to system ones
+rm -r tmp/node_modules
+ln -s tmp/node_modules /usr/lib/node_modules
 
 # Create data directory tree structure
 cp -r tmp/* $OUTDIR/data/usr/share/snap4arduino/
@@ -46,10 +50,3 @@ echo "2.0" > $OUTDIR/debian-binary
 
 # Create ipkg
 tar -C $OUTDIR -cz ./debian-binary ./data.tar.gz ./control.tar.gz > $OUTDIR/$PKGNAME
-
-# Clean up
-rm -rf $OUTDIR/ipkg
-rm -rf $OUTDIR/data
-rm $OUTDIR/debian-binary
-rm $OUTDIR/data.tar.gz
-rm $OUTDIR/control.tar.gz

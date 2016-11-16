@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# Particular build script for iOS
+
+echo
+echo "======="
+echo "Reorganizing directory tree"
+echo "======="
+echo
+
+mv tmp tmp_www
+mkdir tmp
+
+echo "======="
+echo "Creating Cordova application skeleton..."
+echo "======="
+echo
+
+cd tmp
+cordova create Snap4Arduino
+cd Snap4Arduino
+cordova platform add ios
+mv ../../tmp_www/* www
+cd ../../
+rm -r tmp_www
+
+echo
+echo "======="
+echo "Setting version name..."
+echo "======="
+echo
+
+sed -r 's/^\s*version.*/  version="'`cat src\/version`'"/' src/platforms/mobile/ios/config.xml > tmp/Snap4Arduino/config.xml
+
+echo
+echo "======="
+echo "Asking Cordova to build Snap4Arduino for iOS"
+echo "======="
+echo
+
+rm -rf releases/mobile/ios
+mkdir -p releases/mobile/ios
+cd tmp/Snap4Arduino
+cordova build
+#mv platforms/android/build/outputs/apk/android-debug.apk ../../releases/mobile/android/Snap4Arduino.apk
+cd ../..
