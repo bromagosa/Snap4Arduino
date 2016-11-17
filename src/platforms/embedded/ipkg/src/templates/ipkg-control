@@ -1,5 +1,5 @@
 Package: snap4arduino
-Version: v1.2
+Version: CHANGEME
 Depends: libc, node, node-canvas, node-firmata, node-ws, node-ideino-linino-lib, node-es6-shim
 Source: package/linino/snap4arduino
 Section: lang

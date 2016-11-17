@@ -1,5 +1,6 @@
 if [ -d /usr/share/snap4arduino ]
 then
 	rm -rf /usr/share/snap4arduino
-	rm /osjs/dist/snap
+	rm -rf /osjs/dist/snap
+        rm /usr/bin/snap4arduino
 fi

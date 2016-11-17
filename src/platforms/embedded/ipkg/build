@@ -17,29 +17,28 @@ PKGNAME="snap4arduino_${VERSION}_${ARCH}.ipk"
 SRCDIR="tmp"
 OUTDIR="releases/packages"
 
-# Create package files
+# Create package dirs
 mkdir -p $OUTDIR/ipkg/
 mkdir -p $OUTDIR/data/usr/share/snap4arduino
 mkdir -p $OUTDIR/data/usr/bin
 
-# Remove node_modules and symlink to system ones
+# Remove node_modules, they should be symlinked by postinst
 rm -r tmp/node_modules
-ln -s tmp/node_modules /usr/lib/node_modules
 
 # Create data directory tree structure
-cp -r tmp/* $OUTDIR/data/usr/share/snap4arduino/
-ln -s /usr/share/snap4arduino/snap.js $OUTDIR/data/usr/bin/snap
+cp -r tmp/* $OUTDIR/data/usr/share/snap4arduino/.
 
-# Create control file
-cp $PWD/src/templates/ipkg-control $OUTDIR/ipkg/control_tmpl
+# Create control file and set version name
+sed -r 's/^Version.*/Version: v'`cat src\/version`'/' $PWD/src/templates/ipkg-control > $OUTDIR/ipkg/control
 
-# adding custom scripts
+# Add custom scripts
 cp $PWD/src/templates/post* $OUTDIR/ipkg/
 cp $PWD/src/templates/prerm $OUTDIR/ipkg/
 
-awk '{gsub("ARCH", "'"$ARCH"'", $0); print }' $OUTDIR/ipkg/control_tmpl | awk '{gsub("VER", "'"${VERSION}"'", $0); print }' > $OUTDIR/ipkg/control
+# Generic build script arrives late to the party, we need to do the copying ourselves here
+cp -r $PWD/root/* $OUTDIR/data/usr/share/snap4arduino/.
 
-# Create control file
+# Create control package
 tar -C $OUTDIR/ipkg -czf $OUTDIR/control.tar.gz ./control ./prerm ./postinst ./postinst-pkg ./postrm
 
 # Create data image
@@ -50,3 +49,10 @@ echo "2.0" > $OUTDIR/debian-binary
 
 # Create ipkg
 tar -C $OUTDIR -cz ./debian-binary ./data.tar.gz ./control.tar.gz > $OUTDIR/$PKGNAME
+
+# Clean up
+rm -rf $OUTDIR/ipkg
+rm -rf $OUTDIR/data
+rm $OUTDIR/debian-binary
+rm $OUTDIR/data.tar.gz
+rm $OUTDIR/control.tar.gz

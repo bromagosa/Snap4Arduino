@@ -10,6 +10,7 @@ echo
 
 mkdir tmp/snap
 mv tmp/* tmp/snap 2>/dev/null
+cp src/version tmp
 
 echo
 echo "======="
