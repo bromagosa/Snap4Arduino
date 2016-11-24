@@ -137,6 +137,16 @@ BlockMorph.prototype.userMenu = function () {
         top,
         blck;
 
+	function addOption(label, toggle, test, onHint, offHint) {
+        var on = '\u2611 ',
+            off = '\u2610 ';
+        menu.addItem(
+            (test ? on : off) + localize(label),
+            toggle,
+            test ? onHint : offHint
+        );
+    }
+
     menu.addItem(
         "help...",
         'showHelp'
