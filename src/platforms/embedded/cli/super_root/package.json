@@ -2,6 +2,8 @@
   "main": "s4a.html",
   "name": "Snap4Arduino",
   "description": "Snap4Arduino",
+  "license": "AGPL-3.0",
+  "repository": "https://github.com/bromagosa/Snap4Arduino",
   "window": {
     "title": "Snap4Arduino",
     "icon": "s4a.ico",

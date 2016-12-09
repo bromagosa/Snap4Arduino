@@ -29,6 +29,14 @@ lininoMode = !serialPort && process.argv.indexOf('--linino') > -1;
 
 // Let's treat all parameters
 
+if (process.argv.indexOf('--ws') > -1) {
+    require('child_process').exec(
+            'node ws.js ' + (lininoMode ? '' : '--firmata ' + serialPort),
+            { cwd: __dirname },
+            function (e, o) { console.log(e + o) });
+    process.exit(0);
+}
+
 if (process.argv.indexOf('--help') > -1) {
     printHelp();
     process.exit(0);
