@@ -107,6 +107,7 @@ To find out which platforms are supported by the build script, just run ``./buil
     desktop
     desktop/gnu
     mobile
+    this
     all
 
 ## Embedded Command Line Version

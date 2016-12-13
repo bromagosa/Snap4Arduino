@@ -13,9 +13,15 @@ fi
 
 VERSION="`cat src\/version`"
 
+mv tmp clitmp
+mkdir tmp
+mv clitmp tmp/cli_files
+mkdir tmp/ipkg_files
+
 PKGNAME="snap4arduino_${VERSION}_${ARCH}.ipk"
-SRCDIR="tmp"
-OUTDIR="releases/packages"
+SRCDIR="tmp/cli_files"
+OUTDIR="tmp/ipkg_files"
+PKGDIR="releases/packages"
 
 # Create package dirs
 mkdir -p $OUTDIR/ipkg/
@@ -24,10 +30,10 @@ mkdir -p $OUTDIR/data/usr/bin
 mkdir -p $OUTDIR/data/etc/init.d
 
 # Remove node_modules, they should be symlinked by postinst
-rm -r tmp/node_modules
+rm -r $SRCDIR/node_modules
 
 # Create data directory tree structure
-cp -r tmp/* $OUTDIR/data/usr/share/snap4arduino/.
+cp -r $SRCDIR/* $OUTDIR/data/usr/share/snap4arduino/.
 
 # Create control file and set version name
 sed -r 's/^Version.*/Version: v'`cat src\/version`'/' $PWD/src/templates/ipkg-control > $OUTDIR/ipkg/control
@@ -52,11 +58,11 @@ tar -C $OUTDIR/data -czf $OUTDIR/data.tar.gz ./usr ./etc
 echo "2.0" > $OUTDIR/debian-binary
 
 # Create ipkg
-tar -C $OUTDIR -cz ./debian-binary ./data.tar.gz ./control.tar.gz > $OUTDIR/$PKGNAME
+tar -C $OUTDIR -cz ./debian-binary ./data.tar.gz ./control.tar.gz > $PKGDIR/$PKGNAME
 
 # Clean up
-rm -rf $OUTDIR/ipkg
-rm -rf $OUTDIR/data
-rm $OUTDIR/debian-binary
-rm $OUTDIR/data.tar.gz
-rm $OUTDIR/control.tar.gz
+#rm -rf $OUTDIR/ipkg
+#rm -rf $OUTDIR/data
+#rm $OUTDIR/debian-binary
+#rm $OUTDIR/data.tar.gz
+#rm $OUTDIR/control.tar.gz
