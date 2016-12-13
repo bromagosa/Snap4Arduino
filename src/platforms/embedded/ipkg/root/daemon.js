@@ -1,11 +1,14 @@
 var fs = require('fs'),
     cp = require('child_process'),
-    print = function (str) { fs.appendFileSync('/tmp/s4a.out', str) };
+    debugMode = process.argv.indexOf('--debug') > -1,
+    print = debugMode ?
+        function (str) { fs.appendFileSync('/tmp/s4a.out', str + '\n'); } :
+        function () {};
 
 // Unless instructed to run in foreground, we fork ourselves and behave like a daemon
 
 if (process.argv.indexOf('--fg') === -1) {
-    console.log('starting daemon');
+    console.log('starting daemon...');
     require('daemon')();
     console.log('daemon started');
 } else {
