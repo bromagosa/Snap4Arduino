@@ -23,7 +23,12 @@ WorldMorph.prototype.ws.onmessage = function (evt) {
 };
 
 WorldMorph.prototype.ws.onclose = function () { 
-    ide.inform('Connection error', 'WebSockets connection dropped!');
+    var myself = this;
+    ide.confirm(
+            'WebSockets connection dropped!\nDo you wish to try to reconnect?',
+            'Connection error',
+            function () { myself.initWebsockets(); }
+            );
 };
 
 WorldMorph.prototype.initBoard = function (pinConfig) {
