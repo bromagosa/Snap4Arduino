@@ -46,6 +46,7 @@ print_help_platforms() {
     echo "desktop"
     echo "desktop/gnu"
     echo "mobile"
+    echo "this"
     echo "all"
 }
 
@@ -68,9 +69,20 @@ fi
 allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
 
 if test -n "$platform"; then
+    
+    # Placeholder platform names
     if test "$platform" = "all"; then
         platform=""
+    elif test "$platform" = "this"; then
+        if test `arch` = "x86_64" > /dev/null; then
+            platform="desktop/gnu/64"
+        elif test `arch` = "i386" > /dev/null; then
+            platform="desktop/gnu/32"
+        else
+            echo "--platform=this only works under GNU/Linux systems"
+        fi
     fi
+
     platforms=`echo "$allplatforms" | grep "$platform"`
 fi
 

@@ -234,7 +234,8 @@ SpriteMorph.prototype.blockTemplates = function (category) {
             },
             null
         );
-    }
+    };
+
     function blockBySelector (selector) {
         if (StageMorph.prototype.hiddenPrimitives[selector]) {
             return null;
@@ -562,8 +563,11 @@ SpriteMorph.prototype.arduinoWatcher = function (selector, label, color, pin) {
     var stage = this.parentThatIsA(StageMorph),
         watcher,
         others;
+
     if (!stage) { return; }
+
     watcher = this.arduinoWatcherFor(stage, selector, pin);
+
     if (watcher) {
         if (watcher.isVisible) {
             watcher.hide();

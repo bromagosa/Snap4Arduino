@@ -23,11 +23,13 @@ Process.prototype.servoWrite = function (pin, value) {
 };
 
 Process.prototype.reportDigitalReading = function (pin) {
+    if (!pin) { return false };
     world.send([3, pin]);
     return world.board.pins[pin].value || false;
 };
 
 Process.prototype.reportAnalogReading = function (pin) {
+    if (!pin) { return 0 };
     world.send([4, pin]);
     return world.board.pins['A' + pin].value || 0;
 };
@@ -35,3 +37,4 @@ Process.prototype.reportAnalogReading = function (pin) {
 Process.prototype.setPinMode = function (pin, mode) {
     world.send([5, pin, mode]);
 };
+

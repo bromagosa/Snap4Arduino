@@ -2,6 +2,10 @@ function pinsSettableToMode(aMode) {
     var pinNumbers = {},
         pins = world.board.pins;
 
+    if (aMode === 'analog') {
+        return world.board.analogPins;
+    }
+
     pins.forEach(
         function(each){ 
             if (each.supportedModes.indexOf(aMode) > -1) { 
@@ -18,7 +22,6 @@ function pinsSettableToMode(aMode) {
 // labelPart() proxy
 
 SyntaxElementMorph.prototype.originalLabelPart = SyntaxElementMorph.prototype.labelPart;
-
 SyntaxElementMorph.prototype.labelPart = function(spec) {
     var part;
     switch (spec) {
@@ -70,7 +73,9 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
             part = new InputSlotMorph(
                 null,
                 true,
-                world.board.analogPins
+                function() { 
+                    return pinsSettableToMode('analog');
+                }
         );
         break;
         case '%digitalPin':
@@ -86,4 +91,4 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
             part = this.originalLabelPart(spec);
     }
     return part;
-}
+};

@@ -57,3 +57,5 @@ WorldMorph.prototype.initBoard = function (pinConfig) {
                 });
     });
 };
+
+Arduino = nop;
