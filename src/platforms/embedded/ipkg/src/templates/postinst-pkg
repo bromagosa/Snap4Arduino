@@ -1,8 +1,8 @@
 if [ -d /usr/share/snap4arduino ]
 then
-    ln -s /usr/share/snap4arduino/snap.js /usr/bin/snap4arduino
-    ln -s /usr/lib/node_modules /usr/share/snap4arduino/node_modules 
-    ln -s /usr/share/snap4arduino/snap /osjs/dist/snap
+    ln -fs /usr/share/snap4arduino/snap.js /usr/bin/snap4arduino
+    ln -fs /usr/lib/node_modules /usr/share/snap4arduino/node_modules 
+    ln -fs /usr/share/snap4arduino/snap /osjs/dist/snap
 fi
 
 if [ -z "`lininoio -s | grep ENABLED`" ]
@@ -10,7 +10,9 @@ then
     lininoio start -f
 fi
 
-if [ -n "`ls /sys/class/gpio/SCK/`" ]
+chmod +x /etc/init.d/snap4arduino-daemon
+
+if [ -e /sys/class/gpio/SCK/ ]
 then 
     echo "==============================================================="
     echo "=                 WARNING! OLD BATHOS!                        ="

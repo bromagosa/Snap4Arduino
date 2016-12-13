@@ -21,6 +21,7 @@ OUTDIR="releases/packages"
 mkdir -p $OUTDIR/ipkg/
 mkdir -p $OUTDIR/data/usr/share/snap4arduino
 mkdir -p $OUTDIR/data/usr/bin
+mkdir -p $OUTDIR/data/etc/init.d
 
 # Remove node_modules, they should be symlinked by postinst
 rm -r tmp/node_modules
@@ -38,11 +39,14 @@ cp $PWD/src/templates/prerm $OUTDIR/ipkg/
 # Generic build script arrives late to the party, we need to do the copying ourselves here
 cp -r $PWD/root/* $OUTDIR/data/usr/share/snap4arduino/.
 
+# Add daemon script
+cp $PWD/src/templates/daemon.sh $OUTDIR/data/etc/init.d/snap4arduino-daemon
+
 # Create control package
 tar -C $OUTDIR/ipkg -czf $OUTDIR/control.tar.gz ./control ./prerm ./postinst ./postinst-pkg ./postrm
 
 # Create data image
-tar -C $OUTDIR/data -czf $OUTDIR/data.tar.gz ./usr
+tar -C $OUTDIR/data -czf $OUTDIR/data.tar.gz ./usr ./etc
 
 # Create debian binary file
 echo "2.0" > $OUTDIR/debian-binary
