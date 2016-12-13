@@ -1,38 +1,46 @@
 // Linino WebSockets protocol
 
-WorldMorph.prototype.ws = new WebSocket('ws://' + window.location.hostname + ':8888');
+WorldMorph.prototype.initWebsockets = function () {
+    var myself = this;
 
-WorldMorph.prototype.ws.binaryType = 'arraybuffer';
+    this.ws = new WebSocket('ws://' + window.location.hostname + ':8888');
+
+    this.ws.binaryType = 'arraybuffer';
+
+    this.ws.onmessage = function (evt) { 
+        if (!WorldMorph.prototype.board) {
+            WorldMorph.prototype.initBoard(JSON.parse(evt.data));
+        } else {
+            try {
+                var data = JSON.parse(evt.data);
+                world.board.pins[data[0]].value = data[1];
+            } catch (err) {
+                console.error('Unparseable message!\n' + evt.data + '\n' + err);
+                return;
+            }
+        }
+    };
+
+    this.ws.onclose = function () { 
+        ide.confirm(
+                'WebSockets connection dropped!\nDo you wish to try to reconnect?',
+                'Connection error',
+                function () { 
+                    myself.ws.onclose = nop;
+                    myself.initWebsockets(); 
+                }
+                );
+    };
+
+};
 
 WorldMorph.prototype.send = function (array) {
     this.ws.send(new Uint8Array(array).buffer);
 };
 
-WorldMorph.prototype.ws.onmessage = function (evt) { 
-    if (!WorldMorph.prototype.board) {
-        WorldMorph.prototype.initBoard(JSON.parse(evt.data));
-    } else {
-        try {
-            var data = JSON.parse(evt.data);
-            world.board.pins[data[0]].value = data[1];
-        } catch (err) {
-            console.error('Unparseable message!\n' + evt.data + '\n' + err);
-            return;
-        }
-    }
-};
-
-WorldMorph.prototype.ws.onclose = function () { 
-    var myself = this;
-    ide.confirm(
-            'WebSockets connection dropped!\nDo you wish to try to reconnect?',
-            'Connection error',
-            function () { myself.initWebsockets(); }
-            );
-};
-
 WorldMorph.prototype.initBoard = function (pinConfig) {
     var myself = this;
+
     this.board = { 
         pins: [ 
             { supportedModes: [] },
@@ -61,6 +69,12 @@ WorldMorph.prototype.initBoard = function (pinConfig) {
                     }
                 });
     });
+};
+
+WorldMorph.prototype.originalInit = WorldMorph.prototype.init;
+WorldMorph.prototype.init = function (aCanvas, fillPage) {
+    this.originalInit(aCanvas, fillPage);
+    this.initWebsockets();
 };
 
 Arduino = nop;
