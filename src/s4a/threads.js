@@ -75,6 +75,14 @@ Process.prototype.setPinMode = function (pin, mode) {
 Process.prototype.servoWrite = function (pin, value) {
     var sprite = this.homeContext.receiver;
 
+    this.popContext();
+    sprite.startWarp();
+    this.pushContext('doYield');
+
+    if (!this.isAtomic) {
+        this.pushContext('doStopWarping');
+    }
+
     if (sprite.arduino.isBoardReady()) {
 
         var board = sprite.arduino.board,
@@ -110,6 +118,10 @@ Process.prototype.servoWrite = function (pin, value) {
     } else {
         throw new Error(localize('Arduino not connected'));			
     }
+
+    this.isAtomic = true;
+
+    this.pushContext();
 };
 
 Process.prototype.reportAnalogReading = function (pin) {
