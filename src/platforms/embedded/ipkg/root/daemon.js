@@ -26,6 +26,7 @@ if (fs.existsSync('/root/autorun.xml')) {
     proc.on('close', function (code) { print('Snap4Arduino process stopped with exit code ' + code); });
 }
 
+
 // If passed the --ws argument, we start the websockets listener... listener?
 
 if (process.argv.indexOf('--ws') > -1) {
@@ -48,4 +49,30 @@ if (process.argv.indexOf('--ws') > -1) {
     };
 
     setInterval(wsStart, 2500);
+}
+
+
+// And if passed the --listen argument, we start the project listener... listener?
+
+if (process.argv.indexOf('--listen') > -1) {
+    var listenerStart;
+    listenerStart = function () {
+        cp.execFile(
+                'ps',
+                function (err, stdout, stderr) {
+                    print('Checking whether project listener is running...');
+                    if (stdout.indexOf('listen.js') === -1) {
+                        console.log('Project listener not running');
+                        var proc = cp.execFile('node', ['/usr/share/snap4arduino/listen.js']);
+                        proc.stdout.on('data', print);
+                        proc.stderr.on('data', print);
+                        proc.on('close', function (code) { 
+                            print('Project listener stopped with exit code ' + code);
+                            print('Will restart at next check');
+                        });
+                    } 
+                });
+    };
+
+    setInterval(listenerStart, 2500);
 }

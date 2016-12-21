@@ -11,7 +11,7 @@ EXTRA_COMMANDS="status"
 DAEMON_PATH="/usr/share/snap4arduino"
 
 DAEMON="node daemon.js"
-DAEMONOPTS="--ws --log"
+DAEMONOPTS="--ws --log --listen"
 
 NAME=snap4arduino-daemon
 DESC="Snap4Arduino daemon"
@@ -20,6 +20,16 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 start() {
     printf "%-50s" "Starting $NAME..."
+
+    if [ -f $PIDFILE ]; then
+        printf "%-50s" "Found an instance of $NAME. Killing it before firing up a new one..."
+        PID=`cat $PIDFILE`
+        cd $DAEMON_PATH
+        kill -HUP $PID
+        printf "%s\n" "Ok"
+        rm -f $PIDFILE
+    fi
+
     cd $DAEMON_PATH
     PID=`$DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
     if [ -z $PID ]; then

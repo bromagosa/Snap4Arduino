@@ -39,6 +39,10 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem('Save As...', 'saveProjectsBrowser');
     menu.addLine();
     menu.addItem(
+            'Send project to board',
+            'pushProject',
+            'Send this project\nto a Snap!-listener enabled\nboard.');
+    menu.addItem(
         'New Arduino translatable project', 
         'createNewArduinoProject',
         'Experimental feature!\nScripts written under this\nmode will be translatable\nas Arduino sketches');

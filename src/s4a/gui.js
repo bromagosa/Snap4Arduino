@@ -524,10 +524,6 @@ IDE_Morph.prototype.projectMenu = function () {
     menu.addItem('Save and share', 'saveAndShare');
     menu.addLine();
     menu.addItem(
-            'Send project to board',
-            'pushProject',
-            'Send this project\nto a Snap!-listener enabled\nboard.');
-    menu.addItem(
         'New Arduino translatable project', 
         'createNewArduinoProject',
         'Experimental feature!\nScripts written under this\n'
@@ -966,41 +962,32 @@ IDE_Morph.prototype.pushProject = function () {
             }
     ).withKey('pushProject').prompt(
         'Push project',
-        'arduino.local:8080',
+        document.location.hostname + ':8080',
         this.world()
         );
 };
 
 IDE_Morph.prototype.doPushProject = function (contents, url) {
     var myself = this,
-        http = require('http'),
-        splitUrl = url.replace('http://', '').split(':'),
-        options = {
-            hostname: splitUrl[0],
-            port: splitUrl[1],
-            path: '/',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': Buffer.byteLength(contents)
-            }
-        },
-        request = http.request(options, function (response) {
+        http = new XMLHttpRequest();
+
+    http.open('POST', 'http://' + url, true);
+
+    http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    http.onreadystatechange = function () {
+        if (http.readyState === 4 && http.status === 200) {
             myself.inform(
-                    response.statusCode === 200 ? 'Done' : 'Error',
-                    response.statusMessage);
-        });
+                    'Done',
+                    http.responseText);
+        } else if (http.readyState === 4 && status !== 200) {
+            myself.inform(
+                    'Error',
+                    http.responseText);
+        }
+    };
 
-    request.on('error', function (err) {
-        myself.inform('Error', err.message);
-    });
-
-    request.on('timeout', function () {
-        myself.inform('Cannot talk to the board', 'Please check the URL and port, and make\nsure the Snap! listener is running in the board');
-    });
-
-    request.write(contents);
-    request.end();
+    http.send(contents);
 };
 
 IDE_Morph.prototype.openFromUrl = function () {
