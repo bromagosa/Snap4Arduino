@@ -1,8 +1,8 @@
 var fs = require('fs'),
     cp = require('child_process'),
-    debugMode = process.argv.indexOf('--debug') > -1,
-    print = debugMode ?
-        function (str) { fs.appendFileSync('/tmp/s4a.out', str + '\n'); } :
+    logMode = process.argv.indexOf('--log') > -1,
+    print = logMode ?
+        function (str) { fs.appendFileSync('/var/log/snap4arduino', str + '\n'); } :
         function () {};
 
 // Unless instructed to run in foreground, we fork ourselves and behave like a daemon
@@ -34,7 +34,6 @@ if (process.argv.indexOf('--ws') > -1) {
         cp.execFile(
                 'ps',
                 function (err, stdout, stderr) {
-                    print('Checking whether websockets listener is running...');
                     if (stdout.indexOf('ws.js') === -1) {
                         console.log('Websockets listener not running');
                         var proc = cp.execFile('node', ['/usr/share/snap4arduino/ws.js']);
@@ -44,9 +43,7 @@ if (process.argv.indexOf('--ws') > -1) {
                             print('WebSockets listener stopped with exit code ' + code);
                             print('Will restart at next check');
                         });
-                    } else {
-                        print('Websockets listener already running');
-                    }
+                    } 
                 });
     };
 
