@@ -3,6 +3,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="shortcut icon" href="s4a.ico">
+    </head>
+    <body style="margin: 0; background-image: url('loading.png'); background-repeat: no-repeat; background-attachment: fixed; background-position: center;">
+        <canvas id="world" tabindex="1" style="position: absolute;" />
         <script type="text/javascript" src="s4a/arduino.js"></script>
         <script type="text/javascript" src="morphic.js"></script>
         <script type="text/javascript" src="s4a/morphic.js"></script>
@@ -75,10 +78,6 @@
                 nativeMenuBar.createMacBuiltin("Snap4Arduino");
                 win.menu = nativeMenuBar;
             }
-
         </script>
-        </head>
-        <body style="margin: 0;">
-            <canvas id="world" tabindex="1" style="position: absolute;" />
-        </body>
-    </html>
+    </body>
+</html>
