@@ -173,4 +173,4 @@ s4aTempDict = {
 // like en for English, ca for Catalan, zh for Mandarin or de for German.
 
 // Add attributes to original SnapTranslator.dict.LANG
-for (var attrname in s4aTempDict) { SnapTranslator.dict.zh[attrname] = s4aTempDict[attrname]; }
+for (var attrname in s4aTempDict) { SnapTranslator.dict.zh_CN[attrname] = s4aTempDict[attrname]; }
