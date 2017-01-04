@@ -1,3 +1,4 @@
+
 s4aTempDict = {
 
     /*
@@ -43,28 +44,28 @@ s4aTempDict = {
     // arduino:
 
     'digital input':
-        '数字输入',
+        '數位輸入',
 
     'digital output':
-        '数字输出',
+        '數位輸出',
 
     'PWM':
         'PWM',
 
     'servo':
-        '舵机',
+        '伺服馬達',
 
     'clockwise':
-        '顺时针',
+        '順時針',
 
     'clockwise (1500-1000)':
-        '顺时针 (1500-1000)',
+        '順時針 (1500-1000)',
 
     'counter-clockwise':
-        '逆时针',
+        '逆時針',
 
     'counter-clockwise (1500-2000)':
-        '逆时针 (1500-2000)',
+        '逆時針 (1500-2000)',
 
     'stopped':
         '停止',
@@ -73,104 +74,104 @@ s4aTempDict = {
         '停止 (1500)',
 
     'disconnected':
-        '断开连接',
+        '斷開連接',
 
     'angle (0-180)':
         '角度 (0-180)',
 
     'connect to Arduino':
-        '连接到Arduino板',
+        '連接到Arduino板',
 
     'disconnect Arduino':
-        '断开与Arduino的连接',
+        '斷開與Arduino的連接',
 
     'Connect Arduino':
-        '连接到Arduino板',
+        '連接到Arduino板',
 
     'Disconnect Arduino':
-        '断开与Arduino的连接',
+        '斷開與Arduino的連接',
 
     'analog reading %analogPin':
-        '模拟输入值 %analogPin',
+        '類比輸入值 %analogPin',
 
     'digital reading %digitalPin':
-        '数字输入值 %digitalPin',
+        '數位輸入值 %digitalPin',
 
     'connect arduino at %s':
-        '连接位于 %s 的Arduino板',
+        '連接位於 %s 的Arduino板',
 
     'disconnect arduino':
-        '断开与Arduino的连接',
+        '斷開與Arduino的連接',
 
     'setup digital pin %digitalPin as %pinMode':
-        '数字脚 %digitalPin 设置成 %pinMode',
+        '數位腳 %digitalPin 設置成 %pinMode',
 
     'set digital pin %digitalPin to %b':
-        '数字脚 %digitalPin 设置成 %b',
+        '數位腳 %digitalPin 設定成 %b',
 
     'set servo %servoPin to %servoValue':
-        '%servoPin 脚的舵机设置成 %servoValue',
+        '%servoPin 腳的伺服馬達設定成 %servoValue',
 
     'set pin %pwmPin to value %n':
-        '%pwmPin 脚的值设置成 %n',
+        '%pwmPin 腳的值設定成 %n',
 
     'Connecting board at port\n': 
-        '正在连接控制板，端口：\n',
+        '正在連接控制板，通訊埠：\n',
 
     'An Arduino board has been connected. Happy prototyping!':
         '接上Arduino板了，祝你玩得愉快！',
 
     'Board was disconnected from port\n':
-        '控制板已中断连接，端口：\n',
+        '控制板已中斷連線了，通訊埠：\n',
 
     'It seems that someone pulled the cable!':
-        '看来有人拔掉连接线了！',
+        '看來有人拔掉連接線了！',
 
     'Error connecting the board.':
-        '连接控制板时发生错误',
+        '連接控制板時發生錯誤',
 
     'There is already a board connected to this sprite':
-        '已经有一个控制板连接到这个角色了',
+        '已經有一個控制板連接到這個角色了',
 
     'Could not connect an Arduino\nNo boards found':
-        '无法连接到Arduino\n找不到控制板',
+        '無法連接到Arduino\n找不到控制板',
 
     'Could not talk to Arduino in port\n':
-        '无法与Arduino联系，端口：\n',
+        '無法與Arduino聯繫，通訊埠：\n',
 
     'Check if firmata is loaded.':
-        '检查是否已经加载Firmata固件。',
+        '檢查是否已經載入Firmata韌體。',
 
     'An error was detected on the board\n\n':
-        '在控制板上发现错误\n\n',
+        '在控制板上發現錯誤\n\n',
 
     'Board is not connected':
-        '没有连接控制板',
+        '沒有連接控制板',
 
     'New Arduino translatable project':
-        '新增Arduino可转译项目',
+        '新增Arduino可轉譯專案',
 
     'select a port':
-        '选择一个端口',
+        '選擇一個通訊埠',
 
     'Network port':
-        '网络端口  ',
+        '網路通訊埠',
 
     'Enter hostname or ip address:':
-        '输入主机名或IP地址：',
+        '輸入主機名稱或IP位址：',
 
     'Connecting to network port:\n':
-        '连线到网络端口：\n',
+        '連線到網路通訊埠：\n',
 
     'This may take a few seconds...':
-        '可能要等数秒…',
+        '可能要等數秒…',
 
     'Network serial ports':
-        '网络串口'
+        '網路序列埠'
 };
 
 // Please change the LANG keyword in the lines below by your locale's two-digit code in lowercase,
 // like en for English, ca for Catalan, zh for Mandarin or de for German.
 
 // Add attributes to original SnapTranslator.dict.LANG
-for (var attrname in s4aTempDict) { SnapTranslator.dict.zh[attrname] = s4aTempDict[attrname]; }
+for (var attrname in s4aTempDict) { SnapTranslator.dict.tw[attrname] = s4aTempDict[attrname]; }
