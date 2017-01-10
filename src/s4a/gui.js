@@ -1151,10 +1151,9 @@ IDE_Morph.prototype.createNewProject = function () {
             );
 };
 
-IDE_Morph.prototype.version = function() {
+IDE_Morph.prototype.version = function () {
     return require('fs').readFileSync('version')
 };
-
 
 // Can't be decorated, and we need to make sure the "other" category
 // shows up
