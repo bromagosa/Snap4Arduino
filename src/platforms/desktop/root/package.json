@@ -6,7 +6,6 @@
     "window": {
         "title": "Snap4Arduino",
         "icon": "s4a/icon-128.png",
-        "toolbar": false,
         "frame": true,
         "position": "center",
         "width": 960,

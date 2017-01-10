@@ -54,6 +54,13 @@ elif echo $1 | grep osx; then
     echo "======="
     echo
     cp assets/*.icns releases/$1/Snap4Arduino.app/Contents/Resources
+    # In old Macs, one needs to disable GPU rendering for Snap4Arduino to work
+    echo
+    echo "======="
+    echo "Copying OS X additional scripts over..."
+    echo "======="
+    echo
+    cp src/platforms/$1/disable_gpu.command releases/$1
 elif echo $1 | grep gnu; then
     echo
     echo "======="
