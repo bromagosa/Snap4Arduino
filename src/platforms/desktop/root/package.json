@@ -14,13 +14,13 @@
         "min_height": 640
     },
     "dependencies": {
-        "firmata": "~0.3.3",
+        "firmata": ">=0.3.3",
         "serialport": ">=0.7.5"
     },
     "licenses": [
         {
             "type": "AGPLv2",
-            "url": "https://raw.githubusercontent.com/edutec/Snap4Arduino/master/LICENSE"
+            "url": "https://raw.githubusercontent.com/bromagosa/Snap4Arduino/master/LICENSE"
         }
     ],
     "maintainers":[
@@ -33,7 +33,7 @@
     "repositories": [
        {
             "type": "git", 
-            "url": "https://github.com/edutec/Snap4Arduino.git"
+            "url": "https://github.com/bromagosa/Snap4Arduino.git"
        }
     ]
 }
