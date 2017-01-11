@@ -48,45 +48,45 @@ IDE_Morph.prototype.snapMenu = function () {
                      window.open('http://snap4arduino.org', 'Snap4ArduinoWebsite'); 
                  }
                 );
-                menu.addItem(
-                    'Download Snap! source',
-                    function () {
-                        window.open(
-                            'http://snap.berkeley.edu/snapsource/snap.zip',
-                            'SnapSource'
-                        );
-                    }
-                );
-                menu.addItem(
-                    'Snap4Arduino repository',
-                    function () {
-                        window.open(
-                            'http://github.com/edutec/Snap4Arduino',
-                            'SnapSource'
-                        );
-                    }
-                );
+    menu.addItem(
+        'Download Snap! source',
+        function () {
+            window.open(
+                'http://snap.berkeley.edu/snapsource/snap.zip',
+                'SnapSource'
+            );
+        }
+    );
+    menu.addItem(
+        'Snap4Arduino repository',
+        function () {
+            window.open(
+                'http://github.com/edutec/Snap4Arduino',
+                'SnapSource'
+            );
+        }
+    );
 
-                if (world.isDevMode) {
-                    menu.addLine();
-                    menu.addItem(
-                        'Switch back to user mode',
-                        'switchToUserMode',
-                        'disable deep-Morphic\ncontext menus'
-                        + '\nand show user-friendly ones',
-                        new Color(0, 100, 0)
-                    );
-                } else if (world.currentKey === 16) { // shift-click
-                    menu.addLine();
-                    menu.addItem(
-                        'Switch to dev mode',
-                        'switchToDevMode',
-                        'enable Morphic\ncontext menus\nand inspectors,'
-                        + '\nnot user-friendly!',
-                        new Color(100, 0, 0)
-                    );
-                }
-                menu.popup(world, this.logo.bottomLeft());
+    if (world.isDevMode) {
+        menu.addLine();
+        menu.addItem(
+            'Switch back to user mode',
+            'switchToUserMode',
+            'disable deep-Morphic\ncontext menus'
+            + '\nand show user-friendly ones',
+            new Color(0, 100, 0)
+        );
+    } else if (world.currentKey === 16) { // shift-click
+        menu.addLine();
+        menu.addItem(
+            'Switch to dev mode',
+            'switchToDevMode',
+            'enable Morphic\ncontext menus\nand inspectors,'
+            + '\nnot user-friendly!',
+            new Color(100, 0, 0)
+        );
+    }
+    menu.popup(world, this.logo.bottomLeft());
 };
 
 IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
@@ -276,6 +276,22 @@ IDE_Morph.prototype.settingsMenu = function () {
         false
     );
     addPreference(
+        'Nested auto-wrapping',
+        function () {
+            ScriptsMorph.prototype.enableNestedAutoWrapping =
+                !ScriptsMorph.prototype.enableNestedAutoWrapping;
+            if (ScriptsMorph.prototype.enableNestedAutoWrapping) {
+                myself.removeSetting('autowrapping');
+            } else {
+                myself.saveSetting('autowrapping', false);
+            }
+        },
+        ScriptsMorph.prototype.enableNestedAutoWrapping,
+        'uncheck to confine auto-wrapping\nto top-level block stacks',
+        'check to enable auto-wrapping\ninside nested block stacks',
+        false
+    );
+    addPreference(
         'Project URLs',
         function () {
             myself.projectsInURLs = !myself.projectsInURLs;
@@ -376,6 +392,14 @@ IDE_Morph.prototype.settingsMenu = function () {
         'EXPERIMENTAL! check to enable\n live custom control structures',
         true
     );
+    addPreference(
+        'Visible stepping',
+        'toggleSingleStepping',
+        Process.prototype.enableSingleStepping,
+        'uncheck to turn off\nvisible stepping',
+        'check to turn on\n visible stepping (slow)',
+        false
+    );
     menu.addLine();
     addPreference(
         'HTTP server',
@@ -465,7 +489,6 @@ IDE_Morph.prototype.settingsMenu = function () {
         'check to enable\nsaving linked sublist identities',
         true
     );
-
     menu.popup(world, pos);
 };
 
@@ -492,26 +515,30 @@ IDE_Morph.prototype.projectMenu = function () {
             'Costumes' : 'Backgrounds',
         shiftClicked = (world.currentKey === 16);
 
-    // Utility for creating Costumes, etc menus.
-    // loadFunction takes in two parameters: a file URL, and a canonical name
-    function createMediaMenu(mediaType, loadFunction) {
+    function createMediaMenu(folderName, loadFunction) {
+        // Utility for creating Libraries, etc menus.
+        // loadFunction takes in two parameters:
+        // a file URL, and a canonical name
         return function () {
-            var names = this.getMediaList(mediaType),
-                mediaMenu = new MenuMorph(
-                    myself,
-                    localize('Import') + ' ' + localize(mediaType)
-                );
-
-            names.forEach(function (item) {
-                mediaMenu.addItem(
-                    item.name,
-                    function () {loadFunction(item.file, item.name); },
-                    item.help
-                );
-            });
-            mediaMenu.popup(world, pos);
+            myself.getMediaList(
+                folderName,
+                function (names) {
+                    var mediaMenu = new MenuMorph(
+                        myself,
+                        localize('Import') + ' ' + localize(folderName)
+                    );
+                    names.forEach(function (item) {
+                        mediaMenu.addItem(
+                            item.name,
+                            function () {loadFunction(item.file, item.name); },
+                            item.help
+                        );
+                    });
+                    mediaMenu.popup(world, pos);
+                }
+            );
         };
-    };
+    }
 
     menu = new MenuMorph(this);
     menu.addItem('Project notes...', 'editProjectNotes');
@@ -639,29 +666,34 @@ IDE_Morph.prototype.projectMenu = function () {
     }
 
     menu.addLine();
-
-
-    menu.addItem(
-        'Libraries...',
-        createMediaMenu(
-            'libraries',
-            function loadLib(file, name) {
-                var url = myself.resourceURL('libraries', file);
-                myself.droppedText(myself.getURL(url), name);
-            }
-        ),
-        'Select categories of additional blocks to add to this project.'
-    );
     menu.addItem(
         'Import tools',
         function () {
-            myself.droppedText(
-                myself.getURL(myself.resourceURL('tools.xml')),
-                'tools'
+            myself.getURL(
+                myself.resourceURL('tools.xml'),
+                function (txt) {
+                    myself.droppedText(txt, 'tools');
+                }
             );
         },
         'load the official library of\npowerful blocks'
     );
+    menu.addItem(
+        'Libraries...',
+        createMediaMenu(
+            'libraries',
+            function (file, name) {
+                myself.getURL(
+                    myself.resourceURL('libraries', file),
+                    function (txt) {
+                        myself.droppedText(txt, name);
+                    }
+                );
+            }
+        ),
+        'Select categories of additional blocks to add to this project.'
+    );
+
     menu.addItem(
         localize(graphicsName) + '...',
         function () {
@@ -669,19 +701,11 @@ IDE_Morph.prototype.projectMenu = function () {
         },
         'Select a costume from the media library'
     );
-
     menu.addItem(
         localize('Sounds') + '...',
-        createMediaMenu(
-            'Sounds',
-            function loadSound(file, name) {
-                var url = myself.resourceURL('Sounds', file),
-                    audio = new Audio();
-                audio.src = url;
-                audio.load();
-                myself.droppedAudio(audio, name);
-            }
-        ),
+        function () {
+            myself.importMedia('Sounds');
+        },
         'Select a sound from the media library'
     );
 
