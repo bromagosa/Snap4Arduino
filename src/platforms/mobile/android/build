@@ -19,7 +19,8 @@ echo
 cd tmp
 cordova create Snap4Arduino
 cd Snap4Arduino
-cordova platform add android
+cordova platform remove android
+cordova platform add android@5.2.2
 mv ../../tmp_www/* www
 cd ../../
 rm -r tmp_www

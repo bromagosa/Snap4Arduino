@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget 
     id="arduino.org.snap4arduino"
-  version="1.1.6-beta-rc3"
+  version="change me"
     xmlns="http://www.w3.org/ns/widgets"
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Snap4Arduino</name>
