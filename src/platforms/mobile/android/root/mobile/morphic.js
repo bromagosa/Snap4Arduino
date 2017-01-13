@@ -29,6 +29,205 @@ HandMorph.prototype.init = function (aWorld) {
     this.translateStyle = '0px, 0px';
 };
 
+WorldMorph.prototype.initEventListeners = function () {
+    var canvas = this.worldCanvas, myself = this;
+
+    if (myself.useFillPage) {
+        myself.fillPage();
+    } else {
+        this.changed();
+    }
+
+    canvas.addEventListener(
+        "mousedown",
+        function (event) {
+            event.preventDefault();
+            canvas.focus();
+            myself.hand.processMouseDown(event);
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "touchstart",
+        function (event) {
+            myself.hand.processTouchStart(event);
+        },
+        { passive: true }
+    );
+
+    canvas.addEventListener(
+        "mouseup",
+        function (event) {
+            event.preventDefault();
+            myself.hand.processMouseUp(event);
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "dblclick",
+        function (event) {
+            event.preventDefault();
+            myself.hand.processDoubleClick(event);
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "touchend",
+        function (event) {
+            myself.hand.processTouchEnd(event);
+        },
+        { passive: true }
+    );
+
+    canvas.addEventListener(
+        "mousemove",
+        function (event) {
+            myself.hand.processMouseMove(event);
+        },
+        { passive: true }
+    );
+
+    canvas.addEventListener(
+        "touchmove",
+        function (event) {
+            myself.hand.processTouchMove(event);
+        },
+        { passive: true }
+    );
+
+    canvas.addEventListener(
+        "contextmenu",
+        function (event) {
+            // suppress context menu for Mac-Firefox
+            event.preventDefault();
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "keydown",
+        function (event) {
+            // remember the keyCode in the world's currentKey property
+            myself.currentKey = event.keyCode;
+            if (myself.keyboardReceiver) {
+                myself.keyboardReceiver.processKeyDown(event);
+            }
+            // supress backspace override
+            if (event.keyCode === 8) {
+                event.preventDefault();
+            }
+            // supress tab override and make sure tab gets
+            // received by all browsers
+            if (event.keyCode === 9) {
+                if (myself.keyboardReceiver) {
+                    myself.keyboardReceiver.processKeyPress(event);
+                }
+                event.preventDefault();
+            }
+            if ((event.ctrlKey && (!event.altKey) || event.metaKey) &&
+                    (event.keyCode !== 86)) { // allow pasting-in
+                event.preventDefault();
+            }
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "keyup",
+        function (event) {
+            // flush the world's currentKey property
+            myself.currentKey = null;
+            // dispatch to keyboard receiver
+            if (myself.keyboardReceiver) {
+                if (myself.keyboardReceiver.processKeyUp) {
+                    myself.keyboardReceiver.processKeyUp(event);
+                }
+            }
+            event.preventDefault();
+        },
+        false
+    );
+
+    canvas.addEventListener(
+        "keypress",
+        function (event) {
+            if (myself.keyboardReceiver) {
+                myself.keyboardReceiver.processKeyPress(event);
+            }
+            event.preventDefault();
+        },
+        false
+    );
+
+    canvas.addEventListener( // Safari, Chrome
+        "mousewheel",
+        function (event) {
+            myself.hand.processMouseScroll(event);
+            event.preventDefault();
+        },
+        false
+    );
+    canvas.addEventListener( // Firefox
+        "DOMMouseScroll",
+        function (event) {
+            myself.hand.processMouseScroll(event);
+            event.preventDefault();
+        },
+        false
+    );
+
+    document.body.addEventListener(
+        "paste",
+        function (event) {
+            var txt = event.clipboardData.getData("Text");
+            if (txt && myself.cursor) {
+                myself.cursor.insert(txt);
+            }
+        },
+        false
+    );
+
+    window.addEventListener(
+        "dragover",
+        function (event) {
+            event.preventDefault();
+        },
+        false
+    );
+    window.addEventListener(
+        "drop",
+        function (event) {
+            myself.hand.processDrop(event);
+            event.preventDefault();
+        },
+        false
+    );
+
+    window.addEventListener(
+        "resize",
+        function () {
+            if (myself.useFillPage) {
+                myself.fillPage();
+            }
+        },
+        false
+    );
+
+    window.onbeforeunload = function (evt) {
+        var e = evt || window.event,
+            msg = "Are you sure you want to leave?";
+        // For IE and Firefox
+        if (e) {
+            e.returnValue = msg;
+        }
+        // For Safari / chrome
+        return msg;
+    };
+};
+
 HandMorph.prototype.processTouchStart = function (event) {
     var myself = this;
 
@@ -40,14 +239,12 @@ HandMorph.prototype.processTouchStart = function (event) {
             function () {
                 myself.processMouseDown({button: 2});
                 myself.processMouseUp({button: 2});
-                event.preventDefault();
                 clearInterval(myself.touchHoldTimeout);
             },
-            400
+            750
         );
         this.processMouseMove(this.transformTouch(event.touches[0])); // update my position
         this.processMouseDown({button: 0});
-        event.preventDefault();
     } else if (event.touches.length === 2) {
         this.pinchDistance = 0;
     } else if (event.touches.length === 3) {
@@ -211,3 +408,11 @@ CursorMorph.prototype.processKeyUp = function (event) {
         world.virtualKeyboard.value = '';
     }
 };
+
+WorldMorph.prototype.originalSlide = WorldMorph.prototype.slide;
+WorldMorph.prototype.slide = function(aStringOrTextMorph) {
+    if (!aStringOrTextMorph.parentThatIsA(InputSlotMorph)) { return };
+    this.originalSlide(aStringOrTextMorph)
+};
+
+MorphicPreferences = touchScreenSettings;

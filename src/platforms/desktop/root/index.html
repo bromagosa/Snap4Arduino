@@ -58,10 +58,11 @@
                         box.inform(title, message, world)
                     }
                 };
-                setInterval(loop, 1);
+                loop();
             };
 
             function loop() {
+                requestAnimationFrame(loop);
                 world.doOneCycle();
             };
 
