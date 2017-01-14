@@ -9,7 +9,7 @@ IDE_Morph.prototype.checkForNewVersion = function () {
         latest = this.getURL('http://snap4arduino.org/downloads/LATEST'),
         current = this.version();
     
-    if (current !== latest) {
+    if (current < latest) {
         this.confirm(
             'A new version of Snap4Arduino has been released: ' 
                 + latest 
