@@ -448,22 +448,20 @@ IDE_Morph.prototype.settingsMenu = function () {
         'uncheck for round ends of lines',
         'check for flat ends of lines'
     );
-    if (shiftClicked) {
-        addPreference(
-                'Codification support',
-                function () {
-                    StageMorph.prototype.enableCodeMapping =
-                        !StageMorph.prototype.enableCodeMapping;
-                    myself.currentSprite.blocksCache.variables = null;
-                    myself.currentSprite.paletteCache.variables = null;
-                    myself.refreshPalette();
-                },
-                StageMorph.prototype.enableCodeMapping,
-                'uncheck to disable\nblock to text mapping features',
-                'check for block\nto text mapping features',
-                false
-                );
-    }
+    addPreference(
+        'Codification support',
+        function () {
+            StageMorph.prototype.enableCodeMapping =
+                !StageMorph.prototype.enableCodeMapping;
+            myself.currentSprite.blocksCache.variables = null;
+            myself.currentSprite.paletteCache.variables = null;
+            myself.refreshPalette();
+        },
+        StageMorph.prototype.enableCodeMapping,
+        'uncheck to disable\nblock to text mapping features',
+        'check for block\nto text mapping features',
+        false
+    );
     addPreference(
         'Inheritance support',
         function () {
