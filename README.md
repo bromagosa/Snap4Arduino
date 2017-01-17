@@ -27,11 +27,11 @@ The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tuto
 
 To learn more about [Snap<i>!</i>](http://snap.berkeley.edu), take a look at [its official manual](http://snap.berkeley.edu/SnapManual.pdf) and its [additional annex chapters](http://snap.berkeley.edu/#activate).
 
-There are also a few example projects [in this repository](https://github.com/bromagosa/Snap4Arduino/tree/master/examples). To load one of them into Snap4Arduino:
+There are also a few example projects [here](https://github.com/bromagosa/Snap4Arduino/tree/master/examples). To load one of them into Snap4Arduino:
 
-1. Click on the project name: !(Project name.xml)[http://i.imgur.com/ps3efFS.png]
-2. Click on the _Raw_ button: !(Raw)[http://i.imgur.com/oZ75Xhj.png]
-3. Right click on the text and select `Save As`, or press `Control+S`
+1. Click on the project name: ![Project name.xml](http://i.imgur.com/ps3efFS.png)
+2. Click on the _Raw_ button: ![Raw](http://i.imgur.com/oZ75Xhj.png)
+3. Right click on the text and select `Save As` (or just press `Control+S`) to save the file into your computer.
 4. Drag and drop the file you've just downloaded into Snap4Arduino
 
 Acknowledgements
