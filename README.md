@@ -20,6 +20,20 @@ You can get the latest pre-built versions for all platforms at:
 
 [snap4arduino.org/#download](http://snap4arduino.org/#download)
 
+Documentation
+=============
+
+The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tutorials on different topics. You can also find a [collection of examples in the official website](http://snap4arduino.org#examples).
+
+To learn more about [Snap<i>!</i>](http://snap.berkeley.edu), take a look at [its official manual](http://snap.berkeley.edu/SnapManual.pdf) and its [additional annex chapters](http://snap.berkeley.edu/#activate).
+
+There are also a few example projects [in this repository](https://github.com/bromagosa/Snap4Arduino/tree/master/examples). To load one of them into Snap4Arduino:
+
+1. Click on the project name: !(Project name.xml)[http://i.imgur.com/ps3efFS.png]
+2. Click on the _Raw_ button: !(Raw)[http://i.imgur.com/oZ75Xhj.png]
+3. Right click on the text and select `Save As`, or press `Control+S`
+4. Drag and drop the file you've just downloaded into Snap4Arduino
+
 Acknowledgements
 ================
 
@@ -112,7 +126,7 @@ To find out which platforms are supported by the build script, just run ``./buil
 
 ## Embedded Command Line Version
 
-See the wiki section on isntalling and using the [command line version](https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI).
+See the [wiki](https://github.com/bromagosa/Snap4Arduino/wiki) section on installing and using the [command line version](https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI).
 
 ### Third party NodeJS packages:
 * [node-canvas](https://github.com/Automattic/node-canvas) _(only with ``--canvas`` flag active)_
