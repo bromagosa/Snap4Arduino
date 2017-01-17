@@ -112,69 +112,7 @@ To find out which platforms are supported by the build script, just run ``./buil
 
 ## Embedded Command Line Version
 
-You need to satisfy a couple of dependencies. For starters, you are going to need NodeJS (**0.10.4x or higher**) and npm. Follow instructions from https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions.
-
-If you need Snap4Arduino compatibility (which you do, if you are reading this):
-
-```
-$ npm install firmata
-```
-
-If you want to have full Canvas support to be able to stream your stage over HTTP:
-
-```
-$ npm install canvas 
-```
-
-If npm fails to install canvas, you may need to install its prerequisites. In Debian/Raspbian, this should suffice:
-
-```
-# apt-get install g++ build-essential libgif-dev libpango1.0-dev libjpeg-dev libcairo2-dev
-```
-
-For other systems, please refer to https://github.com/Automattic/node-canvas#installation
-
-### System-wide installation
-
-**You do not need to install Snap4Arduino, you can just run the command line interpreter by running** `./snap.js`
-
-To install the snap-interpreter in your system, just run the ``install.sh`` script with root privileges.
-
-```
-# ./install.sh
-```
-
-You can now call ``snap.js`` from anywhere in your system to run any Snap! XML exported project.
-
-### Usage
-
-```
-snap.js yourProject.xml [--plain-snap] [--canvas] [--serve] [/path/to/serial]
-Runs a Berkeley Snap! project or a Snap4Arduino one on the command line.
-
-        --plain-snap
-                Runs a plain Snap! project with no Arduino capabilities.
-        --linino
-                Uses the LininoIO library for communication with the Arduino instead of Firmata.
-                Meant to be used in boards with embedded GNU/Linux inside (Tian, Yun, etc).
-                If a serial port is specified, this setting will have no effect.
-        --canvas
-                Renders the Stage in an HTTP-streamable canvas. Automatically adds «--serve».
-        --serve
-                Starts a simple HTTP server at port 42001 with the following entry points:
-                http://[IP]:42001/stage
-                        Streams the Stage in real time. Needs «--canvas».
-                http://[IP]:42001/broadcast=[message]
-                        Broadcasts «message» to Snap! so it can be captured by «When I receive» hat blocks.
-                http://[IP]:42001/send-messages
-                        Lists all messages being used in the Snap! program.
-                http://[IP]:42001/send-vars
-                        Lists all variables being used in the Snap! program.
-                http://[IP]:42001/vars-update=[variable]=[value]
-                        Sets the Snap! variable «variable» to «value».
-```
-
-On the terminal, you'll get outputs of *say*, *think* and *ask* blocks and all messages given by the UI. The contents of the stage can be seen via a tiny webserver accessible at http://[your-ip]:42001/stage. See [this section](http://snap4arduino.org/index.html#http) to read about the whole HTTP protocol.
+See the wiki section on isntalling and using the [command line version](https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI).
 
 ### Third party NodeJS packages:
 * [node-canvas](https://github.com/Automattic/node-canvas) _(only with ``--canvas`` flag active)_
