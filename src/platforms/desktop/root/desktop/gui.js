@@ -11,8 +11,8 @@ IDE_Morph.prototype.checkForNewVersion = function () {
 
     function outdatedVersion (current,latest) {
         var current = current.split('.'),
-        latest = latest.split('.'),
-        versionLength = Math.max(current.length, latest.length);
+            latest = latest.split('.'),
+            versionLength = Math.max(current.length, latest.length);
 
         for (var i = 0; i < versionLength; i++) {
             current[i] = Number(current[i]) || 0;
