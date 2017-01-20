@@ -14,7 +14,7 @@ echo "Installing Snap! interpreter at /usr/share/snap-interpreter"
 
 rm -Rf /usr/share/snap-interpreter
 mkdir /usr/share/snap-interpreter
-cp -r * /usr/share/snap-interpreter
+cp -R * /usr/share/snap-interpreter
 
 echo "Creating snap.js symlink"
 

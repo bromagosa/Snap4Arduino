@@ -101,19 +101,19 @@ build() {
         rm -rf tmp
 
         echo "Fetching Snap! sources..."
-        if ! cp -r src/snap tmp; then
+        if ! cp -R src/snap tmp; then
             print_error "Could not find Snap! sources.\nPlease run prepare --snap first."
             exit 1
         fi
         
         echo "Fetching Snap4Arduino core..."
-        if ! cp -r src/s4a tmp; then
+        if ! cp -R src/s4a tmp; then
             print_error "Could not find Snap4Arduino core. Please make sure a src/s4a exists and contains the Snap4Arduino core files."
             exit 1
         fi
         
         echo "Fetching platform-specific sources..."
-        if ! cp -r -L src/platforms/$each/root/* tmp; then
+        if ! cp -R -L src/platforms/$each/root/* tmp; then
             print_warning "Could not find any platform-specific files for $each."
         fi
         
@@ -189,14 +189,14 @@ pack() {
         elif echo "$each" | grep gnu; then
             filename=$name.tar.gz
             mkdir ../$name
-            cp -r * ../$name
+            cp -R * ../$name
             mv ../$name .
             tar -czf $filename $name
             rm -rf $name
         else
             filename=$name.zip
             mkdir ../$name
-            cp -r * ../$name
+            cp -R * ../$name
             mv ../$name .
             zip -r $filename $name
             rm -rf $name

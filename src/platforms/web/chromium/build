@@ -19,7 +19,7 @@ echo "Fetching more platform-specific files"
 echo "======="
 echo
 
-cp -rL src/platforms/web/chromium/crx tmp
+cp -RL src/platforms/web/chromium/crx tmp
 
 echo
 echo "======="
@@ -35,7 +35,7 @@ echo "Setting up Node dependencies..."
 echo "======="
 echo
 
-cp -rv environments/web/chromium/node_modules tmp/crx
+cp -Rv environments/web/chromium/node_modules tmp/crx
 
 echo
 echo "======="

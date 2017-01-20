@@ -33,7 +33,7 @@ mkdir -p $OUTDIR/data/etc/init.d
 rm -r $SRCDIR/node_modules
 
 # Create data directory tree structure
-cp -r $SRCDIR/* $OUTDIR/data/usr/share/snap4arduino/.
+cp -R $SRCDIR/* $OUTDIR/data/usr/share/snap4arduino/.
 
 # Create control file and set version name
 sed -E 's/^Version.*/Version: v'`cat src\/version`'/' $PWD/src/templates/ipkg-control > $OUTDIR/ipkg/control
@@ -43,7 +43,7 @@ cp $PWD/src/templates/post* $OUTDIR/ipkg/
 cp $PWD/src/templates/prerm $OUTDIR/ipkg/
 
 # Generic build script arrives late to the party, we need to do the copying ourselves here
-cp -r $PWD/root/* $OUTDIR/data/usr/share/snap4arduino/.
+cp -R $PWD/root/* $OUTDIR/data/usr/share/snap4arduino/.
 
 # Add daemon script
 cp $PWD/src/templates/daemon.sh $OUTDIR/data/etc/init.d/snap4arduino-daemon

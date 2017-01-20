@@ -13,7 +13,7 @@ echo "Setting up Node dependencies..."
 echo "======="
 echo
 
-cp -rv environments/desktop/node_modules tmp
+cp -Rv environments/desktop/node_modules tmp
 
 echo
 echo "======="
@@ -73,7 +73,7 @@ elif echo $1 | grep gnu; then
     echo "Copying icon files over..."
     echo "======="
     echo
-    cp -r assets/icons releases/$1
+    cp -R assets/icons releases/$1
     echo
     echo "======="
     echo "Copying desktop entry over..."

@@ -18,7 +18,7 @@ echo "Setting up Node dependencies..."
 echo "======="
 echo
 
-cp -rv environments/embedded/cli/node_modules tmp
+cp -Rv environments/embedded/cli/node_modules tmp
 
 echo
 echo "======="
@@ -36,4 +36,4 @@ echo
 
 rm -rf releases/embedded/cli
 mkdir -p releases/embedded
-cp -r tmp releases/embedded/cli
+cp -R tmp releases/embedded/cli
