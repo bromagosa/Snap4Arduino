@@ -8,8 +8,19 @@ IDE_Morph.prototype.checkForNewVersion = function () {
     var myself = this,
         latest = this.getURL('http://snap4arduino.org/downloads/LATEST'),
         current = this.version();
-    
-    if (current < latest) {
+    function outdatedVersion(current,latest) {
+		var Current = current.split(".");
+		var Latest = latest.split(".");
+		var versionLength = Math.max(Current.length, Latest.length);
+		for (i=0; i<versionLength; i++) {
+			Current[i] = Number(Current[i]) || 0;
+			Latest[i] = Number(Latest[i]) || 0;
+			if (Current[i] < Latest[i]) return true;
+			if (Current[i] > Latest[i]) return false;
+		}
+		return false;
+	}
+    if (outdatedVersion(current,latest)) {
         this.confirm(
             'A new version of Snap4Arduino has been released: ' 
                 + latest 
