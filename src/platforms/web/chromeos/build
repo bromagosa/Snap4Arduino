@@ -18,7 +18,7 @@ echo "Setting version name"
 echo "======="
 echo
 
-sed -r 's/.*"version".*/  "version": "'`cat src\/version | sed -r "s/[a-z]|-//g" `'",/' src/platforms/web/chromeos/root/manifest.json | sed -r 's/.*version_name.*/  "version_name": "'`cat src\/version`'",/' > tmp/manifest.json
+sed -E 's/.*"version".*/  "version": "'`cat src\/version | sed -E "s/[a-z]|-//g" `'",/' src/platforms/web/chromeos/root/manifest.json | sed -E 's/.*version_name.*/  "version_name": "'`cat src\/version`'",/' > tmp/manifest.json
 
 echo
 echo "======="
@@ -26,7 +26,7 @@ echo "Changing all occurrences of localStorage for chrome.storage.local"
 echo "======="
 echo
 
-sed -i.bak -r 's/localStorage/chrome\.storage\.local/g' tmp/*.js 
+sed -i.bak -E 's/localStorage/chrome\.storage\.local/g' tmp/*.js
 rm tmp/*.bak
 
 echo

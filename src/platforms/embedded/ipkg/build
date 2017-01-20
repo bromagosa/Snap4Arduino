@@ -36,7 +36,7 @@ rm -r $SRCDIR/node_modules
 cp -r $SRCDIR/* $OUTDIR/data/usr/share/snap4arduino/.
 
 # Create control file and set version name
-sed -r 's/^Version.*/Version: v'`cat src\/version`'/' $PWD/src/templates/ipkg-control > $OUTDIR/ipkg/control
+sed -E 's/^Version.*/Version: v'`cat src\/version`'/' $PWD/src/templates/ipkg-control > $OUTDIR/ipkg/control
 
 # Add custom scripts
 cp $PWD/src/templates/post* $OUTDIR/ipkg/

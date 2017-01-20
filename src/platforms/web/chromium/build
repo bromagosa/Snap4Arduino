@@ -27,7 +27,7 @@ echo "Setting version name..."
 echo "======="
 echo
 
-sed -r 's/.*"version".*/  "version": "'`cat src\/version`'",/' src/platforms/web/chromium/crx/manifest.json > tmp/crx/manifest.json
+sed -E 's/.*"version".*/  "version": "'`cat src\/version`'",/' src/platforms/web/chromium/crx/manifest.json > tmp/crx/manifest.json
 
 echo
 echo "======="

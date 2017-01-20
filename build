@@ -40,7 +40,7 @@ print_help_platforms() {
     echo "Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]"
     echo
     echo "Available platforms are:"
-    echo "`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`"
+    echo "`find src/platforms -follow -name '*.buildme*' | sed -E 's|/[^/]+$||' | cut -c 15-`"
     echo
     echo "Generic names are also accepted, such as:"
     echo "desktop"
@@ -66,7 +66,7 @@ if test -n "$help"; then
     fi
 fi
 
-allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
+allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -E 's|/[^/]+$||' | cut -c 15-`
 
 if test -n "$platform"; then
     
@@ -182,7 +182,7 @@ pack() {
     for each in $platforms; do
         echo "Packing $each version"
         cd releases/$each
-        name='Snap4Arduino_'`echo "$each" | sed -r "s/\//-/g"`"_$version"
+        name='Snap4Arduino_'`echo "$each" | sed -E "s/\//-/g"`"_$version"
         if echo "$each" | grep win && test -n "$makeinstaller"; then
             filename=$name.zip
             zip $filename Snap4Arduino-$version*.exe
