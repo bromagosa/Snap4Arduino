@@ -40,7 +40,7 @@ print_help_platforms() {
     echo "Usage: ./build --platform=TARGET [--run] [--deploy=URL --username=USERNAME [--dir=PATH]]"
     echo
     echo "Available platforms are:"
-    echo "`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`"
+    echo "`find src/platforms -follow -name '*.buildme*' | sed -E 's|/[^/]+$||' | cut -c 15-`"
     echo
     echo "Generic names are also accepted, such as:"
     echo "desktop"
@@ -66,7 +66,7 @@ if test -n "$help"; then
     fi
 fi
 
-allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -r 's|/[^/]+$||' | cut -c 15-`
+allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -E 's|/[^/]+$||' | cut -c 15-`
 
 if test -n "$platform"; then
     
@@ -101,19 +101,19 @@ build() {
         rm -rf tmp
 
         echo "Fetching Snap! sources..."
-        if ! cp -r src/snap tmp; then
+        if ! cp -R src/snap tmp; then
             print_error "Could not find Snap! sources.\nPlease run prepare --snap first."
             exit 1
         fi
         
         echo "Fetching Snap4Arduino core..."
-        if ! cp -r src/s4a tmp; then
+        if ! cp -R src/s4a tmp; then
             print_error "Could not find Snap4Arduino core. Please make sure a src/s4a exists and contains the Snap4Arduino core files."
             exit 1
         fi
         
         echo "Fetching platform-specific sources..."
-        if ! cp -r -L src/platforms/$each/root/* tmp; then
+        if ! cp -R -L src/platforms/$each/root/* tmp; then
             print_warning "Could not find any platform-specific files for $each."
         fi
         
@@ -182,21 +182,21 @@ pack() {
     for each in $platforms; do
         echo "Packing $each version"
         cd releases/$each
-        name='Snap4Arduino_'`echo "$each" | sed -r "s/\//-/g"`"_$version"
+        name='Snap4Arduino_'`echo "$each" | sed -E "s/\//-/g"`"_$version"
         if echo "$each" | grep win && test -n "$makeinstaller"; then
             filename=$name.zip
             zip $filename Snap4Arduino-$version*.exe
         elif echo "$each" | grep gnu; then
             filename=$name.tar.gz
             mkdir ../$name
-            cp -r * ../$name
+            cp -R * ../$name
             mv ../$name .
             tar -czf $filename $name
             rm -rf $name
         else
             filename=$name.zip
             mkdir ../$name
-            cp -r * ../$name
+            cp -R * ../$name
             mv ../$name .
             zip -r $filename $name
             rm -rf $name

@@ -30,7 +30,7 @@ echo "Setting version name..."
 echo "======="
 echo
 
-sed -r 's/^\s*version.*/  version="'`cat src\/version`'"/' src/platforms/mobile/ios/config.xml > tmp/Snap4Arduino/config.xml
+sed -E 's/^\s*version.*/  version="'`cat src\/version`'"/' src/platforms/mobile/ios/config.xml > tmp/Snap4Arduino/config.xml
 
 echo
 echo "======="
