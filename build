@@ -171,6 +171,16 @@ run() {
             print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
+    elif test "$run" = "desktop/osx/32" || test `arch` = "i386" > /dev/null; then
+        if ! releases/desktop/osx/32/run; then
+            print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
+    elif test "$run" = "desktop/osx/64" || test `arch` = "i386" > /dev/null; then
+        if ! releases/desktop/osx/64/run; then
+            print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
+            exit 1
+        fi
     else
         print_error "Auto-running is not supported for your current architecture or operating system.\rYour system reports this is an `arch` machine. This script can only auto-run for x86_64 and i386 under GNU/Linux.\nIn other systems, please build Snap4Arduino by using\n./build --platform=TARGET\nand then manually navigate to the releases directory."
     fi
