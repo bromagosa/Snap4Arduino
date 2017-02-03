@@ -2,3 +2,4 @@
 environments/*
 tmp
 releases/*
+.DS_Store
