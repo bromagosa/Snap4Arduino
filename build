@@ -152,7 +152,7 @@ build() {
 }
 
 run() {
-    if test "$run" = "mobile/android"; then
+    if test "$platform" = "mobile/android"; then
         if ! test -e releases/mobile/android/Snap4Arduino.apk; then
             print_error "Failed to run Snap4Arduino for Android. Make sure your device is in USB debug mode, connected to this computer (check the output of adb devices), and the APK has been properly built and placed into releases/mobile/android/Snap4Arduino.apk"
             exit 1
@@ -161,17 +161,17 @@ run() {
             adb install -r releases/mobile/android/Snap4Arduino.apk
             adb shell monkey -p arduino.org.snap4arduino -c android.intent.category.LAUNCHER 1
         fi
-    elif test "$run" = "desktop/osx/64" && test `uname -m` = "x86_64" > /dev/null; then
+    elif test "$platform" = "desktop/osx/64" && test `uname -m` = "x86_64" > /dev/null; then
         if ! open -a Snap4Arduino.app "releases/desktop/osx/64/"; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1           
         fi
-    elif test "$run" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
+    elif test "$platform" = "desktop/gnu/64" || test `arch` = "x86_64" > /dev/null; then
         if ! releases/desktop/gnu/64/run; then
             print_error "Failed to run Snap4Arduino for x86_64. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
         fi
-    elif test "$run" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
+    elif test "$platform" = "desktop/gnu/32" || test `arch` = "i386" > /dev/null; then
         if ! releases/desktop/gnu/32/run; then
             print_error "Failed to run Snap4Arduino for i386. System reported this is an `arch` machine.\nMake sure Snap4Arduino has been built first.\nSee build --help for details."
             exit 1
