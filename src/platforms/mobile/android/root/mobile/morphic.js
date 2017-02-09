@@ -26,8 +26,10 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
 
     if (this.virtualKeyboard) {
         document.body.removeChild(this.okButton);
+        document.body.removeChild(this.cancelButton);
         document.body.removeChild(this.virtualKeyboard);
         this.okButton = null;
+        this.cancelButton = null;
         this.virtualKeyboard = null;
     } 
 
@@ -35,7 +37,7 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     this.virtualKeyboard.type = 'text';
     this.virtualKeyboard.style.color = 'black';
     this.virtualKeyboard.style.backgroundColor = 'lightgray';
-    this.virtualKeyboard.style.border = '1px solid black';
+    this.virtualKeyboard.style.border = '1px solid whitesmoke';
     this.virtualKeyboard.style.outline = 'none';
     this.virtualKeyboard.style.position = 'fixed';
     this.virtualKeyboard.style.width = '100%';
@@ -49,8 +51,10 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     this.virtualKeyboard.value = aStringOrTextMorph.text;
 
     this.okButton = document.createElement('a');
-    this.okButton.text = localize('OK');
+    this.okButton.text = localize('Ok');
+    this.okButton.style.color = 'dimgray';
     this.okButton.style.backgroundColor = 'gray';
+    this.okButton.style.border = '1px solid whitesmoke';
     this.okButton.style.textAlign = 'center';
     this.okButton.style.position = 'fixed';
     this.okButton.style.zIndex = '10';
@@ -59,9 +63,17 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     } else {
         this.okButton.style.top = '50px';
     }
+    this.okButton.style.left = 0;
     this.okButton.style.fontSize = '48px';
-    this.okButton.style.width = '100%';
+    this.okButton.style.width = '50%';
     this.okButton.onclick = function () { world.stopEditing(); };
+
+    this.cancelButton = document.createElement('a');
+    this.cancelButton.text = localize('Cancel');
+    this.cancelButton.style = this.okButton.style.cssText;
+    this.cancelButton.style.left = 'auto';
+    this.cancelButton.style.right = 0;
+    this.cancelButton.onclick = function () { world.stopEditing(true); };
 
     this.cursor.hide();
     aStringOrTextMorph.selectAll();
@@ -69,6 +81,7 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
 
     document.body.appendChild(this.virtualKeyboard);
     document.body.appendChild(this.okButton);
+    document.body.appendChild(this.cancelButton);
 
     this.virtualKeyboard.focus();
     this.virtualKeyboard.select();
@@ -102,7 +115,7 @@ WorldMorph.prototype.edit = function (aStringOrTextMorph) {
     this.lastEditedText = aStringOrTextMorph;
 };
 
-WorldMorph.prototype.stopEditing = function () {
+WorldMorph.prototype.stopEditing = function (cancelChanges) {
     if (this.cursor) {
         this.cursor.target.clearSelection();
         this.cursor.destroy();
@@ -110,13 +123,17 @@ WorldMorph.prototype.stopEditing = function () {
     }
     this.keyboardReceiver = null;
     if (this.virtualKeyboard) {
-        this.editedMorph.text = this.virtualKeyboard.value;
-        this.editedMorph.drawNew();
-        this.editedMorph.changed();
+        if (!cancelChanges) {
+            this.editedMorph.text = this.virtualKeyboard.value;
+            this.editedMorph.drawNew();
+            this.editedMorph.changed();
+        }
         this.virtualKeyboard.blur();
         document.body.removeChild(this.okButton);
+        document.body.removeChild(this.cancelButton);
         document.body.removeChild(this.virtualKeyboard);
         this.okButton = null;
+        this.cancelButton = null;
         this.virtualKeyboard = null;
     }
     this.worldCanvas.focus();
