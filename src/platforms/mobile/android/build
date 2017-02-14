@@ -43,5 +43,6 @@ rm -rf releases/mobile/android
 mkdir -p releases/mobile/android
 cd tmp/Snap4Arduino
 cordova build
-mv platforms/android/build/outputs/apk/android-debug.apk ../../releases/mobile/android/Snap4Arduino.apk
+#mv platforms/android/build/outputs/apk/android-debug.apk ../../releases/mobile/android/Snap4Arduino.apk
+mv platforms/android/build/outputs/apk/android-armv7-debug.apk ../../releases/mobile/android/Snap4Arduino.apk
 cd ../..

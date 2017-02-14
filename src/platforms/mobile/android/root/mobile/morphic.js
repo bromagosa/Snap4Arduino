@@ -1,3 +1,10 @@
+MorphicPreferences.menuFontSize = 14;
+MorphicPreferences.bubbleHelpFontSize = 12;
+MorphicPreferences.prompterFontSize = 14;
+MorphicPreferences.handleSize = 20;
+MorphicPreferences.scrollBarSize = 18;
+MorphicPreferences.grabThreshold = 10;
+
 WorldMorph.prototype.Arduino.firmata = firmata;
 
 WorldMorph.prototype.Arduino.getSerialPorts = function (callback) {
@@ -155,5 +162,3 @@ WorldMorph.prototype.slide = function(aStringOrTextMorph) {
     if (!aStringOrTextMorph.parentThatIsA(InputSlotMorph)) { return; }
     this.originalSlide(aStringOrTextMorph);
 };
-
-MorphicPreferences = touchScreenSettings;

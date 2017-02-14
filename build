@@ -160,6 +160,9 @@ run() {
             adb uninstall arduino.org.snap4arduino
             adb install -r releases/mobile/android/Snap4Arduino.apk
             adb shell monkey -p arduino.org.snap4arduino -c android.intent.category.LAUNCHER 1
+            if test -n "$debug"; then
+                adb logcat | grep arduino # not sure about what to grep against
+            fi
         fi
     elif test "$platform" = "desktop/osx/64" && test `uname -m` = "x86_64" > /dev/null; then
         if ! open -a Snap4Arduino.app "releases/desktop/osx/64/"; then
