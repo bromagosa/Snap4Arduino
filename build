@@ -16,6 +16,9 @@ print_help() {
     echo "--run               Builds and runs Snap4Arduino for the specified architecture."
     echo "                    Only for desktop GNU/Linux and Android."
     echo
+    echo "--adbdebug          Prints ADB debug information related to the Snap4Arduino pkg."
+    echo "                    Only for Android."
+    echo
     echo "--makeinstaller     Attempts to create an installer for the Microsoft Windows"
     echo "                    versions. Needs Inno Setup, check prepare script for info."
     echo
@@ -160,8 +163,8 @@ run() {
             adb uninstall arduino.org.snap4arduino
             adb install -r releases/mobile/android/Snap4Arduino.apk
             adb shell monkey -p arduino.org.snap4arduino -c android.intent.category.LAUNCHER 1
-            if test -n "$debug"; then
-                adb logcat | grep arduino # not sure about what to grep against
+            if test -n "$adbdebug"; then
+                adb logcat | grep arduino
             fi
         fi
     elif test "$platform" = "desktop/osx/64" && test `uname -m` = "x86_64" > /dev/null; then
