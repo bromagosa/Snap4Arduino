@@ -27,6 +27,14 @@ rm -r tmp_www
 
 echo
 echo "======="
+echo "Setting heap size..."
+echo "======="
+echo
+
+cp src/platforms/mobile/android/build-extras.gradle tmp/Snap4Arduino/platforms/android
+
+echo
+echo "======="
 echo "Setting version name..."
 echo "======="
 echo
