@@ -157,8 +157,22 @@ TextMorph.prototype.drawNew = function () {
 
 CursorMorph.prototype.initializeClipboardHandler = nop;
 
+// Remove sliders for text inputs
 WorldMorph.prototype.originalSlide = WorldMorph.prototype.slide;
-WorldMorph.prototype.slide = function(aStringOrTextMorph) {
+WorldMorph.prototype.slide = function (aStringOrTextMorph) {
     if (!aStringOrTextMorph.parentThatIsA(InputSlotMorph)) { return; }
     this.originalSlide(aStringOrTextMorph);
+};
+
+// Only process touch move events if we're moving out of our grab threshold
+HandMorph.prototype.processTouchMove = function (event) {
+    MorphicPreferences.isTouchDevice = true;
+    if (event.touches.length === 1) {
+        var touch = event.touches[0],
+            touchPosition = new Point(touch.pageX, touch.pageY);
+        if (this.grabPosition.distanceTo(touchPosition) > MorphicPreferences.grabThreshold) {
+            this.processMouseMove(touch);
+            clearInterval(this.touchHoldTimeout);
+        }
+    }
 };
