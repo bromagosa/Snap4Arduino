@@ -2,6 +2,7 @@ IDE_Morph.prototype.originalOpenIn = IDE_Morph.prototype.openIn;
 IDE_Morph.prototype.openIn = function (world) {
     this.originalOpenIn(world);
     this.checkForNewVersion();
+    this.checkForCLIparams();
 };
 
 IDE_Morph.prototype.checkForNewVersion = function () {
@@ -67,4 +68,30 @@ IDE_Morph.prototype.arch = function () {
     return ((require('os').arch() === 'x64' || process.env.hasOwnProperty('PROCESSOR_ARCHITEW6432'))
             ? 64 
             : 32);
+};
+
+IDE_Morph.prototype.checkForCLIparams = function () {
+    var myself = this,
+        fileName,
+        param = 
+            nw.App.argv.find(
+                function (any) {
+                    return any.indexOf('--load=') == 0; 
+                });
+        
+    if (param) {
+        fileName = param.split('=')[1];
+        require('fs').readFile(
+            fileName,
+            'utf8',
+            function (err, data) {
+                if (err) {
+                    myself.inform(
+                        'Error reading ' + fileName, 
+                        'The file system reported:\n\n' + err);
+                } else {
+                    myself.droppedText(data);
+                }
+            });
+    }
 };
