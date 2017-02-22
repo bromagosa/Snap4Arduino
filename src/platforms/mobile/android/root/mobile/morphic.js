@@ -41,7 +41,10 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     } 
 
     this.virtualKeyboard = document.createElement(isTextMorph ? 'textarea' : 'input');
-    this.virtualKeyboard.type = 'text';
+    this.virtualKeyboard.type = 
+        aStringOrTextMorph.isPassword ? 
+            'password' : 
+                (aStringOrTextMorph.isNumeric ? 'number' : 'text');
     this.virtualKeyboard.style.color = 'black';
     this.virtualKeyboard.style.backgroundColor = 'lightgray';
     this.virtualKeyboard.style.border = '1px solid whitesmoke';
