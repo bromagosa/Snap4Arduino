@@ -173,7 +173,8 @@ HandMorph.prototype.processTouchMove = function (event) {
     if (event.touches.length === 1) {
         var touch = event.touches[0],
             touchPosition = new Point(touch.pageX, touch.pageY);
-        if (this.grabPosition.distanceTo(touchPosition) > MorphicPreferences.grabThreshold) {
+        if (!this.grabPosition ||
+                this.grabPosition.distanceTo(touchPosition) > MorphicPreferences.grabThreshold) {
             this.processMouseMove(touch);
             clearInterval(this.touchHoldTimeout);
         }
