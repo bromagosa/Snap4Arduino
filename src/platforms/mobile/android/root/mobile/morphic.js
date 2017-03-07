@@ -31,16 +31,19 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     var myself = this,
         isTextMorph = aStringOrTextMorph instanceof TextMorph;
 
-    if (this.virtualKeyboard) {
-        document.body.removeChild(this.okButton);
-        document.body.removeChild(this.cancelButton);
-        document.body.removeChild(this.virtualKeyboard);
-        this.okButton = null;
-        this.cancelButton = null;
+    // If it exists but it's the wrong kind, let's remake it
+    if (this.virtualKeyboard && (
+            ((this.virtualKeyboard.type === 'textarea') && !isTextMorph) 
+                || ((this.virtualKeyboard.type === 'text') && isTextMorph))) {
+        this.virtualKeyboard.remove();
         this.virtualKeyboard = null;
+    }
+
+    if (!this.virtualKeyboard) {
+        this.virtualKeyboard = document.createElement(isTextMorph ? 'textarea' : 'input');
+        document.body.appendChild(this.virtualKeyboard);
     } 
 
-    this.virtualKeyboard = document.createElement(isTextMorph ? 'textarea' : 'input');
     this.virtualKeyboard.type = 
         aStringOrTextMorph.isPassword ? 
             'password' : 
@@ -60,38 +63,48 @@ WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     this.virtualKeyboard.style.zIndex = '5';
     this.virtualKeyboard.value = aStringOrTextMorph.text;
 
-    this.okButton = document.createElement('a');
-    this.okButton.text = localize('Ok');
-    this.okButton.style.color = 'dimgray';
-    this.okButton.style.backgroundColor = 'gray';
-    this.okButton.style.border = '1px solid whitesmoke';
-    this.okButton.style.textAlign = 'center';
-    this.okButton.style.position = 'fixed';
-    this.okButton.style.zIndex = '10';
+    if (!this.okButton) {
+        this.okButton = document.createElement('a');
+        this.okButton.text = localize('Ok');
+        this.okButton.style.color = 'dimgray';
+        this.okButton.style.backgroundColor = 'gray';
+        this.okButton.style.border = '1px solid whitesmoke';
+        this.okButton.style.textAlign = 'center';
+        this.okButton.style.position = 'fixed';
+        this.okButton.style.zIndex = '10';
+        this.okButton.style.left = 0;
+        this.okButton.style.fontSize = '48px';
+        this.okButton.style.width = '50%';
+        this.okButton.onclick = function () { world.stopEditing(); };
+        document.body.appendChild(this.okButton);
+    }
+
     if (isTextMorph) {
+        this.okButton.style.top = 'auto';
         this.okButton.style.bottom = '0';
     } else {
         this.okButton.style.top = '50px';
+        this.okButton.style.bottom = 'auto';
     }
-    this.okButton.style.left = 0;
-    this.okButton.style.fontSize = '48px';
-    this.okButton.style.width = '50%';
-    this.okButton.onclick = function () { world.stopEditing(); };
 
-    this.cancelButton = document.createElement('a');
-    this.cancelButton.text = localize('Cancel');
+    if (!this.cancelButton) {
+        this.cancelButton = document.createElement('a');
+        this.cancelButton.text = localize('Cancel');
+        this.cancelButton.onclick = function () { world.stopEditing(true); };
+        document.body.appendChild(this.cancelButton);
+    }
+
     this.cancelButton.style = this.okButton.style.cssText;
     this.cancelButton.style.left = 'auto';
     this.cancelButton.style.right = 0;
-    this.cancelButton.onclick = function () { world.stopEditing(true); };
 
     this.cursor.hide();
     aStringOrTextMorph.selectAll();
     this.editedMorph = aStringOrTextMorph;
 
-    document.body.appendChild(this.virtualKeyboard);
-    document.body.appendChild(this.okButton);
-    document.body.appendChild(this.cancelButton);
+    this.virtualKeyboard.hidden = false;
+    this.okButton.hidden = false;
+    this.cancelButton.hidden = false;
 
     this.virtualKeyboard.focus();
     this.virtualKeyboard.select();
@@ -139,12 +152,9 @@ WorldMorph.prototype.stopEditing = function (cancelChanges) {
             this.editedMorph.changed();
         }
         this.virtualKeyboard.blur();
-        document.body.removeChild(this.okButton);
-        document.body.removeChild(this.cancelButton);
-        document.body.removeChild(this.virtualKeyboard);
-        this.okButton = null;
-        this.cancelButton = null;
-        this.virtualKeyboard = null;
+        this.okButton.hidden = true;
+        this.cancelButton.hidden = true;
+        this.virtualKeyboard.hidden = true;
     }
     this.worldCanvas.focus();
 };
