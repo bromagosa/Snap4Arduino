@@ -10,21 +10,25 @@ IDE_Morph.prototype.checkForNewVersion = function () {
         latest = this.getURL('http://snap4arduino.org/downloads/LATEST'),
         current = this.version();
 
-    function outdatedVersion (current,latest) {
+    function outdatedVersion (current, latest) {
         var current = current.split('.'),
             latest = latest.split('.'),
             versionLength = Math.max(current.length, latest.length);
 
-        for (var i = 0; i < versionLength; i++) {
+        for (var i = 0; i < versionLength; i += 1) {
             current[i] = Number(current[i]) || 0;
             latest[i] = Number(latest[i]) || 0;
-            if (current[i] < latest[i]) return true;
-            if (current[i] > latest[i]) return false;
+            if (current[i] < latest[i]) {
+                return true;
+            }
+            if (current[i] > latest[i]) {
+                return false;
+            }
         }
         return false;
     };
 
-    if (outdatedVersion(current,latest)) {
+    if (outdatedVersion(current, latest)) {
         this.confirm(
             'A new version of Snap4Arduino has been released: ' 
                 + latest 
@@ -77,7 +81,8 @@ IDE_Morph.prototype.checkForCLIparams = function () {
             nw.App.argv.find(
                 function (any) {
                     return any.indexOf('--load=') == 0; 
-                });
+                }
+            );
         
     if (param) {
         fileName = param.split('=')[1];
@@ -92,6 +97,7 @@ IDE_Morph.prototype.checkForCLIparams = function () {
                 } else {
                     myself.droppedText(data);
                 }
-            });
+            }
+        );
     }
 };
