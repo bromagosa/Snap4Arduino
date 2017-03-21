@@ -1,4 +1,13 @@
-IDE_Morph.prototype.originalOpenIn = IDE_Morph.prototype.openIn;
+var originalCodeOpenIn = IDE_Morph.prototype.openIn.toString();
+var initFunction = originalCodeOpenIn.indexOf("\n") + 1;
+var changePoint = originalCodeOpenIn.indexOf("        } else if (location.hash.substr(0, 7) === '#signup') {\n" +
+    "            this.createCloudAccount();\n" +
+    "        }\n") + 112;
+var newCodeOpenIn = originalCodeOpenIn.slice(initFunction,changePoint) +
+    '        this.loadNewProject = false;\n' +
+    originalCodeOpenIn.slice(changePoint,-1);
+IDE_Morph.prototype.originalOpenIn = new Function(newCodeOpenIn);
+//IDE_Morph.prototype.originalOpenIn = IDE_Morph.prototype.openIn;
 IDE_Morph.prototype.openIn = function (world) {
     this.originalOpenIn(world);
     this.checkForNewVersion();
@@ -95,9 +104,17 @@ IDE_Morph.prototype.checkForCLIparams = function () {
                         'Error reading ' + fileName, 
                         'The file system reported:\n\n' + err);
                 } else {
-                    myself.droppedText(data);
+                    function checkInitFinished() {
+                        if(myself.loadNewProject) {
+                            window.setTimeout(checkInitFinished, 100); /* this checks the flag every 100 milliseconds*/
+                        } else {
+                            myself.droppedText(data);
+                        }
+                    }
+                    checkInitFinished();
                 }
             }
         );
     }
 };
+
