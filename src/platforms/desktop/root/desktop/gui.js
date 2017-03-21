@@ -1,8 +1,8 @@
 IDE_Morph.prototype.originalOpenIn = IDE_Morph.prototype.openIn;
 IDE_Morph.prototype.openIn = function (world) {
+    this.checkForCLIparams();
     this.originalOpenIn(world);
     this.checkForNewVersion();
-    this.checkForCLIparams();
 };
 
 IDE_Morph.prototype.checkForNewVersion = function () {
@@ -76,28 +76,40 @@ IDE_Morph.prototype.arch = function () {
 
 IDE_Morph.prototype.checkForCLIparams = function () {
     var myself = this,
-        fileName,
-        param = 
-            nw.App.argv.find(
-                function (any) {
-                    return any.indexOf('--load=') == 0; 
+        language, fileName,
+        fs = require('fs'),
+        params = nw.App.argv;
+
+    params.forEach(function (each) {
+        if (each.indexOf('--load=') === 0) {
+            fileName = each.split('=')[1];
+            fs.readFile(
+                fileName,
+                'utf8',
+                function (err, data) {
+                    if (err) {
+                        myself.inform(
+                            'Error reading ' + fileName, 
+                            'The file system reported:\n\n' + err);
+                    } else {
+                        if (myself.userLanguage) {
+                            location.hash = '#open:' + data;
+                            myself.loadNewProject = true;
+                        } else {
+                            myself.droppedText(data);
+                        }
+                    }
                 }
-            );
-        
-    if (param) {
-        fileName = param.split('=')[1];
-        require('fs').readFile(
-            fileName,
-            'utf8',
-            function (err, data) {
-                if (err) {
-                    myself.inform(
-                        'Error reading ' + fileName, 
-                        'The file system reported:\n\n' + err);
-                } else {
-                    myself.droppedText(data);
-                }
+            ); 
+        } else if (each.indexOf('--lang') === 0) {
+            language = each.split('=')[1];
+            fileName = 's4a/lang-' + language + '.js';
+            if (!fs.existsSync(fileName)) {
+                // we just need this file to exist, that's all
+                fs.writeFileSync(fileName, '');
             }
-        );
-    }
+            myself.userLanguage = (language !== 'en') ? language : null;
+            myself.loadNewProject = true;
+        }
+    });
 };
