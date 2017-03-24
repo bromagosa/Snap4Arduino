@@ -20,7 +20,8 @@ SpriteIconMorph.prototype.userMenu = function () {
 
 // Override Snap! menus
 // Keeping the original one because we may want to re-override it in web-based versions
-// ToDo: Duplicate code! This is terrible style... we need to think of a better way 
+// TODO: Shouldn't this go into src/platforms/desktop/root/gui.js then?
+// TODO: Duplicate code! This is terrible style... we need to think of a better way 
 
 IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
@@ -1043,29 +1044,36 @@ IDE_Morph.prototype.doSaveAndShare = function () {
     this.setProjectName(projectName);
 
     SnapCloud.saveProject(
-            this,
-            function () {
-                myself.showMessage('sharing\nproject...');
-                SnapCloud.reconnect(
-                    function () {
-                        SnapCloud.callService(
-                            'publishProject',
-                            function () {
-                                myself.showMessage('shared.', 2);
-                            },
-                            myself.cloudError(),
-                            [
+        this,
+        function () {
+            myself.showMessage('sharing\nproject...');
+            SnapCloud.reconnect(
+                function () {
+                    SnapCloud.callService(
+                        'publishProject',
+                        function () {
+                            myself.showMessage('shared.', 2);
+                        },
+                        myself.cloudError(),
+                        [
                             projectName,
                             myself.stage.thumbnail(SnapSerializer.prototype.thumbnailSize).toDataURL('image/png')
-                            ]
-                            );
-                    },
-                    myself.cloudError()
+                        ]
                     );
-                prompt('This project is now public at the following URL:', SnapCloud.urlForMyProject(projectName));
-            },
-            this.cloudError()
-                )
+                },
+                myself.cloudError()
+            );
+            myself.showProjectUrl(projectName);
+        },
+        this.cloudError()
+    )
+};
+
+IDE_Morph.prototype.showProjectUrl = function (projectName) {
+    prompt(
+        'This project is now public at the following URL:',
+        SnapCloud.urlForMyProject(projectName)
+    );
 };
 
 // EXPERIMENTAL: Arduino translation mode
@@ -1231,34 +1239,35 @@ IDE_Morph.prototype.createCategories = function () {
 
     function fixCategoriesLayout() {
         var buttonWidth = myself.categories.children[0].width(),
-        buttonHeight = myself.categories.children[0].height(),
-        border = 3,
-        rows =  Math.ceil((myself.categories.children.length) / 2),
-        xPadding = (myself.categories.width()
-                - border
-                - buttonWidth * 2) / 3,
-        yPadding = 2,
-        l = myself.categories.left(),
-        t = myself.categories.top(),
-        i = 0,
-        row,
-        col;
+            buttonHeight = myself.categories.children[0].height(),
+            border = 3,
+            rows =  Math.ceil((myself.categories.children.length) / 2),
+            xPadding = (myself.categories.width()
+                    - border
+                    - buttonWidth * 2) / 3,
+            yPadding = 2,
+            l = myself.categories.left(),
+            t = myself.categories.top(),
+            i = 0,
+            row,
+            col;
 
         myself.categories.children.forEach(function (button) {
             i += 1;
             row = Math.ceil(i / 2);
             col = 2 - (i % 2);
             button.setPosition(new Point(
-                        l + (col * xPadding + ((col - 1) * buttonWidth)),
-                        t + (row * yPadding + ((row - 1) * buttonHeight) + border)
-                        ));
+                l + (col * xPadding + ((col - 1) * buttonWidth)),
+                t + (row * yPadding + ((row - 1) * buttonHeight) + border)
+                )
+            );
         });
 
         myself.categories.setHeight(
-                (rows + 1) * yPadding
-                + rows * buttonHeight
-                + 2 * border
-                );
+            (rows + 1) * yPadding
+            + rows * buttonHeight
+            + 2 * border
+            );
     }
 
     SpriteMorph.prototype.categories.forEach(function (cat) {
@@ -1269,3 +1278,41 @@ IDE_Morph.prototype.createCategories = function () {
     fixCategoriesLayout();
     this.add(this.categories);
 };
+
+// Show URL of public projects in project list
+ProjectDialogMorph.prototype.originalInstallCloudProjectList = ProjectDialogMorph.prototype.installCloudProjectList;
+ProjectDialogMorph.prototype.installCloudProjectList = function (pl) {
+    this.originalInstallCloudProjectList(pl);
+    this.addUserMenuToListItems();
+};
+
+ProjectDialogMorph.prototype.originalBuildFilterField = ProjectDialogMorph.prototype.buildFilterField;
+ProjectDialogMorph.prototype.buildFilterField = function () {
+    var myself = this;
+
+    this.originalBuildFilterField();
+
+    this.filterField.originalReactToKeystroke = this.filterField.reactToKeystroke;
+    this.filterField.reactToKeystroke = function (evt) {
+        this.originalReactToKeystroke(evt);
+        myself.addUserMenuToListItems();
+    };
+};
+
+ProjectDialogMorph.prototype.addUserMenuToListItems = function () {
+    var ide = this.ide;
+    this.listField.listContents.children.forEach(function (menuItem) {
+        if (menuItem.labelBold) { // shared project
+            menuItem.userMenu = function () {
+                var menu = new MenuMorph(this);
+                menu.addItem(
+                    'Show project URL',
+                    function () {
+                        ide.showProjectUrl(menuItem.labelString);
+                    });
+                return menu;
+            };
+        }
+    });
+};
+
