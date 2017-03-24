@@ -92,6 +92,8 @@ Process.prototype.servoWrite = function (pin, value) {
             if (board.pins[pin].mode != board.MODES.OUTPUT) {
                 board.pinMode(pin, board.MODES.OUTPUT);
             }
+            this.isAtomic = true;
+            this.pushContext();
             return null;
         }
 
@@ -114,13 +116,14 @@ Process.prototype.servoWrite = function (pin, value) {
                 numericValue = value;
         }
         board.servoWrite(pin, numericValue);
+        this.isAtomic = true;
+        this.pushContext();
         return null;
     } else {
         throw new Error(localize('Arduino not connected'));			
     }
 
     this.isAtomic = true;
-
     this.pushContext();
 };
 
