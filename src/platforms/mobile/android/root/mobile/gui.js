@@ -92,6 +92,14 @@ IDE_Morph.prototype.growPalette = function () {
     this.setExtent(world.extent());
 };
 
+IDE_Morph.prototype.originalCreateStageHandle = IDE_Morph.prototype.createStageHandle;
+IDE_Morph.prototype.createStageHandle = function () {
+    this.originalCreateStageHandle();
+    this.stageHandle = new Morph();
+    this.stageHandle.fixLayout = nop;
+    this.stageHandle.drawOn = nop;
+};
+
 PaletteHandleMorph.prototype.init = function (target) {
     var ide = target.parentThatIsA(IDE_Morph);
     ide.paletteWidth = 5;
@@ -170,30 +178,19 @@ PaletteHandleMorph.prototype.drawOutline = function (context, color) {
     context.stroke();
 };
 
-PaletteHandleMorph.prototype.mouseDownLeft = function (pos) {
+PaletteHandleMorph.prototype.mouseClickLeft = function () {
     var world = this.world(),
-        offset = this.right() - pos.x,
         ide = this.target.parentThatIsA(IDE_Morph);
 
     if (!this.target) {
         return null;
     }
-    this.step = function () {
-        var newPos = world.hand.bounds.origin.x + offset;
-        if (!world.hand.mouseButton) {
-            this.step = null;
-            if (newPos < 100) {
-                ide.shrinkPalette();
-                return;
-            } else if (newPos < 200) {
-                ide.growPalette();
-                return;
-            }
-        }
-        ide.paletteWidth = Math.min(
-            newPos,
-            ide.stageHandle.left() - ide.spriteBar.tabBar.width()
-            );
-        ide.setExtent(world.extent());
-    };
+
+    if (ide.paletteWidth < 200) {
+        ide.growPalette();
+    } else {
+        ide.shrinkPalette();
+    }
 };
+
+PaletteHandleMorph.prototype.mouseDownLeft = PaletteHandleMorph.prototype.mouseClickLeft;

@@ -29,72 +29,107 @@ WorldMorph.prototype.init = WorldMorph.prototype.originalInit;
 
 WorldMorph.prototype.initVirtualKeyboard = function (aStringOrTextMorph) {
     var myself = this,
-        isTextMorph = aStringOrTextMorph instanceof TextMorph;
+        isTextMorph = aStringOrTextMorph instanceof TextMorph,
+        inputElement = isTextMorph ? this.virtualTextKeyboard : this.virtualKeyboard;
 
-    if (this.virtualKeyboard) {
-        document.body.removeChild(this.okButton);
-        document.body.removeChild(this.cancelButton);
-        document.body.removeChild(this.virtualKeyboard);
-        this.okButton = null;
-        this.cancelButton = null;
-        this.virtualKeyboard = null;
-    } 
+    if (isTextMorph && !this.virtualTextKeyboard) {
+        this.virtualTextKeyboard = document.createElement('textarea');
+        inputElement = this.virtualTextKeyboard;
+        setUp();
+    } else if (!isTextMorph && !this.virtualKeyboard) {
+        this.virtualKeyboard = document.createElement('input');
+        inputElement = this.virtualKeyboard;
+        setUp();
+    }
 
-    this.virtualKeyboard = document.createElement(isTextMorph ? 'textarea' : 'input');
-    this.virtualKeyboard.type = 
+    function setUp () {
+        document.body.appendChild(inputElement);
+        inputElement.style.color = 'black';
+        inputElement.style.backgroundColor = 'lightgray';
+        inputElement.style.border = '1px solid whitesmoke';
+        inputElement.style.outline = 'none';
+        inputElement.style.position = 'fixed';
+        inputElement.style.width = '100%';
+        inputElement.style.height = (isTextMorph ? '100%' : '50px');
+        inputElement.style.fontSize = '30px';
+        inputElement.style.textAlign = (isTextMorph ? 'left' : 'center');
+        inputElement.autocapitalize = 'none'; // iOS specific
+        inputElement.style.top = 0;
+        inputElement.style.left = 0;
+        inputElement.style.zIndex = 5;
+    };
+
+    if (!this.previewImg) {
+        this.previewImg = document.createElement('img');
+        this.previewImg.hidden = true;
+        this.previewImg.style.position = 'fixed';
+        this.previewImg.style.top = 0;
+        this.previewImg.style.margin = '0 auto';
+        this.previewImg.style.zIndex = 6;
+        this.previewImg.style.left = '50%';
+        this.previewImg.style.transform = 'translateX(-50%)';
+        document.body.appendChild(this.previewImg);
+    }
+
+    if (!isTextMorph) {
+        this.previewImg.src = aStringOrTextMorph.parent.fullImageClassic().toDataURL();
+        this.previewImg.style.display = 'block';
+    }
+
+    inputElement.type = 
         aStringOrTextMorph.isPassword ? 
             'password' : 
                 (aStringOrTextMorph.isNumeric ? 'number' : 'text');
-    this.virtualKeyboard.style.color = 'black';
-    this.virtualKeyboard.style.backgroundColor = 'lightgray';
-    this.virtualKeyboard.style.border = '1px solid whitesmoke';
-    this.virtualKeyboard.style.outline = 'none';
-    this.virtualKeyboard.style.position = 'fixed';
-    this.virtualKeyboard.style.width = '100%';
-    this.virtualKeyboard.style.height = (isTextMorph ? '100%' : '50px');
-    this.virtualKeyboard.style.fontSize = '30px';
-    this.virtualKeyboard.style.textAlign = (isTextMorph ? 'left' : 'center');
-    this.virtualKeyboard.autocapitalize = 'none'; // iOS specific
-    this.virtualKeyboard.style.top = '0';
-    this.virtualKeyboard.style.left = '0';
-    this.virtualKeyboard.style.zIndex = '5';
-    this.virtualKeyboard.value = aStringOrTextMorph.text;
 
-    this.okButton = document.createElement('a');
-    this.okButton.text = localize('Ok');
-    this.okButton.style.color = 'dimgray';
-    this.okButton.style.backgroundColor = 'gray';
-    this.okButton.style.border = '1px solid whitesmoke';
-    this.okButton.style.textAlign = 'center';
-    this.okButton.style.position = 'fixed';
-    this.okButton.style.zIndex = '10';
-    if (isTextMorph) {
-        this.okButton.style.bottom = '0';
-    } else {
-        this.okButton.style.top = '50px';
+    inputElement.value = aStringOrTextMorph.text;
+
+    if (!this.okButton) {
+        this.okButton = document.createElement('a');
+        this.okButton.text = localize('Ok');
+        this.okButton.style.color = 'dimgray';
+        this.okButton.style.backgroundColor = 'gray';
+        this.okButton.style.border = '1px solid whitesmoke';
+        this.okButton.style.textAlign = 'center';
+        this.okButton.style.position = 'fixed';
+        this.okButton.style.zIndex = 10;
+        this.okButton.style.left = 0;
+        this.okButton.style.fontSize = '48px';
+        this.okButton.style.width = '50%';
+        this.okButton.onclick = function () { world.stopEditing(); };
+        document.body.appendChild(this.okButton);
     }
-    this.okButton.style.left = 0;
-    this.okButton.style.fontSize = '48px';
-    this.okButton.style.width = '50%';
-    this.okButton.onclick = function () { world.stopEditing(); };
 
-    this.cancelButton = document.createElement('a');
-    this.cancelButton.text = localize('Cancel');
+    if (isTextMorph) {
+        this.okButton.style.top = 'auto';
+        this.okButton.style.bottom = 0;
+        inputElement.style.paddingTop = 0;
+    } else {
+        inputElement.style.paddingTop = (aStringOrTextMorph.parent.height() + 8) + 'px';
+        this.okButton.style.top = (aStringOrTextMorph.parent.height() + 58) + 'px';
+        this.okButton.style.bottom = 'auto';
+    }
+
+    if (!this.cancelButton) {
+        this.cancelButton = document.createElement('a');
+        this.cancelButton.text = localize('Cancel');
+        this.cancelButton.onclick = function () { world.stopEditing(true); };
+        document.body.appendChild(this.cancelButton);
+    }
+
     this.cancelButton.style = this.okButton.style.cssText;
     this.cancelButton.style.left = 'auto';
     this.cancelButton.style.right = 0;
-    this.cancelButton.onclick = function () { world.stopEditing(true); };
 
     this.cursor.hide();
     aStringOrTextMorph.selectAll();
     this.editedMorph = aStringOrTextMorph;
 
-    document.body.appendChild(this.virtualKeyboard);
-    document.body.appendChild(this.okButton);
-    document.body.appendChild(this.cancelButton);
+    inputElement.hidden = false;
+    this.okButton.hidden = false;
+    this.cancelButton.hidden = false;
 
-    this.virtualKeyboard.focus();
-    this.virtualKeyboard.select();
+    inputElement.focus();
+    inputElement.select();
 };
 
 WorldMorph.prototype.edit = function (aStringOrTextMorph) {
@@ -126,25 +161,28 @@ WorldMorph.prototype.edit = function (aStringOrTextMorph) {
 };
 
 WorldMorph.prototype.stopEditing = function (cancelChanges) {
+    var inputElement; 
     if (this.cursor) {
+        inputElement =
+            this.cursor.target instanceof TextMorph ?
+                this.virtualTextKeyboard :
+                this.virtualKeyboard;
         this.cursor.target.clearSelection();
         this.cursor.destroy();
         this.cursor = null;
     }
     this.keyboardReceiver = null;
-    if (this.virtualKeyboard) {
+    if (inputElement) {
         if (!cancelChanges) {
-            this.editedMorph.text = this.virtualKeyboard.value;
+            this.editedMorph.text = inputElement.value;
             this.editedMorph.drawNew();
             this.editedMorph.changed();
         }
-        this.virtualKeyboard.blur();
-        document.body.removeChild(this.okButton);
-        document.body.removeChild(this.cancelButton);
-        document.body.removeChild(this.virtualKeyboard);
-        this.okButton = null;
-        this.cancelButton = null;
-        this.virtualKeyboard = null;
+        inputElement.blur();
+        this.okButton.hidden = true;
+        this.cancelButton.hidden = true;
+        inputElement.hidden = true;
+        this.previewImg.style.display = 'none';
     }
     this.worldCanvas.focus();
 };
