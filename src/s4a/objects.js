@@ -175,9 +175,8 @@ SpriteMorph.prototype.initBlocks();
 
 SpriteMorph.prototype.originalBlockTemplates = SpriteMorph.prototype.blockTemplates;
 SpriteMorph.prototype.blockTemplates = function (category) {
-    var myself = this;
-
-    var blocks = myself.originalBlockTemplates(category); 
+    var myself = this,
+        blocks = myself.originalBlockTemplates(category); 
 
     //  Button that triggers a connection attempt 
 
@@ -620,6 +619,7 @@ SpriteMorph.prototype.arduinoWatcher = function (selector, label, color, pin) {
     stage.add(watcher);
     watcher.fixLayout();
     watcher.keepWithin(stage);
+    return watcher;
 };
 
 SpriteMorph.prototype.arduinoWatcherFor = function (stage, selector, pin) {
