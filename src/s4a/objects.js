@@ -22,6 +22,49 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         spec: 'analog reading %analogPin',
         transpilable: true
     };
+     this.blocks.motor = 
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Motor at Port %motorpin rotation %bool speed %n',
+        transpilable: true
+    };
+
+this.blocks.qservo = 
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Set Servo at Port %qdigital Range %n - %n SweepTime %n (ms)',
+        transpilable: true
+    };
+
+this.blocks.servodis = 
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Disconnect Servo at Port %qdigital',
+        transpilable: true
+    };
+
+     this.blocks.reportqanalog =
+    {
+        only: SpriteMorph,
+        type: 'reporter',
+        category: 'arduino',
+        spec: 'Read Analog at Port %qanalog',
+        transpilable: true
+    };
+     this.blocks.reportLDR = 
+    {
+        only: SpriteMorph,
+        type: 'reporter',
+        category: 'arduino',
+        spec: 'Read LDR at Port %qanalog',
+        transpilable: true
+    };
 
     this.blocks.reportDigitalReading = 
     {
@@ -31,6 +74,24 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         spec: 'digital reading %digitalPin',
         transpilable: true
     };
+     this.blocks.reportLimitSwitch = 
+    {
+        only: SpriteMorph,
+        type: 'predicate',
+        category: 'arduino',
+        spec: 'Read limitSwitch at Port %qdigital',
+        transpilable: true
+    };
+  this.blocks.reportqdigital = 
+    {
+        only: SpriteMorph,
+        type: 'predicate',
+        category: 'arduino',
+        spec: 'Read Digital at Port %qdigital',
+        transpilable: true
+    };
+
+
 
     this.blocks.connectArduino =
     {
@@ -67,6 +128,34 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         spec: 'set digital pin %digitalPin to %b',
         transpilable: true
     };
+   this.blocks.setDigital =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Set Digital at Port %qdigital to %bool',
+        transpilable: true
+    };
+
+   this.blocks.setLed =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Set LED at Port %qdigital to %bool',
+        transpilable: true
+    };
+
+   this.blocks.swapmotor =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Swap Motor at Port %qdigital to %bool',
+        transpilable: true
+    };
+
+
 
     this.blocks.servoWrite =
     {
@@ -77,6 +166,24 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         defaults: [null, ['clockwise']],
         transpilable: true
     };
+   
+ this.blocks.reportInfrared = 
+    {
+        only: SpriteMorph,
+        type: 'predicate',
+        category: 'arduino',
+        spec: 'Read IR at Port %qdigital',
+        transpilable: true
+    };
+this.blocks.reportPIR = 
+    {
+        only: SpriteMorph,
+        type: 'predicate',
+        category: 'arduino',
+        spec: 'Read PIR at Port %qdigital',
+        transpilable: true
+    };
+
 
     this.blocks.pwmWrite =
     {
@@ -87,6 +194,25 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
 	defaults: [null, 128],
         transpilable: true
     };
+  this.blocks.SetPWM =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Set PWM at Port %qPWM to value %n',
+	defaults: [null, 128],
+        transpilable: true
+    };
+  this.blocks.Buzzer =
+    {
+        only: SpriteMorph,
+        type: 'command',
+        category: 'arduino',
+        spec: 'Buzzer at Port %qPWM to value %n',
+	defaults: [null, 128],
+        transpilable: true
+    };
+
 
     // Ardui... nization? 
     // Whatever, let's dumb this language down:
@@ -262,7 +388,7 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(this.arduinoConnectButton);
         blocks.push(this.arduinoDisconnectButton);
         blocks.push('-');
-        blocks.push(blockBySelector('connectArduino'));
+       /* blocks.push(blockBySelector('connectArduino'));
         blocks.push(blockBySelector('disconnectArduino'));
         blocks.push('-');
         blocks.push(blockBySelector('servoWrite'));
@@ -272,7 +398,37 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(analogToggle);
         blocks.push(reportAnalog);
         blocks.push(digitalToggle);
-        blocks.push(reportDigital);
+        blocks.push(reportDigital); */
+        blocks.push('-');
+        blocks.push('-');
+        blocks.push('-');
+        blocks.push(blockBySelector('reportInfrared'));
+        blocks.push(blockBySelector('reportPIR'));
+        blocks.push(blockBySelector('reportLimitSwitch'));
+        blocks.push(blockBySelector('reportqdigital'));
+        blocks.push('-');
+        blocks.push(blockBySelector('reportqanalog'));
+        blocks.push(blockBySelector('reportLDR'));
+        blocks.push('-');
+        blocks.push(blockBySelector('setDigital'));
+        blocks.push(blockBySelector('setLed'));
+        blocks.push(blockBySelector('swapmotor'));
+        blocks.push('-');
+        blocks.push(blockBySelector('SetPWM'));
+        blocks.push(blockBySelector('Buzzer'));
+        blocks.push('-');
+        blocks.push(blockBySelector('motor'));
+        blocks.push('-');
+        blocks.push(blockBySelector('qservo'));
+        blocks.push(blockBySelector('servodis'));
+        blocks.push('-');
+
+
+
+
+
+
+
 
     } else if (category === 'other') {
         button = new PushButtonMorph(
@@ -643,210 +799,4 @@ SpriteMorph.prototype.showingArduinoWatcher = function (selector, pin) {
         return watcher.isVisible;
     }
     return false;
-};
-
-
-// List exporting
-
-WatcherMorph.prototype.userMenu = function () {
-    var myself = this,
-        menu = new MenuMorph(this),
-        subMenu,
-        on = '\u25CF',
-        off = '\u25CB',
-        vNames;
-
-    function monitor(vName) {
-        var stage = myself.parentThatIsA(StageMorph),
-            varFrame = myself.currentValue.outerContext.variables;
-        menu.addItem(
-            vName + '...',
-            function () {
-                var watcher = detect(
-                    stage.children,
-                    function (morph) {
-                        return morph instanceof WatcherMorph
-                            && morph.target === varFrame
-                            && morph.getter === vName;
-                    }
-                ),
-                    others;
-                if (watcher !== null) {
-                    watcher.show();
-                    watcher.fixLayout(); // re-hide hidden parts
-                    return;
-                }
-                watcher = new WatcherMorph(
-                    vName + ' ' + localize('(temporary)'),
-                    SpriteMorph.prototype.blockColor.variables,
-                    varFrame,
-                    vName
-                );
-                watcher.setPosition(stage.position().add(10));
-                others = stage.watchers(watcher.left());
-                if (others.length > 0) {
-                    watcher.setTop(others[others.length - 1].bottom());
-                }
-                stage.add(watcher);
-                watcher.fixLayout();
-            }
-        );
-    }
-
-    menu.addItem(
-        (this.style === 'normal' ? on : off) + ' ' + localize('normal'),
-        'styleNormal'
-    );
-    menu.addItem(
-        (this.style === 'large' ? on : off) + ' ' + localize('large'),
-        'styleLarge'
-    );
-    if (this.target instanceof VariableFrame) {
-        menu.addItem(
-            (this.style === 'slider' ? on : off) + ' ' + localize('slider'),
-            'styleSlider'
-        );
-        menu.addLine();
-        menu.addItem(
-            'slider min...',
-            'userSetSliderMin'
-        );
-        menu.addItem(
-            'slider max...',
-            'userSetSliderMax'
-        );
-        menu.addLine();
-        menu.addItem(
-            'import...',
-            function () {
-                var inp = document.createElement('input'),
-                    ide = myself.parentThatIsA(IDE_Morph);
-                if (ide.filePicker) {
-                    document.body.removeChild(ide.filePicker);
-                    ide.filePicker = null;
-                }
-                inp.type = 'file';
-                inp.style.color = "transparent";
-                inp.style.backgroundColor = "transparent";
-                inp.style.border = "none";
-                inp.style.outline = "none";
-                inp.style.position = "absolute";
-                inp.style.top = "0px";
-                inp.style.left = "0px";
-                inp.style.width = "0px";
-                inp.style.height = "0px";
-                inp.style.display = "none";
-                inp.addEventListener(
-                    "change",
-                    function () {
-                        var file;
-
-                        function txtOnlyMsg(ftype) {
-                            ide.inform(
-                                'Unable to import',
-                                'Snap! can only import "text" files.\n' +
-                                    'You selected a file of type "' +
-                                    ftype +
-                                    '".'
-                            );
-                        }
-
-                        function readText(aFile) {
-                            var frd = new FileReader();
-                            frd.onloadend = function (e) {
-                                myself.target.setVar(
-                                    myself.getter,
-                                    e.target.result
-                                );
-                            };
-
-                            if (aFile.type.indexOf("text") === 0) {
-                                frd.readAsText(aFile);
-                            } else {
-                                txtOnlyMsg(aFile.type);
-                            }
-                        }
-
-                        document.body.removeChild(inp);
-                        ide.filePicker = null;
-                        if (inp.files.length > 0) {
-                            file = inp.files[inp.files.length - 1];
-                            readText(file);
-                        }
-                    },
-                    false
-                );
-                document.body.appendChild(inp);
-                ide.filePicker = inp;
-                inp.click();
-            }
-        );
-        if (this.currentValue &&
-                (isString(this.currentValue) || !isNaN(+this.currentValue))) {
-            menu.addItem('export...', this.valueExporter('plain'));
-        } else if (this.currentValue instanceof List) {
-            subMenu = new MenuMorph(this.currentValue);
-            if (!this.currentValue.contents.some(
-                    function (any) {
-                        return any instanceof List;
-                    })) {
-                subMenu.addItem('Plain text', this.valueExporter('plain'));
-            }
-            subMenu.addItem('JSON', this.valueExporter('json'));
-            subMenu.addItem('XML', this.valueExporter('xml'));
-            subMenu.addItem('CSV', this.valueExporter('csv'));
-            menu.addMenu('export...', subMenu);
-        } else if (this.currentValue instanceof Context) {
-            vNames = this.currentValue.outerContext.variables.names();
-            if (vNames.length) {
-                menu.addLine();
-                vNames.forEach(function (vName) {
-                    monitor(vName);
-                });
-            }
-        }
-    }
-    return menu;
-};
-
-WatcherMorph.prototype.valueExporter = function (format) {
-    var myself = this,
-        value = this.currentValue,
-        contents,
-        format = format || 'plain',
-        ide = myself.parentThatIsA(IDE_Morph);
-
-    return function () {
-        switch (format) {
-            case 'plain':
-                contents = value instanceof List ? 
-                    value.asArray().join('\n') : 
-                    value.toString();
-                break;
-            case 'json':
-                contents = JSON.stringify(value);
-                break;
-            case 'xml':
-                contents = ide.serializer.serialize(value);
-                break;
-            case 'csv':
-                try {
-                    contents = value.toCSV();
-                } catch (err) {
-                    if (Process.prototype.isCatchingErrors) {
-                        ide.showMessage('List cannot be converted into CSV', 2);
-                    } else {
-                        throw err;
-                    }
-                    return;
-                }
-                break;
-        }
-
-        ide.saveFileAs(
-            contents,
-            'text/' + format + ';charset=utf-8',
-            myself.getter // variable name
-            );
-    };
 };
