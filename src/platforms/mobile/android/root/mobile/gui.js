@@ -1,25 +1,39 @@
+// Resize blocks and categories
+IDE_Morph.prototype.originalInit = IDE_Morph.prototype.init;
+IDE_Morph.prototype.init = function (isAutoFill) {
+    SyntaxElementMorph.prototype.setScale(1.5);
+    this.saveSetting('zoom', 1.5);
+    this.originalInit(isAutoFill);
+};
+IDE_Morph.prototype.originalCreateCategories = IDE_Morph.prototype.createCategories;
+IDE_Morph.prototype.createCategories = function () {
+    this.originalCreateCategories(240);
+};
+
 IDE_Morph.prototype.showGarbageBin = function () {
     if (!this.garbageBin) {
         ide.buildGarbageBin();
         ide.garbageBin.drawNew();
     }
+    this.palette.showOverlay();
     this.garbageBin.show();
-    this.garbageBin.setRight(this.stage.left() - 20);
+    this.garbageBin.setCenter(this.palette.center());
 };
 
 IDE_Morph.prototype.hideGarbageBin = function () {
     this.garbageBin.hide();
+    this.palette.hideOverlay();
 };
 
 IDE_Morph.prototype.buildGarbageBin = function () {
-    var myself = this;
+    var myself = this,
+        overlay = new Morph();
     this.garbageBin = new Morph();
     this.garbageBin.setExtent(new Point(60, 75));
-    this.garbageBin.setBottom(this.bottom() - 20);
-    this.garbageBin.setRight(this.stage.left() - 20);
+    this.garbageBin.setCenter(this.palette.center());
     this.garbageBin.isDraggable = false;
     this.garbageBin.acceptsDrops = false;
-    this.garbageBin.color = new Color(125, 112, 85, 0.6);
+    this.garbageBin.color = new Color(125, 112, 85);
 
     this.garbageBin.drawNew = function () {
         var w = this.width(),
@@ -51,31 +65,33 @@ IDE_Morph.prototype.buildGarbageBin = function () {
         }
     };
 
-    this.garbageBin.mouseEnterDragging = function () {
-        var myself = this,
-            hand = this.world().hand,
-            origin = hand.grabOrigin.position;
-        this.setColor(new Color(225, 212, 85, 0.6));
+    overlay.setColor(50, 50, 50);
+    overlay.setAlphaScaled(50);
+    overlay.setExtent(this.palette.extent());
+    overlay.setPosition(this.palette.position());
+    this.palette.add(overlay);
+    overlay.hide();
 
-        hand.processTouchEnd = function (event) {
-            var morph = this.children[0];
-            MorphicPreferences.isTouchDevice = true;
-            clearInterval(this.touchHoldTimeout);
-            if (morph instanceof BlockMorph
-                    && this.allMorphsAtPointer().indexOf(myself) > -1) {
-                hand.setPosition(origin);
-                hand.drop();
-                morph.destroy();
-            }
-            this.processMouseUp({button: 0});
-        };
+    this.palette.showOverlay = function () {
+        overlay.show();
+        myself.garbageBin.setColor(new Color(225, 212, 85));
     };
 
-    this.garbageBin.mouseLeave = function () {
-        this.setColor(new Color(125, 112, 85, 0.6));
+    this.palette.hideOverlay = function () {
+        overlay.hide();
+        myself.garbageBin.setColor(new Color(125, 112, 85));
     };
 
-    this.add(this.garbageBin);
+    this.palette.mouseEnterDragging = function () {
+        this.showOverlay();
+    };
+
+    this.palette.mouseLeave = function () {
+        this.hideOverlay();
+    };
+
+
+    this.palette.add(this.garbageBin);
 };
 
 IDE_Morph.prototype.shrinkStage = function () {
@@ -88,7 +104,7 @@ IDE_Morph.prototype.shrinkPalette = function () {
 };
 
 IDE_Morph.prototype.growPalette = function () {
-    this.paletteWidth = 200;
+    this.paletteWidth = 240;
     this.setExtent(world.extent());
 };
 

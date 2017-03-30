@@ -806,7 +806,6 @@ IDE_Morph.prototype.getCostumesList = function (dirname) {
 
 
 // Snap4Arduino logo
-
 IDE_Morph.prototype.createLogo = function () {
     var myself = this;
 
@@ -855,7 +854,6 @@ IDE_Morph.prototype.createLogo = function () {
 };
 
 // Exporting
-
 IDE_Morph.prototype.originalExportProject = IDE_Morph.prototype.exportProject;
 IDE_Morph.prototype.exportProject = function (name, plain) {
     var menu, 
@@ -882,7 +880,7 @@ IDE_Morph.prototype.exportProject = function (name, plain) {
     }
 };
 
-function saveFile(name, contents, extension, target) {
+function saveFile (name, contents, extension, target) {
     var inp = document.createElement('input');
     if (target.filePicker) {
         document.body.removeChild(target.filePicker);
@@ -1077,7 +1075,6 @@ IDE_Morph.prototype.showProjectUrl = function (projectName) {
 };
 
 // EXPERIMENTAL: Arduino translation mode
-
 IDE_Morph.prototype.createNewArduinoProject = function () {
     var myself = this;
     this.confirm(
@@ -1186,7 +1183,7 @@ IDE_Morph.prototype.version = function () {
 
 // Can't be decorated, and we need to make sure the "other" category
 // shows up
-IDE_Morph.prototype.createCategories = function () {
+IDE_Morph.prototype.createCategories = function (overriddenWidth) {
     var myself = this;
 
     if (this.categories) {
@@ -1194,10 +1191,10 @@ IDE_Morph.prototype.createCategories = function () {
     }
     this.categories = new Morph();
     this.categories.color = this.groupColor;
-    this.categories.silentSetWidth(this.logo.width()); // width is fixed
+    this.categories.silentSetWidth(overriddenWidth || this.logo.width()); // width is fixed
 
     function addCategoryButton(category) {
-        var labelWidth = 75,
+        var labelWidth = 75 * SyntaxElementMorph.prototype.scale,
             colors = [
                 myself.frameColor,
                 myself.frameColor.darker(50),
@@ -1225,6 +1222,8 @@ IDE_Morph.prototype.createCategories = function () {
                 labelWidth, // minWidth
                 true // has preview
                 );
+
+        button.fontSize *= SyntaxElementMorph.prototype.scale;
 
         button.corner = 8;
         button.padding = 0;
