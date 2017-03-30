@@ -91,6 +91,30 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
             part.originalChanged = part.changed;
             part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
             break;
+  case '%qanalog':
+            part = new InputSlotMorph(
+                    null,
+                    false,
+                    {
+                        '1' : 1,
+                        '2' : 2, 
+                        '3' : 3,
+                        '4' : 4,
+                    }
+                    );
+            break;
+
+     case '%motorpin':
+            part = new InputSlotMorph(
+                    null,
+                    false,
+                    {
+                        'M1' : 'M1',
+                        'M2' : 'M2', 
+                    }
+                    );
+            break;
+
         case '%digitalPin':
             part = new InputSlotMorph(
                     null,
@@ -122,6 +146,34 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
             part.originalChanged = part.changed;
             part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
             break;
+
+case '%qdigital':
+            part = new InputSlotMorph(
+                    null,
+                    false,
+                    {
+                        '1' : 1,
+                        '2' : 2, 
+                        '3' : 3,
+                        '4' : 4,
+                        '5' : 5,
+                        '6' : 6,
+                    }
+                    );
+            break;
+case '%qPWM':
+            part = new InputSlotMorph(
+                    null,
+                    false,
+                    {
+                        '1' : 1,
+                        '2' : 2, 
+                        '3' : 3,
+                        '4' : 4,
+                    }
+                    );
+            break;
+
         default:
             part = this.originalLabelPart(spec);
     }
@@ -360,3 +412,4 @@ BlockMorph.prototype.transpileToC = function () {
         ide.inform('Error exporting to Arduino sketch!', error.message)
     }
 };
+

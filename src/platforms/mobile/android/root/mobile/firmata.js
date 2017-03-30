@@ -288,7 +288,7 @@ var Board = function(port, callback) {
     } else {
         this.sp = new SerialPort(port, {
             baudrate: 57600,
-            buffersize: 1
+            buffersize: 128
         });
     }
     this.sp.on('error', function(string) {

@@ -235,7 +235,7 @@ Arduino.prototype.connectNetwork = function (host) {
                         myself.board.sp.path = myself.hostname;
 
                         myself.hideMessage();
-                        ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));
+                        ide.inform(myself.owner.name, localize('RIO board has been connected. Happy prototyping!'));
                     } else {
                         myself.hideMessage();
                         ide.inform(myself.owner.name, localize('Error connecting the board.\n') + err, myself.closeHandler(true));
