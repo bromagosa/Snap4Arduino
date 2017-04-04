@@ -21,6 +21,7 @@ cordova create Snap4Arduino
 cd Snap4Arduino
 cordova platform remove android
 cordova platform add android@5.2.2
+cordova plugin add http://github.com/don/cordova-filechooser.git
 mv ../../tmp_www/* www
 cd ../../
 rm -r tmp_www

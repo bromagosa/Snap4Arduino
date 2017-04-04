@@ -10,6 +10,7 @@ IDE_Morph.prototype.createCategories = function () {
     this.originalCreateCategories(240);
 };
 
+// Garbage bin
 IDE_Morph.prototype.showGarbageBin = function () {
     if (!this.garbageBin) {
         ide.buildGarbageBin();
@@ -74,26 +75,24 @@ IDE_Morph.prototype.buildGarbageBin = function () {
 
     this.palette.showOverlay = function () {
         overlay.show();
-        myself.garbageBin.setColor(new Color(225, 212, 85));
     };
 
     this.palette.hideOverlay = function () {
         overlay.hide();
-        myself.garbageBin.setColor(new Color(125, 112, 85));
     };
 
     this.palette.mouseEnterDragging = function () {
-        this.showOverlay();
+        myself.garbageBin.setColor(new Color(225, 212, 85));
     };
 
     this.palette.mouseLeave = function () {
-        this.hideOverlay();
+        myself.garbageBin.setColor(new Color(125, 112, 85));
     };
-
 
     this.palette.add(this.garbageBin);
 };
 
+// Resize stage and palette
 IDE_Morph.prototype.shrinkStage = function () {
     this.toggleStageSize(true);
 };
@@ -210,3 +209,27 @@ PaletteHandleMorph.prototype.mouseClickLeft = function () {
 };
 
 PaletteHandleMorph.prototype.mouseDownLeft = PaletteHandleMorph.prototype.mouseClickLeft;
+
+// Cordova file operations
+
+IDE_Morph.prototype.fileImport = function () {
+    function readFile(fileEntry) {
+        fileEntry.file(
+            function (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) { 
+                    var contents = e.target.result;
+                    ide.droppedText(contents);
+                };
+                reader.readAsText(file);
+            },
+            function (error) {
+                console.log(error);
+            }
+        );
+    };
+
+    fileChooser.open(function (uri) {
+        window.resolveLocalFileSystemURL(uri, readFile); 
+    });
+};
