@@ -92,6 +92,7 @@ Arduino.prototype.hideMessage = function () {
 
 Arduino.prototype.attemptConnection = function () {
     var myself = this,
+        bleEnabled = Arduino.prototype.bleEnabled;
         networkPortsEnabled = Arduino.prototype.networkPortsEnabled;
 
     if (!this.connecting) {
@@ -114,7 +115,13 @@ Arduino.prototype.attemptConnection = function () {
                         myself.networkDialog();
                     });
                 }
-                if (networkPortsEnabled || portCount > 1) {
+                if (bleEnabled) {
+                    portMenu.addLine();
+                    portMenu.addItem('BLE device', function () {
+                        myself.bleDialog();
+                    });
+                }
+                if (networkPortsEnabled || bleEnabled || portCount > 1) {
                     portMenu.popUpAtHand(world);
                 } else if (!networkPortsEnabled && portCount === 1) {
                     myself.connect(Object.keys(ports)[0]);
@@ -149,6 +156,7 @@ Arduino.prototype.closeHandler = function (silent) {
     Arduino.unlockPort(this.port);
     this.connecting = false;
     this.disconnecting = false;
+    this.justConnected = false;
 
     if (this.gotUnplugged & !silent) {
         ide.inform(
@@ -176,95 +184,16 @@ Arduino.prototype.errorHandler = function (err) {
 };
 
 Arduino.prototype.networkDialog = function () {
+    var myself = this;
     new DialogBoxMorph(
             this, // target
-            'connectNetwork', // action
+            function () { myself.connect(myself.hostname, false, 'network'); }, // action
             this // environment
             ).prompt(
                 'Enter hostname or ip address:', // title
                 this.hostname, // default
                 this.owner.world() // world
                 );
-};
-
-Arduino.prototype.connectNetwork = function (host) {
-    var myself = this,
-        net = require('net'),
-        hostname,
-        port;
-
-    if (host.indexOf('tcp://') === 0) {
-        host = host.slice(6);
-    }
-
-    hostname = host.split(':')[0];
-    port = host.split(':')[1] || 23;
-
-    this.hostname = 'tcp://' + hostname + ':' + port;
-
-    this.owner.parentThatIsA(IDE_Morph).saveSetting('network-serial-hostname', this.hostname);
-
-    this.disconnect(true);
-
-    this.showMessage(localize('Connecting to network port:\n') + this.hostname + '\n\n' + localize('This may take a few seconds...'));
-    this.connecting = true;
-
-    var client = net.connect(
-            { 
-                host: hostname,
-                port: port
-            },
-            function () {
-                var socket = this;
-                myself.board = new Arduino.firmata.Board(socket, function(err) {
-                    if (!err) {
-                        // Clear timeout to avoid problems if connection is closed before timeout is completed
-                        clearTimeout(myself.connectionTimeout);
-
-                        // Start the keepAlive interval
-                        myself.keepAliveIntervalID = setInterval(function () { myself.keepAlive }, 5000);
-
-                        myself.board.sp.on('disconnect', function () { myself.disconnectHandler.call(myself) });
-                        myself.board.sp.on('close', function () { myself.closeHandler.call(myself) } );
-                        myself.board.sp.on('error', function () { myself.errorHandler.call(myself) } );
-
-                        myself.port = 'network';
-                        myself.connecting = false;
-                        myself.justConnected = true;
-                        myself.board.connected = true;
-                        myself.board.sp.path = myself.hostname;
-
-                        myself.hideMessage();
-                        ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));
-                    } else {
-                        myself.hideMessage();
-                        ide.inform(myself.owner.name, localize('Error connecting the board.\n') + err, myself.closeHandler(true));
-                    }
-                    return;
-                });
-            });
-
-    client.on('error', function(err) {
-        myself.hideMessage();
-        if (err.code === 'EHOSTUNREACH') {
-            ide.inform(
-                    myself.owner.name, 
-                    localize('Unable to connect to board\n')
-                    + myself.hostname + '\n\n'
-                    + localize('Make sure the board is powered on'));
-        } else if (err.code === 'ECONNREFUSED') {
-            ide.inform(
-                    myself.owner.name,
-                    localize('Unable to connect to board\n')
-                    + myself.hostname + '\n\n'
-                    + localize('Make sure the hostname and port are correct'));
-        } else {
-            ide.inform(myself.owner.name, localize('Unable to connect to board\n') + myself.hostname);
-        }
-        client.destroy();
-        myself.connecting = false;
-        myself.justConnected = false;
-    });
 };
 
 Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
@@ -275,7 +204,7 @@ Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
                 { bitrate: 57600 },
                 function (info) { 
                     if (info) { 
-                        chrome.serial.disconnect( info.connectionId, okCallback);
+                        chrome.serial.disconnect(info.connectionId, okCallback);
                     } else {
                         failCallback('Port ' + port + ' does not seem to exist');
                     }
@@ -285,38 +214,96 @@ Arduino.prototype.verifyPort = function (port, okCallback, failCallback) {
     }
 };
 
-Arduino.prototype.connect = function (port, verify) {
-    var myself = this;
+Arduino.prototype.connect = function (port, verify, channel) {
+    var myself = this,
+        net,
+        hostname,
+        host = port,
+        netPort,
+        netClient,
+        socket;
+
+    if (channel === 'network') {
+        net = require('net');
+
+        if (host.indexOf('tcp://') === 0) {
+            host = host.slice(6);
+        }
+
+        hostname = host.split(':')[0];
+        netPort = host.split(':')[1] || 23;
+
+        this.hostname = 'tcp://' + hostname + ':' + netPort;
+
+        this.owner.parentThatIsA(IDE_Morph).saveSetting(
+            'network-serial-hostname',
+            this.hostname);
+
+        this.showMessage(localize('Connecting to network port:\n') +
+            this.hostname + '\n\n' + 
+            localize('This may take a few seconds...'));
+    } else {
+        this.showMessage(localize('Connecting board at port\n') + port);
+    }
 
     this.disconnect(true);
-
-    this.showMessage(localize('Connecting board at port\n') + port);
     this.connecting = true;
 
     if (verify) {
         this.verifyPort(port, doConnect, fail);
+    } else if (channel === 'network') {
+        netClient = net.connect(
+            {
+                host: hostname,
+                port: netPort
+            },
+            doConnect
+        );
+        netClient.on('error', fail);
     } else {
         doConnect();
     }
 
-    function fail (err, shouldClose) {
+    function fail (err) {
         myself.hideMessage();
-        myself.owner.parentThatIsA(StageMorph).threads.processes.forEach(
-                function (process) {
-                    if (process.topBlock.selector === 'connectArduino') {
-                        process.stop(); 
-                    }
-                });
-        ide.inform(
-                myself.owner.name,
-                localize('Error connecting the board.') + ' ' + err,
-                function () {
-                    myself.closeHandler(true); 
 
-                });
+        myself.owner.parentThatIsA(StageMorph).threads.processes.forEach(
+            function (process) {
+                if (process.topBlock.selector === 'connectArduino') {
+                    process.stop(); 
+                }
+            });
+
+        if (err.code === 'EHOSTUNREACH') {
+            ide.inform(
+                myself.owner.name, 
+                localize('Unable to connect to board\n')
+                    + myself.hostname + '\n\n'
+                    + localize('Make sure the board is powered on'));
+        } else if (err.code === 'ECONNREFUSED') {
+            ide.inform(
+                myself.owner.name,
+                localize('Unable to connect to board\n')
+                    + myself.hostname + '\n\n'
+                    + localize('Make sure the hostname and port are correct'));
+        } else {
+            ide.inform(
+                myself.owner.name,
+                localize('Error connecting the board.') + ' ' + err);
+        }
+
+        if (netClient) {
+            netClient.destroy();
+        }
+
+        myself.closeHandler(true); 
     };
 
     function doConnect () {
+        if (channel === 'network') {
+            port = this;
+        }
+        
         myself.board = new Arduino.firmata.Board(port, function (err) { 
             // Clear timeout to avoid problems if connection is closed before timeout is completed
             clearTimeout(myself.connectionTimeout); 
@@ -328,11 +315,19 @@ Arduino.prototype.connect = function (port, verify) {
                 myself.board.sp.on('close', function () { myself.closeHandler.call(myself) } );
                 myself.board.sp.on('error', function () { myself.errorHandler.call(myself) } );
 
-                Arduino.lockPort(port);
-                myself.port = myself.board.sp.path;
-                myself.connecting = false;
-                myself.justConnected = true;
-                myself.board.connected = true;
+                if (channel === 'network') {
+                    myself.port = 'network';
+                    myself.connecting = false;
+                    myself.justConnected = true;
+                    myself.board.connected = true;
+                    myself.board.sp.path = myself.hostname;
+                } else {
+                    Arduino.lockPort(port);
+                    myself.port = myself.board.sp.path;
+                    myself.connecting = false;
+                    myself.justConnected = true;
+                    myself.board.connected = true;
+                }
 
                 myself.hideMessage();
                 ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));   
