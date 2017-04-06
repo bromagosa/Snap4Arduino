@@ -288,6 +288,27 @@ this.blocks.reportPIR =
     StageMorph.prototype.codeMappings['digitalWrite'] = '  s4a.digitalWrite(<#1>, <#2>);';
     StageMorph.prototype.codeMappings['servoWrite'] = '  s4a.servoWrite(<#1>, <#2>);';
     StageMorph.prototype.codeMappings['pwmWrite'] = '  s4a.analogWrite(<#1>, <#2>);';
+    //qtpi
+    StageMorph.prototype.codeMappings['reportInfrared'] = 's4a.qdigitalRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportPIR'] = 's4a.qdigitalRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportLimitSwitch'] = 's4a.qdigitalRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportqdigital'] = 's4a.qdigitalRead(<#1>)';
+
+    StageMorph.prototype.codeMappings['reportqanalog'] = 's4a.qanalogRead(<#1>)';
+    StageMorph.prototype.codeMappings['reportLDR'] = 's4a.qanalogRead(<#1>)';
+
+    StageMorph.prototype.codeMappings['setDigital'] = '  s4a.qdigitalWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['setLed'] = '  s4a.qdigitalWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['swapmotor'] = '  s4a.qdigitalWrite(<#1>, <#2>);';
+
+    StageMorph.prototype.codeMappings['SetPWM'] = '  s4a.qanalogWrite(<#1>, <#2>);';
+    StageMorph.prototype.codeMappings['Buzzer'] = '  s4a.qanalogWrite(<#1>, <#2>);';
+
+    StageMorph.prototype.codeMappings['motor'] = '  s4a.qmotor(<#1>, <#2>, <#3>);';
+
+    StageMorph.prototype.codeMappings['qservo'] = '  s4a.qservowrite(<#1>, <#2>, <#3>, <#4>);';
+    
+
 }
 
 SpriteMorph.prototype.initBlocks =  function() {

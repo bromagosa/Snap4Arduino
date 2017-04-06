@@ -179,7 +179,7 @@ Process.prototype.servodis = function (pin) {
 
 Process.prototype.qservo = function (pin, min, max, value) {
     var sprite = this.homeContext.receiver;
-    var i,j,k;    
+    var i,j,k;     
     var pinValue;
     switch (pin[0]) {
             case '1':
