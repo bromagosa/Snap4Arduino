@@ -213,7 +213,7 @@ PaletteHandleMorph.prototype.mouseDownLeft = PaletteHandleMorph.prototype.mouseC
 // Cordova file operations
 
 IDE_Morph.prototype.fileImport = function () {
-    function readFile(fileEntry) {
+    function readFile (fileEntry) {
         fileEntry.file(
             function (file) {
                 var reader = new FileReader();
@@ -224,7 +224,7 @@ IDE_Morph.prototype.fileImport = function () {
                 reader.readAsText(file);
             },
             function (error) {
-                console.log(error);
+                alert(error);
             }
         );
     };
@@ -232,4 +232,29 @@ IDE_Morph.prototype.fileImport = function () {
     fileChooser.open(function (uri) {
         window.resolveLocalFileSystemURL(uri, readFile); 
     });
+};
+
+saveAs = function (contents, fileName) {
+    window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dirEntry) {
+        dirEntry.getFile(
+            fileName,
+            {
+                create: true,
+                exclusive: false
+            },
+            function (fileEntry) {
+                console.log(fileEntry);
+                writeFile(fileEntry, new Blob([contents], { type: 'text/xml' }));
+            }
+        );
+    });
+
+    function writeFile (fileEntry, dataObj) {
+        fileEntry.createWriter(function (fileWriter) {
+            fileWriter.onerror = function (err) {
+                alert(err.toString());
+            };
+            fileWriter.write(dataObj);
+        });
+    };
 };
