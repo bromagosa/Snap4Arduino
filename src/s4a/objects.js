@@ -306,7 +306,7 @@ this.blocks.reportPIR =
 
     StageMorph.prototype.codeMappings['motor'] = '  s4a.qmotor(<#1>, <#2>, <#3>);';
 
-    StageMorph.prototype.codeMappings['qservo'] = '  s4a.qservowrite(<#1>, <#2>, <#3>, <#4>);';
+    StageMorph.prototype.codeMappings['qservo'] = '  s4a.qservowrite(<#1>, <#2>, <#3>, <#4>);'; 
     
 
 }

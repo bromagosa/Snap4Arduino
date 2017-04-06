@@ -552,7 +552,7 @@ Arduino.processBroadcasts = function (hatBlocks) {
         fullCode += myself.processBroadcast(each);
     });
 
-    return fullCode;
+    return fullCode; 
 };
 
 Arduino.processBroadcast = function (hatBlock, body) {
@@ -641,7 +641,7 @@ Arduino.S4Afunctions =
     + '       digitalWrite(pin,booleanValue);\n'
     + '       analogWrite(qpin,value);\n'
     + '  }\n\n'
-    + '  void qdigitalWrite(int port, boolean level) {\n'
+    + '  void qdigitalWrite(int port, boolean level)  {\n'
     + '    int pin;\n'
     + '      if(port==1){pin=3;}\n'
     + '      if(port==2){pin=9;}\n'
