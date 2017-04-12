@@ -235,7 +235,12 @@ IDE_Morph.prototype.fileImport = function () {
     });
 };
 
-saveAs = function (contents, fileName) {
+saveAs = function (contents, fileName, ignoreUntitled) {
+
+    if (!ignoreUntitled && fileName === localize('Untitled') + '.xml') {
+        window.prompt('Project Name', '', function (name) { saveAs(contents, name, true); });
+    }
+
     window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function (dirEntry) {
         dirEntry.getFile(
             fileName,
@@ -244,7 +249,6 @@ saveAs = function (contents, fileName) {
                 exclusive: false
             },
             function (fileEntry) {
-                console.log(fileEntry);
                 writeFile(fileEntry, new Blob([contents], { type: 'text/xml' }));
             }
         );
