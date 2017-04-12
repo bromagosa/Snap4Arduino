@@ -218,3 +218,23 @@ HandMorph.prototype.processTouchMove = function (event) {
         }
     }
 };
+
+// Traditionally resizable dialogs are now full screen,
+// except for the make a block one, that still needs to show the palette
+HandleMorph.prototype.originalInit = HandleMorph.prototype.init;
+HandleMorph.prototype.init = function (target, minX, minY, insetX, insetY, type) {
+    if (target instanceof BlockEditorMorph) {
+        ide.growPalette();
+        target.setWidth(480);
+        target.setHeight(world.height());
+        target.setTop(0);
+        target.setRight(world.width());
+        this.drawNew = nop;
+    } else if (target instanceof DialogBoxMorph) {
+        target.setExtent(world.extent());
+        target.setPosition(world.position());
+        this.drawNew = nop;
+    } else {
+        this.originalInit(target, minX, minY, insetX, insetY, type);
+    }
+};

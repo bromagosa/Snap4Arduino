@@ -4,6 +4,7 @@ IDE_Morph.prototype.init = function (isAutoFill) {
     SyntaxElementMorph.prototype.setScale(1.5);
     this.saveSetting('zoom', 1.5);
     this.originalInit(isAutoFill);
+    this.isAnimating = false;
 };
 IDE_Morph.prototype.originalCreateCategories = IDE_Morph.prototype.createCategories;
 IDE_Morph.prototype.createCategories = function () {
