@@ -1185,7 +1185,7 @@ IDE_Morph.prototype.version = function () {
 
 // Can't be decorated, and we need to make sure the "other" category
 // shows up
-IDE_Morph.prototype.createCategories = function (overriddenWidth) {
+IDE_Morph.prototype.createCategories = function () {
     var myself = this;
 
     if (this.categories) {
@@ -1193,10 +1193,10 @@ IDE_Morph.prototype.createCategories = function (overriddenWidth) {
     }
     this.categories = new Morph();
     this.categories.color = this.groupColor;
-    this.categories.silentSetWidth(overriddenWidth || this.logo.width()); // width is fixed
+    this.categories.silentSetWidth(this.logo.width()); // width is fixed
 
     function addCategoryButton(category) {
-        var labelWidth = 75 * SyntaxElementMorph.prototype.scale,
+        var labelWidth = 75,
             colors = [
                 myself.frameColor,
                 myself.frameColor.darker(50),
@@ -1224,8 +1224,6 @@ IDE_Morph.prototype.createCategories = function (overriddenWidth) {
                 labelWidth, // minWidth
                 true // has preview
                 );
-
-        button.fontSize *= SyntaxElementMorph.prototype.scale;
 
         button.corner = 8;
         button.padding = 0;

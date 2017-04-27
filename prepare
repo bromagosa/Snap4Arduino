@@ -48,7 +48,32 @@ pull_snap() {
         cd ../..
         exit 1
     fi
-    cd ../..
+
+    echo "Fetching and pulling some unmerged pull requests"
+    git fetch origin refs/pull/1731/head
+    git fetch origin refs/pull/1676/head
+    git fetch origin refs/pull/1674/head
+    git fetch origin refs/pull/1673/head
+    git fetch origin refs/pull/1666/head
+    git fetch origin refs/pull/1663/head
+
+    git pull origin refs/pull/1731/head
+    git pull origin refs/pull/1676/head
+    git pull origin refs/pull/1674/head
+    git pull origin refs/pull/1673/head
+    git pull origin refs/pull/1666/head
+    git pull origin refs/pull/1663/head
+
+    echo "Converting all sounds to a free format (OGG)"
+    cd Sounds
+    for name in `ls *.mp3 | cut -f1 -d.`; do ffmpeg -i "$name.mp3" "$name.ogg"; done
+    rm *.mp3
+
+    sed -E 's/mp3/ogg/' catalog.json > catalog_ogg.json
+    mv catalog_ogg.json catalog.json
+
+    cd ../../..
+
     print_ok "Snap! sources up to date."
 }
 

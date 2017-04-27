@@ -6,9 +6,100 @@ IDE_Morph.prototype.init = function (isAutoFill) {
     this.originalInit(isAutoFill);
     this.isAnimating = false;
 };
-IDE_Morph.prototype.originalCreateCategories = IDE_Morph.prototype.createCategories;
+
 IDE_Morph.prototype.createCategories = function () {
-    this.originalCreateCategories(240);
+    var myself = this;
+
+    if (this.categories) {
+        this.categories.destroy();
+    }
+    this.categories = new Morph();
+    this.categories.color = this.groupColor;
+    this.categories.silentSetWidth(240 || this.logo.width()); // width is fixed
+
+    function addCategoryButton(category) {
+        var labelWidth = 75 * SyntaxElementMorph.prototype.scale,
+            colors = [
+                myself.frameColor,
+                myself.frameColor.darker(50),
+                SpriteMorph.prototype.blockColor[category]
+            ],
+            button;
+
+        button = new ToggleButtonMorph(
+                colors,
+                myself, // the IDE is the target
+                function () {
+                    myself.currentCategory = category;
+                    myself.categories.children.forEach(function (each) {
+                        each.refresh();
+                    });
+                    myself.refreshPalette(true);
+                },
+                category[0].toUpperCase().concat(category.slice(1)), // label
+                function () {  // query
+                    return myself.currentCategory === category;
+                },
+                null, // env
+                null, // hint
+                null, // template cache
+                labelWidth, // minWidth
+                true // has preview
+                );
+
+        button.fontSize *= SyntaxElementMorph.prototype.scale;
+
+        button.corner = 8;
+        button.padding = 0;
+        button.labelShadowOffset = new Point(-1, -1);
+        button.labelShadowColor = colors[1];
+        button.labelColor = myself.buttonLabelColor;
+        button.fixLayout();
+        button.refresh();
+        myself.categories.add(button);
+        return button;
+    }
+
+    function fixCategoriesLayout() {
+        var buttonWidth = myself.categories.children[0].width(),
+            buttonHeight = myself.categories.children[0].height(),
+            border = 3,
+            rows =  Math.ceil((myself.categories.children.length) / 2),
+            xPadding = (myself.categories.width()
+                    - border
+                    - buttonWidth * 2) / 3,
+            yPadding = 2,
+            l = myself.categories.left(),
+            t = myself.categories.top(),
+            i = 0,
+            row,
+            col;
+
+        myself.categories.children.forEach(function (button) {
+            i += 1;
+            row = Math.ceil(i / 2);
+            col = 2 - (i % 2);
+            button.setPosition(new Point(
+                l + (col * xPadding + ((col - 1) * buttonWidth)),
+                t + (row * yPadding + ((row - 1) * buttonHeight) + border)
+                )
+            );
+        });
+
+        myself.categories.setHeight(
+            (rows + 1) * yPadding
+            + rows * buttonHeight
+            + 2 * border
+            );
+    }
+
+    SpriteMorph.prototype.categories.forEach(function (cat) {
+        if (!contains(['lists'], cat)) {
+            addCategoryButton(cat);
+        }
+    });
+    fixCategoriesLayout();
+    this.add(this.categories);
 };
 
 // Garbage bin
