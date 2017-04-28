@@ -1,5 +1,47 @@
 # CHANGELOG
 
+### 1.2.3
+
+* Experimental mobile version for Android tablets that uses serial over Blueetooth
+* Added script that fixes GPU issue in old Mac computers (see [this wiki entry](https://github.com/bromagosa/Snap4Arduino/wiki/Troubleshooting#white-screen-in-macosx-on-startup))
+* Automatic version discovery (with help from Joan Guillén), prompts user to download a new version if available
+* Fixed Libraries menu in ChromeOS version
+* Added Phiro library
+* French translation (thanks @pierre-rouanet!)
+* Fixed costume/background loader
+* Added `--load` parameter for desktop versions (see [this wiki entry](https://github.com/bromagosa/Snap4Arduino/wiki/Launch-Parameters))
+* Added `--lang` parameter for desktop versions (see [this wiki entry](https://github.com/bromagosa/Snap4Arduino/wiki/Launch-Parameters))
+* Bahasa Indonesia translation (thanks @triyanwn!)
+* Ability to export lists into CSV, XML, JSON or plain text
+* Made servoWrite _actually_ atomic
+* Analog/digital watchers are now saved in the project
+* Converted all sounds to OGG so that they can be played by nwjs.io (MPEG codecs are proprietary)
+* Included a bunch of pull requests to Snap! that haven't yet been merged but are necessary:
+  * Webcam costume and background dialog support
+  * Fix for variable rename-refactoring
+  * Two fixes related to toggling design mode and project names, by Joan Guillén
+  * Categorized costumes and sounds dialog, by @erichake
+  * Fix for paint bucket bug
+* Updated Firmata in desktop versions, by Joan Guillén
+
+### 1.2.2
+
+* Project listener and websockets command listener daemon for Linino version (Tian, Yun, Yun mini, Industrial 101)
+* Fixed analog and digital watchers in Linino version
+* Made servoWrite atomic
+* Fixed LeapMotion library for desktop versions, contributed by @fzsigmond
+* Added loading screen for desktop versions
+* Traditional and simplified Chinese translations by Jeffrey (Ying-Chieh) Chao
+
+### 1.2.1
+
+* Fixed some broken ChromeOS file system operations
+* Transpiler enhancements for servos, by Joan Guillén
+* Added ability to load projects by URL
+* Support for modified Firmatas in web version, by Joan Guillén
+* WebSockets project listener for Linino version (Tian, Yun, Yun mini, Industrial 101)
+* Added Galician language (thanks @tecnoloxia!)
+
 ### 1.2
 
 _This release was made in collaboration with -and thanks to- Joan Guillén and Josep Ferrándiz from AULATEC (CESIRE)._
