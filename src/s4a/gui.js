@@ -682,10 +682,11 @@ IDE_Morph.prototype.projectMenu = function () {
 };
 
 IDE_Morph.prototype.fileImport = function () {
-    var inp = document.createElement('input');
-    if (myself.filePicker) {
+    var myself = this,
+        inp = document.createElement('input');
+    if (this.filePicker) {
         document.body.removeChild(myself.filePicker);
-        myself.filePicker = null;
+        this.filePicker = null;
     }
     inp.type = 'file';
     inp.style.color = "transparent";
@@ -707,7 +708,7 @@ IDE_Morph.prototype.fileImport = function () {
             false
             );
     document.body.appendChild(inp);
-    myself.filePicker = inp;
+    this.filePicker = inp;
     inp.click();
 };
 
