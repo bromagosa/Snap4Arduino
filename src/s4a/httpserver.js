@@ -124,7 +124,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                         stage = myself.stage;
 
                     Object.keys(stage.globalVariables().vars).forEach(function (varName) {
-                        contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value;
+                        contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value.toString();
                     });
 
                     response.end(contents);
@@ -134,7 +134,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     var stage = myself.stage,
                         varName = command[1];
 
-                    response.end(stage.globalVariables().vars[varName].value);
+                    response.end(stage.globalVariables().vars[varName].value.toString());
                     break;
 
                 case 'stage':
