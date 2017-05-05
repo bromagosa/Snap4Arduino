@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Snap4Arduino</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/owl.carousel.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/ionicons.min.css">
+        <link rel="stylesheet" href="css/animate.css">
+        <link rel="stylesheet" href="css/responsive.css">
+        <link rel="stylesheet" href="css/scrolling-nav.css">
+
+        <!-- Js -->
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/owl.carousel.min.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/min/waypoints.min.js"></script>
+        <script src="js/jquery.counterup.js"></script>
+        <script src="js/scrolling-nav.js"></script>
+        <script src="js/jquery.easing.min.js"></script>
+
+        <script>
+            $(function(){
+                $(window).scroll(function() {
+                    if ($(this).scrollTop() >= 110) {
+                        $('header').addClass('stickytop');
+                    }
+                    else {
+                        $('header').removeClass('stickytop');
+                    }
+                });
+            });
+        </script>
+
+        <script src="js/main.js"></script>
+
+    </head>
+    <body>
+
+        <!-- Header Start -->
+        <header>
+            <div class="container header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- header Nav Start -->
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="container-fluid">
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <a class="navbar-brand" href="index.html">
+                                        <img src="img/logo.png" alt="Logo">
+                                    </a>
+                                </div>
+                                <div class="collapse navbar-collapse navbarCollapse" id="bs-example-navbar-collapse-1">
+                                    <ul class="nav navbar-nav navbar-right">
+                                        <li class="active"><a class="page-scroll" href="#start">What is it?</a></li>
+                                        <li><a class="page-scroll" href="#feature">Features</a></li>
+                                        <li><a class="page-scroll" href="#download">Download</a></li>
+                                        <li><a class="page-scroll" href="#install">Installation</a></li>
+                                        <li><a class="page-scroll" href="#demos">Demos</a></li>
+                                        <li><a class="page-scroll" href="#code">Source</a></li>
+                                        <li><a class="page-scroll" href="#devices">Devices</a></li>
+                                        <li><a class="page-scroll" href="#http">Http Protocol</a></li>
+                                        <li><a class="page-scroll" href="#plugin">Plugin</a></li>
+                                        <li><a class="page-scroll" href="#contact">Contact</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+
+                    </div>
+                </div>
+            </div>
+        </header><!-- header close -->
+
+
+        <section id="start" class="motto">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="block">
+                            <h1 class="pageTitle">Arduino goes lambda!</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wrapper Start -->
+        <section id="intro">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <div class="section-title">
+                                <h3>What is it?</h3>
+                            </div>
+                            <p class="whatis">
+                            Snap4Arduino is a modification of the <a href ="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> visual programming language that lets you seamlessly interact with almost all versions of the <a href="http://www.arduino.org" target="_blank">Arduino</a> board.<br/>
+                            <br/>
+                            You can see a short example of what you can do with it in the video at the rightmost column.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <div class="section-title">
+                                <h3>Snap<i>!</i></h3>
+                            </div>
+                            <p>Snap<i>!</i> (<a href ="http://snap.berkeley.edu/" target="_blank">formerly BYOB</a>) is an extended reimplementation of Scratch that allows you to <a href="http://snap.berkeley.edu/" target="_blank">Build Your Own Blocks</a>&trade;. It also features first class heterogeneous lists, first class procedures, and continuations.
+                            These added capabilities make it suitable for a serious introduction to computer science for high school or college students. <br>
+                            <br> <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> is presented by the University of California at Berkeley. It was developed by Jens Mönig, with design input and documentation by Brian Harvey and contributions by students at Berkeley and elsewhere.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block" id="video-intro">
+                            <br />
+                            <iframe class ="video-intro" width="400" height="280" src="https://www.youtube.com/embed/I-nQtc9vYWs" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="feature" class="feature-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Features</h3>
+                    </div>
+                    <div class="col-md-8">
+                        <ul>
+                            <li>Blocks-based, dynamic, live, concurrent, parallel programming</li>
+                            <li>Almost all <a href="http://www.arduino.org" target="_blank">Arduino</a> boards supported</li>
+                            <li>Uses standard <a href="http://firmata.org" target="_blank">Firmata</a> firmware</li>
+                            <li>Auto-configurable pinouts and high level hardware abstractions</li>
+                            <li>You can interact with multiple boards at the same time</li>
+                            <li>Desktop-based versions for the three major OSes</li>
+                            <li>Free software licensed under the Affero GPLv3</li>
+                            <li>Transpilation of simple scripts into Arduino sketches</li>
+                            <li>HTTP protocol for remote control and live-streaming of the <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> stage</li>
+                            <li>Command line version for embedded GNU/Linuxes</li>
+                            <li>Support for the <a href="http://linino.org" target="_blank">Linino</a> library instead of Firmata in new generation boards like the Tian, Yun or similar</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="download" class="download-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="block">
+                            <div class="section-title">
+                                <h3>Download</h3>
+                            </div>
+                        </div>
+                    </div><!-- .col-md-7 close -->
+                    <div class="col-md-4">
+                        <div class="block">
+                            <p>There are currently versions for GNU/Linux, MacOSX, Microsoft Windows and Chromebook available. 
+                            <br><br>
+                            The project and all its components (including Snap<i>!</i>) are registered under public free software licenses (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">AGPLv3</a> and <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a>), so you can download the <a href="https://github.com/bromagosa/Snap4Arduino" target="_blank">sources</a> and pretty much do whatever you want with them!<br>
+                            <br>Please download the version that matches your operating system.
+                            Current version: 1.2.2, released on 22/12/2016</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="block">
+                            <p>
+                            <a href="/downloads/1.2.2/Snap4Arduino_desktop-win-32_1.2.2.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> Microsoft Windows (32 bits)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_desktop-win-64_1.2.2.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> Microsoft Windows (64 bits)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_desktop-osx-64_1.2.2.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MacOSX (64 bits)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_desktop-gnu-32_1.2.2.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (32 bits)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_desktop-gnu-64_1.2.2.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (64 bits)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_embedded-cli_1.2.2.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> Embedded (Command Line)</a><br>
+                            <a href="/downloads/1.2.2/snap4arduino_1.2.2_ar71xx.ipk" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> Embedded (Linino)</a><br>
+                            <a href="/downloads/1.2.2/Snap4Arduino_web-chromeos_1.2.2.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> ChromeOS</a><br>
+                            <a href="#plugin" class="btn btn-gray btn-sm btn-icon page-scroll" onClick="" target="_self"><i class="fa fa-arrow-down"></i> Web (experimental)</a><br>
+                            </p>
+                            <!-- <p><small><a href="http://vps34736.ovh.net/snap4arduino/" target="blank">Looking for an old version?</a></small></p> -->
+                        </div>
+                    </div><!-- .col-md-5 close --><!-- .col-md-5 close -->
+                </div>
+            </div>
+        </section>
+
+        <section id="install" class="instal-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Installation</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Snap4Arduino requires that you have <a href="http://firmata.org/wiki/Main_Page" target="_blank">StandardFirmata</a> installed in your board.<br>  <br>
+                        To do so, follow these simple steps:
+                        <ol>
+                            <li>If you haven't already, download and install the Arduino environment by following the instructions on <a href="http://arduino.cc/en/Main/Software" target="_blank">http://arduino.cc/en/Main/Software</a>.</li>
+                            <li>Open the <a href="https://www.arduino.cc/en/Main/Software" target="_blank">Arduino IDE</a>, go to File → Examples → Firmata → StandardFirmata</li>
+                            <li>Connect your board to a USB port in your computer</li>
+                            <li>In the Tools menu, select the board version and the serial port where the board is connected</li>
+                            <li>Go to File and click on Upload</li>
+                            <li>Snap4Arduino will now be able to interact with your board.</li>
+                        </ol>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>GNU/Linux</h6>
+                        <p>
+                        You just need to unpack the package. In most window environments you can just click on <b>Snap4Arduino</b>.
+                        If this fails, you can always run <i>./run</i> from the command line.</p>
+                        <h6>MacOS X</h6>
+                        <p>Unzip the package and run the <b>Snap4Arduino</b> package. If you wish, you can move it to your <b>Applications</b> folder so you can access it as a regular app.</p>
+                        <h6>Microsoft Windows</h6>
+                        <p>Just unzip the package and run the installer.</p>
+                        <h6>ChromeOS</h6>
+                        <p>Unzip and double-click on the CRX file.</p>
+                        <h6>Embedded</h6>
+                        <p>The embedded command line version works in any GNU/Linux based machine, including embedded platforms and single board computers. New generation Arduino boards like Yun, Tian or Industrial 101 can run this version right inside the board, and if you have a regular Arduino and any kind of Gnu/Linux based single board computer, you can always have the latter be the host computer to the Arduino board, giving autonomy to your project without having to modify your Snap4Arduino program at all.</p>
+                        <p>Check out <a href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI" target="_blank">this section</a> of our GitHub wiki.
+                        <h6>Web based version (EXPERIMENTAL!)</h6>
+                        <p>If you just want to use it, follow the instructions in the <a class="page-scroll" href="#plugin">Plugin</a> section. To install it in a server of yours, unzip the package and serve the contents of the <i>www</i> folder.<br><br>
+                        Happy prototyping!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demos" class="demos-section">
+            <div class="container">
+                <div id="demorow" class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block demo">
+                            <div class="section-title">
+                                <h3>Demos</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-12">
+                        <div class="block demo">
+                            <p>Here's a couple of fun things that can be done with Snap4Arduino, most of them recorded on a Hi-Tech last generation potato camera. 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/hr23HfC3OWQ" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A bluetooth-controlled car (<a target="_blank" href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-Blueetooth">HOWTO: Blueetooth connectivity</a>)</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/97ByFhhiQOU" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A line follower with parking lights</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/i6OzdKh8PXE" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">An ultrasound ruler</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/rCrV-coweLg" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">An LCD screen</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/XJresVyZul4" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A command line application (<a target="_blank" href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI">HOWTO: Command Line</a>)</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/CeL0r6_3u04" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A somewhat autonomous RaspberryPi powered bullseye contraption (<a target="_blank" href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI">HOWTO: Command Line</a>)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/7WMurQs4J9U" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">An Etch-A-Sketch that streams itself to any device over the network (<a href="https://cdn.rawgit.com/bromagosa/Snap4Arduino/master/examples/Etch-a-Sketch.xml">source</a>)</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/FGKFoUICByE" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A shy Poppy Ergo Jr Robot</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/k35FN1ikWi4" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">Music for a horror film of the 50s (<a href="https://cdn.rawgit.com/bromagosa/Snap4Arduino/master/examples/Theremin.xml">source</a>)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/usDAgvcEXJA" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A machine that beats you at Tic-Tac-Toe</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/afZ31DvivKY" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A mechatronic teddy bear</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/SPnnuo1cDFk" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A LOGO-turtle-like bluetooth drawing robot (<a target="_blank" href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-Blueetooth">HOWTO: Blueetooth connectivity</a>)</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/AgT5ryYHbqM" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A mechatronic eye (<a href="https://cdn.rawgit.com/bromagosa/Snap4Arduino/master/examples/Robotic%20eye.xml">source</a>)</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/r3URJUVYbJk" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">A Phiro robot (<a href="https://cdn.rawgit.com/bromagosa/Snap4Arduino/master/examples/Phiro%20robot.xml">source</a>)</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="block">
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ITCOfX-o1vM" frameborder="0" allowfullscreen></iframe>
+                            <h6 class="video-title">Two laptops communicating via Morse</h6>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="code" class="code-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Source Code</h3>
+                    </div>
+                    <div class="col-md-8">
+                        <p>You can find our GitHub repo at <a href="https://github.com/bromagosa/Snap4Arduino" target="_blank">Snap4Arduino@GitHub</a>. Please feel free to send us your pull requests and participate in reporting, fixing or commenting on bugs!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="devices" class="devices-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Supported Devices</h3>
+
+                    </div>
+                    <div class="col-md-4">
+                        <p>
+                        You can modify Firmata to have it work with a wide variety of devices that, by default, are not supported.
+
+                        Check out <a href="http://blog.s4a.cat/2015/03/13/Extending-Firmata-for-Snap4Arduino.html" target="_blank">this blog post</a> if you want to do it yourself.
+
+                        Additionally, we will be publishing a series of modified Firmata versions and their corresponding Snap4Arduino block libraries here, so if your device shows up under this list you can just download the extension and start prototyping:
+                        </p>
+                        <p>
+                        <ul>
+                            <li><a href="http://vps34736.ovh.net/LCD-Snap4Arduino.zip">LCD Display</a> :: <a href="http://blog.s4a.cat/2015/03/24/LCD-Library-for-Snap4Arduino.html" target="_blank">blog post</a></li>
+                            <li><a href="http://vps34736.ovh.net/Ultrasound-Snap4Arduino.zip">Ultrasound Sensor</a> :: <a href="http://blog.s4a.cat/2015/03/31/Ultrasound-Library-for-Snap4Arduino.html" target="_blank">blog post</a></li>
+                        </ul>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>User-contributed Firmata versions</h6>
+                        <p>
+                        <ul>
+                            <li>Edutec's <a href="https://github.com/edutec/Snap4ArduinoDev" target="_blank">Snap4ArduinoDev</a> is a super-Firmata modification that allows you to use DHT11 temperature and humidity sensors, capacitive sensors, and stepper motors.</li>
+                            <li>Joan Guillén's <a href="https://github.com/jguille2/SA5/" target="_blank">SA5Firmata</a> is another super-Firmata modification that adds tone, pulse and ping functions, along with support for DHT11 humidity and temperature sensors, ultrasound sensors, Nunchuks and message sending and receiving over IR.</li>
+                            <li>Matthew Canham's <a href="https://github.com/mdcanham/Snap4Arduino-Firmata" target="_blank">Snap4Arduino Firmata Collection</a> features several great Firmata modifications.</li>
+                            <li>Chris Clay's <a href="https://github.com/chrisclaynz/Robotics-unleashed" target="_blank">Robotics-unleashed</a> is yet another super-Firmata modification that allows you to control several devices at the same time.</li>
+                        </ul>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="http" class="http-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>HTTP Protocol</h3>
+                    </div>
+                    <div class="col-md-8">
+                        <p>Snap4Arduino comes with a built-in tiny HTTP server that mimics (and extends) the one <a href="http://wiki.scratch.mit.edu/wiki/Remote_Sensors_Protocol" target="_blank">Scratch 1.4 had</a>.
+
+                        This means you can control your Snap4Arduino application from any computer, mobile phone, tablet or any other network-enabled device in the same network.
+
+                        In the following sections, the word IP refers to the IP address of the machine that has Snap4Arduino running on it.</p>
+
+                        <h6>Giving orders to Snap4Arduino</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/broadcast=<b>MESSAGE</b><br><br>
+
+                        This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular When I receive [message] block.</p>
+
+                        <h6>Updating the value of a Snap4Arduino variable</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/vars-update=<b>VARIABLE-NAME=VARIABLE-VALUE</b><br><br>
+
+                        This will set the variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.
+
+                        You can also send a POST request to Snap4Arduino to update a variable.</p>
+
+                        <h6>Finding out which messages is Snap4Arduino listening for</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/send-messages<br><br>
+
+                        This will show a list of all message names for which Snap4Arduino has When I receive [message] hat blocks.</p>
+
+                        <h6>Getting variables and their values from Snap4Arduino</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/send-vars<br><br>
+
+                        This will show a list of all variables defined in Snap4Arduino, along with their current value.</p>
+
+                        <h6>Getting the value of a single variables from Snap4Arduino</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/send-var=<b>VARIABLE-NAME</b><br><br>
+
+                        This will return the value of the variable ready for you to use, no string manipulation needed.</p>
+
+                        <h6>Getting a real-time stream of the stage in Snap4Arduino</h6>
+
+                        <p>Point your browser to http://<b>IP</b>:42001/stage<br><br>
+                        This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plugin" class="command-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Web-based version (EXPERIMENTAL)</h3>
+                    </div>
+                    <div class="col-md-8">
+                        <p>A web-based version is currently in the works. As with the desktop version, you need to have Firmata loaded into your board.</p>
+                        <p>You will need to install a Chrome companion extension, that you can download <a href="/downloads/1.2.2/Snap4Arduino_chromium-plugin-1.2.2.crx">here</a>. Please note that you cannot install it straight from the downloaded file icon. Instead you need to:</p>
+                        <ul>
+                            <li>Go to chrome://extensions in your Chrome browser</li>
+                            <li>Drag and drop the Snap4Arduino.crx extension file into your browser window</li>
+                        </ul>
+                        <p>When you are done, you can test it out live <a href="/run" target="_blank">here</a>.</p>
+                        <br>
+                        <p>If you prefer to run it in your own server, use <a href="/downloads/1.2.2/Snap4Arduino_web-chromium_1.2.2.zip">this downloadable version</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="pre-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Contact</h5>
+                        <p>Snap4Arduino is being developed by Bernat Romagosa. You can always reach him at bernat (at) arduino (dot) org. Please use our <a href="https://github.com/bromagosa/Snap4Arduino/issues" target="_blank">GitHub issue tracker</a> for reporting issues.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>History</h5>
+                        <p>Snap4Arduino was started in 2013 as a side project in the Edutec research group from Citilab (Cornellà, Barcelona), but was soon turned into a full fledged project when it began to gain user base and became clear that it had potential. Since then, it has been used in primary schools, high schools, universities, code clubs, artistic installations and individuals from all around the world. It has received localization contributions for 13 different languages, and projects such as Phiro (India), SmartBlock (Turkey), First Makers (Chile) or ROKIT Brick (South Korea) have based their software solutions in modified versions of Snap4Arduino. Since June 2016, it is being developed at Arduino.org.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Contributors</h5>
+                        <p>Special thanks to <a href="https://github.com/elaval" target="_blank">Ernesto Laval</a>, 
+                        <a href="https://github.com/jguille2" target="_blank">Joan Guillén</a>, 
+                        <a href="https://github.com/jferran6" target="_blank">Josep Ferràndiz</a>, 
+                        <a href="https://github.com/jogaye" target="_blank">José García</a>, 
+                        <a href="https://twitter.com/joanguell" target="_blank">Joan Güell</a>, 
+                        <a href="https://twitter.com/victorct83" target="_blank">Víctor Casado</a>, 
+                        <a href="https://github.com/fhunleth" target="_blank">Frank Hunleth</a>, 
+                        <a href="https://launchpad.net/~ove-risberg" target="_blank">Ove Risberg</a>, 
+                        <a href="https://github.com/maprzybylla" target="_blank"> Mareen Przybylla</a>, 
+                        <a href="https://github.com/artynet" target="_blank"> Arturo Rinaldi</a>, 
+                        <a href="https://github.com/MMSequeira" target="_blank">Manuel Menezes de Sequeira</a>, 
+                        <a href="http://www.funmetas.com.hk/" target="_blank">Steven Tang</a>, 
+                        <a href="http://coderdojogenova.it/chi-siamo/mentor/" target="_blank">Alberto Firpo</a>,
+                        <a href="https://github.com/amacara1" target="_blank">Cristian Macarascu</a>, 
+                        <a href="https://github.com/jan-tomsa" target="_blank">Jan Tomsa</a>, 
+                        <a href="https://github.com/SyavsoN" target="_blank">Yaroslav Kirov</a>, 
+                        <a href="https://github.com/sdmeijer" target="_blank">Sjoerd Dirk Meijer</a>, 
+                        <a href="https://github.com/alior101" target="_blank">Lior Assouline</a>, 
+                        <a href="https://github.com/awangenh" target="_blank">Aldo von Wangenheim</a>,
+                        <a href="https://github.com/hasso" target="_blank">Hasso Tepper</a> and, of course, to
+                        <a href="https://github.com/jmoenig">Jens Mönig</a>, who built Snap<i>!</i>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+
+        <!-- footer Start -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="footer-menu">
+                            <ul class="social-icons">
+                                <li>
+                                    <a href="https://www.facebook.com/arduino.org" target="_blank"><i class="fa fa-facebook"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://twitter.com/ArduinoOrg" target="_blank"><i class="fa fa-twitter"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://plus.google.com/+ArduinoOrgPage/posts" target="_blank"><i class="fa fa-google"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://www.instagram.com/arduinoorg/" target="_blank"><i class="fa fa-instagram"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://www.youtube.com/c/ArduinoOrgPage" target="_blank"><i class="fa fa-youtube"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://www.linkedin.com/company/arduino-srl" target="_blank"><i class="fa fa-linkedin"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://www.linkedin.com/company/arduino-srl" target="_blank"><i class="fa fa-pinterest"></i></a>
+                                </li>
+                                <li>
+                                    <a href="http://arduino.tumblr.com/" target="_blank"><i class="fa fa-tumblr"></i></a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/arduino-org" target="_blank"><i class="fa fa-github"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="copyright">
+                            <p>© COPYRIGHT 2016.<br>
+                            ARDUINO S.R.L. - ITALY - <a href="http://www.arduino.org/copyright-notice" target="_blank">COPYRIGHT NOTICE.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+        <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
+
+    </body>
+</html>

@@ -1,0 +1,14 @@
+/*!
+ * Start Bootstrap - Scrolling Nav HTML Template (http://startbootstrap.com)
+ * Code licensed under the Apache License v2.0.
+ * For details, see http://www.apache.org/licenses/LICENSE-2.0.
+ */
+
+
+
+.feature-section, .download-section, .instal-section, .demos-section, 
+.code-section, .devices-section, .http-section, .command-section {
+    height: 100%;
+    padding-top: 180px !important;
+    padding-bottom: 180px !important;
+}
