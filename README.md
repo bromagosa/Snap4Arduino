@@ -23,7 +23,7 @@ You can get the latest pre-built versions for all platforms at:
 Documentation
 =============
 
-The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tutorials on different topics. You can also find a [collection of examples in the official website](http://snap4arduino.rocks#examples).
+The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tutorials on different topics. You can also find a [collection of examples in the official website](http://snap4arduino.rocks#demos).
 
 To learn more about [Snap<i>!</i>](http://snap.berkeley.edu), take a look at [its official manual](http://snap.berkeley.edu/SnapManual.pdf) and its [additional annex chapters](http://snap.berkeley.edu/#activate).
 
