@@ -1,4 +1,4 @@
-[![Snap4Arduino Logo](http://snap4arduino.org/img/logo.png)](http://snap4arduino.org)
+[![Snap4Arduino Logo](http://snap4arduino.rocks/img/logo.png)](http://snap4arduino.rocks)
 
 Snap4Arduino binds Snap! and Arduino together and is available in several flavors:
 
@@ -11,19 +11,19 @@ Snap4Arduino binds Snap! and Arduino together and is available in several flavor
 
 Please check out our official website for further info:
 
-[snap4arduino.org](http://snap4arduino.org)
+[snap4arduino.rocks](http://snap4arduino.rocks)
 
 Downloads
 =========
 
 You can get the latest pre-built versions for all platforms at:
 
-[snap4arduino.org/#download](http://snap4arduino.org/#download)
+[snap4arduino.rocks/#download](http://snap4arduino.rocks/#download)
 
 Documentation
 =============
 
-The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tutorials on different topics. You can also find a [collection of examples in the official website](http://snap4arduino.org#examples).
+The [Wiki](https://github.com/bromagosa/Snap4Arduino/wiki) holds a bunch of tutorials on different topics. You can also find a [collection of examples in the official website](http://snap4arduino.rocks#examples).
 
 To learn more about [Snap<i>!</i>](http://snap.berkeley.edu), take a look at [its official manual](http://snap.berkeley.edu/SnapManual.pdf) and its [additional annex chapters](http://snap.berkeley.edu/#activate).
 
