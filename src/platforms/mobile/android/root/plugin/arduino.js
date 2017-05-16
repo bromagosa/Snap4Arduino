@@ -66,7 +66,7 @@ Arduino.prototype.connect = function (port) {
                             myself.board.connected = true;
 
                             myself.hideMessage();
-                            ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));
+                            ide.inform(myself.owner.name, localize('RIO board has been connected. Happy prototyping!'));
                         }
                     });
 
