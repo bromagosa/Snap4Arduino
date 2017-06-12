@@ -1,5 +1,6 @@
 IDE_Morph.prototype.settingsMenu = IDE_Morph.prototype.originalSettingsMenu;
 
+/*
 IDE_Morph.prototype.projectMenu = function () {
     var menu,
         myself = this,
@@ -210,9 +211,9 @@ IDE_Morph.prototype.projectMenu = function () {
     );
 
     menu.popup(world, pos);
-};
+};*/
 
-IDE_Morph.prototype.getCostumesList = IDE_Morph.prototype.originalGetCostumesList;
+//IDE_Morph.prototype.getCostumesList = IDE_Morph.prototype.originalGetCostumesList;
 
 // Snap4Arduino logo
 
