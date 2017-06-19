@@ -19,7 +19,8 @@
             "http://localhost:8080/*",
             "http://localhost/*",
             "http://snap4arduino.local/*",
-            "http://snap4arduino.org/*"
+            "http://snap4arduino.org/*",
+            "http://snap4arduino.rocks/*"
         ],
         "accepts_tls_channel_id": false
     },
