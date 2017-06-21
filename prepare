@@ -41,28 +41,6 @@ pull_snap() {
         print_error "Could not set up Snap! git submodule.\nPlease make sure that you have access to the Internet and git is installed in your system."
         exit 1
     fi
-    cd src/snap
-    git checkout master
-    if ! git pull; then
-        print_error "Could not pull latest Snap! version from Git.\nPlease make sure that you have access to the Internet and git is installed in your system."
-        cd ../..
-        exit 1
-    fi
-
-    echo "Fetching and pulling some unmerged pull requests"
-    git fetch origin refs/pull/1731/head
-    git fetch origin refs/pull/1676/head
-    git fetch origin refs/pull/1674/head
-    git fetch origin refs/pull/1673/head
-    git fetch origin refs/pull/1666/head
-    git fetch origin refs/pull/1663/head
-
-    git pull origin refs/pull/1731/head
-    git pull origin refs/pull/1676/head
-    git pull origin refs/pull/1674/head
-    git pull origin refs/pull/1673/head
-    git pull origin refs/pull/1666/head
-    git pull origin refs/pull/1663/head
 
     echo "Converting all sounds to a free format (OGG)"
     cd Sounds
