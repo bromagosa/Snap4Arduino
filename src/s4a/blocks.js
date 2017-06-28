@@ -357,8 +357,10 @@ BlockMorph.prototype.transpileToC = function () {
         fileName = ide.projectName || 'snap4arduino';
 
     fileName = fileName.replace(/[^\w ]/g, function(char) {
-        return saveChars[char] || char;
+        return safeChars[char] || char;
     });
+    fileName = fileName.replace(/ /g,'_')
+    fileName = fileName.replace(/[^a-zA-Z0-9_]/g,'');
     try {
         ide.saveFileAs(
                 this.world().Arduino.transpile(
