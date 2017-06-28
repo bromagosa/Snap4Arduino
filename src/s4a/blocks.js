@@ -342,11 +342,25 @@ BlockMorph.prototype.userMenu = function () {
 };
 
 BlockMorph.prototype.transpileToC = function () {
-    var fs = require('fs'),
-        ide = this.parentThatIsA(IDE_Morph);
+    var ide = this.parentThatIsA(IDE_Morph),
+        safeChars = {"á": "a", "à": "a", "ä": "a",
+                     "é": "e", "è": "e", "ë": "e",
+                     "í": "i", "ì": "i", "ï": "i",
+                     "ó": "o", "ò": "o", "ö": "o",
+                     "ú": "u", "ù": "u", "ü": "u",
+                     "Á": "A", "À": "A", "Ä": "A",
+                     "É": "E", "È": "E", "Ë": "E",
+                     "Í": "I", "Ì": "I", "Ï": "I",
+                     "Ó": "O", "Ò": "O", "Ö": "O",
+                     "Ú": "U", "Ù": "U", "Ü": "U",
+                     "ç":"c", "Ç": "C", "ñ": "n", "Ñ": "N"},
+        fileName = ide.projectName || 'snap4arduino';
+
+    fileName = fileName.replace(/[^\w ]/g, function(char) {
+        return saveChars[char] || char;
+    });
     try {
-        saveFile(
-                ide.projectName ? ide.projectName.replace(/[^a-zA-Z]/g,'') : 'snap4arduino',
+        ide.saveFileAs(
                 this.world().Arduino.transpile(
                     this.mappedCode(),
                     this.parentThatIsA(ScriptsMorph).children.filter(
@@ -354,8 +368,8 @@ BlockMorph.prototype.transpileToC = function () {
                             return each instanceof HatBlockMorph &&
                                 each.selector == 'receiveMessage';
                         })),
-                '.ino',
-                ide);
+                'application/ino;chartset=utf-8',
+                fileName);
     } catch (error) {
         ide.inform('Error exporting to Arduino sketch!', error.message)
     }
