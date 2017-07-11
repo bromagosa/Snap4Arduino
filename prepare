@@ -11,7 +11,7 @@ print_help() {
     echo "    --nwjs              Pulls the latest nwjs.io stable version."
     echo "    --desktop           Pulls all NodeJS modules needed for desktop versions."
     echo "    --chromeos          Pulls all NodeJS modules needed for the ChromeOS app."
-    echo "    --chromium          Pulls all NodeJS modules needed for the web extension."
+    echo "    --chromium          Preparing the chromium web extension."
     echo "    --cli               Pulls all NodeJS modules needed for command-line version."
     echo "    --all               Does all of the above."
     echo "    --inno              Attempts to install Inno Setup under Wine, required to"
@@ -128,29 +128,13 @@ pull_cli_modules() {
 }
 
 pull_chromium_modules() {
-    echo "Pulling NodeJS modules for the Chromium extension"
+    echo "Preparing the chromium extension"
     cd environments
     rm -rf web/chromium/node_modules
     mkdir -p web/chromium
-    cd web/chromium
-    wget http://snap4arduino.org/downloads/chromium_node_modules.zip
-    if ! test -e chromium_node_modules.zip; then
-        print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
-        cd ../../..
-        exit 1
-    fi
-    if ! unzip chromium_node_modules.zip; then
-        print_error "Could not unpack NodeJS modules.\nZip file seems to be corrupted, please try again."
-        rm chromium_node_modules.zip
-        cd ../../..
-        exit 1
-    fi 
-    rm chromium_node_modules.zip
-    cd ../../..
-    print_ok "Chromium extension NodeJS modules fetched."
     if ! test -e environments/web/chromium/Snap4Arduino.pem; then
-        print_warning "Please make sure to place your Snap4Arduino.pem Chromium extension private key under environments/web/chromium"
-        echo "I cannot do this for you because, you know, it's a private key ;)"
+        print_warning "There isn't Snap4Arduino.pem (chromium extension private key) under environments/web/chromium"
+        echo "Chromium extension will be built into a folder. To build the crx file, you need the pem key."
     fi
 }
 

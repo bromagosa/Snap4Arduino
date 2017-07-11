@@ -12,7 +12,7 @@ SnapSerializer.prototype.openProject = function (project, ide) {
     this.originalOpenProject(project, ide);
 };
 
-SnapSerializer.prototype.app = 'Snap4Arduino ' + IDE_Morph.prototype.version() + ' http://snap4arduino.org';
+SnapSerializer.prototype.app = IDE_Morph.prototype.getURL('version',function (response) {return 'Snap4Arduino ' + response + ' http://snap4arduino.org';});
 
 SnapSerializer.prototype.watcherLabels['reportAnalogReading'] = 'analog reading %analogPin';
 SnapSerializer.prototype.watcherLabels['reportDigitalReading'] = 'digital reading %digitalPin';
