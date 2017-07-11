@@ -31,20 +31,12 @@ sed -E 's/.*"version".*/  "version": "'`cat src\/version`'",/' src/platforms/web
 
 echo
 echo "======="
-echo "Setting up Node dependencies..."
-echo "======="
-echo
-
-cp -Rv environments/web/chromium/node_modules tmp/crx
-
-echo
-echo "======="
 echo "Building Chromium extension"
 echo "======="
 echo
 
 if ! test -e environments/web/chromium/Snap4Arduino.pem; then
-    print_error "Could not find a valid private key.\nPlease make sure Snap4Arduino.pem is located under environments/web/chromium/"
+    print_error "There isn't Snap4Arduino.pem (chromium extension private key) under environments/web/chromium\nChromium extension is being built into a folder. To build the crx file, you need the pem key."
 else
     if command -v chromium-browser; then
         chromium-browser --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
@@ -65,4 +57,8 @@ echo
 rm -rf releases/web/chromium
 mkdir -p releases/web/chromium
 mv tmp/www releases/web/chromium/
-mv tmp/crx.crx releases/web/chromium/Snap4Arduino.crx
+if test -e tmp/crx.crx; then
+    mv tmp/crx.crx releases/web/chromium/Snap4Arduino.crx
+else
+    mv tmp/crx releases/web/chromium/
+fi

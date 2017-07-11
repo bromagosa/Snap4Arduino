@@ -21,6 +21,7 @@
         <script type="text/javascript" src="plugin/threads.js"></script>
         <script type="text/javascript" src="objects.js"></script>
         <script type="text/javascript" src="s4a/objects.js"></script>
+        <script type="text/javascript" src="plugin/objects.js"></script>
         <script type="text/javascript" src="gui.js"></script>
         <script type="text/javascript" src="s4a/gui.js"></script>
         <script type="text/javascript" src="plugin/gui.js"></script>
@@ -50,7 +51,7 @@
                 ide = new IDE_Morph();
                 ide.openIn(world);
 
-                document.title = document.title.replace("@AppVersion", ide.version());
+                ide.getURL('version', function (response) { document.title = document.title.replace("@AppVersion", response); });
 
                 ide.inform = function(title, message, callback) { 
                     var myself = this;
