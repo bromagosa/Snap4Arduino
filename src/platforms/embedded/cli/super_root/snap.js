@@ -125,6 +125,8 @@ if (!snapMode) {
     includeInThisContext('snap/s4a/threads.js');
 }
 
+includeInThisContext('threads.js');
+
 includeInThisContext('snap/objects.js');
 
 if (!snapMode) {

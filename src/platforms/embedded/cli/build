@@ -11,6 +11,11 @@ echo
 mkdir tmp/snap
 mv tmp/* tmp/snap 2>/dev/null
 cp src/version tmp
+rm -R tmp/snap/Backgrounds
+rm -R tmp/snap/Costumes
+rm -R tmp/snap/Sounds
+rm -R tmp/snap/Examples
+rm -R tmp/snap/help
 
 echo
 echo "======="
