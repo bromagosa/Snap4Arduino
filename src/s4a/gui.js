@@ -717,7 +717,9 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino ' + this.version() +'\n'
+    dlg = new DialogBoxMorph();
+
+    this.getURL('version', function (version) { aboutTxt = 'Snap4Arduino ' + version +'\n'
 
     + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
     + 'bernat@arduino.org\n'
@@ -734,7 +736,10 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Llobregat (Barcelona).\n\n'
 
     + 'For more information, please visit\n'
-    + 'http://edutec.citilab.eu'
+    + 'http://edutec.citilab.eu';
+
+    dlg.inform('About Snap4Arduino', aboutTxt, world);
+    });
     
     creditsTxt = localize('Contributors')
     + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
@@ -758,8 +763,6 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Hasso Tepper: Estonian translation'
     + 'Triyan W. Nugroho: Bahasa Indonesian translation';
 
-    dlg = new DialogBoxMorph();
-    dlg.inform('About Snap4Arduino', aboutTxt, world);
     creditsBtn = dlg.addButton(
         function () {
             dlg.body.text = creditsTxt;

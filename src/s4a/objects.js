@@ -550,7 +550,7 @@ SpriteMorph.prototype.reportDigitalReading = function (pin) {
 
         if (board.pins[pin].mode != board.MODES.INPUT) {
             board.pinMode(pin, board.MODES.INPUT);
-            board.digitalRead(pin, function(value) { board.pins[pin].value = value });
+            board.reportDigitalPin(pin, 1);
         }
         return board.pins[pin].value == 1;
     } else {

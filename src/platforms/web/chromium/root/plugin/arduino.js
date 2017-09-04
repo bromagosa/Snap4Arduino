@@ -103,9 +103,12 @@ Arduino.prototype.populateBoard = function (board) {
     board.digitalWrite = function (pin, value) { postal.sendCommand('digitalWrite', [ board.id, pin, value ]); };
     board.servoWrite = function (pin, value) { postal.sendCommand('servoWrite', [ board.id, pin, value ]); };
     board.analogWrite = function (pin, value) { postal.sendCommand('analogWrite', [ board.id, pin, value ]); };
-    board.digitalRead = function (pin, callback) { postal.sendCommand('digitalRead', [ board.id, pin ], callback); };
-    board.analogRead = function (pin, callback) { postal.sendCommand('analogRead', [ board.id, pin ], callback); };
-    board.once = function (name, callback) { postal.sendCommand('once', [ board.id, name ], function (data) { console.log(data) }); };
+    board.once = function (name, callback) { postal.sendCommand('once', [ board.id, name ], function (response) { board[name] = response; }); };
+    board.reportDigitalPin = function (pin, value) { postal.sendCommand('reportDigitalPin', [board.id, pin, value ]);};
+    board.getDigitalPinValue = function (pin) { postal.sendCommand('getDigitalPinValue', [board.id, pin], function (response) { board.pins[pin].value = response; board.pins[pin].report = 2;}); };
+    board.getAnalogPinValue = function (aPin) { postal.sendCommand('getAnalogPinValue', [board.id, aPin], function (response) { board.pins[aPin].value = response; board.pins[aPin].report = 2;}); };
+    board.getArduinoBoardParam = function (name) {postal.sendCommand('getArduinoBoardParam', [board.id, name], function (response) { board[name] = response;}); };
+
 };
 
 // Fake Buffer definition, needed by some Firmata extensions
