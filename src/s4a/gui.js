@@ -719,49 +719,49 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 
     dlg = new DialogBoxMorph();
 
-    this.getURL('version', function (version) { aboutTxt = 'Snap4Arduino ' + version +'\n'
+    this.getURL('version', function (version) {
+        
+        aboutTxt = 'Snap4Arduino ' + version +'\n'
+        + 'Copyright \u24B8 2017 Bernat Romagosa\n'
+        + 'bernat@snap4arduino.rocks\n'
+        + 'http://snap4arduino.rocks\n\n'
 
-    + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
-    + 'bernat@arduino.org\n'
-    + 'http://snap4arduino.org\n\n'
+        + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
 
-    + 'As of 2016, Snap4Arduino is being developed by Bernat\n'
-    + 'Romagosa at Arduino.org\n\n'
+        + 'Arduino.org supported the development and maintenance\n'
+        + 'of Snap4Arduino from June 2016 until August 2017.\n\n'
 
-    + 'Copyright \u24B8 2015 Citilab\n'
-    + 'edutec@citilab.eu\n\n'
+        + 'Copyright \u24B8 2015 Citilab\n'
+        + 'edutec@citilab.eu\n\n'
 
-    + 'Snap4Arduino is a modification of Snap! originally developed\n'
-    + 'by the Edutec research group at the Citilab, Cornellà de\n'
-    + 'Llobregat (Barcelona).\n\n'
+        + 'Snap4Arduino is a modification of Snap! originally developed\n'
+        + 'by the Edutec research group at the Citilab, Cornellà de\n'
+        + 'Llobregat (Barcelona).'
 
-    + 'For more information, please visit\n'
-    + 'http://edutec.citilab.eu';
-
-    dlg.inform('About Snap4Arduino', aboutTxt, world);
+        dlg.inform('About Snap4Arduino', aboutTxt, world);
     });
     
     creditsTxt = localize('Contributors')
-    + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
-    + 'several features and bugfixes, Spanish translation\n'
-    + 'José García, Joan Güell and Víctor Casado: vision,\n'
-    + 'architectural decisions, several bug reports, testing and\n'
-    + 'unvaluable help in many other regards\n'
-    + 'Joan Guillén: Too many contributions to fit in here, thanks!\n'
-    + 'Josep Ferràndiz: Extensive testing, vision\n'
-    + 'Frank Hunleth: GNU/Linux 64b version\n'
-    + 'Ove Risberg: Network to serial port functionality\n'
-    + 'Mareen Przybylla: Early testing, several bug reports,\n'
-    + 'German translation, architectural decisions\n'
-    + 'Steven Tang and Jeffrey (Ying-Chieh) Chao:\n\t\tSimplified Chinese translation\n'
-    + 'Jeffrey (Ying-Chieh) Chao: Traditional Chinese translation\n'
-    + 'Alberto Firpo: Italian translation\n'
-    + 'Yaroslav Kirov: Ukrainian and Russian translations\n'
-    + 'Sjoerd Dirk Meijer: Dutch translation\n'
-    + 'Lior Assouline: Hebrew translation\n'
-    + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation\n'
-    + 'Hasso Tepper: Estonian translation'
-    + 'Triyan W. Nugroho: Bahasa Indonesian translation';
+        + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
+        + 'several features and bugfixes, Spanish translation\n'
+        + 'José García, Joan Güell and Víctor Casado: vision,\n'
+        + 'architectural decisions, several bug reports, testing and\n'
+        + 'unvaluable help in many other regards\n'
+        + 'Joan Guillén: Too many contributions to fit in here, thanks!\n'
+        + 'Josep Ferràndiz: Extensive testing, vision\n'
+        + 'Frank Hunleth: GNU/Linux 64b version\n'
+        + 'Ove Risberg: Network to serial port functionality\n'
+        + 'Mareen Przybylla: Early testing, several bug reports,\n'
+        + 'German translation, architectural decisions\n'
+        + 'Steven Tang and Jeffrey (Ying-Chieh) Chao:\n\t\tSimplified Chinese translation\n'
+        + 'Jeffrey (Ying-Chieh) Chao: Traditional Chinese translation\n'
+        + 'Alberto Firpo: Italian translation\n'
+        + 'Yaroslav Kirov: Ukrainian and Russian translations\n'
+        + 'Sjoerd Dirk Meijer: Dutch translation\n'
+        + 'Lior Assouline: Hebrew translation\n'
+        + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation\n'
+        + 'Hasso Tepper: Estonian translation'
+        + 'Triyan W. Nugroho: Bahasa Indonesian translation';
 
     creditsBtn = dlg.addButton(
         function () {
