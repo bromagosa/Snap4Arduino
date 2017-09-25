@@ -40,6 +40,8 @@ if ! test -e environments/web/chromium/Snap4Arduino.pem; then
 else
     if command -v chromium-browser; then
         chromium-browser --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
+    elif command -v chromium; then
+        chromium --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
     elif command -v google-chrome; then
         google-chrome --pack-extension=tmp/crx --pack-extension-key=environments/web/chromium/Snap4Arduino.pem
     fi
