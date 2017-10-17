@@ -72,7 +72,6 @@ fi
 allplatforms=`find src/platforms -follow -name '*.buildme*' | sed -E 's|/[^/]+$||' | cut -c 15-`
 
 if test -n "$platform"; then
-    
     # Placeholder platform names
     if test "$platform" = "all"; then
         platform=""

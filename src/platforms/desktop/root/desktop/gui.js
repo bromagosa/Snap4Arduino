@@ -6,39 +6,44 @@ IDE_Morph.prototype.openIn = function (world) {
 };
 
 IDE_Morph.prototype.checkForNewVersion = function () {
-    var myself = this,
-        latest = this.getURL('http://snap4arduino.org/downloads/LATEST'),
-        current = this.version();
+    var myself = this;
+    this.getURL(
+        'https://api.github.com/repos/bromagosa/Snap4Arduino/releases/latest',
+        function (response) {
+            var current = myself.version().split('.'),
+                latest = JSON.parse(response).tag_name.split('.'),
+                versionLength = Math.max(current.length, latest.length);
 
-    function outdatedVersion (current, latest) {
-        var current = current.split('.'),
-            latest = latest.split('.'),
-            versionLength = Math.max(current.length, latest.length);
+            console.log('current: ' + current);
+            console.log('latest: ' + latest);
 
-        for (var i = 0; i < versionLength; i += 1) {
-            current[i] = Number(current[i]) || 0;
-            latest[i] = Number(latest[i]) || 0;
-            if (current[i] < latest[i]) {
-                return true;
-            }
-            if (current[i] > latest[i]) {
+            function outdatedVersion () {
+                for (var i = 0; i < versionLength; i += 1) {
+                    current[i] = Number(current[i]) || 0;
+                    latest[i] = Number(latest[i]) || 0;
+                    if (current[i] < latest[i]) {
+                        return true;
+                    }
+                    if (current[i] > latest[i]) {
+                        return false;
+                    }
+                }
                 return false;
+            };
+
+            if (outdatedVersion()) {
+                this.confirm(
+                    'A new version of Snap4Arduino has been released: '
+                    + latest
+                    + '\nDo you wish to download it?',
+                    'New version available',
+                    function () {
+                        myself.downloadVersion(latest);
+                    }
+                );
             }
         }
-        return false;
-    };
-
-    if (outdatedVersion(current, latest)) {
-        this.confirm(
-            'A new version of Snap4Arduino has been released: ' 
-                + latest 
-                + '\nDo you wish to download it?',
-            'New version available',
-            function () {
-                myself.downloadVersion(latest);
-            }
-        );
-    }
+    );
 };
 
 IDE_Morph.prototype.downloadVersion = function (versionName) {
