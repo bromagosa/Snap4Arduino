@@ -64,7 +64,7 @@ pull_desktop_modules() {
     rm -rf desktop/node_modules
     mkdir -p desktop
     cd desktop
-    wget http://snap4arduino.org/downloads/desktop_node_modules.zip
+    wget https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.3/desktop_node_modules.zip
     if ! test -e desktop_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
         cd ../..
@@ -87,7 +87,7 @@ pull_chromeos_modules() {
     rm -rf web/chromeos/node_modules
     mkdir -p web/chromeos
     cd web/chromeos
-    wget http://snap4arduino.org/downloads/chromeos_node_modules.zip
+    wget https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.3/chromeos_node_modules.zip
     if ! test -e chromeos_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
         cd ../../..
@@ -110,7 +110,7 @@ pull_cli_modules() {
     rm -rf embedded/cli/node_modules
     mkdir -p embedded/cli
     cd embedded/cli
-    wget http://snap4arduino.org/downloads/cli_node_modules.zip
+    wget https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.3/cli_node_modules.zip
     if ! test -e cli_node_modules.zip; then
         print_error "Could not fetch NodeJS modules.\nPlease make sure that you have access to the Internet."
         cd ../../..
