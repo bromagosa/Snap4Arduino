@@ -717,7 +717,9 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     module, aboutBtn, creditsBtn,
     world = this.world();
 
-    aboutTxt = 'Snap4Arduino ' + this.version() +'\n'
+    dlg = new DialogBoxMorph();
+
+    this.getURL('version', function (version) { aboutTxt = 'Snap4Arduino ' + version +'\n'
 
     + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
     + 'bernat@arduino.org\n'
@@ -734,7 +736,10 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Llobregat (Barcelona).\n\n'
 
     + 'For more information, please visit\n'
-    + 'http://edutec.citilab.eu'
+    + 'http://edutec.citilab.eu';
+
+    dlg.inform('About Snap4Arduino', aboutTxt, world);
+    });
     
     creditsTxt = localize('Contributors')
     + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
@@ -758,8 +763,6 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     + 'Hasso Tepper: Estonian translation'
     + 'Triyan W. Nugroho: Bahasa Indonesian translation';
 
-    dlg = new DialogBoxMorph();
-    dlg.inform('About Snap4Arduino', aboutTxt, world);
     creditsBtn = dlg.addButton(
         function () {
             dlg.body.text = creditsTxt;
@@ -855,74 +858,6 @@ IDE_Morph.prototype.createLogo = function () {
     this.logo.setExtent(new Point(200, 28)); // dimensions are fixed
     this.add(this.logo);
 };
-
-// Exporting
-IDE_Morph.prototype.originalExportProject = IDE_Morph.prototype.exportProject;
-IDE_Morph.prototype.exportProject = function (name, plain) {
-    var menu, 
-    str,
-    myself = this;
-
-    if (name) {
-        this.setProjectName(name);
-        if (Process.prototype.isCatchingErrors) {
-            try {
-                menu = this.showMessage('Exporting');
-                str = this.serializer.serialize(this.stage);
-                saveFile(name, str, '.xml', myself);
-                menu.destroy();
-            } catch (err) {
-                this.showMessage('Export failed: ' + err);
-            }
-        } else {
-            menu = this.showMessage('Exporting');
-            str = this.serializer.serialize(this.stage);
-            saveFile(name, str, '.xml', myself);
-            menu.destroy();
-        }
-    }
-};
-
-function saveFile (name, contents, extension, target) {
-    var inp = document.createElement('input');
-    if (target.filePicker) {
-        document.body.removeChild(target.filePicker);
-        target.filePicker = null;
-    }
-    inp.nwsaveas = homePath() + name + extension;
-    inp.type = 'file';
-    inp.style.color = "transparent";
-    inp.style.backgroundColor = "transparent";
-    inp.style.border = "none";
-    inp.style.outline = "none";
-    inp.style.position = "absolute";
-    inp.style.top = "0px";
-    inp.style.left = "0px";
-    inp.style.width = "0px";
-    inp.style.height = "0px";
-    inp.addEventListener(
-            "change",
-            function (e) {
-                document.body.removeChild(inp);
-                target.filePicker = null;
-
-                var fs = require('fs'),
-                fileName = e.target.files[0].path;
-
-                if (fileName.slice(-4) != extension) {
-                    fileName += extension; 
-                }
-
-                fs.writeFileSync(fileName, contents);
-                target.showMessage('Exported as ' + fileName, 3);
-            },
-            false
-            );
-    document.body.appendChild(inp);
-    target.filePicker = inp;
-    inp.click();
-};
-
 
 function homePath() {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'] + ((process.platform == 'win32') ? '\\' : '/')

@@ -264,10 +264,6 @@ IDE_Morph.prototype.createLogo = function () {
     this.add(this.logo);
 };
 
-// Exporting
-
-IDE_Morph.prototype.exportProject = IDE_Morph.prototype.originalExportProject;
-
 IDE_Morph.prototype.version = function() {
     return this.getURL('version');
 };
