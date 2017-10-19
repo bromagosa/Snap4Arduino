@@ -9,10 +9,10 @@ AppId={{79712027-5DAE-425B-8534-1CA699720EA5}
 AppName=Snap4Arduino
 AppVersion=@AppVersion
 AppVerName=Snap4Arduino-@AppVersion
-AppPublisher=Arduino SRL
-AppPublisherURL=http://arduino.org
-AppSupportURL=http://snap4arduino.org
-AppUpdatesURL=http://snap4arduino.org
+AppPublisher=Bernat Romagosa
+AppPublisherURL=http://bromagosa.github.io
+AppSupportURL=http://snap4arduino.rocks
+AppUpdatesURL=http://snap4arduino.rocks
 DefaultDirName={pf}\Snap4Arduino
 DefaultGroupName=Snap4Arduino
 AllowNoIcons=no
@@ -37,7 +37,7 @@ Source: "*.*"; Excludes: "Snap4Arduino.iss"; DestDir: "{app}"; Flags: ignorevers
 
 [Icons]
 Name: "{group}\Snap4Arduino"; Filename: "{app}\Snap4Arduino.exe"; IconFilename: "{app}\s4a.ico"; WorkingDir: "{app}"
-Name: "{group}\{cm:ProgramOnTheWeb,Snap4Arduino}"; Filename: "http://snap4arduino.org"
+Name: "{group}\{cm:ProgramOnTheWeb,Snap4Arduino}"; Filename: "http://snap4arduino.rocks"
 Name: "{group}\{cm:UninstallProgram,Snap4Arduino}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\Snap4Arduino"; Filename: "{app}\Snap4Arduino.exe"; IconFilename: "{app}\s4a.ico"; Tasks: desktopicon; WorkingDir: "{app}"
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Snap4Arduino"; Filename: "{app}\Snap4Arduino.exe"; Tasks: quicklaunchicon; WorkingDir: "{app}"
