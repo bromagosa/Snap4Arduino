@@ -621,7 +621,6 @@ a.btn.btn-gray.btn-sm.btn-icon {
     text-align: left;
     font-size:14px;
 }
-
 a.btn.btn-gray.btn-sm.btn-icon .fa {
     padding-right: 10px;
 }
@@ -668,6 +667,19 @@ padding-left: 45px;
 padding: 7px 15px;
 margin: 5px 0;
 }
+
+a.btn-small {
+    min-width: 0 !important;
+    padding-right: 0;
+    margin-left: 0.25em !important;
+    color: #a04646 !important;
+}
+
+a.btn-small:hover {
+    color: #fff !important;
+}
+
+
 
 /* RESPONSIVE ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
