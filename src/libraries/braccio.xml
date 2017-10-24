@@ -1,5 +1,5 @@
 <blocks app="Snap4Arduino 1.2.3
- http://snap4arduino.org" version="1"><block-definition s="set %&apos;motor name&apos; motor to angle %&apos;angle&apos;" type="command" category="arduino"><header></header><code></code><inputs><input type="%s" readonly="true">base<options>base
+ http://snap4arduino.rocks" version="1"><block-definition s="set %&apos;motor name&apos; motor to angle %&apos;angle&apos;" type="command" category="arduino"><header></header><code></code><inputs><input type="%s" readonly="true">base<options>base
 shoulder
 elbow
 hand

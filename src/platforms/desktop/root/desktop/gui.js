@@ -50,7 +50,7 @@ IDE_Morph.prototype.downloadVersion = function (versionName) {
     var os = this.osName();
 
     nw.Shell.openExternal(
-        'http://snap4arduino.org/downloads/'
+        'http://snap4arduino.rocks/downloads/'
             + versionName 
             + '/Snap4Arduino_desktop-'
             + os
