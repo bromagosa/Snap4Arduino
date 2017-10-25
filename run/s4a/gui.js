@@ -46,7 +46,7 @@ IDE_Morph.prototype.snapMenu = function () {
     );
     menu.addItem('Snap4Arduino website', 
                  function() {
-                     window.open('http://snap4arduino.org', 'Snap4ArduinoWebsite'); 
+                     window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
                  }
                 );
     menu.addItem(

@@ -102,6 +102,7 @@ Arduino.prototype.populateBoard = function (board) {
     board.pinMode = function (pin, mode) { postal.sendCommand('pinMode', [ board.id, pin, mode ], function() { board.pins[pin].mode = mode; }); };
     board.digitalWrite = function (pin, value) { postal.sendCommand('digitalWrite', [ board.id, pin, value ]); };
     board.servoWrite = function (pin, value) { postal.sendCommand('servoWrite', [ board.id, pin, value ]); };
+    board.servoConfig = function (pin, value1, value2) { postal.sendCommand('servoConfig', [ board.id, pin, value1, value2 ]); };
     board.analogWrite = function (pin, value) { postal.sendCommand('analogWrite', [ board.id, pin, value ]); };
     board.once = function (name, callback) { postal.sendCommand('once', [ board.id, name ], function (response) { board[name] = response; }); };
     board.reportDigitalPin = function (pin, value) { postal.sendCommand('reportDigitalPin', [board.id, pin, value ]);};
