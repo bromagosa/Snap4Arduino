@@ -38,7 +38,7 @@ Cloud.prototype.urlForMyProject = function (projectName) {
         return;
     }
 
-    return 'http://snap4arduino.org/run#present:Username=' + 
+    return 'http://snap4arduino.rocks/run#present:Username=' + 
         encodeURIComponent(this.username) + '&ProjectName=' + 
         encodeURIComponent(projectName);
 };

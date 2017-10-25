@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget 
-    id="arduino.org.snap4arduino"
+    id="snap4arduino.rocks"
     version="change me"
     xmlns="http://www.w3.org/ns/widgets"
     xmlns:cdv="http://cordova.apache.org/ns/1.0">
@@ -8,7 +8,7 @@
     <description>
         Snap4Arduino for Android
     </description>
-    <author email="bernat@arduino.org" href="http://snap4arduino.org">
+    <author email="bernat@snap4arduino.rocks" href="http://snap4arduino.rocks">
         Bernat Romagosa - Arduino.org
     </author>
     <icon density="mdpi" height="128" platform="android" src="www/s4a/icon-128.png" width="128" />

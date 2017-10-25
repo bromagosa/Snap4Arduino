@@ -10,12 +10,14 @@ IDE_Morph.prototype.checkForNewVersion = function () {
     this.getURL(
         'https://api.github.com/repos/bromagosa/Snap4Arduino/releases/latest',
         function (response) {
-            var current = myself.version().split('.'),
-                latest = JSON.parse(response).tag_name.split('.'),
+            var currentName = myself.version(),
+                current = currentName.split('.'),
+                latestName = JSON.parse(response).tag_name,
+                latest = latestName.split('.'),
                 versionLength = Math.max(current.length, latest.length);
 
-            console.log('current: ' + current);
-            console.log('latest: ' + latest);
+            console.log('current: ' + currentName);
+            console.log('latest: ' + latestName);
 
             function outdatedVersion () {
                 for (var i = 0; i < versionLength; i += 1) {
@@ -34,11 +36,11 @@ IDE_Morph.prototype.checkForNewVersion = function () {
             if (outdatedVersion()) {
                 this.confirm(
                     'A new version of Snap4Arduino has been released: '
-                    + latest
+                    + latestName
                     + '\nDo you wish to download it?',
                     'New version available',
                     function () {
-                        myself.downloadVersion(latest);
+                        myself.downloadVersion(latestName);
                     }
                 );
             }
@@ -50,7 +52,7 @@ IDE_Morph.prototype.downloadVersion = function (versionName) {
     var os = this.osName();
 
     nw.Shell.openExternal(
-        'http://snap4arduino.org/downloads/'
+        'https://github.com/bromagosa/Snap4Arduino/releases/download/'
             + versionName 
             + '/Snap4Arduino_desktop-'
             + os
