@@ -498,7 +498,7 @@ Arduino.transpile = function (body, hatBlocks) {
     + 'byte detachedServoCount = 0;\n'
     + 'byte servoCount = 0;\n\n';
 
-    varLines = body.match(/int .* = 0;/g) || [];
+    varLines = body.match(/int .* = 0;\n/g) || [];
     body = body.replace(/int .* = 0;\n/g, '');
     varLines.forEach(function (each) {
         assignments += each + '\n';
