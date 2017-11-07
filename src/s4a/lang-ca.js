@@ -166,7 +166,13 @@ s4aTempDict = {
         'Aquesta operació pot trigar uns segons...',
 
     'Network serial ports':
-        'Ports sèrie sobre xarxa'
+        'Ports sèrie sobre xarxa',
+
+    'Open from URL...':
+        'Obre des d\'una URL...',
+
+    'Save and share':
+        'Desa i comparteix'
 };
 
 // Add attributes to original SnapTranslator.dict.ca
