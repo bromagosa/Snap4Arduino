@@ -187,7 +187,7 @@ Arduino.prototype.networkDialog = function () {
     var myself = this;
     new DialogBoxMorph(
             this, // target
-            function () { myself.connect(myself.hostname, false, 'network'); }, // action
+            function (hostName) { myself.connect(hostName, false, 'network'); }, // action
             this // environment
             ).prompt(
                 'Enter hostname or ip address:', // title
