@@ -90,12 +90,12 @@ IDE_Morph.prototype.snapMenu = function () {
     menu.popup(world, this.logo.bottomLeft());
 };
 
-//Adding Snap4Arduino options to settingsMenu
+//Adding Snap4Arduino options to projectMenu and settingsMenu
 MenuMorph.prototype.originalPopup = MenuMorph.prototype.popup;
 MenuMorph.prototype.popup = function (world, pos) {
 
-    // Snap! settings menu
-    if (this.items.length > 0 && this.items[0][1] == 'languageMenu') {
+    // Snap! settings menu (only for Desktop versions)
+    if (this.items.length > 0 && this.items[0][1] == 'languageMenu' && document.title == '') {
         this.addLine();
         var ide = world.children[0];
 
@@ -119,6 +119,21 @@ MenuMorph.prototype.popup = function (world, pos) {
             },
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
+
+    // Snap! project menu
+    } else if (this.items.length > 0 && this.items[0][1] == 'editProjectNotes') {
+        this.addLine();
+
+        // 
+        this.addItem('Open from URL...', 'openFromUrl');
+        this.addItem('Save and share', 'saveAndShare');
+        this.addLine();
+        this.addItem(
+            'New Arduino translatable project', 
+            'createNewArduinoProject',
+            'Experimental feature!\nScripts written under this\n'
+            + 'mode will be translatable\nas Arduino sketches'
+        );
     }
     this.originalPopup(world, pos);
 };
@@ -134,183 +149,6 @@ IDE_Morph.prototype.applySavedSettings = function () {
     }
 
     Arduino.prototype.hostname = this.getSetting('network-serial-hostname') || 'tcp://arduino.local:23';
-};
-
-IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
-IDE_Morph.prototype.projectMenu = function () {
-    var menu,
-        myself = this,
-        world = this.world(),
-        pos = this.controlBar.projectButton.bottomLeft(),
-        graphicsName = this.currentSprite instanceof SpriteMorph ?
-            'Costumes' : 'Backgrounds',
-        shiftClicked = (world.currentKey === 16);
-
-    function createMediaMenu(folderName, loadFunction) {
-        // Utility for creating Libraries, etc menus.
-        // loadFunction takes in two parameters:
-        // a file URL, and a canonical name
-        return function () {
-            myself.getMediaList(
-                folderName,
-                function (names) {
-                    var mediaMenu = new MenuMorph(
-                        myself,
-                        localize('Import') + ' ' + localize(folderName)
-                    );
-                    names.forEach(function (item) {
-                        mediaMenu.addItem(
-                            item.name,
-                            function () {loadFunction(item.file, item.name); },
-                            item.help
-                        );
-                    });
-                    mediaMenu.popup(world, pos);
-                }
-            );
-        };
-    }
-
-    menu = new MenuMorph(this);
-    menu.addItem('Project notes...', 'editProjectNotes');
-    menu.addLine();
-    menu.addItem('New', 'createNewProject');
-    menu.addItem('Open...', 'openProjectsBrowser');
-    menu.addItem('Open from URL...', 'openFromUrl');
-    menu.addItem('Save', "save");
-    menu.addItem('Save As...', 'saveProjectsBrowser');
-    menu.addItem('Save and share', 'saveAndShare');
-    menu.addLine();
-    menu.addItem(
-        'New Arduino translatable project', 
-        'createNewArduinoProject',
-        'Experimental feature!\nScripts written under this\n'
-        + 'mode will be translatable\nas Arduino sketches');
-    menu.addLine();
-    menu.addItem(
-        'Import...',
-        'fileImport',
-        'file menu import hint' // looks up the actual text in the translator
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            localize(
-                'Export project...') + ' ' + localize('(in a new window)'
-            ),
-            function () {
-                if (myself.projectName) {
-                    myself.exportProject(myself.projectName, shiftClicked);
-                } else {
-                    myself.prompt('Export Project As...', function (name) {
-                        // false - override the shiftClick setting to use XML
-                        // true - open XML in a new tab
-                        myself.exportProject(name, false, true);
-                    }, null, 'exportProject');
-                }
-            },
-            'show project data as XML\nin a new browser window',
-            new Color(100, 0, 0)
-        );
-    }
-    menu.addItem(
-        shiftClicked ?
-                'Export project as plain text...' : 'Export project...',
-        function () {
-            if (myself.projectName) {
-                myself.exportProject(myself.projectName, shiftClicked);
-            } else {
-                myself.prompt('Export Project As...', function (name) {
-                    myself.exportProject(name, shiftClicked);
-                }, null, 'exportProject');
-            }
-        },
-        'save project data as XML\nto your downloads folder',
-        shiftClicked ? new Color(100, 0, 0) : null
-    );
-
-    if (this.stage.globalBlocks.length) {
-        menu.addItem(
-            'Export blocks...',
-            function () {myself.exportGlobalBlocks(); },
-            'show global custom block definitions as XML' +
-                '\nin a new browser window'
-        );
-        menu.addItem(
-            'Unused blocks...',
-            function () {myself.removeUnusedBlocks(); },
-            'find unused global custom blocks' +
-                '\nand remove their definitions'
-        );
-    }
-
-    menu.addItem(
-        'Export summary...',
-        function () {myself.exportProjectSummary(); },
-        'open a new browser browser window\n with a summary of this project'
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            'Export summary with drop-shadows...',
-            function () {myself.exportProjectSummary(true); },
-            'open a new browser browser window' +
-                '\nwith a summary of this project' +
-                '\nwith drop-shadows on all pictures.' +
-                '\nnot supported by all browsers',
-            new Color(100, 0, 0)
-        );
-        menu.addItem(
-            'Export all scripts as pic...',
-            function () {myself.exportScriptsPicture(); },
-            'show a picture of all scripts\nand block definitions',
-            new Color(100, 0, 0)
-        );
-    }
-
-    menu.addLine();
-    menu.addItem(
-        'Import tools',
-        function () {
-            myself.getURL(
-                myself.resourceURL('tools.xml'),
-                function (txt) {
-                    myself.droppedText(txt, 'tools');
-                }
-            );
-        },
-        'load the official library of\npowerful blocks'
-    );
-    menu.addItem(
-        'Libraries...',
-        function() {
-            myself.getURL(
-                myself.resourceURL('libraries', 'LIBRARIES'),
-                function (txt) {
-                    var libraries = myself.parseResourceFile(txt);
-                    new LibraryImportDialogMorph(myself, libraries).popUp();
-                }
-            );
-        },
-        'Select categories of additional blocks to add to this project.'
-    );
-
-    menu.addItem(
-        localize(graphicsName) + '...',
-        function () {
-            myself.importMedia(graphicsName);
-        },
-        'Select a costume from the media library'
-    );
-    menu.addItem(
-        localize('Sounds') + '...',
-        function () {
-            myself.importMedia('Sounds');
-        },
-        'Select a sound from the media library'
-    );
-
-    menu.popup(world, pos);
 };
 
 IDE_Morph.prototype.fileImport = function () {
