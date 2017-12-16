@@ -1,4 +1,5 @@
-IDE_Morph.prototype.settingsMenu = IDE_Morph.prototype.originalSettingsMenu;
+// deleting s4a modifications to settingsMenu
+MenuMorph.prototype.popup = MenuMorph.prototype.originalPopup;
 
 /*
 IDE_Morph.prototype.projectMenu = function () {
