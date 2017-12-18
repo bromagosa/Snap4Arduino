@@ -171,8 +171,11 @@ s4aTempDict = {
     'Open from URL...':
         'Obre des d\'una URL...',
 
-    'Save and share':
-        'Desa i comparteix'
+    'Save, share and get URL...':
+        'Desa, comparteix i mostra la URL...',
+
+    'This project is now public at the following URL:':
+        'Aquest projecte és públic, accessible des de la URL:'
 };
 
 // Add attributes to original SnapTranslator.dict.ca

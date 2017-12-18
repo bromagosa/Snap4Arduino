@@ -126,7 +126,7 @@ MenuMorph.prototype.popup = function (world, pos) {
 
         // 
         this.addItem('Open from URL...', 'openFromUrl');
-        this.addItem('Save and share', 'saveAndShare');
+        this.addItem('Save, share and get URL...', 'saveAndShare');
         this.addLine();
         this.addItem(
             'New Arduino translatable project', 
@@ -476,10 +476,22 @@ IDE_Morph.prototype.doSaveAndShare = function () {
 };
 
 IDE_Morph.prototype.showProjectUrl = function (projectName) {
-    prompt(
-        'This project is now public at the following URL:',
-        SnapCloud.urlForMyProject(projectName)
-    );
+    var info = new DialogBoxMorph(),
+        label = localize('This project is now public at the following URL:'), 
+        txt = new InputFieldMorph(
+            SnapCloud.urlForMyProject(projectName),
+            false, // no numeric
+            null, // no choices
+            false // readOnly, to get a selected text
+        );
+    info.labelString = label;
+    txt.setWidth(Math.max(txt.contents().text.text.length*6,label.length*8));
+    info.createLabel();
+    info.addBody(txt);
+    info.addButton('ok', 'OK');
+    info.drawNew();
+    info.fixLayout();
+    info.popUp(this.world());
 };
 
 // EXPERIMENTAL: Arduino translation mode
