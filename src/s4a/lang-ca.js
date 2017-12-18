@@ -175,7 +175,13 @@ s4aTempDict = {
         'Desa, comparteix i mostra la URL...',
 
     'This project is now public at the following URL:':
-        'Aquest projecte és públic, accessible des de la URL:'
+        'Aquest projecte és públic, accessible des de la URL:',
+    'About Snap4Arduino...':
+        'Sobre Snap4Arduino...',
+    'Snap4Arduino website':
+        'Web de Snap4Arduino',
+    'Snap4Arduino repository':
+        'Repositori de Snap4Arduino'
 };
 
 // Add attributes to original SnapTranslator.dict.ca

@@ -18,79 +18,9 @@ SpriteIconMorph.prototype.userMenu = function () {
     return menu;
 };
 
-// Override Snap! menus
-// Keeping the original one because we may want to re-override it in web-based versions
-// TODO: Shouldn't this go into src/platforms/desktop/root/gui.js then?
-// TODO: Duplicate code! This is terrible style... we need to think of a better way 
+// Snap! menus
+// Adding Snap4Arduino options to snapMenu, projectMenu and settingsMenu
 
-IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
-IDE_Morph.prototype.snapMenu = function () {
-    var menu,
-    world = this.world();
-
-    menu = new MenuMorph(this);
-    menu.addItem('About Snap!...', 'aboutSnap');
-    menu.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
-    menu.addLine();
-    menu.addItem(
-        'Snap! reference manual',
-        function () {
-            window.open('http://snap.berkeley.edu/snapsource/help/SnapManual.pdf', 'SnapReferenceManual');
-        }
-    );
-    menu.addItem(
-        'Snap! website',
-        function () {
-            window.open('http://snap.berkeley.edu/', 'SnapWebsite');
-        }
-    );
-    menu.addItem('Snap4Arduino website', 
-                 function() {
-                     window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
-                 }
-                );
-    menu.addItem(
-        'Download Snap! source',
-        function () {
-            window.open(
-                'http://snap.berkeley.edu/snapsource/snap.zip',
-                'SnapSource'
-            );
-        }
-    );
-    menu.addItem(
-        'Snap4Arduino repository',
-        function () {
-            window.open(
-                'http://github.com/edutec/Snap4Arduino',
-                'SnapSource'
-            );
-        }
-    );
-
-    if (world.isDevMode) {
-        menu.addLine();
-        menu.addItem(
-            'Switch back to user mode',
-            'switchToUserMode',
-            'disable deep-Morphic\ncontext menus'
-            + '\nand show user-friendly ones',
-            new Color(0, 100, 0)
-        );
-    } else if (world.currentKey === 16) { // shift-click
-        menu.addLine();
-        menu.addItem(
-            'Switch to dev mode',
-            'switchToDevMode',
-            'enable Morphic\ncontext menus\nand inspectors,'
-            + '\nnot user-friendly!',
-            new Color(100, 0, 0)
-        );
-    }
-    menu.popup(world, this.logo.bottomLeft());
-};
-
-//Adding Snap4Arduino options to projectMenu and settingsMenu
 MenuMorph.prototype.originalPopup = MenuMorph.prototype.popup;
 MenuMorph.prototype.popup = function (world, pos) {
 
@@ -124,7 +54,7 @@ MenuMorph.prototype.popup = function (world, pos) {
     } else if (this.items.length > 0 && this.items[0][1] == 'editProjectNotes') {
         this.addLine();
 
-        // 
+        // adding s4a items
         this.addItem('Open from URL...', 'openFromUrl');
         this.addItem('Save, share and get URL...', 'saveAndShare');
         this.addLine();
@@ -133,6 +63,22 @@ MenuMorph.prototype.popup = function (world, pos) {
             'createNewArduinoProject',
             'Experimental feature!\nScripts written under this\n'
             + 'mode will be translatable\nas Arduino sketches'
+        );
+    // Snap! menu
+    } else if (this.items.length > 0 && this.items[0][1] == 'aboutSnap') {
+        this.addLine();
+        // adding s4a items
+        this.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
+        this.addLine();
+        this.addItem('Snap4Arduino website', 
+            function() {
+                window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
+            }
+        );
+        this.addItem('Snap4Arduino repository',
+            function () {
+                window.open('http://github.com/bromagosa/Snap4Arduino', 'SnapSource');
+            }
         );
     }
     this.originalPopup(world, pos);
