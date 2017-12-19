@@ -24,10 +24,19 @@ IDE_Morph.prototype.toggleServer = function () {
 IDE_Morph.prototype.startServer = function () {
     var myself = this,
         ifaces = require('os').networkInterfaces(),
-        ips = '';
+        iips = '',
+        eips = '';
 
-    Object.keys(ifaces).forEach(function (key) {
-        ips += '\nhttp://' + ifaces[key][0].address + ':42001';
+    Object.keys(ifaces).forEach(function (ifname) {
+        ifaces[ifname].forEach(function (iface) {
+            if (iface.family =='IPv4') {
+                if (iface.internal) {
+                    iips += 'http://' + iface.address + ':42001\n';
+                } else {
+                    eips += 'http://' + iface.address + ':42001\n';
+                }
+            }
+        });
     });
 
     this.httpServer.listen(
@@ -37,8 +46,11 @@ IDE_Morph.prototype.startServer = function () {
                 myself.inform(
                         'HTTP server', 
                         'This Snap4Arduino instance can be remotely\n'
-                        + 'controlled from the following addresses:\n'
-                        + ips)
+                        + 'controlled from the following addresses:\n\n'
+                        + 'Internal URLs:\n'
+                        + iips
+                        + '\nExternal URLs:\n' 
+                        + eips)
             });
 };
 
