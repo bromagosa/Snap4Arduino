@@ -19,69 +19,84 @@ SpriteIconMorph.prototype.userMenu = function () {
 };
 
 // Snap! menus
-// Adding Snap4Arduino options to snapMenu, projectMenu and settingsMenu
+// Adding Snap4Arduino extra options to snapMenu, projectMenu and settingsMenu
+IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
+IDE_Morph.prototype.snapMenu = function () {
+    this.originalSnapMenu();
+    var menu = this.world().activeMenu;
 
-MenuMorph.prototype.originalPopup = MenuMorph.prototype.popup;
-MenuMorph.prototype.popup = function (world, pos) {
+    // adding s4a items
+    menu.addLine();
+    menu.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
+    menu.addLine();
+    menu.addItem('Snap4Arduino website', 
+        function() {
+            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
+        }
+    );
+    menu.addItem('Snap4Arduino repository',
+        function () {
+            window.open('http://github.com/bromagosa/Snap4Arduino', 'SnapSource');
+        }
+    );
 
-    // Snap! settings menu (only for Desktop versions)
-    if (this.items.length > 0 && this.items[0][1] == 'languageMenu' && document.title == '') {
-        this.addLine();
-        var ide = world.children[0];
+    menu.popup(this.world(), this.logo.bottomLeft());
+};
 
+IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
+IDE_Morph.prototype.settingsMenu = function () {
+    this.originalSettingsMenu();
+
+    // adding extra s4a items only for Desktop version
+    if (document.title == '') {
+        var menu = this.world().activeMenu,
+            pos = this.controlBar.settingsButton.bottomLeft();
+
+        menu.addLine();
         // http server option
-        this.addItem(
-            (ide.isServerOn ? '\u2611 ' : '\u2610 ') + localize('HTTP server'),
+        menu.addItem(
+            (this.isServerOn ? '\u2611 ' : '\u2610 ') + localize('HTTP server'),
                 'toggleServer',
-                ide.isServerOn ? 'uncheck to stop\nHTTP server' : 'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
+                this.isServerOn ? 'uncheck to stop\nHTTP server' : 'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
         );
 
         // network serial port option
-        this.addItem(
+        menu.addItem(
             (Arduino.prototype.networkPortsEnabled ? '\u2611 ' : '\u2610 ') + localize('Network serial ports'),
             function () {
                 Arduino.prototype.networkPortsEnabled = !Arduino.prototype.networkPortsEnabled;
-                    if (Arduino.prototype.networkPortsEnabled) {
-                        ide.saveSetting('network-ports-enabled', true);
-                    } else {
-                        ide.removeSetting('network-ports-enabled');
-                    }
+                if (Arduino.prototype.networkPortsEnabled) {
+                    this.saveSetting('network-ports-enabled', true);
+                } else {
+                    this.removeSetting('network-ports-enabled');
+                }
             },
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
 
-    // Snap! project menu
-    } else if (this.items.length > 0 && this.items[0][1] == 'editProjectNotes') {
-        this.addLine();
-
-        // adding s4a items
-        this.addItem('Open from URL...', 'openFromUrl');
-        this.addItem('Save, share and get URL...', 'saveAndShare');
-        this.addLine();
-        this.addItem(
-            'New Arduino translatable project', 
-            'createNewArduinoProject',
-            'Experimental feature!\nScripts written under this\n'
-            + 'mode will be translatable\nas Arduino sketches'
-        );
-    // Snap! menu
-    } else if (this.items.length > 0 && this.items[0][1] == 'aboutSnap') {
-        this.addLine();
-        // adding s4a items
-        this.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
-        this.addLine();
-        this.addItem('Snap4Arduino website', 
-            function() {
-                window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
-            }
-        );
-        this.addItem('Snap4Arduino repository',
-            function () {
-                window.open('http://github.com/bromagosa/Snap4Arduino', 'SnapSource');
-            }
-        );
+        menu.popup(this.world(), pos);
     }
-    this.originalPopup(world, pos);
+};
+
+IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
+IDE_Morph.prototype.projectMenu = function () {
+    this.originalProjectMenu();
+    var menu = this.world().activeMenu,
+        pos = this.controlBar.projectButton.bottomLeft();
+
+    // adding s4a items
+    menu.addLine();
+    menu.addItem('Open from URL...', 'openFromUrl');
+    menu.addItem('Save, share and get URL...', 'saveAndShare');
+    menu.addLine();
+    menu.addItem(
+        'New Arduino translatable project', 
+        'createNewArduinoProject',
+        'Experimental feature!\nScripts written under this\n'
+            + 'mode will be translatable\nas Arduino sketches'
+    );
+
+    menu.popup(this.world(), pos);
 };
 
 IDE_Morph.prototype.originalApplySavedSettings = IDE_Morph.prototype.applySavedSettings;
