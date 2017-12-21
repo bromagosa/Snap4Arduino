@@ -18,477 +18,85 @@ SpriteIconMorph.prototype.userMenu = function () {
     return menu;
 };
 
-// Override Snap! menus
-// Keeping the original one because we may want to re-override it in web-based versions
-// TODO: Shouldn't this go into src/platforms/desktop/root/gui.js then?
-// TODO: Duplicate code! This is terrible style... we need to think of a better way 
-
+// Snap! menus
+// Adding Snap4Arduino extra options to snapMenu, projectMenu and settingsMenu
 IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
-    var menu,
-    world = this.world();
+    this.originalSnapMenu();
+    var menu = this.world().activeMenu;
 
-    menu = new MenuMorph(this);
-    menu.addItem('About Snap!...', 'aboutSnap');
+    // adding s4a items
+    menu.addLine();
     menu.addItem('About Snap4Arduino...', 'aboutSnap4Arduino');
     menu.addLine();
-    menu.addItem(
-        'Snap! reference manual',
-        function () {
-            window.open('http://snap.berkeley.edu/snapsource/help/SnapManual.pdf', 'SnapReferenceManual');
-        }
-    );
-    menu.addItem(
-        'Snap! website',
-        function () {
-            window.open('http://snap.berkeley.edu/', 'SnapWebsite');
-        }
-    );
     menu.addItem('Snap4Arduino website', 
-                 function() {
-                     window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
-                 }
-                );
-    menu.addItem(
-        'Download Snap! source',
-        function () {
-            window.open(
-                'http://snap.berkeley.edu/snapsource/snap.zip',
-                'SnapSource'
-            );
+        function() {
+            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
         }
     );
-    menu.addItem(
-        'Snap4Arduino repository',
+    menu.addItem('Snap4Arduino repository',
         function () {
-            window.open(
-                'http://github.com/edutec/Snap4Arduino',
-                'SnapSource'
-            );
+            window.open('http://github.com/bromagosa/Snap4Arduino', 'SnapSource');
         }
     );
 
-    if (world.isDevMode) {
-        menu.addLine();
-        menu.addItem(
-            'Switch back to user mode',
-            'switchToUserMode',
-            'disable deep-Morphic\ncontext menus'
-            + '\nand show user-friendly ones',
-            new Color(0, 100, 0)
-        );
-    } else if (world.currentKey === 16) { // shift-click
-        menu.addLine();
-        menu.addItem(
-            'Switch to dev mode',
-            'switchToDevMode',
-            'enable Morphic\ncontext menus\nand inspectors,'
-            + '\nnot user-friendly!',
-            new Color(100, 0, 0)
-        );
-    }
-    menu.popup(world, this.logo.bottomLeft());
+    menu.popup(this.world(), this.logo.bottomLeft());
 };
 
 IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
 IDE_Morph.prototype.settingsMenu = function () {
-    var menu,
-        stage = this.stage,
-        world = this.world(),
-        myself = this,
-        pos = this.controlBar.settingsButton.bottomLeft(),
-        networkPorts = this.getSetting('networkPorts'),
-        shiftClicked = (world.currentKey === 16);
+    this.originalSettingsMenu();
 
-    function addPreference(label, toggle, test, onHint, offHint, hide) {
-        var on = '\u2611 ',
-            off = '\u2610 ';
-        if (!hide || shiftClicked) {
-            menu.addItem(
-                (test ? on : off) + localize(label),
-                toggle,
-                test ? onHint : offHint,
-                hide ? new Color(100, 0, 0) : null
-            );
-        }
-    }
+    // adding extra s4a items only for Desktop version
+    if (document.title == '') {
+        var menu = this.world().activeMenu,
+            pos = this.controlBar.settingsButton.bottomLeft();
 
-    menu = new MenuMorph(this);
-    menu.addItem('Language...', 'languageMenu');
-    menu.addItem(
-        'Zoom blocks...',
-        'userSetBlocksScale'
-    );
-    menu.addItem(
-        'Stage size...',
-        'userSetStageSize'
-    );
-    if (shiftClicked) {
+        menu.addLine();
+        // http server option
         menu.addItem(
-            'Dragging threshold...',
-            'userSetDragThreshold',
-            'specify the distance the hand has to move\n' +
-                'before it picks up an object',
-            new Color(100, 0, 0)
+            (this.isServerOn ? '\u2611 ' : '\u2610 ') + localize('HTTP server'),
+                'toggleServer',
+                this.isServerOn ? 'uncheck to stop\nHTTP server' : 'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
         );
-    }
-    menu.addLine();
-    if (isRetinaSupported()) {
-        addPreference(
-            'Retina display support',
-            'toggleRetina',
-            isRetinaEnabled(),
-            'uncheck for lower resolution,\nsaves computing resources',
-            'check for higher resolution,\nuses more computing resources'
-        );
-    }
-    addPreference(
-        'Blurred shadows',
-        'toggleBlurredShadows',
-        useBlurredShadows,
-        'uncheck to use solid drop\nshadows and highlights',
-        'check to use blurred drop\nshadows and highlights',
-        true
-    );
-    addPreference(
-        'Zebra coloring',
-        'toggleZebraColoring',
-        BlockMorph.prototype.zebraContrast,
-        'uncheck to disable alternating\ncolors for nested block',
-        'check to enable alternating\ncolors for nested blocks',
-        true
-    );
-    addPreference(
-        'Dynamic input labels',
-        'toggleDynamicInputLabels',
-        SyntaxElementMorph.prototype.dynamicInputLabels,
-        'uncheck to disable dynamic\nlabels for variadic inputs',
-        'check to enable dynamic\nlabels for variadic inputs',
-        true
-    );
-    addPreference(
-        'Prefer empty slot drops',
-        'togglePreferEmptySlotDrops',
-        ScriptsMorph.prototype.isPreferringEmptySlots,
-        'uncheck to allow dropped\nreporters to kick out others',
-        'settings menu prefer empty slots hint',
-        true
-    );
-    addPreference(
-        'Long form input dialog',
-        'toggleLongFormInputDialog',
-        InputSlotDialogMorph.prototype.isLaunchingExpanded,
-        'uncheck to use the input\ndialog in short form',
-        'check to always show slot\ntypes in the input dialog'
-    );
-    addPreference(
-        'Plain prototype labels',
-        'togglePlainPrototypeLabels',
-        BlockLabelPlaceHolderMorph.prototype.plainLabel,
-        'uncheck to always show (+) symbols\nin block prototype labels',
-        'check to hide (+) symbols\nin block prototype labels'
-    );
-    addPreference(
-        'Virtual keyboard',
-        'toggleVirtualKeyboard',
-        MorphicPreferences.useVirtualKeyboard,
-        'uncheck to disable\nvirtual keyboard support\nfor mobile devices',
-        'check to enable\nvirtual keyboard support\nfor mobile devices',
-        true
-    );
-    addPreference(
-        'Input sliders',
-        'toggleInputSliders',
-        MorphicPreferences.useSliderForInput,
-        'uncheck to disable\ninput sliders for\nentry fields',
-        'check to enable\ninput sliders for\nentry fields'
-    );
-    if (MorphicPreferences.useSliderForInput) {
-        addPreference(
-            'Execute on slider change',
-            'toggleSliderExecute',
-            InputSlotMorph.prototype.executeOnSliderEdit,
-            'uncheck to supress\nrunning scripts\nwhen moving the slider',
-            'check to run\nthe edited script\nwhen moving the slider'
-        );
-    }
-    addPreference(
-        'Clicking sound',
-        function () {
-            BlockMorph.prototype.toggleSnapSound();
-            if (BlockMorph.prototype.snapSound) {
-                myself.saveSetting('click', true);
-            } else {
-                myself.removeSetting('click');
-            }
-        },
-        BlockMorph.prototype.snapSound,
-        'uncheck to turn\nblock clicking\nsound off',
-        'check to turn\nblock clicking\nsound on'
-    );
-    addPreference(
-        'Animations',
-        function () {myself.isAnimating = !myself.isAnimating; },
-        myself.isAnimating,
-        'uncheck to disable\nIDE animations',
-        'check to enable\nIDE animations',
-        true
-    );
-    addPreference(
-        'Turbo mode',
-        'toggleFastTracking',
-        this.stage.isFastTracked,
-        'uncheck to run scripts\nat normal speed',
-        'check to prioritize\nscript execution'
-    );
-    addPreference(
-        'Cache Inputs',
-        function () {
-            BlockMorph.prototype.isCachingInputs =
-                !BlockMorph.prototype.isCachingInputs;
-        },
-        BlockMorph.prototype.isCachingInputs,
-        'uncheck to stop caching\ninputs (for debugging the evaluator)',
-        'check to cache inputs\nboosts recursion',
-        true
-    );
-    addPreference(
-        'Rasterize SVGs',
-        function () {
-            MorphicPreferences.rasterizeSVGs =
-                !MorphicPreferences.rasterizeSVGs;
-        },
-        MorphicPreferences.rasterizeSVGs,
-        'uncheck for smooth\nscaling of vector costumes',
-        'check to rasterize\nSVGs on import',
-        true
-    );
-    addPreference(
-        'Flat design',
-        function () {
-            if (MorphicPreferences.isFlat) {
-                return myself.defaultDesign();
-            }
-            myself.flatDesign();
-        },
-        MorphicPreferences.isFlat,
-        'uncheck for default\nGUI design',
-        'check for alternative\nGUI design',
-        false
-    );
-    addPreference(
-        'Nested auto-wrapping',
-        function () {
-            ScriptsMorph.prototype.enableNestedAutoWrapping =
-                !ScriptsMorph.prototype.enableNestedAutoWrapping;
-            if (ScriptsMorph.prototype.enableNestedAutoWrapping) {
-                myself.removeSetting('autowrapping');
-            } else {
-                myself.saveSetting('autowrapping', false);
-            }
-        },
-        ScriptsMorph.prototype.enableNestedAutoWrapping,
-        'uncheck to confine auto-wrapping\nto top-level block stacks',
-        'check to enable auto-wrapping\ninside nested block stacks',
-        false
-    );
-    addPreference(
-        'Project URLs',
-        function () {
-            myself.projectsInURLs = !myself.projectsInURLs;
-            if (myself.projectsInURLs) {
-                myself.saveSetting('longurls', true);
-            } else {
-                myself.removeSetting('longurls');
-            }
-        },
-        myself.projectsInURLs,
-        'uncheck to disable\nproject data in URLs',
-        'check to enable\nproject data in URLs',
-        true
-    );
-    addPreference(
-        'Sprite Nesting',
-        function () {
-            SpriteMorph.prototype.enableNesting =
-                !SpriteMorph.prototype.enableNesting;
-        },
-        SpriteMorph.prototype.enableNesting,
-        'uncheck to disable\nsprite composition',
-        'check to enable\nsprite composition',
-        true
-    );
-    addPreference(
-        'First-Class Sprites',
-        function () {
-            SpriteMorph.prototype.enableFirstClass =
-                !SpriteMorph.prototype.enableFirstClass;
-            myself.currentSprite.blocksCache.sensing = null;
-            myself.currentSprite.paletteCache.sensing = null;
-            myself.refreshPalette();
-        },
-        SpriteMorph.prototype.enableFirstClass,
-        'uncheck to disable support\nfor first-class sprites',
-        'check to enable support\n for first-class sprite',
-        true
-    );
-    addPreference(
-        'Keyboard Editing',
-        function () {
-            ScriptsMorph.prototype.enableKeyboard =
-                !ScriptsMorph.prototype.enableKeyboard;
-            if (ScriptsMorph.prototype.enableKeyboard) {
-                myself.saveSetting('keyboard', true);
-            } else {
-                myself.removeSetting('keyboard');
-            }
-        },
-        ScriptsMorph.prototype.enableKeyboard,
-        'uncheck to disable\nkeyboard editing support',
-        'check to enable\nkeyboard editing support',
-        false
-    );
-    addPreference(
-        'Table support',
-        function () {
-            List.prototype.enableTables =
-                !List.prototype.enableTables;
-            if (List.prototype.enableTables) {
-                myself.saveSetting('tables', true);
-            } else {
-                myself.removeSetting('tables');
-            }
-        },
-        List.prototype.enableTables,
-        'uncheck to disable\nmulti-column list views',
-        'check for multi-column\nlist view support',
-        false
-    );
-    if (List.prototype.enableTables) {
-        addPreference(
-            'Table lines',
+
+        // network serial port option
+        menu.addItem(
+            (Arduino.prototype.networkPortsEnabled ? '\u2611 ' : '\u2610 ') + localize('Network serial ports'),
             function () {
-                TableMorph.prototype.highContrast =
-                    !TableMorph.prototype.highContrast;
-                if (TableMorph.prototype.highContrast) {
-                    myself.saveSetting('tableLines', true);
+                Arduino.prototype.networkPortsEnabled = !Arduino.prototype.networkPortsEnabled;
+                if (Arduino.prototype.networkPortsEnabled) {
+                    this.saveSetting('network-ports-enabled', true);
                 } else {
-                    myself.removeSetting('tableLines');
+                    this.removeSetting('network-ports-enabled');
                 }
             },
-            TableMorph.prototype.highContrast,
-            'uncheck for less contrast\nmulti-column list views',
-            'check for higher contrast\ntable views',
-            false
+            Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
+
+        menu.popup(this.world(), pos);
     }
-    addPreference(
-        'Live coding support',
-        function () {
-            Process.prototype.enableLiveCoding =
-                !Process.prototype.enableLiveCoding;
-        },
-        Process.prototype.enableLiveCoding,
-        'EXPERIMENTAL! uncheck to disable live\ncustom control structures',
-        'EXPERIMENTAL! check to enable\n live custom control structures',
-        true
-    );
-    addPreference(
-        'Visible stepping',
-        'toggleSingleStepping',
-        Process.prototype.enableSingleStepping,
-        'uncheck to turn off\nvisible stepping',
-        'check to turn on\n visible stepping (slow)',
-        false
-    );
+};
+
+IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
+IDE_Morph.prototype.projectMenu = function () {
+    this.originalProjectMenu();
+    var menu = this.world().activeMenu,
+        pos = this.controlBar.projectButton.bottomLeft();
+
+    // adding s4a items
     menu.addLine();
-    addPreference(
-        'HTTP server',
-        'toggleServer',
-        myself.isServerOn,
-        'uncheck to stop\nHTTP server',
-        'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
+    menu.addItem('Open from URL...', 'openFromUrl');
+    menu.addItem('Save, share and get URL...', 'saveAndShare');
+    menu.addLine();
+    menu.addItem(
+        'New Arduino translatable project', 
+        'createNewArduinoProject',
+        'Experimental feature!\nScripts written under this\n'
+            + 'mode will be translatable\nas Arduino sketches'
     );
-    addPreference(
-        'Network serial ports',
-        function () {
-            Arduino.prototype.networkPortsEnabled =
-                !Arduino.prototype.networkPortsEnabled;
-            if (Arduino.prototype.networkPortsEnabled) {
-                myself.saveSetting('network-ports-enabled', true);
-            } else {
-                myself.removeSetting('network-ports-enabled');
-            }
-        },
-        Arduino.prototype.networkPortsEnabled,
-        'uncheck to disable\nserial ports over\nnetwork',
-        'check to enable\nserial ports over\nnetwork'
-    );
-    menu.addLine(); // everything below this line is stored in the project
-    addPreference(
-        'Thread safe scripts',
-        function () {stage.isThreadSafe = !stage.isThreadSafe; },
-            this.stage.isThreadSafe,
-        'uncheck to allow\nscript reentrance',
-        'check to disallow\nscript reentrance'
-    );
-    addPreference(
-        'Prefer smooth animations',
-        'toggleVariableFrameRate',
-        StageMorph.prototype.frameRate,
-        'uncheck for greater speed\nat variable frame rates',
-        'check for smooth, predictable\nanimations across computers'
-    );
-    addPreference(
-        'Flat line ends',
-        function () {
-            SpriteMorph.prototype.useFlatLineEnds =
-                !SpriteMorph.prototype.useFlatLineEnds;
-        },
-        SpriteMorph.prototype.useFlatLineEnds,
-        'uncheck for round ends of lines',
-        'check for flat ends of lines'
-    );
-    addPreference(
-        'Codification support',
-        function () {
-            StageMorph.prototype.enableCodeMapping =
-                !StageMorph.prototype.enableCodeMapping;
-            myself.currentSprite.blocksCache.variables = null;
-            myself.currentSprite.paletteCache.variables = null;
-            myself.refreshPalette();
-        },
-        StageMorph.prototype.enableCodeMapping,
-        'uncheck to disable\nblock to text mapping features',
-        'check for block\nto text mapping features',
-        false
-    );
-    addPreference(
-        'Inheritance support',
-        function () {
-            StageMorph.prototype.enableInheritance =
-                !StageMorph.prototype.enableInheritance;
-            myself.currentSprite.blocksCache.variables = null;
-            myself.currentSprite.paletteCache.variables = null;
-            myself.refreshPalette();
-        },
-        StageMorph.prototype.enableInheritance,
-        'uncheck to disable\nsprite inheritance features',
-        'check for sprite\ninheritance features',
-        false
-    );
-    addPreference(
-        'Persist linked sublist IDs',
-        function () {
-            StageMorph.prototype.enableSublistIDs =
-                !StageMorph.prototype.enableSublistIDs;
-        },
-        StageMorph.prototype.enableSublistIDs,
-        'uncheck to disable\nsaving linked sublist identities',
-        'check to enable\nsaving linked sublist identities',
-        true
-    );
-    menu.popup(world, pos);
+
+    menu.popup(this.world(), pos);
 };
 
 IDE_Morph.prototype.originalApplySavedSettings = IDE_Morph.prototype.applySavedSettings;
@@ -502,183 +110,6 @@ IDE_Morph.prototype.applySavedSettings = function () {
     }
 
     Arduino.prototype.hostname = this.getSetting('network-serial-hostname') || 'tcp://arduino.local:23';
-};
-
-IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
-IDE_Morph.prototype.projectMenu = function () {
-    var menu,
-        myself = this,
-        world = this.world(),
-        pos = this.controlBar.projectButton.bottomLeft(),
-        graphicsName = this.currentSprite instanceof SpriteMorph ?
-            'Costumes' : 'Backgrounds',
-        shiftClicked = (world.currentKey === 16);
-
-    function createMediaMenu(folderName, loadFunction) {
-        // Utility for creating Libraries, etc menus.
-        // loadFunction takes in two parameters:
-        // a file URL, and a canonical name
-        return function () {
-            myself.getMediaList(
-                folderName,
-                function (names) {
-                    var mediaMenu = new MenuMorph(
-                        myself,
-                        localize('Import') + ' ' + localize(folderName)
-                    );
-                    names.forEach(function (item) {
-                        mediaMenu.addItem(
-                            item.name,
-                            function () {loadFunction(item.file, item.name); },
-                            item.help
-                        );
-                    });
-                    mediaMenu.popup(world, pos);
-                }
-            );
-        };
-    }
-
-    menu = new MenuMorph(this);
-    menu.addItem('Project notes...', 'editProjectNotes');
-    menu.addLine();
-    menu.addItem('New', 'createNewProject');
-    menu.addItem('Open...', 'openProjectsBrowser');
-    menu.addItem('Open from URL...', 'openFromUrl');
-    menu.addItem('Save', "save");
-    menu.addItem('Save As...', 'saveProjectsBrowser');
-    menu.addItem('Save and share', 'saveAndShare');
-    menu.addLine();
-    menu.addItem(
-        'New Arduino translatable project', 
-        'createNewArduinoProject',
-        'Experimental feature!\nScripts written under this\n'
-        + 'mode will be translatable\nas Arduino sketches');
-    menu.addLine();
-    menu.addItem(
-        'Import...',
-        'fileImport',
-        'file menu import hint' // looks up the actual text in the translator
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            localize(
-                'Export project...') + ' ' + localize('(in a new window)'
-            ),
-            function () {
-                if (myself.projectName) {
-                    myself.exportProject(myself.projectName, shiftClicked);
-                } else {
-                    myself.prompt('Export Project As...', function (name) {
-                        // false - override the shiftClick setting to use XML
-                        // true - open XML in a new tab
-                        myself.exportProject(name, false, true);
-                    }, null, 'exportProject');
-                }
-            },
-            'show project data as XML\nin a new browser window',
-            new Color(100, 0, 0)
-        );
-    }
-    menu.addItem(
-        shiftClicked ?
-                'Export project as plain text...' : 'Export project...',
-        function () {
-            if (myself.projectName) {
-                myself.exportProject(myself.projectName, shiftClicked);
-            } else {
-                myself.prompt('Export Project As...', function (name) {
-                    myself.exportProject(name, shiftClicked);
-                }, null, 'exportProject');
-            }
-        },
-        'save project data as XML\nto your downloads folder',
-        shiftClicked ? new Color(100, 0, 0) : null
-    );
-
-    if (this.stage.globalBlocks.length) {
-        menu.addItem(
-            'Export blocks...',
-            function () {myself.exportGlobalBlocks(); },
-            'show global custom block definitions as XML' +
-                '\nin a new browser window'
-        );
-        menu.addItem(
-            'Unused blocks...',
-            function () {myself.removeUnusedBlocks(); },
-            'find unused global custom blocks' +
-                '\nand remove their definitions'
-        );
-    }
-
-    menu.addItem(
-        'Export summary...',
-        function () {myself.exportProjectSummary(); },
-        'open a new browser browser window\n with a summary of this project'
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            'Export summary with drop-shadows...',
-            function () {myself.exportProjectSummary(true); },
-            'open a new browser browser window' +
-                '\nwith a summary of this project' +
-                '\nwith drop-shadows on all pictures.' +
-                '\nnot supported by all browsers',
-            new Color(100, 0, 0)
-        );
-        menu.addItem(
-            'Export all scripts as pic...',
-            function () {myself.exportScriptsPicture(); },
-            'show a picture of all scripts\nand block definitions',
-            new Color(100, 0, 0)
-        );
-    }
-
-    menu.addLine();
-    menu.addItem(
-        'Import tools',
-        function () {
-            myself.getURL(
-                myself.resourceURL('tools.xml'),
-                function (txt) {
-                    myself.droppedText(txt, 'tools');
-                }
-            );
-        },
-        'load the official library of\npowerful blocks'
-    );
-    menu.addItem(
-        'Libraries...',
-        function() {
-            myself.getURL(
-                myself.resourceURL('libraries', 'LIBRARIES'),
-                function (txt) {
-                    var libraries = myself.parseResourceFile(txt);
-                    new LibraryImportDialogMorph(myself, libraries).popUp();
-                }
-            );
-        },
-        'Select categories of additional blocks to add to this project.'
-    );
-
-    menu.addItem(
-        localize(graphicsName) + '...',
-        function () {
-            myself.importMedia(graphicsName);
-        },
-        'Select a costume from the media library'
-    );
-    menu.addItem(
-        localize('Sounds') + '...',
-        function () {
-            myself.importMedia('Sounds');
-        },
-        'Select a sound from the media library'
-    );
-
-    menu.popup(world, pos);
 };
 
 IDE_Morph.prototype.fileImport = function () {
@@ -1006,10 +437,22 @@ IDE_Morph.prototype.doSaveAndShare = function () {
 };
 
 IDE_Morph.prototype.showProjectUrl = function (projectName) {
-    prompt(
-        'This project is now public at the following URL:',
-        SnapCloud.urlForMyProject(projectName)
-    );
+    var info = new DialogBoxMorph(),
+        label = localize('This project is now public at the following URL:'), 
+        txt = new InputFieldMorph(
+            SnapCloud.urlForMyProject(projectName),
+            false, // no numeric
+            null, // no choices
+            false // readOnly, to get a selected text
+        );
+    info.labelString = label;
+    txt.setWidth(Math.max(txt.contents().text.text.length*6,label.length*8));
+    info.createLabel();
+    info.addBody(txt);
+    info.addButton('ok', 'OK');
+    info.drawNew();
+    info.fixLayout();
+    info.popUp(this.world());
 };
 
 // EXPERIMENTAL: Arduino translation mode

@@ -322,7 +322,10 @@ SpriteMorph.prototype.freshPalette = function (category) {
         hideNextSpace = false,
         myself = this,
         stage = this.parentThatIsA(StageMorph),
-        oldFlag = Morph.prototype.trackChanges;
+        oldFlag = Morph.prototype.trackChanges,
+        shade = new Color(140, 140, 140),
+        searchButton,
+        makeButton;
 
     Morph.prototype.trackChanges = false;
 
@@ -331,8 +334,40 @@ SpriteMorph.prototype.freshPalette = function (category) {
     palette.color = this.paletteColor;
     palette.growth = new Point(0, MorphicPreferences.scrollBarSize);
 
-    // menu:
+    // toolbar:
+    
+    palette.toolBar = new AlignmentMorph('column');
 
+    searchButton = new PushButtonMorph(
+        this,
+        "searchBlocks",
+        new SymbolMorph("magnifierOutline", 16)
+    );
+    searchButton.alpha = 0.2;
+    searchButton.padding = 1;
+    searchButton.hint = localize('find blocks') + '...';
+    searchButton.labelShadowColor = shade;
+    searchButton.drawNew();
+    searchButton.fixLayout();
+	palette.toolBar.add(searchButton);
+
+    makeButton = new PushButtonMorph(
+        this,
+        "makeBlock",
+        new SymbolMorph("cross", 16)
+    );
+    makeButton.alpha = 0.2;
+    makeButton.padding = 1;
+    makeButton.hint = localize('Make a block') + '...';
+    makeButton.labelShadowColor = shade;
+    makeButton.drawNew();
+    makeButton.fixLayout();
+    palette.toolBar.add(makeButton);
+
+	palette.toolBar.fixLayout();
+    palette.add(palette.toolBar);
+
+    // menu:
     palette.userMenu = function () {
         var menu = new MenuMorph(),
             ide = this.parentThatIsA(IDE_Morph),
@@ -375,7 +410,17 @@ SpriteMorph.prototype.freshPalette = function (category) {
             });
         }
 
-        menu.addItem('find blocks...', function () {myself.searchBlocks(); });
+        menu.addPair(
+            [
+                new SymbolMorph(
+                    'magnifyingGlass',
+                    MorphicPreferences.menuFontSize
+                ),
+                localize('find blocks') + '...'
+            ],
+            function () {myself.searchBlocks(); },
+            '^F'
+        );
         if (canHidePrimitives()) {
             menu.addItem(
                 'hide primitives',
@@ -420,9 +465,9 @@ SpriteMorph.prototype.freshPalette = function (category) {
 
     blocks = this.blocksCache[category];
     if (!blocks) {
-        blocks = myself.blockTemplates(category);
+        blocks = this.blockTemplates(category);
         if (this.isCachingPrimitives) {
-            myself.blocksCache[category] = blocks;
+            this.blocksCache[category] = blocks;
         }
     }
 
@@ -502,6 +547,29 @@ SpriteMorph.prototype.freshPalette = function (category) {
             y += block.height();
         }
     });
+
+    // inherited custom blocks:
+
+    // y += unit * 1.6;
+    if (this.exemplar) {
+        this.inheritedBlocks(true).forEach(function (definition) {
+            var block;
+            if (definition.category === category ||
+                    (category === 'variables'
+                        && contains(
+                            ['lists'],
+                            definition.category
+                        ))) {
+                block = definition.templateInstance();
+                y += unit * 0.3;
+                block.setPosition(new Point(x, y));
+                palette.addContents(block);
+                block.ghost();
+                x = 0;
+                y += block.height();
+            }
+        });
+    }
 
     //layout
 
