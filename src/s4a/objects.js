@@ -716,163 +716,23 @@ SpriteMorph.prototype.showingArduinoWatcher = function (selector, pin) {
 
 // List exporting
 
+WatcherMorph.prototype.originalUserMenu = WatcherMorph.prototype.userMenu;
 WatcherMorph.prototype.userMenu = function () {
-    var myself = this,
-        menu = new MenuMorph(this),
-        subMenu,
-        on = '\u25CF',
-        off = '\u25CB',
-        vNames;
-
-    function monitor(vName) {
-        var stage = myself.parentThatIsA(StageMorph),
-            varFrame = myself.currentValue.outerContext.variables;
-        menu.addItem(
-            vName + '...',
-            function () {
-                var watcher = detect(
-                    stage.children,
-                    function (morph) {
-                        return morph instanceof WatcherMorph
-                            && morph.target === varFrame
-                            && morph.getter === vName;
-                    }
-                ),
-                    others;
-                if (watcher !== null) {
-                    watcher.show();
-                    watcher.fixLayout(); // re-hide hidden parts
-                    return;
-                }
-                watcher = new WatcherMorph(
-                    vName + ' ' + localize('(temporary)'),
-                    SpriteMorph.prototype.blockColor.variables,
-                    varFrame,
-                    vName
-                );
-                watcher.setPosition(stage.position().add(10));
-                others = stage.watchers(watcher.left());
-                if (others.length > 0) {
-                    watcher.setTop(others[others.length - 1].bottom());
-                }
-                stage.add(watcher);
-                watcher.fixLayout();
-            }
-        );
-    }
-
-    menu.addItem(
-        (this.style === 'normal' ? on : off) + ' ' + localize('normal'),
-        'styleNormal'
-    );
-    menu.addItem(
-        (this.style === 'large' ? on : off) + ' ' + localize('large'),
-        'styleLarge'
-    );
-    if (this.target instanceof VariableFrame) {
-        menu.addItem(
-            (this.style === 'slider' ? on : off) + ' ' + localize('slider'),
-            'styleSlider'
-        );
-        menu.addLine();
-        menu.addItem(
-            'slider min...',
-            'userSetSliderMin'
-        );
-        menu.addItem(
-            'slider max...',
-            'userSetSliderMax'
-        );
-        menu.addLine();
-        menu.addItem(
-            'import...',
-            function () {
-                var inp = document.createElement('input'),
-                    ide = myself.parentThatIsA(IDE_Morph);
-                if (ide.filePicker) {
-                    document.body.removeChild(ide.filePicker);
-                    ide.filePicker = null;
-                }
-                inp.type = 'file';
-                inp.style.color = "transparent";
-                inp.style.backgroundColor = "transparent";
-                inp.style.border = "none";
-                inp.style.outline = "none";
-                inp.style.position = "absolute";
-                inp.style.top = "0px";
-                inp.style.left = "0px";
-                inp.style.width = "0px";
-                inp.style.height = "0px";
-                inp.style.display = "none";
-                inp.addEventListener(
-                    "change",
-                    function () {
-                        var file;
-
-                        function txtOnlyMsg(ftype) {
-                            ide.inform(
-                                'Unable to import',
-                                'Snap! can only import "text" files.\n' +
-                                    'You selected a file of type "' +
-                                    ftype +
-                                    '".'
-                            );
-                        }
-
-                        function readText(aFile) {
-                            var frd = new FileReader();
-                            frd.onloadend = function (e) {
-                                myself.target.setVar(
-                                    myself.getter,
-                                    e.target.result
-                                );
-                            };
-
-                            if (aFile.type.indexOf("text") === 0) {
-                                frd.readAsText(aFile);
-                            } else {
-                                txtOnlyMsg(aFile.type);
-                            }
-                        }
-
-                        document.body.removeChild(inp);
-                        ide.filePicker = null;
-                        if (inp.files.length > 0) {
-                            file = inp.files[inp.files.length - 1];
-                            readText(file);
-                        }
-                    },
-                    false
-                );
-                document.body.appendChild(inp);
-                ide.filePicker = inp;
-                inp.click();
-            }
-        );
-        if (this.currentValue &&
-                (isString(this.currentValue) || !isNaN(+this.currentValue))) {
-            menu.addItem('export...', this.valueExporter('plain'));
-        } else if (this.currentValue instanceof List) {
-            subMenu = new MenuMorph(this.currentValue);
-            if (!this.currentValue.contents.some(
-                    function (any) {
-                        return any instanceof List;
-                    })) {
-                subMenu.addItem('Plain text', this.valueExporter('plain'));
-            }
-            subMenu.addItem('JSON', this.valueExporter('json'));
-            subMenu.addItem('XML', this.valueExporter('xml'));
-            subMenu.addItem('CSV', this.valueExporter('csv'));
-            menu.addMenu('export...', subMenu);
-        } else if (this.currentValue instanceof Context) {
-            vNames = this.currentValue.outerContext.variables.names();
-            if (vNames.length) {
-                menu.addLine();
-                vNames.forEach(function (vName) {
-                    monitor(vName);
-                });
-            }
+    var menu = this.originalUserMenu(),
+        submenu;
+    if (this.target instanceof VariableFrame && this.currentValue instanceof List) {
+        subMenu = new MenuMorph(this.currentValue);
+        if (!this.currentValue.contents.some(
+                function (any) {
+                    return any instanceof List;
+                })) {
+            subMenu.addItem('Plain text', this.valueExporter('plain'));
         }
+        subMenu.addItem('JSON', this.valueExporter('json'));
+        subMenu.addItem('XML', this.valueExporter('xml'));
+        subMenu.addItem('CSV', this.valueExporter('csv'));
+        menu.addMenu('export...', subMenu);
+
     }
     return menu;
 };
