@@ -212,3 +212,8 @@ Process.prototype.pwmWrite = function (pin, value) {
         throw new Error(localize('Arduino not connected'));
     }
 };
+
+Process.prototype.reportConnected = function () {
+    var sprite = this.blockReceiver();
+    return sprite.arduino.isBoardReady();
+};

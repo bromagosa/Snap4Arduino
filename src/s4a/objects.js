@@ -88,6 +88,15 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
         transpilable: true
     };
 
+    this.blocks.reportConnected =
+    {
+        only: SpriteMorph,
+        type: 'predicate',
+        category: 'arduino',
+        spec: 'arduino connected?',
+        transpilable: false
+    };
+
     // Ardui... nization? 
     // Whatever, let's dumb this language down:
 
@@ -260,6 +269,8 @@ SpriteMorph.prototype.blockTemplates = function (category) {
     if (category === 'arduino') {
         blocks.push(this.arduinoConnectButton);
         blocks.push(this.arduinoDisconnectButton);
+        blocks.push('-');
+        blocks.push(blockBySelector('reportConnected'));
         blocks.push('-');
         blocks.push(blockBySelector('connectArduino'));
         blocks.push(blockBySelector('disconnectArduino'));

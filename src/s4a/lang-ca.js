@@ -90,6 +90,9 @@ s4aTempDict = {
     'Disconnect Arduino':
         'Desconnecta Arduino',
 
+    'arduino connected?':
+        'arduino connectat?',
+
     'analog reading %analogPin':
         'lectura analògica %analogPin',
 
