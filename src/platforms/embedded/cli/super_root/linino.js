@@ -4,7 +4,7 @@ Arduino.prototype.isBoardReady = function () {
 };
 
 Process.prototype.setPinMode = function (pin, mode) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -41,7 +41,7 @@ Process.prototype.setPinMode = function (pin, mode) {
 };
 
 Process.prototype.servoWrite = function (pin, value) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -81,7 +81,7 @@ Process.prototype.servoWrite = function (pin, value) {
 };
 
 Process.prototype.reportAnalogReading = function (pin) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -116,7 +116,7 @@ Process.prototype.reportAnalogReading = function (pin) {
 };
 
 Process.prototype.reportDigitalReading = function (pin) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
         var board = sprite.arduino.board; 
@@ -136,7 +136,7 @@ Process.prototype.reportDigitalReading = function (pin) {
 };
 
 Process.prototype.digitalWrite = function (pin, booleanValue) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
         var board = sprite.arduino.board,
@@ -159,7 +159,7 @@ Process.prototype.digitalWrite = function (pin, booleanValue) {
 };
 
 Process.prototype.pwmWrite = function (pin, value) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
         var board = sprite.arduino.board; 
