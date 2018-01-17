@@ -121,11 +121,7 @@ s4aTempDict = {
     'disconnect arduino':
         'Ardunio bağlantısını kes',
 
-
-
-
-
- 'setup digital pin %digitalPin as %pinMode':
+    'setup digital pin %digitalPin as %pinMode':
         'Sayısal pin D %digitalPin durumunu %pinMode yap',
 
     'set digital pin %digitalPin to %b':
@@ -134,16 +130,8 @@ s4aTempDict = {
     'set servo %servoPin to %servoValue':
         'Servo pin D %servoPin değerini %servoValue yap',
 
-   
-
     'set pin %pwmPin to value %n':
         'Sayısal pin D %pwmPin değerini %n yap',
-
-
-
-
-
-
 
     'Connecting board at port\n':
         'Arduino kartına bağlanıyor port\n ',
