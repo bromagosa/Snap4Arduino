@@ -64,38 +64,38 @@ s4aTempDict = {
 
     // arduino:
 
-	'digital input':
-		'Sayısal Giriş',
+    'digital input':
+        'Sayısal Giriş',
 
-	'digital output':
-		'Sayısal Çıkış',
+    'digital output':
+        'Sayısal Çıkış',
 
-	'PWM':
-		'PWM',
+    'PWM':
+        'PWM',
 
-	'servo':
-		'Servo',
+    'servo':
+        'Servo',
 
-	'clockwise':
-		'Saat Yönü',
+    'clockwise':
+        'Saat Yönü',
 
-	'clockwise (1500-1000)':
-		'Saat Yönü (1500-1000)',
+    'clockwise (1500-1000)':
+        'Saat Yönü (1500-1000)',
 
-	'counter-clockwise':
-		'Saat Yönünün Tersi',
+    'counter-clockwise':
+        'Saat Yönünün Tersi',
 
-	'counter-clockwise (1500-2000)':
-		'Saat Yönünün Tersi (1500-2000)',
+    'counter-clockwise (1500-2000)':
+        'Saat Yönünün Tersi (1500-2000)',
 
-	'stopped':
-		'Durduruldu',
+    'stopped':
+        'Durduruldu',
 
-	'stopped (1500)':
-		'Durduruldu (1500)',
+    'stopped (1500)':
+        'Durduruldu (1500)',
 
-	'angle (0-180)':
-		'Açı (0-180)',
+    'angle (0-180)':
+        'Açı (0-180)',
 
     'connect to Arduino':
         'Arduino ya bağlan',
