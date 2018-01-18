@@ -160,9 +160,10 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     this.getURL('version', function (version) {
         
         aboutTxt = 'Snap4Arduino ' + version +'\n'
-        + 'Copyright \u24B8 2017 Bernat Romagosa\n'
-        + 'bernat@snap4arduino.rocks\n'
         + 'http://snap4arduino.rocks\n\n'
+        + 'Copyright \u24B8 2018 Bernat Romagosa\n'
+        + 'http://romagosa.work\n'
+        + 'bernat@snap4arduino.rocks\n'
 
         + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
 
@@ -182,9 +183,9 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
     creditsTxt = localize('Contributors')
         + '\n\nErnesto Laval: MacOSX version, architectural decisions,\n'
         + 'several features and bugfixes, Spanish translation\n'
-        + 'José García, Joan Güell and Víctor Casado: vision,\n'
+        + 'José García, Joan Güell and Víctor Casado: SnapJr mode,\n'
         + 'architectural decisions, several bug reports, testing and\n'
-        + 'unvaluable help in many other regards\n'
+        + 'unvaluable help in many other regards.\n'
         + 'Joan Guillén: Too many contributions to fit in here, thanks!\n'
         + 'Josep Ferràndiz: Extensive testing, vision\n'
         + 'Frank Hunleth: GNU/Linux 64b version\n'
