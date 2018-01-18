@@ -107,7 +107,11 @@ build() {
             print_error "Could not find Snap! sources.\nPlease run prepare --snap first."
             exit 1
         fi
-        
+
+        echo "Fetching Snap4Arduino examples..."
+        cp -R examples/*.xml tmp/Examples
+        cat examples/EXAMPLES >> tmp/Examples/EXAMPLES
+
         echo "Fetching Snap4Arduino core..."
         if ! cp -R src/s4a tmp; then
             print_error "Could not find Snap4Arduino core. Please make sure a src/s4a exists and contains the Snap4Arduino core files."

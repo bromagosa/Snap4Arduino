@@ -166,7 +166,28 @@ s4aTempDict = {
         'Esto puede tardar unos segundos...',
 
     'Network serial ports':
-        'Puertas serie sobre red'
+        'Puertas serie sobre red',
+
+    'Open from URL...':
+        'Abre desde una URL...',
+
+    'Save, share and get URL...':
+        'Guarda, comparte y muestra la URL...',
+
+    'This project is now public at the following URL:':
+        'Este proyecto es público, accessible desde la URL:',
+
+    'About Snap4Arduino...':
+        'Sobre Snap4Arduino...',
+
+    'Snap4Arduino website':
+        'Web de Snap4Arduino',
+
+    'Snap4Arduino repository':
+        'Repositorio de Snap4Arduino',
+
+    'Start a Snap Jr. session':
+        'Inicia una sesión de Snap Junior'
 };
 
 // Add attributes to original SnapTranslator.dict.es
