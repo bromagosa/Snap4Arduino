@@ -109,8 +109,12 @@ build() {
         fi
 
         echo "Fetching Snap4Arduino examples..."
-        cp -R examples/*.xml tmp/Examples
-        cat examples/EXAMPLES >> tmp/Examples/EXAMPLES
+        cp -R src/examples/*.xml tmp/Examples
+        cat src/examples/EXAMPLES >> tmp/Examples/EXAMPLES
+
+        echo "Fetching Snap4Arduino libraries..."
+        cp -R src/libraries/*.xml tmp/libraries
+        cat src/libraries/LIBRARIES >> tmp/libraries/LIBRARIES
 
         echo "Fetching Snap4Arduino core..."
         if ! cp -R src/s4a tmp; then

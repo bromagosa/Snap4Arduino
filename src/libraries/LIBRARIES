@@ -1,0 +1,5 @@
+scale.xml	Scale between ranges	Scale a value from a range to another. Useful to map sensor values into stage coordinates, or to map sensors into actuators.
+phiro.xml	Phiro robot	Control the Phiro robotic car.
+i2c.xml	I2C	Send and receive data from I2C-enabled sensors and actuators.
+NeoPixel.xml	NeoPixel	NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.
+braccio.xml	Braccio arm	The Braccio robotic arm is an educational simple arm with a grip on its end. You need to install BraccioFirmata into the board before being able to use this library.

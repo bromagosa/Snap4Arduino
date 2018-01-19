@@ -36,7 +36,7 @@ Servo wrist_ver;
 Servo gripper;
 
 // Initial motor positions
-int motors [6] =    { 10,    45,  160,  160,  90,   15 };
+int motors [6] =    { 0,    45,   180,  180,  90,   0 };
 int maxangles [6] = { 180,  165,  180,  180,  180,  73 };
 int minangles [6] = { 0,    15,   0,    0,    0,    10 };
 
