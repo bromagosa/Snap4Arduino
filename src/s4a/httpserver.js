@@ -82,23 +82,22 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                 case 'broadcast':
                     var message = command[1],
                         stage = myself.stage,
-                        hats = [];
+                        rcvrs = stage.children.concat(stage);
 
                     if (message.length > 0) {
 
                         stage.lastMessage = message;
 
-                        stage.children.concat(stage).forEach(function (morph) {
+                        rcvrs.forEach(function (morph) {
                             if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
-                                hats = hats.concat(morph.allHatBlocksFor(message));
+                                morph.allHatBlocksFor(message).forEach(function (block) {
+                                    stage.threads.startProcess(
+                                        block,
+                                        morph,
+                                        stage.isThreadSafe
+                                )});
                             }
                         });
-
-                        hats.forEach(function (block) {
-                            stage.threads.startProcess(
-                                    block,
-                                    stage.isThreadSafe
-                                    )});
 
                         response.end('broadcast ' + message);
 
