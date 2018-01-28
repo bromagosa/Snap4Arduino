@@ -111,8 +111,12 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                         value = command[2],
                         stage = myself.stage;
 
-                    stage.globalVariables().setVar(varName, value, stage);
-                    response.end('updating variable ' + command[1] + ' to value ' + command[2]);
+                    if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
+                        response.end('variable ' + varName + ' does not exist');
+                    } else {
+                        stage.globalVariables().setVar(varName, value, stage);
+                        response.end('updating variable ' + command[1] + ' to value ' + command[2]);
+                    }
                     break;
 
                 case 'send-messages':
