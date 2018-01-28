@@ -80,17 +80,17 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
 
             switch (command[0]) {
                 case 'broadcast':
-                    var message = command[1],
+                    var bcMessage = typeof command[1] !== 'undefined' ? message.slice(10) : '',
                         stage = myself.stage,
                         rcvrs = stage.children.concat(stage);
 
-                    if (message.length > 0) {
+                    if (bcMessage.length > 0) {
 
-                        stage.lastMessage = message;
+                        stage.lastMessage = bcMessage;
 
                         rcvrs.forEach(function (morph) {
                             if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
-                                morph.allHatBlocksFor(message).forEach(function (block) {
+                                morph.allHatBlocksFor(bcMessage).forEach(function (block) {
                                     stage.threads.startProcess(
                                         block,
                                         morph,
@@ -99,7 +99,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                             }
                         });
 
-                        response.end('broadcast ' + message);
+                        response.end('broadcast ' + bcMessage);
 
                     } else {
                         response.end('no message provided');
