@@ -69,6 +69,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
     var myself = this;
 
     response.setHeader('Access-Control-Allow-Origin', '*');
+    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
     function parse(message) {
 
         if (message.length > 0) {
@@ -209,7 +210,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
             response.write('POST processing...\n');
             bodys.forEach(function (item) {
                 response.write('\n');
-                parse('vars-update=' + item);
+                parse('vars-update=' + decodeURIComponent(item));
             });
             response.end('\n\nPOST completed');
         });
