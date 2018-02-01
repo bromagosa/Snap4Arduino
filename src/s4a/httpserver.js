@@ -69,7 +69,6 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
     var myself = this;
 
     response.setHeader('Access-Control-Allow-Origin', '*');
-    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
     function parse(message) {
 
         if (message.length > 0) {
@@ -81,7 +80,8 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
 
             switch (command[0]) {
                 case 'broadcast':
-                    var bcMessage = typeof command[1] !== 'undefined' ? message.slice(10) : '',
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+                    var bcMessage = typeof command[1] !== 'undefined' ? decodeURIComponent(message.slice(10)) : '',
                         stage = myself.stage,
                         rcvrs = stage.children.concat(stage);
 
@@ -108,23 +108,27 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     break;
 
                 case 'vars-update':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+
+                case 'var2-update':
                     if (typeof command[1] == 'undefined' || command[1] == '') {
                         response.write('No variable provided');
                     } else {
-                        var varName = command[1],
-                            value = message.slice(command[0].length+command[1].length+2),
+                        var varName = decodeURIComponent(command[1]),
+                            value = decodeURIComponent(message.slice(command[0].length+command[1].length+2)),
                             stage = myself.stage;
 
                         if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
                             response.write('Variable ' + varName + ' does not exist');
                         } else {
                             stage.globalVariables().setVar(varName, value, stage);
-                            response.write('Updating variable ' + command[1] + ' to value ' + value);
+                            response.write('Updating variable ' + varName + ' to value ' + value, 'utf-8');
                         }
                     }
                     break;
 
                 case 'send-messages':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var contents = 'broadcast',
                         stage = myself.stage;
 
@@ -140,6 +144,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     break;
 
                 case 'send-vars':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var contents = 'sensor-update',
                         stage = myself.stage;
 
@@ -151,8 +156,9 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     break;
 
                 case 'send-var':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var stage = myself.stage,
-                        varName = command[1];
+                        varName = decodeURIComponent(command[1]);
                     if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
                         response.write('Variable ' + varName + ' does not exist');
                     } else {
@@ -185,6 +191,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     break;
 
                 default:
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     response.write('Unknown command');
 
             }
@@ -206,11 +213,12 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
             if (chunk) { 
                 body += chunk;
             }
-            bodys = body.split("&");
+            bodys = body.replace(/\+/g,' ').split("&");
+            response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
             response.write('POST processing...\n');
             bodys.forEach(function (item) {
                 response.write('\n');
-                parse('vars-update=' + decodeURIComponent(item));
+                parse('var2-update=' + item);
             });
             response.end('\n\nPOST completed');
         });
