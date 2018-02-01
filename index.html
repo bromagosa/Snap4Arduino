@@ -425,51 +425,131 @@
                 <div class="row">
                     <div class="col-md-4">
                         <h3>HTTP Protocol</h3>
+                        <pre class="pull-left">http://IP:42001/</pre>
+
                     </div>
                     <div class="col-md-8">
                         <p>Snap4Arduino comes with a built-in tiny HTTP server that mimics (and extends) the one <a href="http://wiki.scratch.mit.edu/wiki/Remote_Sensors_Protocol" target="_blank">Scratch 1.4 had</a>.
 
-                        This means you can control your Snap4Arduino application from any computer, mobile phone, tablet or any other network-enabled device in the same network.
+                        This means you can <b>control your Snap4Arduino application from any computer, mobile phone, tablet or any other network-enabled device in the same network</b>.
 
-                        In the following sections, the word IP refers to the IP address of the machine that has Snap4Arduino running on it.</p>
+                        In the following sections, the word <b>IP</b> refers to the IP <b>address of the machine</b> that has Snap4Arduino running on it.</p>
+                        <h6><i class="fa fa-external-link fa-3"> Giving orders to Snap4Arduino</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/broadcast=MESSAGE</pre>
+                        <img src="img/broadcastMessage.png" class ="pull-right">
+                    </div>
+                    <div class="col-md-8">      		
 
-                        <h6>Giving orders to Snap4Arduino</h6>
+                        <p>Point your browser to http://<b>IP</b>:42001/broadcast=<b>MESSAGE</b></p>
 
-                        <p>Point your browser to http://<b>IP</b>:42001/broadcast=<b>MESSAGE</b><br><br>
+                        <p>This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular <samp>When I receive [message]</samp> block.</p>
+                        <h6><i class="fa fa-external-link fa-3"> Updating the value of a Snap4Arduino variable</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/vars-update=VARIABLE-NAME=VARIABLE-VALUE</pre>
+                        <img src="img/setVariable.png" class ="pull-right">
+                    </div>
+                    <div class="col-md-8">      		
 
-                        This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular When I receive [message] block.</p>
-
-                        <h6>Updating the value of a Snap4Arduino variable</h6>
 
                         <p>Point your browser to http://<b>IP</b>:42001/vars-update=<b>VARIABLE-NAME=VARIABLE-VALUE</b><br><br>
 
-                        This will set the variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.
+                        This will set the global variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.</p>
+                        <p>This is only for global variables. The only limitation is that VARIABLE-NAME can not have '<b>=</b>' character (although it is possible in Snap!).</p>
+                        <p>You can also update multiple variables by a POST request (see below).</p>
 
-                        You can also send a POST request to Snap4Arduino to update a variable.</p>
-
-                        <h6>Finding out which messages is Snap4Arduino listening for</h6>
+                        <h6><i class="fa fa-external-link fa-3"> Finding out which messages is Snap4Arduino listening for</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/send-messages</pre>
+                    </div>
+                    <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-messages<br><br>
 
                         This will show a list of all message names for which Snap4Arduino has When I receive [message] hat blocks.</p>
 
-                        <h6>Getting variables and their values from Snap4Arduino</h6>
+                        <h6><i class="fa fa-external-link fa-3"> Getting variables and their values from Snap4Arduino</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/send-vars</pre><br><br><br>
+                    </div>
+                    <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-vars<br><br>
 
-                        This will show a list of all variables defined in Snap4Arduino, along with their current value.</p>
+                        This will show a list of all global variables defined in Snap4Arduino, along with their current value.</p>
 
-                        <h6>Getting the value of a single variables from Snap4Arduino</h6>
+                        <h6><i class="fa fa-external-link fa-3"> Getting the value of a single variables from Snap4Arduino</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/send-var=VARIABLE-NAME</pre>
+                        <img src="img/variable.png" class ="pull-right">
+                    </div>
+                    <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-var=<b>VARIABLE-NAME</b><br><br>
 
                         This will return the value of the variable ready for you to use, no string manipulation needed.</p>
 
-                        <h6>Getting a real-time stream of the stage in Snap4Arduino</h6>
+                        <h6><i class="fa fa-external-link fa-3"> Getting a real-time stream of the stage in Snap4Arduino</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/stage</pre><br><br><br>
+                        <div class="pull-right">
+                            <img src="img/stage2.png">
+                            <span style="width:200px"></span>
+                            <i class="fa fa-video-camera" style="font-size:30px;color:black"></i><br>
+                        </div>
+                    </div>
+                    <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/stage<br><br>
-                        This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.
-                        </p>
+                        This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.</p>
+                        <p>You get a auto-refreshing HTML page. So you get the stage itself in your browser, though in a non-interactive way.</p>
+                        <h6><i class="fa fa-external-link fa-3"> Getting a snapshot of the stage in Snap4Arduino</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">/stageimg</pre><br><br><br>
+                        <div class="pull-right">
+                            <img src="img/stage1.png">
+                            <span style="width:200px"></span>
+                            <i class="fa fa-camera" style="font-size:30px;color:black"></i><br>
+                        </div>
+                    </div>
+                    <div class="col-md-8">      		
+
+                        <p>Point your browser to http://<b>IP</b>:42001/stageimg</p>
+                        <p>This will render a snapshot of the Snap4Arduino stage. You get a picture (not a web page) encoded in base64, to use in any context.</p>
+                        <h6><i class="fa fa-external-link fa-3"> POST. Updating multiple variables of Snap4Arduino from a HTML form</i></h6>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <pre class="pull-right">&lt;form action="http://IP:42001" method="post"></pre>
+                    </div>
+                    <div class="col-md-8">      		
+
+                        <p>A HTML form can update multiple global variables of the Snap4Arduino project by POST method.</p>
+                        <p>It can be used all input types by &lt;INPUT> and &lt;TEXTAREA> tags. The <i>name</i> attribute is the VARIABLE-NAME.</p>
+                        <p>Note that Snap4Arduino uses UTF-8 decoding with the POST messages sended. To ensure the good operation (especially with special characters) you can always use: <pre>&lt;form action="http://IP:42001" method="post" accept-charset="utf-8"></pre></p>
+
                     </div>
                 </div>
             </div>
