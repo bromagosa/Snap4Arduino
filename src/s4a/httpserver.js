@@ -203,7 +203,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
     if (request.method === 'POST') {
 
         var body = '',
-            bodys = [];
+            bodies = [];
 
         request.addListener('data', function(chunk) {
             body += chunk;
@@ -213,10 +213,10 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
             if (chunk) { 
                 body += chunk;
             }
-            bodys = body.replace(/\+/g,' ').split("&");
+            bodies = body.replace(/\+/g,' ').split("&");
             response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
             response.write('POST processing...\n');
-            bodys.forEach(function (item) {
+            bodies.forEach(function (item) {
                 response.write('\n');
                 parse('var2-update=' + item);
             });
