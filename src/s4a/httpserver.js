@@ -80,43 +80,55 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
 
             switch (command[0]) {
                 case 'broadcast':
-                    var message = command[1],
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+                    var bcMessage = typeof command[1] !== 'undefined' ? decodeURIComponent(message.slice(10)) : '',
                         stage = myself.stage,
-                        hats = [];
+                        rcvrs = stage.children.concat(stage);
 
-                    if (message.length > 0) {
+                    if (bcMessage.length > 0) {
 
-                        stage.lastMessage = message;
+                        stage.lastMessage = bcMessage;
 
-                        stage.children.concat(stage).forEach(function (morph) {
+                        rcvrs.forEach(function (morph) {
                             if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
-                                hats = hats.concat(morph.allHatBlocksFor(message));
+                                morph.allHatBlocksFor(bcMessage).forEach(function (block) {
+                                    stage.threads.startProcess(
+                                        block,
+                                        morph,
+                                        stage.isThreadSafe
+                                )});
                             }
                         });
 
-                        hats.forEach(function (block) {
-                            stage.threads.startProcess(
-                                    block,
-                                    stage.isThreadSafe
-                                    )});
-
-                        response.end('broadcast ' + message);
+                        response.write('broadcast ' + bcMessage);
 
                     } else {
-                        response.end('no message provided');
+                        response.write('No message provided');
                     }
                     break;
 
                 case 'vars-update':
-                    var varName = command[1],
-                        value = command[2],
-                        stage = myself.stage;
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
 
-                    stage.globalVariables().setVar(varName, value, stage);
-                    response.end('updating variable ' + command[1] + ' to value ' + command[2]);
+                case 'var2-update':
+                    if (typeof command[1] == 'undefined' || command[1] == '') {
+                        response.write('No variable provided');
+                    } else {
+                        var varName = decodeURIComponent(command[1]),
+                            value = decodeURIComponent(message.slice(command[0].length+command[1].length+2)),
+                            stage = myself.stage;
+
+                        if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
+                            response.write('Variable ' + varName + ' does not exist');
+                        } else {
+                            stage.globalVariables().setVar(varName, value, stage);
+                            response.write('Updating variable ' + varName + ' to value ' + value, 'utf-8');
+                        }
+                    }
                     break;
 
                 case 'send-messages':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var contents = 'broadcast',
                         stage = myself.stage;
 
@@ -128,10 +140,11 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                         }
                     });
 
-                    response.end(contents);
+                    response.write(contents);
                     break;
 
                 case 'send-vars':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var contents = 'sensor-update',
                         stage = myself.stage;
 
@@ -139,14 +152,18 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                         contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value.toString();
                     });
 
-                    response.end(contents);
+                    response.write(contents);
                     break;
 
                 case 'send-var':
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var stage = myself.stage,
-                        varName = command[1];
-
-                    response.end(stage.globalVariables().vars[varName].value.toString());
+                        varName = decodeURIComponent(command[1]);
+                    if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
+                        response.write('Variable ' + varName + ' does not exist');
+                    } else {
+                        response.write(stage.globalVariables().vars[varName].value.toString());
+                    }
                     break;
 
                 case 'stage':
@@ -159,26 +176,34 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                             'setTimeout(getData, Math.min(new Date() - time, 100));' + 
                         '}; getData();' +
                         '</script></html>';
-                    response.end(contents);
+                    response.write(contents);
                     break;
 
                 case 'stageimg':
                     response.setHeader('Cache-Control', 'no-cache');
-                    response.end(myself.stage.fullImageClassic().toDataURL());
+                    response.write(myself.stage.fullImageClassic().toDataURL());
                     break;
 
                 case 'push':
-                    response.end('Pushing project to file system');
+                    response.write('Pushing project to file system');
                     var str = myself.serializer.serialize(myself.stage);
                     require('fs').writeFile(homePath() + 'autorun.xml', str);
                     break;
+
+                default:
+                    response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+                    response.write('Unknown command');
+
             }
+        } else {
+            response.write('No command provided');
         }
     }
 
     if (request.method === 'POST') {
 
-        var body = '';
+        var body = '',
+            bodies = [];
 
         request.addListener('data', function(chunk) {
             body += chunk;
@@ -188,13 +213,21 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
             if (chunk) { 
                 body += chunk;
             }
-            parse(body);
+            bodies = body.replace(/\+/g,' ').split("&");
+            response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+            response.write('POST processing...\n');
+            bodies.forEach(function (item) {
+                response.write('\n');
+                parse('var2-update=' + item);
+            });
+            response.end('\n\nPOST completed');
         });
 
     } else if (request.method === 'GET') {
         parse(request.url.slice(1));
+        response.end();
+
+    } else {
+        response.end('Unknown request');
     }
-
-    response.end('Unknown command');
 };
-
