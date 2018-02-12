@@ -36,15 +36,55 @@
         <script type="text/javascript" src="FileSaver.min.js"></script>
         <script type="text/javascript">
             var world,
-                ide;
+                ide,
+                cliParams = nw.App.argv;
 
             window.onload = function () {
                 world = new WorldMorph(document.getElementById('world'));
-
                 world.Arduino.keepAlive = true;
 
                 ide = new IDE_Morph();
+
+                if (cliParams) {
+
+                    cliParams.forEach(function (each) {
+                        if (each.indexOf('--load=') === 0) {
+                            var fileName = each.split('=')[1] || null;
+                            if (fileName) {
+                                if (fileName == 'jr') {
+                                    ide.arePendingCliParams = true;
+                                    ide.loadPendingCliParam = 'jr';
+                                } else {
+                                    var fs = require('fs');
+                                    fs.readFile(
+                                        fileName,
+                                        'utf8',
+                                        function (err, data) {
+                                            if (err) {
+                                                ide.inform(
+                                                    'Error reading ' + fileName, 
+                                                    'The file system reported:\n\n' + err);
+                                            } else {
+                                                ide.serializer.serialize(data);
+                                                ide.arePendingCliParams = true;
+                                                ide.loadPendingCliParam = data;
+                                            }
+                                        }
+                                    );
+                                }
+                            } 
+                        } else if (each.indexOf('--lang') === 0 && SnapTranslator.languages().indexOf(each.split('=')[1]) != -1) {
+                            ide.arePendingCliParams = true;
+                            ide.langPendingCliParam = each.split('=')[1];
+                        }
+                    });
+                    cliParams = null;
+                }
+
                 ide.openIn(world);
+                if (ide.arePendingCliParams && !ide.userLanguage) {
+                    ide.newProject();
+                }
 
                 ide.inform = function(title, message, callback) { 
                     var myself = this;

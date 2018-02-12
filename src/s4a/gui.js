@@ -82,7 +82,8 @@ IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
 IDE_Morph.prototype.projectMenu = function () {
     this.originalProjectMenu();
     var menu = this.world().activeMenu,
-        pos = this.controlBar.projectButton.bottomLeft();
+        pos = this.controlBar.projectButton.bottomLeft(),
+        shiftClicked = (world.currentKey === 16);
 
     // adding s4a items
     menu.addLine();
@@ -95,13 +96,16 @@ IDE_Morph.prototype.projectMenu = function () {
         'Experimental feature!\nScripts written under this\n'
             + 'mode will be translatable\nas Arduino sketches'
     );
-    menu.addLine();
-    menu.addItem(
-        'Start a Snap Jr. session', 
-        'startSnapJr',
-        'Start Snap4Arduino in an\nicon-based blocks mode\n'
-            + 'for the youngest programmers'
-    );
+    if (shiftClicked) {
+        menu.addLine();
+        menu.addItem(
+            'Start a Snap Jr. session', 
+            'startSnapJr',
+            'Start Snap4Arduino in an\nicon-based blocks mode\n'
+                + 'for the youngest programmers',
+            new Color(100, 0, 0)
+        );
+    }
 
     menu.popup(this.world(), pos);
 };
@@ -469,9 +473,10 @@ IDE_Morph.prototype.startSnapJr = function () {
     var myself = this;
     this.showMessage(localize('Loading Snap Jr.'));
     this.getURL(
-        's4a/snapjr.xml',
+        'Examples/SnapJunior.xml',
         function (contents) {
             myself.droppedText(contents, 'Snap Jr.');
+            location.hash = '#loadJr';
         }
     );
 };
