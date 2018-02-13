@@ -426,26 +426,18 @@ IDE_Morph.prototype.doSaveAndShare = function () {
         this,
         function () {
             myself.showMessage('sharing\nproject...');
-            SnapCloud.reconnect(
+            SnapCloud.shareProject(
+                projectName,
+                null, // username is implicit
                 function () {
-                    SnapCloud.callService(
-                        'publishProject',
-                        function () {
-                            myself.showMessage('shared.', 2);
-                        },
-                        myself.cloudError(),
-                        [
-                            projectName,
-                            myself.stage.thumbnail(SnapSerializer.prototype.thumbnailSize).toDataURL('image/png')
-                        ]
-                    );
+                    myself.showProjectUrl(projectName);
+                    myself.showMessage('shared.');
                 },
                 myself.cloudError()
             );
-            myself.showProjectUrl(projectName);
         },
         this.cloudError()
-    )
+    );
 };
 
 IDE_Morph.prototype.showProjectUrl = function (projectName) {
