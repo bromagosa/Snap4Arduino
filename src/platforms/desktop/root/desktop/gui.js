@@ -1,8 +1,44 @@
 IDE_Morph.prototype.originalOpenIn = IDE_Morph.prototype.openIn;
 IDE_Morph.prototype.openIn = function (world) {
-    this.checkForCLIparams();
+//    this.checkForCLIparams();
     this.originalOpenIn(world);
     this.checkForNewVersion();
+};
+
+IDE_Morph.prototype.original2NewProject = IDE_Morph.prototype.newProject;
+IDE_Morph.prototype.newProject = function () {
+
+    if (this.arePendingCliParams) {
+
+        this.arePendingCliParams = false;
+
+        function loadPendingCli () {
+            if (this.loadPendingCliParam) {
+                if (this.loadPendingCliParam == 'jr') {
+                    this.startSnapJr();
+                } else {
+                    this.openProjectString(this.loadPendingCliParam);
+                    this.setURL('#open:' + this.loadPendingCliParam);
+                }
+                this.loadPendingCliParam = false;
+            }
+        }
+
+        if (this.langPendingCliParam) {
+            this.setLanguage(this.langPendingCliParam, loadPendingCli);
+            this.langPendingCliParam = false;
+
+        } else {
+
+            loadPendingCli.call(this);
+        }
+
+        return;
+    } else {
+
+        this.original2NewProject();
+    }
+
 };
 
 IDE_Morph.prototype.checkForNewVersion = function () {

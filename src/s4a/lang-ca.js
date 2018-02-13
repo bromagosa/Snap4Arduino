@@ -190,7 +190,14 @@ s4aTempDict = {
         'Repositori de Snap4Arduino',
  
     'Start a Snap Jr. session':
-        'Inicia una sessió de Snap Júnior'
+        'Inicia una sessió de Snap Júnior',
+
+    'Start Snap4Arduino in an\nicon-based blocks mode\nfor the youngest programmers':
+        'Inicia Snap4Arduino en un\nmode de blocs amb icones\nper els/les programadors/es més joves',
+
+    'Loading Snap Jr.':
+        'S\'està carregant Snap Júnior'
+
 };
 
 // Add attributes to original SnapTranslator.dict.ca
