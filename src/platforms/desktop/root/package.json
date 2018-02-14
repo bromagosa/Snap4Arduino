@@ -27,13 +27,20 @@
         {
             "name": "Bernat Romagosa",
             "email": "bernat@snap4arduino.rocks",
-            "web": "http://bromagosa.github.io"
+            "web": "http://romagosa.work"
+        },
+        {
+            "name": "Joan Guillén",
+            "email": "jguille2@xtec.cat",
+            "web": "https://github.com/jguille2"
         }
+
     ],
     "repositories": [
        {
             "type": "git", 
             "url": "https://github.com/bromagosa/Snap4Arduino.git"
        }
-    ]
+    ],
+    "chromium-args": "--disable-raf-throttling"
 }
