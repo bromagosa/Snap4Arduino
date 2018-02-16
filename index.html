@@ -112,7 +112,7 @@
                 <h5>You must <strong>upgrade to 1.2.5 version</strong> to use the new cloud after 16/02/18.
                 <ul>
                     <li>After this, old versions still work properly... but without cloud access.</li>
-                    <li>You can always use <a href="http://snap4arduino.rocks/run" class="alert-link">online version</a> to get full cloud access at any time.</li>
+                    <li>You can always use <a href="http://snap4arduino.rocks/run/" class="alert-link">online version</a> to get full cloud access at any time.</li>
                     <li>During the migration (16th - 18th of February) all the projects of the previous cloud will be moved. Don't worry if you do not find some last project...it will still be moving.</li>
                 </ul></h5>
             </div>
@@ -167,7 +167,7 @@
                             <li>Auto-configurable pinouts and high level hardware abstractions</li>
                             <li>You can interact with multiple boards at the same time</li>
                             <li>Desktop-based versions for the three major OSes</li>
-                            <li><a href="http://snap4arduino.rocks/run">On line</a> version that can be connected to Arduino boards with a Chrome/Chromium <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">plugin</a></li>
+                            <li><a href="http://snap4arduino.rocks/run/">Online</a> version that can be connected to Arduino boards with a Chrome/Chromium <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">plugin</a></li>
                             <li>Free software licensed under the Affero GPLv3</li>
                             <li>Transpilation of simple scripts into Arduino sketches</li>
                             <li>HTTP protocol for remote control and live-streaming of the <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> stage</li>
@@ -190,7 +190,7 @@
                     </div><!-- .col-md-7 close -->
                     <div class="col-md-4">
                         <div class="block">
-                            <p>There are currently versions for GNU/Linux, MacOSX, Microsoft Windows and a web version (also available <a href="http://snap4arduino.rocks/run">on line</a>) connectable to Arduino boards with a Chrome/Chromium plugin. 
+                            <p>There are currently versions for GNU/Linux, MacOSX, Microsoft Windows and a web version (also available <a href="http://snap4arduino.rocks/run/">online</a>) connectable to Arduino boards with a Chrome/Chromium <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">plugin</a>. 
                             <br><br>
                             The project and all its components (including Snap<i>!</i>) are registered under public free software licenses (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">AGPLv3</a> and <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a>), so you can download the <a href="https://github.com/bromagosa/Snap4Arduino" target="_blank">sources</a> and pretty much do whatever you want with them!<br>
                             <br>Please download the version that matches your operating system.
@@ -246,7 +246,7 @@
                         <h6>Microsoft Windows</h6>
                         <p>Just unzip the package and run the installer.</p>
                         <h6>Web version</h6>
-                        <p>Just run <a href="http://snap4arduino.rocks/run">Snap4Arduino online</a>.<br>To connect to Arduino boards, you must use Chrome/Chromium browser with <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">Snap4arduino plugin</a> installed. And to install it, just drag and drop this <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">crx file</a> into <a href="chrome://extensions">'chrome://extensions</a> on the chrome/chromium browser.<br><br>
+                        <p>Just run <a href="http://snap4arduino.rocks/run/">Snap4Arduino online</a>.<br>To connect to Arduino boards, you must use Chrome/Chromium browser with <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">Snap4arduino plugin</a> installed. And to install it, just drag and drop this <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium-plugin_1.2.5.crx">crx file</a> into <a href="chrome://extensions">'chrome://extensions</a> on the chrome/chromium browser.<br><br>
                         The full web version is also available to <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.5/Snap4Arduino_web-chromium_1.2.5.zip">download</a> and use it offline</p>
                         <!--<h6>Embedded</h6>
                         <p>The embedded command line version works in any GNU/Linux based machine, including embedded platforms and single board computers. New generation Arduino boards like Yun, Tian or Industrial 101 can run this version right inside the board, and if you have a regular Arduino and any kind of Gnu/Linux based single board computer, you can always have the latter be the host computer to the Arduino board, giving autonomy to your project without having to modify your Snap4Arduino program at all.</p>
@@ -473,8 +473,8 @@
                         <p>Point your browser to http://<b>IP</b>:42001/vars-update=<b>VARIABLE-NAME=VARIABLE-VALUE</b><br><br>
 
                         This will set the global variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.</p>
-                        <p>This is only for global variables. The only limitation is that VARIABLE-NAME can not have '<b>=</b>' character (although it is possible in Snap!).</p>
-                        <p>You can also update multiple variables by a POST request (see below).</p>
+                        <p>This only works for global variables. Bear in mind that variables whose name includes the '<b>=</b>' character can not be used, even though Snap<i>!</i> supports them.</p>
+                        <p>You can also update multiple variables at once by means of a POST request (see below).</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Finding out which messages is Snap4Arduino listening for</i></h6>
                     </div>
@@ -532,7 +532,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/stage<br><br>
                         This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.</p>
-                        <p>You get a auto-refreshing HTML page. So you get the stage itself in your browser, though in a non-interactive way.</p>
+                        <p>You will be presented with an auto-refreshing HTML page, enabling you to watch the stage contents in your browser, though in a non-interactive way.</p>
                         <h6><i class="fa fa-external-link fa-3"> Getting a snapshot of the stage in Snap4Arduino</i></h6>
                     </div>
                 </div>
@@ -548,19 +548,19 @@
                     <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/stageimg</p>
-                        <p>This will render a snapshot of the Snap4Arduino stage. You get a picture (not a web page) encoded in base64, to use in any context.</p>
-                        <h6><i class="fa fa-external-link fa-3"> POST. Updating multiple variables of Snap4Arduino from a HTML form</i></h6>
+                        <p>This will render a snapshot of the Snap4Arduino stage in the form of an image encoded in base64 that you can use for any purpose.</p>
+                        <h6><i class="fa fa-external-link fa-3"> POST. Updating multiple variables of Snap4Arduino from an HTML form</i></h6>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <pre class="pull-right">&lt;form action="http://IP:42001" method="post"></pre>
+                        <pre class="pull-right">&lt;form action="http://IP:42001" method="post"&gt;</pre>
                     </div>
                     <div class="col-md-8">      		
 
-                        <p>A HTML form can update multiple global variables of the Snap4Arduino project by POST method.</p>
-                        <p>It can be used all input types by &lt;INPUT> and &lt;TEXTAREA> tags. The <i>name</i> attribute is the VARIABLE-NAME.</p>
-                        <p>Note that Snap4Arduino uses UTF-8 decoding with the POST messages sended. To ensure the good operation (especially with special characters) you can always use: <pre>&lt;form action="http://IP:42001" method="post" accept-charset="utf-8"></pre></p>
+                        <p>You can update multiple global variables in your project at the same time by means of an HTML form sent through a POST request.</p>
+                        <p>By using &lt;INPUT&gt; and &lt;TEXTAREA&gt; tags, you can send all kinds of input types to Snap<i>!</i>, except for booleans. Their <i>name</i> attribute should contain the name of the variable you wish to update.</p>
+                        <p>Note that Snap4Arduino expects all queries to be UTF-8 encoded. To make sure your query goes through properly, especially when dealing with special characters, you can always use: <pre>&lt;form action="http://IP:42001" method="post" accept-charset="utf-8"&gt;</pre></p>
 
                     </div>
                 </div>
@@ -572,18 +572,18 @@
                 <div class="row">
                     <div class="col-md-4">
                         <h5>Contact</h5>
-                        <p>Snap4Arduino is being developed by Bernat Romagosa. You can always reach him at bernat (at) snap4arduino (dot) rocks. Please use our <a href="https://github.com/bromagosa/Snap4Arduino/issues" target="_blank">GitHub issue tracker</a> for reporting issues.
+                        <p>Snap4Arduino is being developed by Bernat Romagosa and Joan Guillén. You can always reach them at bernat (at) snap4arduino (dot) rocks or jguille2 (at) xtec (doc) cat. Please use our <a href="https://github.com/bromagosa/Snap4Arduino/issues" target="_blank">GitHub issue tracker</a> for reporting issues.
                         </p>
                     </div>
                     <div class="col-md-4">
                         <h5>History</h5>
-                        <p>Snap4Arduino was started in 2013 as a side project in the Edutec research group from Citilab (Cornellà, Barcelona), but was soon turned into a full fledged project when it began to gain user base and became clear that it had potential. Since then, it has been used in primary schools, high schools, universities, code clubs, artistic installations and individuals from all around the world. It has received localization contributions for 13 different languages, and projects such as Phiro (India), SmartBlock (Turkey), First Makers (Chile) or ROKIT Brick (South Korea) have based their software solutions in modified versions of Snap4Arduino. From June 2016 until August 2017 it was supported and developed at Arduino.org. Nowadays it is being independently developed by Bernat Romagosa and several contributors.
+                        <p>Snap4Arduino was started in 2013 as a side project in the Edutec research group from Citilab (Cornellà, Barcelona), but was soon turned into a full fledged project when it began to gain user base and became clear that it had potential. Since then, it has been used in primary schools, high schools, universities, code clubs, artistic installations and individuals from all around the world. It has received localization contributions for 13 different languages, and projects such as Phiro (India), SmartBlock (Turkey), First Makers (Chile) or ROKIT Brick (South Korea) have based their software solutions in modified versions of Snap4Arduino. From June 2016 until August 2017 it was supported and developed at Arduino.org. Nowadays it is being independently developed by Bernat Romagosa, Joan Guillén and several contributors.
                         </p>
                     </div>
                     <div class="col-md-4">
                         <h5>Contributors</h5>
-                        <p>Special thanks to <a href="https://github.com/elaval" target="_blank">Ernesto Laval</a>, 
-                        <a href="https://github.com/jguille2" target="_blank">Joan Guillén</a>, 
+                        <p>Special thanks to <a href="https://github.com/jguille2" target="_blank">Joan Guillén</a>, 
+                        <a href="https://github.com/elaval" target="_blank">Ernesto Laval</a>, 
                         <a href="https://github.com/jferran6" target="_blank">Josep Ferràndiz</a>, 
                         <a href="https://github.com/jogaye" target="_blank">José García</a>, 
                         <a href="https://twitter.com/joanguell" target="_blank">Joan Güell</a>, 
