@@ -1,220 +1,3 @@
-IDE_Morph.prototype.settingsMenu = IDE_Morph.prototype.originalSettingsMenu;
-
-/*
-IDE_Morph.prototype.projectMenu = function () {
-    var menu,
-        myself = this,
-        world = this.world(),
-        pos = this.controlBar.projectButton.bottomLeft(),
-        graphicsName = this.currentSprite instanceof SpriteMorph ?
-                'Costumes' : 'Backgrounds',
-        shiftClicked = (world.currentKey === 16);
-
-    // Utility for creating Costumes, etc menus.
-    // loadFunction takes in two parameters: a file URL, and a canonical name
-    function createMediaMenu(mediaType, loadFunction) {
-        return function () {
-            var names = this.getMediaList(mediaType),
-                mediaMenu = new MenuMorph(
-                    myself,
-                    localize('Import') + ' ' + localize(mediaType)
-                );
-
-            names.forEach(function (item) {
-                mediaMenu.addItem(
-                    item.name,
-                    function () {loadFunction(item.file, item.name); },
-                    item.help
-                );
-            });
-            mediaMenu.popup(world, pos);
-        };
-    }
-
-    menu = new MenuMorph(this);
-    menu.addItem('Project notes...', 'editProjectNotes');
-    menu.addLine();
-    menu.addItem('New', 'createNewProject');
-    menu.addItem('Open...', 'openProjectsBrowser');
-    menu.addItem('Save', "save");
-    menu.addItem('Save As...', 'saveProjectsBrowser');
-    menu.addLine();
-    menu.addItem(
-            'Send project to board',
-            'pushProject',
-            'Send this project\nto a Snap!-listener enabled\nboard.');
-    menu.addItem(
-        'New Arduino translatable project', 
-        'createNewArduinoProject',
-        'Experimental feature!\nScripts written under this\nmode will be translatable\nas Arduino sketches');
-    menu.addLine();
-    menu.addItem(
-        'Import...',
-        function () {
-            var inp = document.createElement('input');
-            if (myself.filePicker) {
-                document.body.removeChild(myself.filePicker);
-                myself.filePicker = null;
-            }
-            inp.type = 'file';
-            inp.style.color = "transparent";
-            inp.style.backgroundColor = "transparent";
-            inp.style.border = "none";
-            inp.style.outline = "none";
-            inp.style.position = "absolute";
-            inp.style.top = "0px";
-            inp.style.left = "0px";
-            inp.style.width = "0px";
-            inp.style.height = "0px";
-            inp.addEventListener(
-                "change",
-                function () {
-                    document.body.removeChild(inp);
-                    myself.filePicker = null;
-                    world.hand.processDrop(inp.files);
-                },
-                false
-            );
-            document.body.appendChild(inp);
-            myself.filePicker = inp;
-            inp.click();
-        },
-        'file menu import hint' // looks up the actual text in the translator
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            localize('Export project...') + ' ' + localize('(in a new window)'),
-            function () {
-                if (myself.projectName) {
-                    myself.exportProject(myself.projectName, shiftClicked);
-                } else {
-                    myself.prompt('Export Project As...', function (name) {
-                        // false - override the shiftClick setting to use XML
-                        // true - open XML in a new tab
-                        myself.exportProject(name, false, true);
-                    }, null, 'exportProject');
-                }
-            },
-            'show project data as XML\nin a new browser window',
-            new Color(100, 0, 0)
-        );
-    }
-    menu.addItem(
-        shiftClicked ?
-                'Export project as plain text...' : 'Export project...',
-        function () {
-            if (myself.projectName) {
-                myself.exportProject(myself.projectName, shiftClicked);
-            } else {
-                myself.prompt('Export Project As...', function (name) {
-                    myself.exportProject(name, shiftClicked);
-                }, null, 'exportProject');
-            }
-        },
-        'save project data as XML\nto your downloads folder',
-        shiftClicked ? new Color(100, 0, 0) : null
-    );
-
-    if (this.stage.globalBlocks.length) {
-        menu.addItem(
-            'Export blocks...',
-            function () {myself.exportGlobalBlocks(); },
-            'show global custom block definitions as XML' +
-                '\nin a new browser window'
-        );
-        menu.addItem(
-            'Unused blocks...',
-            function () {myself.removeUnusedBlocks(); },
-            'find unused global custom blocks' +
-                '\nand remove their definitions'
-        );
-    }
-
-    menu.addItem(
-        'Export summary...',
-        function () {myself.exportProjectSummary(); },
-        'open a new browser browser window\n with a summary of this project'
-    );
-
-    if (shiftClicked) {
-        menu.addItem(
-            'Export summary with drop-shadows...',
-            function () {myself.exportProjectSummary(true); },
-            'open a new browser browser window' +
-                '\nwith a summary of this project' +
-                '\nwith drop-shadows on all pictures.' +
-                '\nnot supported by all browsers',
-            new Color(100, 0, 0)
-        );
-        menu.addItem(
-            'Export all scripts as pic...',
-            function () {myself.exportScriptsPicture(); },
-            'show a picture of all scripts\nand block definitions',
-            new Color(100, 0, 0)
-        );
-    }
-
-    menu.addLine();
-    menu.addItem(
-        'Import tools',
-        function () {
-            myself.droppedText(
-                myself.getURL(myself.resourceURL('tools.xml')),
-                'tools'
-            );
-        },
-        'load the official library of\npowerful blocks'
-    );
-    menu.addItem(
-        'Libraries...',
-        createMediaMenu(
-            'libraries',
-            function loadLib(file, name) {
-                var url = myself.resourceURL('libraries', file);
-                myself.droppedText(myself.getURL(url), name);
-            }
-        ),
-        'Select categories of additional blocks to add to this project.'
-    );
-
-    menu.addItem(
-        localize(graphicsName) + '...',
-        createMediaMenu(
-            graphicsName,
-            function loadCostume(file, name) {
-                var url = myself.resourceURL(graphicsName, file),
-                    img = new Image();
-                img.onload = function () {
-                    var canvas = newCanvas(new Point(img.width, img.height));
-                    canvas.getContext('2d').drawImage(img, 0, 0);
-                    myself.droppedImage(canvas, name);
-                };
-                img.src = url;
-            }
-        ),
-        'Select a costume from the media library'
-    );
-    menu.addItem(
-        localize('Sounds') + '...',
-        createMediaMenu(
-            'Sounds',
-            function loadSound(file, name) {
-                var url = myself.resourceURL('Sounds', file),
-                    audio = new Audio();
-                audio.src = url;
-                audio.load();
-                myself.droppedAudio(audio, name);
-            }
-        ),
-        'Select a sound from the media library'
-    );
-
-    menu.popup(world, pos);
-};*/
-
-//IDE_Morph.prototype.getCostumesList = IDE_Morph.prototype.originalGetCostumesList;
-
 // Snap4Arduino logo
 
 IDE_Morph.prototype.createLogo = function () {
@@ -267,3 +50,248 @@ IDE_Morph.prototype.createLogo = function () {
 IDE_Morph.prototype.version = function() {
     return this.getURL('version');
 };
+
+IDE_Morph.prototype.openIn = function (world) {
+    var hash, myself = this, urlLanguage = null;
+
+    SnapCloud.initSession(
+        function (username) {
+            if (username) {
+                myself.source = 'cloud';
+            }
+        }
+    );
+
+    this.buildPanes();
+    world.add(this);
+    world.userMenu = this.userMenu;
+
+    // override SnapCloud's user message with Morphic
+    SnapCloud.message = function (string) {
+        var m = new MenuMorph(null, string),
+            intervalHandle;
+        m.popUpCenteredInWorld(world);
+        intervalHandle = setInterval(function () {
+            m.destroy();
+            clearInterval(intervalHandle);
+        }, 2000);
+    };
+
+    // prevent non-DialogBoxMorphs from being dropped
+    // onto the World in user-mode
+    world.reactToDropOf = function (morph) {
+        if (!(morph instanceof DialogBoxMorph ||
+        		(morph instanceof MenuMorph))) {
+            if (world.hand.grabOrigin) {
+                morph.slideBackTo(world.hand.grabOrigin);
+            } else {
+                world.hand.grab(morph);
+            }
+        }
+    };
+
+    this.reactToWorldResize(world.bounds);
+
+    function getURL(url) {
+        try {
+            var request = new XMLHttpRequest();
+            request.open('GET', url, false);
+            request.send();
+            if (request.status === 200) {
+                return request.responseText;
+            }
+            throw new Error('unable to retrieve ' + url);
+        } catch (err) {
+            myself.showMessage('unable to retrieve project');
+            return '';
+        }
+    }
+
+    function applyFlags(dict) {
+        if (dict.embedMode) {
+            myself.setEmbedMode();
+        }
+        if (dict.editMode) {
+            myself.toggleAppMode(false);
+        } else {
+            myself.toggleAppMode(true);
+        }
+        if (!dict.noRun) {
+            myself.runScripts();
+        }
+        if (dict.hideControls) {
+            myself.controlBar.hide();
+            window.onbeforeunload = nop;
+        }
+        if (dict.noExitWarning) {
+            window.onbeforeunload = nop;
+        }
+    }
+
+    // dynamic notifications from non-source text files
+    // has some issues, commented out for now
+    /*
+    this.cloudMsg = getURL('http://snap.berkeley.edu/cloudmsg.txt');
+    motd = getURL('http://snap.berkeley.edu/motd.txt');
+    if (motd) {
+        this.inform('Snap!', motd);
+    }
+    */
+
+    function interpretUrlAnchors() {
+        var dict, idx;
+
+        if (location.hash.substr(0, 6) === '#open:') {
+            hash = location.hash.substr(6);
+            if (hash.charAt(0) === '%'
+                    || hash.search(/\%(?:[0-9a-f]{2})/i) > -1) {
+                hash = decodeURIComponent(hash);
+            }
+            if (contains(
+                    ['project', 'blocks', 'sprites', 'snapdata'].map(
+                        function (each) {
+                            return hash.substr(0, 8).indexOf(each);
+                        }
+                    ),
+                    1
+                )) {
+                this.droppedText(hash);
+            } else {
+                this.droppedText(getURL(hash));
+            }
+        } else if (location.hash.substr(0, 5) === '#run:') {
+            hash = location.hash.substr(5);
+            idx = hash.indexOf("&");
+            if (idx > 0) {
+                hash = hash.slice(0, idx);
+            }
+            if (hash.charAt(0) === '%'
+                    || hash.search(/\%(?:[0-9a-f]{2})/i) > -1) {
+                hash = decodeURIComponent(hash);
+            }
+            if (hash.substr(0, 8) === '<project>') {
+                this.rawOpenProjectString(hash);
+            } else {
+                this.rawOpenProjectString(getURL(hash));
+            }
+            applyFlags(SnapCloud.parseDict(location.hash.substr(5)));
+        } else if (location.hash.substr(0, 9) === '#present:') {
+            this.shield = new Morph();
+            this.shield.color = this.color;
+            this.shield.setExtent(this.parent.extent());
+            this.parent.add(this.shield);
+            myself.showMessage('Fetching project\nfrom the cloud...');
+
+            // make sure to lowercase the username
+            dict = SnapCloud.parseDict(location.hash.substr(9));
+            dict.Username = dict.Username.toLowerCase();
+
+            SnapCloud.getPublicProject(
+                dict.ProjectName,
+                dict.Username,
+                function (projectData) {
+                    var msg;
+                    myself.nextSteps([
+                        function () {
+                            msg = myself.showMessage('Opening project...');
+                        },
+                        function () {nop(); }, // yield (bug in Chrome)
+                        function () {
+                            if (projectData.indexOf('<snapdata') === 0) {
+                                myself.rawOpenCloudDataString(projectData);
+                            } else if (
+                                projectData.indexOf('<project') === 0
+                            ) {
+                                myself.rawOpenProjectString(projectData);
+                            }
+                            myself.hasChangedMedia = true;
+                        },
+                        function () {
+                            myself.shield.destroy();
+                            myself.shield = null;
+                            msg.destroy();
+                            applyFlags(dict);
+                        }
+                    ]);
+                },
+                this.cloudError()
+            );
+        } else if (location.hash.substr(0, 7) === '#cloud:') {
+            this.shield = new Morph();
+            this.shield.alpha = 0;
+            this.shield.setExtent(this.parent.extent());
+            this.parent.add(this.shield);
+            myself.showMessage('Fetching project\nfrom the cloud...');
+
+            // make sure to lowercase the username
+            dict = SnapCloud.parseDict(location.hash.substr(7));
+
+            SnapCloud.getPublicProject(
+                dict.ProjectName,
+                dict.Username,
+                function (projectData) {
+                    var msg;
+                    myself.nextSteps([
+                        function () {
+                            msg = myself.showMessage('Opening project...');
+                        },
+                        function () {nop(); }, // yield (bug in Chrome)
+                        function () {
+                            if (projectData.indexOf('<snapdata') === 0) {
+                                myself.rawOpenCloudDataString(projectData);
+                            } else if (
+                                projectData.indexOf('<project') === 0
+                            ) {
+                                myself.rawOpenProjectString(projectData);
+                            }
+                            myself.hasChangedMedia = true;
+                        },
+                        function () {
+                            myself.shield.destroy();
+                            myself.shield = null;
+                            msg.destroy();
+                            myself.toggleAppMode(false);
+                        }
+                    ]);
+                },
+                this.cloudError()
+            );
+        } else if (location.hash.substr(0, 4) === '#dl:') {
+            myself.showMessage('Fetching project\nfrom the cloud...');
+
+            // make sure to lowercase the username
+            dict = SnapCloud.parseDict(location.hash.substr(4));
+
+            SnapCloud.getPublicProject(
+                dict.ProjectName,
+                dict.Username,
+                function (projectData) {
+                	myself.saveXMLAs(projectData, dict.ProjectName);
+                 	myself.showMessage(
+                  	   'Saved project\n' + dict.ProjectName,
+                      	2
+                 	);
+                },
+                this.cloudError()
+            );
+        } else if (location.hash.substr(0, 6) === '#lang:') {
+            urlLanguage = location.hash.substr(6);
+            this.setLanguage(urlLanguage);
+            this.loadNewProject = true;
+        } else if (location.hash.substr(0, 7) === '#signup') {
+            this.createCloudAccount();
+        } else if (location.hash.substr(0, 7) === '#loadJr') {
+            this.startSnapJr();
+        }
+    this.loadNewProject = false;
+
+    }
+
+    if (this.userLanguage) {
+        this.loadNewProject = true;
+        this.setLanguage(this.userLanguage, interpretUrlAnchors);
+    } else {
+        interpretUrlAnchors.call(this);
+    }
+};
+

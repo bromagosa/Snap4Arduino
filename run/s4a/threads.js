@@ -1,5 +1,5 @@
 Process.prototype.connectArduino = function (port) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (!sprite.arduino.connecting) {
         sprite.arduino.connecting = true;
@@ -29,7 +29,7 @@ Process.prototype.connectArduino = function (port) {
 };
 
 Process.prototype.disconnectArduino = function (port) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.board && sprite.arduino.board.connected) {
         sprite.arduino.disconnect(true); // silent
@@ -37,7 +37,7 @@ Process.prototype.disconnectArduino = function (port) {
 };
 
 Process.prototype.setPinMode = function (pin, mode) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -73,7 +73,7 @@ Process.prototype.setPinMode = function (pin, mode) {
 };
 
 Process.prototype.servoWrite = function (pin, value) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     this.popContext();
     sprite.startWarp();
@@ -128,7 +128,7 @@ Process.prototype.servoWrite = function (pin, value) {
 };
 
 Process.prototype.reportAnalogReading = function (pin) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -148,7 +148,7 @@ Process.prototype.reportAnalogReading = function (pin) {
 };
 
 Process.prototype.reportDigitalReading = function (pin) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -169,7 +169,7 @@ Process.prototype.reportDigitalReading = function (pin) {
 };
 
 Process.prototype.digitalWrite = function (pin, booleanValue) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
     
     this.popContext();
     sprite.startWarp();
@@ -197,7 +197,7 @@ Process.prototype.digitalWrite = function (pin, booleanValue) {
 };
 
 Process.prototype.pwmWrite = function (pin, value) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
         var board = sprite.arduino.board; 
@@ -211,4 +211,9 @@ Process.prototype.pwmWrite = function (pin, value) {
     } else {
         throw new Error(localize('Arduino not connected'));
     }
+};
+
+Process.prototype.reportConnected = function () {
+    var sprite = this.blockReceiver();
+    return sprite.arduino.isBoardReady();
 };
