@@ -91,31 +91,34 @@ s4aTempDict = {
         '아두이노 연결 끊기',
 
     'analog reading %analogPin':
-        '아날로그 입력 %analogPin번 핀',
+        '아날로그 입력 %analogPin 번 핀',
 
     'digital reading %digitalPin':
-        '디지털 입력 %digitalPin번 핀',
+        '디지털 입력 %digitalPin 번 핀',
 
     'connect arduino at %s':
-        '%s번 포트의 아두이노 연결',
+        '%s 번 포트의 아두이노 연결하기',
 
     'disconnect arduino':
         '아두이노 연결 끊기',
 
+    'arduino connected?':
+        '아두이노 연결됨?',
+
     'setup digital pin %digitalPin as %pinMode':
-        '디지털 핀 %digitalPin을 %pinMode로 설정',
+        '디지털 핀 %digitalPin 을 %pinMode 로 설정하기',
 
     'set digital pin %digitalPin to %b':
-        '디지털 핀 %digitalPin을 %b로 설정',
+        '디지털 핀 %digitalPin 을 %b 로 설정하기',
 
     'set servo %servoPin to %servoValue':
-        '서보 핀 %servoPin을 %servoValue로 설정',
+        '서보 핀 %servoPin 을 %servoValue 로 설정하기',
 
     'set pin %pwmPin to value %n':
-        'pwm 핀 %pwmPin을 %n으로 설정',
+        'PWM 핀 %pwmPin 을 %n 으로 설정하기',
 
     'Connecting board at port\n': 
-        '다음 포트의 보드를 연결:\n',
+        '다음 포트의 보드를 연결 중입니다:\n',
 
     'An Arduino board has been connected. Happy prototyping!':
         '아두이노 보드가 연결되었습니다!',
@@ -139,10 +142,10 @@ s4aTempDict = {
         '다음 포트의 아두이노와 통신할 수 없습니다:\n',
 
     'Check if firmata is loaded.':
-        'firmata가 로딩되었는지 확인하십시오.',
+        'firmata가 로드되었는지 확인하십시오.',
 
     'An error was detected on the board\n\n':
-        '보드 오류가 감지되었습니다.\n\n',
+        '보드에서 오류가 발견되었습니다.\n\n',
 
     'Board is not connected':
         '보드가 연결되지 않았습니다.',
@@ -166,7 +169,7 @@ s4aTempDict = {
         '몇 초가 걸릴 수 있습니다...',
 
     'Network serial ports':
-        '네트워크 시리얼 포트'
+        '네트워크 시리얼 포트',
 
     'Open from URL...':
         'URL로부터 열기...',
