@@ -7,6 +7,27 @@ IDE_Morph.prototype.openIn = function (world) {
 
 IDE_Morph.prototype.original2NewProject = IDE_Morph.prototype.newProject;
 IDE_Morph.prototype.newProject = function () {
+    var myself = this;
+    function asyncDroppedText(aString) {
+        if (aString.indexOf('<project') === 0) {
+            return myself.openProjectString(aString);
+        }
+        if (aString.indexOf('<snapdata') === 0) {
+            return myself.openCloudDataString(aString);
+        }
+        if (aString.indexOf('<blocks') === 0) {
+            return myself.openBlocksString(aString, 'blocks', true);
+        }
+        if (aString.indexOf('<sprites') === 0) {
+            return myself.openSpritesString(aString);
+        }
+        if (aString.indexOf('<media') === 0) {
+            return myself.openMediaString(aString);
+        }
+        if (aString.indexOf('<script') === 0) {
+            return myself.openScriptString(aString);
+        }
+    };
 
     if (this.arePendingCliParams) {
 
@@ -17,7 +38,8 @@ IDE_Morph.prototype.newProject = function () {
                 if (this.loadPendingCliParam == 'jr') {
                     this.startSnapJr();
                 } else {
-                    this.openProjectString(this.loadPendingCliParam);
+                    //this.openProjectString(this.loadPendingCliParam);
+                    asyncDroppedText(this.loadPendingCliParam);
                     this.setURL('#open:' + this.loadPendingCliParam);
                 }
                 this.loadPendingCliParam = false;
