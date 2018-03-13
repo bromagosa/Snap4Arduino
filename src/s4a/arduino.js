@@ -33,15 +33,15 @@ Arduino.prototype.keepAlive = function () {
     }
 };
 
-Arduino.prototype.disconnect = function (silent) {
+Arduino.prototype.disconnect = function (silent, force) {
     // Prevent disconnection attempts before board is actually connected
-    if (this.board && this.isBoardReady()) {
+    if ((this.board && this.isBoardReady()) || force) {
         this.disconnecting = true;
         if (this.port === 'network') {
             this.board.sp.destroy();
         } else {
             if (this.board.sp && !this.board.sp.disconnected) {
-                if (!this.connecting) {
+                if (!this.connecting || force) {
                     // otherwise something went wrong in the middle of a connection attempt
                     this.board.sp.close();
                 } 
@@ -352,8 +352,8 @@ Arduino.prototype.connect = function (port, verify, channel) {
                         + port + '\n\n' + localize('Check if firmata is loaded.')
                         );
 
-                // silently closing the connection attempt
-                myself.disconnect(true); 
+                // silent and forced closing of the connection attempt
+                myself.disconnect(true, true);
             }
         }, 10000);
     };
