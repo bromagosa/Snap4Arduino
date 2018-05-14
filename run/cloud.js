@@ -50,7 +50,7 @@ Cloud.prototype.init = function (url) {
     this.username = null;
 };
 
-SnapCloud = new Cloud('https://snap-cloud.cs10.org');
+SnapCloud = new Cloud('https://cloud.snap.berkeley.edu');
 
 // Dictionary handling
 
