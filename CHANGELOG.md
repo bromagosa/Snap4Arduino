@@ -1,5 +1,39 @@
 # CHANGELOG
 
+### 1.2.6
+
+* Korean translation by @ljb7977
+* Allow loading libraries using the command line --load parameter
+* Allow to reconnect a board after a failed attempt
+* Fixed note values in SnapJr library and mode
+* Fixed cloud URL
+* Updated to latest stable Snap! version
+
+### 1.2.5
+
+* Updated to Snap 4.1.2
+* Background execution. Programs keep working when Snap4Arduino is minimized or out of focus.
+* Snap Jr. mode. Thanks to @jogaye and @vcasado for the implementation, and to @jguille2 for a bunch of bug fixes.
+* Some improvements on the HTTP server by @jguille2.
+* Added a bunch of libraries to the library browser.
+* Added a bunch of examples to the project browser.
+* New Turkish translation. Thanks @yildizhuseyin!
+* New < arduino connected ? > block.
+* Code cleanup, especially regarding menu decorators.
+* New save and share dialog, by @jguille2.
+* Showing correct IPs and hostnames in the HTTP server menu, by @jguille2.
+* Probably a bunch of other improvements by @jguille2 that I've forgotten, especially in the web and ChromeOS versions. Thanks for all the hard work!
+
+### 1.2.4
+
+* Updated URLs and info dialogs to match new domain, this includes the mechanism that checks for new versions. This solves the launch delay in some versions.
+* Fixed HTTP issues for CLI version.
+* Huge improvements in Chromium version, thanks to @jguille2.
+* Transpiler now works in Chromium, thanks to @jguille2 again.
+* File saving fixes for the transpiler. Guess thanks to whom ;)
+* Fixed menus in web version.
+* Fixed send-var HTTP API entry point.
+
 ### 1.2.3
 
 * Experimental mobile version for Android tablets that uses serial over Blueetooth
