@@ -90,6 +90,9 @@ s4aTempDict = {
     'Disconnect Arduino':
         'Desconnecta Arduino',
 
+    'arduino connected?':
+        'arduino connectat?',
+
     'analog reading %analogPin':
         'lectura analògica %analogPin',
 
@@ -166,7 +169,35 @@ s4aTempDict = {
         'Aquesta operació pot trigar uns segons...',
 
     'Network serial ports':
-        'Ports sèrie sobre xarxa'
+        'Ports sèrie sobre xarxa',
+
+    'Open from URL...':
+        'Obre des d\'una URL...',
+
+    'Save, share and get URL...':
+        'Desa, comparteix i mostra la URL...',
+
+    'This project is now public at the following URL:':
+        'Aquest projecte és públic, accessible des de la URL:',
+
+    'About Snap4Arduino...':
+        'Sobre Snap4Arduino...',
+   
+    'Snap4Arduino website':
+        'Web de Snap4Arduino',
+  
+    'Snap4Arduino repository':
+        'Repositori de Snap4Arduino',
+ 
+    'Start a Snap Jr. session':
+        'Inicia una sessió de Snap Júnior',
+
+    'Start Snap4Arduino in an\nicon-based blocks mode\nfor the youngest programmers':
+        'Inicia Snap4Arduino en un\nmode de blocs amb icones\nper els/les programadors/es més joves',
+
+    'Loading Snap Jr.':
+        'S\'està carregant Snap Júnior'
+
 };
 
 // Add attributes to original SnapTranslator.dict.ca

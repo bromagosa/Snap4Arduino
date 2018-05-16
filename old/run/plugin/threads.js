@@ -1,5 +1,5 @@
 Process.prototype.reportAnalogReading = function (pin) {
-    var sprite = this.homeContext.receiver;
+    var sprite = this.blockReceiver();
 
     if (sprite.arduino.isBoardReady()) {
 
@@ -25,8 +25,8 @@ Process.prototype.reportAnalogReading = function (pin) {
 };
 
 Process.prototype.reportDigitalReading = function (pin) {
-    var sprite = this.homeContext.receiver;
-    var check;
+    var sprite = this.blockReceiver(),
+        check;
 
     if (sprite.arduino.isBoardReady()) {
 

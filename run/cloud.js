@@ -32,7 +32,7 @@
 /*global modules, SnapSerializer, nop, hex_sha512, DialogBoxMorph, Color,
 normalizeCanvas*/
 
-modules.cloud = '2018-February-08';
+modules.cloud = '2018-March-14';
 
 // Global stuff
 
@@ -208,6 +208,7 @@ Cloud.prototype.checkCredentials = function (onSuccess, onError, response) {
         function (user) {
             if (user.username) {
                 myself.username = user.username;
+                myself.verified = user.verified;
             }
             if (onSuccess) {
             	onSuccess.call(
@@ -620,6 +621,23 @@ Cloud.prototype.unpublishProject = function (
         onSuccess,
         onError,
         'Could not unpublish project'
+    );
+};
+
+Cloud.prototype.remixProject = function (
+    projectName,
+    username,
+    onSuccess,
+    onError
+) {
+    this.withCredentialsRequest(
+        'POST',
+        '/projects/' + encodeURIComponent(username) +
+            '/' + encodeURIComponent(projectName) +
+            '/remix',
+        onSuccess,
+        onError,
+        'Could not remix project'
     );
 };
 

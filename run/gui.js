@@ -75,7 +75,7 @@ isRetinaSupported, SliderMorph, Animation, BoxMorph, MediaRecorder*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.gui = '2018-February-15';
+modules.gui = '2018-March-19';
 
 // Declarations
 
@@ -276,6 +276,22 @@ IDE_Morph.prototype.openIn = function (world) {
         function (username) {
             if (username) {
                 myself.source = 'cloud';
+                if (!SnapCloud.verified) {
+                        new DialogBoxMorph().inform(
+                            'Unverified account',
+                            'Your account is still unverified.\n' +
+                            'Please use the verification link that\n' +
+                            'was sent to your email address when you\n' +
+                            'signed up.\n\n' +
+                            'If you cannot find that email, please\n' +
+                            'check your spam folder. If you still\n' +
+                            'cannot find it, please use the "Resend\n' +
+                            'Verification Email..." option in the cloud\n' +
+                            'menu.',
+                            world,
+                            myself.cloudIcon(null, new Color(0, 180, 0))
+                        );
+                }
             }
         }
     );
@@ -1905,9 +1921,29 @@ IDE_Morph.prototype.droppedSVG = function (anImage, name) {
 };
 
 IDE_Morph.prototype.droppedAudio = function (anAudio, name) {
-    this.currentSprite.addSound(anAudio, name.split('.')[0]); // up to period
-    this.spriteBar.tabBar.tabTo('sounds');
-    this.hasChangedMedia = true;
+	var myself = this;
+    if (anAudio.src.indexOf('data:audio') !== 0) {
+    	// fetch and base 64 encode samples using FileReader
+    	this.getURL(
+        	anAudio.src,
+        	function (blob) {
+                var reader = new window.FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = function() {
+                	var base64 = reader.result;
+                    base64 = 'data:audio/ogg;base64,' +
+                        base64.split(',')[1];
+                    anAudio.src = base64;
+                    myself.droppedAudio(anAudio, name);
+                };
+            },
+            'blob'
+        );
+    } else {
+    	this.currentSprite.addSound(anAudio, name.split('.')[0]); // up to '.'
+    	this.spriteBar.tabBar.tabTo('sounds');
+    	this.hasChangedMedia = true;
+    }
 };
 
 IDE_Morph.prototype.droppedText = function (aString, name) {
@@ -3463,7 +3499,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 4.1.2 - dev -\nBuild Your Own Blocks\n\n'
+    aboutTxt = 'Snap! 4.1.2.7\nBuild Your Own Blocks\n\n'
         + 'Copyright \u24B8 2018 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
@@ -5161,11 +5197,16 @@ IDE_Morph.prototype.initializeCloud = function () {
                     if (!isNil(response.days_left)) {
                         new DialogBoxMorph().inform(
                             'Unverified account: ' + response.days_left + ' days left',
-                            'You are now logged in, but your account\n' +
-                            'has not been verified yet.\n' +
+                            'You are now logged in, and your account\n' +
+                            'is enabled for three days.\n' +
                             'Please use the verification link that\n' +
                             'was sent to your email address when you\n' +
                             'signed up.\n\n' +
+                            'If you cannot find that email, please\n' +
+                            'check your spam folder. If you still\n' +
+                            'cannot find it, please use the "Resend\n' +
+                            'Verification Email..." option in the cloud\n' +
+                            'menu.\n\n' +
                             'You have ' + response.days_left + ' days left.',
                             world,
                             myself.cloudIcon(null, new Color(0, 180, 0))
@@ -5242,7 +5283,7 @@ IDE_Morph.prototype.resetCloudPassword = function () {
                     new DialogBoxMorph().inform(
                         title,
                         txt +
-                            '.\n\nAn e-mail with a link to\n' +
+                            '\n\nAn e-mail with a link to\n' +
                             'reset your password\n' +
                             'has been sent to the address provided',
                         world,
@@ -5278,10 +5319,7 @@ IDE_Morph.prototype.resendVerification = function () {
                 function (txt, title) {
                     new DialogBoxMorph().inform(
                         title,
-                        txt +
-                            '.\n\nAn e-mail with a link to\n' +
-                            'verify your account\n' +
-                            'has been sent to the address provided',
+                        txt,
                         world,
                         myself.cloudIcon(null, new Color(0, 180, 0))
                     );
@@ -5553,30 +5591,37 @@ IDE_Morph.prototype.setCloudURL = function () {
         null,
         {
             'Snap!Cloud' : 'https://cloud.snap.berkeley.edu',
+            'Snap!Cloud (cs10)' : 'https://snap-cloud.cs10.org',
             'localhost' : 'http://localhost:8080',
-            'localhost (secure)' : 'https://localhost:8080'
+            'localhost (secure)' : 'https://localhost:4431'
         }
     );
 };
 
 // IDE_Morph HTTP data fetching
 
-IDE_Morph.prototype.getURL = function (url, callback) {
+IDE_Morph.prototype.getURL = function (url, callback, responseType) {
     // fetch the contents of a url and pass it into the specified callback.
     // If no callback is specified synchronously fetch and return it
     // Note: Synchronous fetching has been deprecated and should be switched
     var request = new XMLHttpRequest(),
         async = callback instanceof Function,
-        myself = this;
+        myself = this,
+        rsp;
+	if (async) {
+    	request.responseType = responseType || 'text';
+    }
+    rsp = (!async || request.responseType === 'text') ? 'responseText'
+    	: 'response';
     try {
         request.open('GET', url, async);
         if (async) {
             request.onreadystatechange = function () {
                 if (request.readyState === 4) {
-                    if (request.responseText) {
+                    if (request[rsp]) {
                         callback.call(
                             myself,
-                            request.responseText
+                            request[rsp]
                         );
                     } else {
                         throw new Error('unable to retrieve ' + url);
@@ -5587,7 +5632,7 @@ IDE_Morph.prototype.getURL = function (url, callback) {
         request.send();
         if (!async) {
             if (request.status === 200) {
-                return request.responseText;
+                return request[rsp];
             }
             throw new Error('unable to retrieve ' + url);
         }
@@ -5596,7 +5641,7 @@ IDE_Morph.prototype.getURL = function (url, callback) {
         if (async) {
             callback.call(this);
         } else {
-            return request.responseText;
+            return request[rsp];
         }
     }
 };
@@ -6813,7 +6858,7 @@ LibraryImportDialogMorph.prototype.installLibrariesList = function () {
     this.listField.action = function (item) {
         if (isNil(item)) {return; }
 
-        myself.notesText.text = item.description || '';
+        myself.notesText.text = localize(item.description || '');
         myself.notesText.drawNew();
         myself.notesField.contents.adjustBounds();
 
@@ -9071,6 +9116,11 @@ SoundRecorderDialogMorph.prototype.buildProgressBar = function () {
 };
 
 SoundRecorderDialogMorph.prototype.record = function () {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+        this.stop();
+        return;
+    }
+
     this.mediaRecorder.start();
     this.recordButton.label.setColor(new Color(255, 0, 0));
     this.playButton.label.setColor(new Color(0, 0, 0));

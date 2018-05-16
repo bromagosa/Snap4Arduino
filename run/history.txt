@@ -3927,8 +3927,6 @@ Translation Updates:
 * Spanish
 * Russian
 
-*** in development ***
-
 180206
 ------
 * GUI: start developing v4.1.2
@@ -3956,15 +3954,92 @@ Translation Updates:
 ------
 * Threads, Blocks, Objects: experimental JIT compiler
 
+180217
+------
+release
 
-=== v4.1.2 features ===
+=== v4.1.2 minor release ===
 
-v4.1.2 New Features:
-* experimental JIT compiler (in progress)
-
-Notable Changes:
+v4.1.2 Notable Changes:
 * new cloud backend
 
-Notable Fixes:
+New Features:
+* experimental JIT compiler (in progress)
 
 Translation Updates:
+* new Catalan-Valencia translation
+* Catalan
+* German
+
+180219
+------
+* GUI, snap.html: started v4.1.2.1 development
+* Threads: optimized "broadcast and wait" for atomic subroutines
+* Spanish translation update
+
+180220
+------
+* Libraries: Changed LeapMotion library source to https
+* account verification
+* release
+
+=== v4.1.2.1 maintenance release ===
+
+v4.1.2.1 Notable Changes:
+* account verification
+* optimized "broadcast and wait" for atomic subroutines
+* changed leap motion library to https
+
+Translation Updates:
+* Spanish
+
+180222
+------
+* crayons library: fixed "nearest crayon to" reporter
+* release
+
+=== v4.1.2.2 maintenance release ===
+
+180305
+------
+* cloud tweaks, thanks, Bernat and Michael!
+* fixed "join words" in the tools, library, thanks, Brian, for reporting the bug!
+* added new "text to speech" library
+* made sure sound data is always stored in the project (not referenced)
+* added capability to compile input slot options to experimental JIT
+* Spanish and German translation updates
+
+=== v4.1.2.3 maintenance release ===
+
+180308
+------
+* Objects: fixed #2053
+* GUI: fixed #2052
+
+180309
+------
+* Blocks, Objects, Threads: added "random" option for "go to", "point towards" and "point in direction" primitives
+
+=== v4.1.2.4 maintenance release ===
+
+180313
+------
+* Objects: draw a "dot" pentrail when moving zero steps while the pen is down
+
+=== v4.1.2.5 maintenance release ===
+
+180314
+------
+* Threads: changed testing order for type inferral, speeds up list operations significantly
+* Cloud: remix project method, thanks, Bernat!
+
+=== v4.1.2.6 maintenance release ===
+
+180316
+------
+* Threads: experimental JIT compiler support for multi-word formal parameters and a single implicit formal parameter mapped to all empty input slots
+
+180319
+------
+* Threads: initialize Process>>gensyms with null (because it's hardly ever needed)
+* Objects: remove obsolete STOP primitive from the stage's palette

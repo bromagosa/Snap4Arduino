@@ -42,7 +42,7 @@
 
 /*global modules, contains*/
 
-modules.locale = '2018-February-15';
+modules.locale = '2018-March-09';
 
 // Global stuff
 
@@ -160,7 +160,7 @@ SnapTranslator.dict.de = {
     'translator_e-mail':
         'jens@moenig.org',
     'last_changed':
-        '2018-02-15'
+        '2018-03-09'
 };
 
 SnapTranslator.dict.it = {
@@ -288,11 +288,11 @@ SnapTranslator.dict.es = {
     'language_name':
         'Espa\u00F1ol',
     'language_translator':
-        'V\u00EDctor Manuel Muratalla Morales',
+        'V\u00EDctor Manuel Muratalla Morales / Cristi\u00E1n Rizzi Iribarren / Alfonso Ruzafa',
     'translator_e-mail':
-        'victor.muratalla@yahoo.com',
+        'victor.muratalla@yahoo.com / rizzi.cristian@gmail.com',
     'last_changed':
-        '2018-01-22'
+        '2018-02-19'
 };
 
 SnapTranslator.dict.nl = {
