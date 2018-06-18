@@ -4,4 +4,4 @@ i2c.xml	I2C	Send and receive data from I2C-enabled sensors and actuators.
 NeoPixel.xml	NeoPixel	NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.
 braccio.xml	Braccio arm	The Braccio robotic arm is an educational simple arm with a grip on its end. You need to install BraccioFirmata into the board before being able to use this library.
 snapJrLib.xml	SnapJunior Blocks	Icon-based blocks for the youngest programmers.
-Creative_Robotix_S4A_V1.1.xml	Creative Robotix Platform	Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware.
+Creative_Robotix.xml	Creative Robotix Platform	Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware.
