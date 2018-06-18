@@ -22,9 +22,9 @@ See file LICENSE.txt for further informations on licensing terms.
 
 Last updated August 17th, 2017
 
-Creative Science Foundation Creative Robotix Educational Platform Modifications.
+Creative Science Foundation Creative Robotix Platform Modifications.
 
-Last updated May 15th, 2018 
+Last updated June 18th, 2018 
 
 Compile Notes:
 
@@ -32,13 +32,26 @@ Additional libraies required for compile
 
 http://playground.arduino.cc/Code/NewPing
 
-https://github.com/wayoda/LedControl
-
-New Ping may conflict with the Tone function.  Edit the NewPing.h file 
+New Ping conflicts with the Tone functions, edit the NewPing.h file 
 and set the TIMMER_ENABLED setting to 'false'.  The header file can
 be found under the 'Arduino/libraries/NewPing' folder.
 
+https://github.com/wayoda/LedControl
+
 */
+
+
+// Edit this to rename your robot, you may also rename your robot via Firmata 
+   
+#define MY_ROBOTS_NAME		"Codee"
+
+
+// Edit this to give your robot a new pin number
+
+#define MY_ROBOTS_PIN		1234
+
+
+/* ----------------------------------------------------------------------------------------------------------------------------*/
 
 #include <Servo.h>
 #include <Wire.h>
@@ -65,10 +78,11 @@ be found under the 'Arduino/libraries/NewPing' folder.
 
 // CRE SYSEX Commands
 #define CRE_ULTRASOUND				0x08
-#define CRE_SAY						0x09
+#define CRE_AUDIO					0x09
 #define CRE_LED_DISPLAY				0x0A
 #define CRE_SWING_ARMS				0x0B
 #define CRE_LOOK_AROUND				0x0C
+#define CRE_HCO6_CMD				0x0D
 
 // CRE configuration
 #define CRE_DEFAULT_CONFIGURATION_INPUTS 0x000400 // each bit: 1 = pin in INPUT, 0 = anything else
@@ -107,11 +121,226 @@ be found under the 'Arduino/libraries/NewPing' folder.
 
 #define SPEAKER					13
 
-#define TEXT_TO_SAY_BUFFER_LEN	60
+#define TEXT_TO_SAY_BUFFER_LEN	30
+
+#define MELODY_TO_PLAY_BUFFER_LEN 40
+
+#define AUDIO_SAY			0
+#define AUDIO_MELODY_BLTIN	1
+#define AUDIO_MELODY_USR	2
+#define AUDIO_TONE			3
+
+#define NOTE_RST 0
+#define NOTE_B0  31
+#define NOTE_C1  33
+#define NOTE_CS1 35
+#define NOTE_D1  37
+#define NOTE_DS1 39
+#define NOTE_E1  41
+#define NOTE_F1  44
+#define NOTE_FS1 46
+#define NOTE_G1  49
+#define NOTE_GS1 52
+#define NOTE_A1  55
+#define NOTE_AS1 58
+#define NOTE_B1  62
+#define NOTE_C2  65
+#define NOTE_CS2 69
+#define NOTE_D2  73
+#define NOTE_DS2 78
+#define NOTE_E2  82
+#define NOTE_F2  87
+#define NOTE_FS2 93
+#define NOTE_G2  98
+#define NOTE_GS2 104
+#define NOTE_A2  110
+#define NOTE_AS2 117
+#define NOTE_B2  123
+#define NOTE_C3  131
+#define NOTE_CS3 139
+#define NOTE_D3  147
+#define NOTE_DS3 156
+#define NOTE_E3  165
+#define NOTE_F3  175
+#define NOTE_FS3 185
+#define NOTE_G3  196
+#define NOTE_GS3 208
+#define NOTE_A3  220
+#define NOTE_AS3 233
+#define NOTE_B3  247
+#define NOTE_C4  262
+#define NOTE_CS4 277
+#define NOTE_D4  294
+#define NOTE_DS4 311
+#define NOTE_E4  330
+#define NOTE_F4  349
+#define NOTE_FS4 370
+#define NOTE_G4  392
+#define NOTE_GS4 415
+#define NOTE_A4  440
+#define NOTE_AS4 466
+#define NOTE_B4  494
+#define NOTE_C5  523
+#define NOTE_CS5 554
+#define NOTE_D5  587
+#define NOTE_DS5 622
+#define NOTE_E5  659
+#define NOTE_F5  698
+#define NOTE_FS5 740
+#define NOTE_G5  784
+#define NOTE_GS5 831
+#define NOTE_A5  880
+#define NOTE_AS5 932
+#define NOTE_B5  988
+#define NOTE_C6  1047
+#define NOTE_CS6 1109
+#define NOTE_D6  1175
+#define NOTE_DS6 1245
+#define NOTE_E6  1319
+#define NOTE_F6  1397
+#define NOTE_FS6 1480
+#define NOTE_G6  1568
+#define NOTE_GS6 1661
+#define NOTE_A6  1760
+#define NOTE_AS6 1865
+#define NOTE_B6  1976
+#define NOTE_C7  2093
+#define NOTE_CS7 2217
+#define NOTE_D7  2349
+#define NOTE_DS7 2489
+#define NOTE_E7  2637
+#define NOTE_F7  2794
+#define NOTE_FS7 2960
+#define NOTE_G7  3136
+#define NOTE_GS7 3322
+#define NOTE_A7  3520
+#define NOTE_AS7 3729
+#define NOTE_B7  3951
+#define NOTE_C8  4186
+#define NOTE_CS8 4435
+#define NOTE_D8  4699
+#define NOTE_DS8 4978
+#define NOTE_P0	 0000
+
+#define AUDIO_MELODIES_BLTIN	4
+
+const static uint16_t AUDIO_MELODIES_NOTES[] PROGMEM = {
+	// Green Sleeves 
+	19,
+	NOTE_FS3,
+	NOTE_A3, NOTE_B3,
+	NOTE_CS4, NOTE_D4, NOTE_CS4,
+	NOTE_B3, NOTE_GS3,
+	NOTE_E3, NOTE_FS3, NOTE_GS3,
+	NOTE_A3, NOTE_FS3,
+	NOTE_FS3, NOTE_F3, NOTE_FS3,
+	NOTE_GS3, NOTE_F3,
+	NOTE_CS3,
+	// Marry Had a Little Lamb
+	26,
+	NOTE_E3, NOTE_D3, NOTE_C3, NOTE_D3,
+	NOTE_E3, NOTE_E3, NOTE_E3,
+	NOTE_D3, NOTE_D3, NOTE_D3,
+	NOTE_E3, NOTE_G3, NOTE_G3,
+	NOTE_E3, NOTE_D3, NOTE_C3, NOTE_D3,
+	NOTE_E3, NOTE_E3, NOTE_E3, NOTE_E3,
+	NOTE_D3, NOTE_D3, NOTE_E3, NOTE_D3,
+	NOTE_C3,
+	// Happy Birthday
+	25,
+	NOTE_G3, NOTE_G3,
+	NOTE_A3, NOTE_G3, NOTE_C4, 
+	NOTE_B3, NOTE_G3, NOTE_G3,
+	NOTE_A3, NOTE_G3, NOTE_D4,
+	NOTE_C4, NOTE_G3, NOTE_G3,
+	NOTE_G4, NOTE_E4, NOTE_C4, 
+	NOTE_B3, NOTE_A3, NOTE_G4, NOTE_G4, 
+	NOTE_E4, NOTE_C4, NOTE_D4, 
+	NOTE_C4,
+	// Star Wars
+	40,
+	NOTE_A3, NOTE_A3, NOTE_A3,
+	NOTE_D4, NOTE_A4, NOTE_RST,
+	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
+	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
+	NOTE_G4, NOTE_FS4, NOTE_G4, NOTE_E4, NOTE_RST, NOTE_A3, NOTE_A3, NOTE_A3,
+	NOTE_D4, NOTE_A4,
+	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
+	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
+	NOTE_G4, NOTE_FS4, NOTE_G4, NOTE_E4
+};
+
+const uint8_t AUDIO_MELODIES_NOTES_LEN = sizeof(AUDIO_MELODIES_NOTES) / sizeof(uint16_t);
+
+const static uint8_t AUDIO_MELODIES_DURATIONS[] PROGMEM = {
+	// Green Sleevs
+	19,
+	4,
+	2, 4,
+	3, 8, 4,
+	2, 4,
+	3, 8, 4,
+	2, 4,
+	3, 8, 4,
+	2, 4,
+	1,
+	// Mary Had a Little Lamb
+	26,
+	4, 4, 4, 4,    
+	4, 4, 2,    
+	4, 4, 2,   
+	4, 4, 2,
+	4, 4, 4, 4,    
+	4, 4, 4, 4,        
+	4, 4, 4, 4,       
+	1,
+	// Happy Birthday
+	25,
+	8, 8, 
+	4, 4, 4, 
+	2, 8, 8, 
+	4, 4, 4, 
+	2, 8, 8, 
+	4, 4, 4, 
+	4, 4, 8, 8, 
+	4, 4, 4, 
+	2,
+	// Star Wars
+	40, 
+	12, 12, 12, 
+	2, 2, 8,
+	12, 12, 12, 2, 4, 
+	12, 12, 12, 2, 4, 
+	12, 12, 12, 2, 8, 12, 12, 12, 
+	2, 2, 
+	12, 12, 12, 2, 4,
+	12, 12, 12, 2, 4, 
+	12, 12, 12, 2
+};
+
+const uint8_t AUDIO_MELODIES_DURATIONS_LEN = sizeof(AUDIO_MELODIES_DURATIONS) / sizeof(uint8_t);
+
+const static uint16_t NOTES[] PROGMEM = { // NOTE_P0 included to force a nice hash function 
+	NOTE_A1, NOTE_AS1, NOTE_B1, NOTE_P0, NOTE_C1, NOTE_CS1, NOTE_D1, NOTE_DS1, NOTE_E1, NOTE_P0, NOTE_F1, NOTE_FS1, NOTE_G1, NOTE_GS1,	// Scale C1
+	NOTE_A2, NOTE_AS1, NOTE_B2, NOTE_P0, NOTE_C2, NOTE_CS2, NOTE_D2, NOTE_DS2, NOTE_E2, NOTE_P0, NOTE_F2, NOTE_FS2, NOTE_G2, NOTE_GS2,	// Scale C2 
+	NOTE_A3, NOTE_AS1, NOTE_B3, NOTE_P0, NOTE_C3, NOTE_CS3, NOTE_D3, NOTE_DS3, NOTE_E3, NOTE_P0, NOTE_F3, NOTE_FS3, NOTE_G3, NOTE_GS3,	// Scale C3 
+	NOTE_A4, NOTE_AS1, NOTE_B4, NOTE_P0, NOTE_C4, NOTE_CS4, NOTE_D4, NOTE_DS4, NOTE_E4, NOTE_P0, NOTE_F4, NOTE_FS4, NOTE_G4, NOTE_GS4,	// Scale C4 
+	NOTE_A5, NOTE_AS1, NOTE_B5, NOTE_P0, NOTE_C5, NOTE_CS5, NOTE_D5, NOTE_DS5, NOTE_E5, NOTE_P0, NOTE_F5, NOTE_FS5, NOTE_G5, NOTE_GS5,	// Scale C5 
+	NOTE_A6, NOTE_AS1, NOTE_B6, NOTE_P0, NOTE_C6, NOTE_CS6, NOTE_D6, NOTE_DS6, NOTE_E6, NOTE_P0, NOTE_F6, NOTE_FS6, NOTE_G6, NOTE_GS6,	// Scale C6 
+	NOTE_A7, NOTE_AS1, NOTE_B7, NOTE_P0, NOTE_C7, NOTE_CS7, NOTE_D7, NOTE_DS7, NOTE_E7, NOTE_P0, NOTE_F7, NOTE_FS7, NOTE_G7, NOTE_GS7,	// Scale C7 
+	NOTE_P0, NOTE_P0, NOTE_P0, NOTE_P0, NOTE_C8, NOTE_CS8, NOTE_D1, NOTE_DS8															// Scale C8 
+	};
+
+const uint8_t NOTES_LEN = sizeof(NOTES) / sizeof(uint16_t);
 
 // Bluetooth
 
-#define BLUETOOTH_RX_EN			12
+#define PIN_SETUP_HC06			21
+
+#define HC06_DATA_BUFFER_LEN	10
+
+#define HC06_CMD_SETNAME		1
+#define HC06_CMD_SETPIN			2
 
 // Local 8x8 display data
 
@@ -126,10 +355,13 @@ const static uint32_t LED_DISPLAY_IMAGES[][2] PROGMEM = {
 	0x7e3c1805, 0x03070507,			// rock
 	0x1f3e7cf9, 0xf1070507,			// paper
 	0xd8f82027, 0x54570107,			// sissors
+	0x10387cfe, 0xfeee4400,			// Heart
+	0x060e0c08, 0x08281800,			// Quaver
+	0x066eecc8, 0x8898f000,			// Quaver x 2
 	0x00000000, 0x00000000			// blank
 };
 
-const uint8_t LED_DISPLAY_IMAGES_LEN = sizeof(LED_DISPLAY_IMAGES) / sizeof(uint32_t);
+const uint8_t LED_DISPLAY_IMAGES_LEN = sizeof(LED_DISPLAY_IMAGES) / sizeof(uint32_t) / 2;
 
 const static uint32_t LED_DISPLAY_DIGITS[][2] PROGMEM = {
 	0x0000e0a0, 0xa0a0e000,			// 0
@@ -144,7 +376,7 @@ const static uint32_t LED_DISPLAY_DIGITS[][2] PROGMEM = {
 	0x00008080, 0xe0a0e000			// 9
 };
 
-const int LED_DIGITS_LEN = sizeof(LED_DISPLAY_DIGITS) / sizeof(uint32_t);
+const int LED_DIGITS_LEN = sizeof(LED_DISPLAY_DIGITS) / sizeof(uint32_t) / 2;
 
 const static uint32_t LED_DISPLAY_CHARACTERS[][2] PROGMEM = {
 	0x00000000, 0x00000000,
@@ -245,7 +477,7 @@ const static uint32_t LED_DISPLAY_CHARACTERS[][2] PROGMEM = {
 	0x00000000, 0x00000000			// del
 };
 
-const int LED_DISPLAY_CHARACTERS_LEN = sizeof(LED_DISPLAY_CHARACTERS) / sizeof(uint32_t);
+const int LED_DISPLAY_CHARACTERS_LEN = sizeof(LED_DISPLAY_CHARACTERS) / sizeof(uint32_t) / 2;
 
 #define GETSCROLLROW(c, b)				((byte)((c >> (8*b)) & 0xFF))
 #define GETDISPLAYROW(c, b)				((byte)((c >> (8*(7-b)) & 0xFF)))
@@ -260,7 +492,10 @@ const int LED_DISPLAY_CHARACTERS_LEN = sizeof(LED_DISPLAY_CHARACTERS) / sizeof(u
 #define LED_DISPLAY_ROCK				7
 #define LED_DISPLAY_PAPER				8
 #define LED_DISPLAY_SISSORS				9	
-#define LED_DISPLAY_BLANK				10 
+#define LED_DISPLAY_QUAVER				10
+#define LED_DISPLAY_QUAVERx2			11
+#define LED_DISPLAY_HEART				12
+#define LED_DISPLAY_BLANK				13 
 
 #define LED_SET_IMAGE					1
 #define LED_SET_SCROLL_TEXT				2
@@ -269,7 +504,12 @@ const int LED_DISPLAY_CHARACTERS_LEN = sizeof(LED_DISPLAY_CHARACTERS) / sizeof(u
 #define LED_SET_SET_PIXEL				5
 #define LED_SET_CLEAR					6
 
-#define TEXT_TO_SCROLL_BUFFER_LEN		60
+#define LED_DISPLAY_TYPE_IMAGES			0
+#define LED_DISPLAY_TYPE_DIGITS			1
+#define LED_DISPLAY_TYPE_ASCII			2
+
+
+#define TEXT_TO_SCROLL_BUFFER_LEN		30
 
 /*==============================================================================
 * GLOBAL VARIABLES
@@ -354,11 +594,20 @@ boolean isArmsSwing = false;
 boolean isHeadSwing = false;			
 boolean isTextToScroll = false;	 
 boolean isTextToSay = false;
+boolean isMelodyToPlay = false;
+
+uint8_t ledDisplayImage = 0, ledDisplayDigits = 0, ledDisplayASCII = 0;
+
+uint8_t ledDisplayType = 0;
 
 uint8_t armSwingSpeed = 0, headSwingSpeed = 0;
 
 uint8_t textToScrollLen = 0;
 byte textToScrollBuffer[TEXT_TO_SCROLL_BUFFER_LEN];
+
+uint8_t	melodyToPlayLen = 0;
+uint16_t melodyToPlayNoteBuffer[MELODY_TO_PLAY_BUFFER_LEN];
+uint8_t melodyToPlayDurationBuffer[MELODY_TO_PLAY_BUFFER_LEN];
 
 unsigned long scrollInterval = 200;
 unsigned long armSwingInterval = 25;
@@ -367,17 +616,14 @@ unsigned long headSwingInterval = 50;
 uint8_t textToSayLen = 0;
 byte textToSayBuffer[TEXT_TO_SAY_BUFFER_LEN];
 
+uint8_t hc06DataBuffer[HC06_DATA_BUFFER_LEN];
+
 /*==============================================================================
 * FUNCTIONS (CREATIVE ROBOTIX PLATFORM)
 *============================================================================*/
 
 void initCreativeRobotixPlatform() {
 	uint64_t character;
-
-	// Configure A0 and A1 as digital outputs 
-
-	setPinModeCallback(14, OUTPUT);
-	setPinModeCallback(15, OUTPUT);
 
 	// Initialise the MAX72XX display 
 
@@ -386,21 +632,61 @@ void initCreativeRobotixPlatform() {
 	ledDisplay.clearDisplay(0);			// and clear the display
 
 	// LED Display to neutral
-	character = pgm_read_dword(&(LED_DISPLAY_IMAGES[LED_DISPLAY_NEUTRAL][0])); // High
-	character = (character << 32) | pgm_read_dword(&(LED_DISPLAY_IMAGES[LED_DISPLAY_NEUTRAL][1])); // Low
-	setLEDisplay(character);
+
+	setLEDDisplayImage(LED_DISPLAY_NEUTRAL);
 
 	// Say hello, I'm active
 	sayDirect("Hello World!");
 
-	// If transistor in place, this will turn on the Blutooth serial RX, disabling USB Serial RX
+	setLEDDisplayImage(LED_DISPLAY_SMILE);
+}
 
-	BluetoothRX(true);
 
-	// LED display to smile
-	character = pgm_read_dword(&(LED_DISPLAY_IMAGES[LED_DISPLAY_SMILE][0])); // High
-	character = (character << 32) | pgm_read_dword(&(LED_DISPLAY_IMAGES[LED_DISPLAY_SMILE][1])); // Low
+void restoreLEDDisplay(void) {
+	switch (ledDisplayType) {
+	case LED_DISPLAY_TYPE_IMAGES:
+		setLEDDisplayImage(ledDisplayImage);
+		break;
+	case LED_DISPLAY_TYPE_DIGITS:
+		setLEDDisplayDigits(ledDisplayDigits);
+		break;
+	case LED_DISPLAY_TYPE_ASCII:
+		setLEDDisplayASCII(ledDisplayASCII);
+		break;
+	default:
+		break;
+	}
+}
+
+void setLEDDisplayImage(uint8_t image) {
+	uint64_t character;
+	character = pgm_read_dword(&(LED_DISPLAY_IMAGES[image][0])); // High
+	character = (character << 32) | pgm_read_dword(&(LED_DISPLAY_IMAGES[image][1])); // Low
 	setLEDisplay(character);
+	ledDisplayImage = image;
+	ledDisplayType = LED_DISPLAY_TYPE_IMAGES;
+}
+
+
+void setLEDDisplayDigits(uint8_t number) {
+	uint64_t digit_tens, digit_units;
+	digit_tens = pgm_read_dword(&(LED_DISPLAY_DIGITS[int(number/10)][0])); // High
+	digit_tens = (digit_tens << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[int(number / 10)][1])); // Low
+	digit_units = pgm_read_dword(&(LED_DISPLAY_DIGITS[number - (int(number/10)*10)][0])); // High
+	digit_units = (digit_units << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[number - (int(number / 10) * 10)][1])); // Low
+	setLEDisplay((digit_tens >> 4) | digit_units);
+	ledDisplayDigits = number;
+	ledDisplayType = LED_DISPLAY_TYPE_DIGITS;
+}
+
+
+void setLEDDisplayASCII(uint8_t ascii) {
+	uint64_t character;
+	character = pgm_read_dword(&(LED_DISPLAY_IMAGES[ascii][0])); // High
+	character = (character << 32) | pgm_read_dword(&(LED_DISPLAY_CHARACTERS[ascii][1])); // Low
+	setLEDisplay(character);
+	ledDisplayASCII = ascii;
+	ledDisplayType = LED_DISPLAY_TYPE_ASCII;
 }
 
 void setLEDisplay(const uint64_t character)
@@ -420,7 +706,7 @@ void updateTextToSay() {
 	static unsigned long toneDuration;		// store current tone duration
 
 	l_currentMillis = millis();
-
+	
 	if (character >= textToSayLen) { // All done, reset
 		isTextToSay = false;
 		character = 0;
@@ -443,13 +729,62 @@ void updateTextToSay() {
 	}
 }
 
-void updateTextToScroll() {
+void updateMelodyToPlay() {
+	/* timer variables */
+	static uint8_t note = 0;
+	static boolean noteActive = false, notePause = false;
+	static unsigned long l_currentMillis;	// store the current value from millis()
+	static unsigned long l_previousMillis;	// for comparison with currentMillis
+	static unsigned long noteDuration;		// store current note duration
+	static unsigned long notePauseDuration;	// store current note duration
+
+	l_currentMillis = millis();
+
+	if (note >= melodyToPlayLen) { // All done, reset
+		isMelodyToPlay = false;
+		note = 0;
+		melodyToPlayLen = 0;
+	}
+	else { // Still have a character to say, have we finished the tone?
+		if (!noteActive) { // If no active note, play the next one
+			noteDuration = (1000 / melodyToPlayDurationBuffer[note]);
+			tone(SPEAKER, melodyToPlayNoteBuffer[note], noteDuration); // convert character to suitable frequency, currently arbitary, update?
+			noteActive = true;
+			l_previousMillis = l_currentMillis;
+		}
+		else { // update timmer and tone
+			if (!notePause) {
+				if ((l_currentMillis - l_previousMillis) > noteDuration) { // tone duration reached
+					notePauseDuration = noteDuration * 0.30; // 30% seems to work well
+					notePause = true;
+					l_previousMillis = l_currentMillis;
+				}
+			}
+			else {
+				if ((l_currentMillis - l_previousMillis) > notePauseDuration) {
+					noTone(SPEAKER);
+					notePause = false;
+					noteActive = false;
+					note++; // next note
+				}
+			}
+		}
+	}
+}
+
+void updateTextToScroll(boolean reset) {
 	static uint8_t character = 0, character_previous = 1, character_scroll = 0, cindex;
 	static unsigned long l_currentMillis;	// store the current value from millis()
 	static unsigned long l_previousMillis;	// for comparison with currentMillis
 	static uint64_t current_character = 0, screen = 0, column_update;
 
 	l_currentMillis = millis();
+
+	if (reset) {  // Reset the state
+		character = 0;
+		character_previous = 1, character_scroll = 0;
+		current_character = 0, screen = 0, column_update = 0; 
+	}
 
 	if ((l_currentMillis - l_previousMillis) > scrollInterval) {
 		// update screen buffer 
@@ -559,10 +894,105 @@ void sayDirect(String text) {
 	}
 }
 
-void BluetoothRX(bool active) {
-	// Controls the Bluetooth serial receive, when active USB receive is turned off.
+boolean setHC06S4A(void) {
+	uint8_t i;
+	boolean btatcrlf = true;
+	String response, command;
+	unsigned long baudrate[] = { 57600, 9600, 1200, 2400, 4800, 19200, 38400, 115200 };
 
-	setPinValueCallback(BLUETOOTH_RX_EN, active);
+	if (analogRead(PIN_SETUP_HC06) > 50) { // Nothing to do 
+		return (false);
+	}
+	
+	// Discover HC-06 current baudrate
+
+	uint8_t baudrates = sizeof(baudrate) / sizeof(baudrate[0]);
+
+	for (i = 0; i < baudrates; i++) {
+
+		// Try to connect
+		sayDirect("ATAT");
+		Serial.begin(baudrate[i]);
+
+		// Two types of firmwaire to deal with, types which require <CR><LF>, and types that do not
+
+		// Are we dealing with HC-05 type firmaware requiring <CR><LF>?
+
+		Serial.print("AT\r\n");
+		Serial.setTimeout(1000);
+		response = Serial.readString();
+
+		Serial.print("AT\r\n");			// TODO: Find out why this only works the second time, timming? Delays?
+		Serial.setTimeout(1000);
+		response = Serial.readString();
+
+		// Were we successful? 
+
+		if (response.startsWith("OK")) {
+			break; // Yes, got it.
+		}
+
+		// Are we deadling with HC-06 firware with NO <CR><LF> needed?
+
+		Serial.print("AT");
+		Serial.setTimeout(1000);
+		response = Serial.readString();
+
+		Serial.print("AT");			// TODO: Find out why this only works the second time, timming? Delays?
+		Serial.setTimeout(1000);
+		response = Serial.readString();
+
+		// Were we successful? 
+
+		if (response.startsWith("OK")) {
+			btatcrlf = false;
+			break; // Yes, got it.
+		}
+		
+		Serial.end();
+	}
+
+	if (i == baudrates) { // Couldn't connect to the HC-06
+		while (1) { sayDirect("{}"); delay(100); }; // Sound the alarm... 
+	}
+
+	// All good, let's congigure... 
+
+	// Set Name
+	// TODO restrict name to 20 characters 
+	(btatcrlf) ? command = (String)"AT+NAME" + (String)MY_ROBOTS_NAME + (String)"\r\n" : command = (String)"AT+NAME" + (String)MY_ROBOTS_NAME;
+	Serial.print(command);
+	Serial.setTimeout(3000);
+	delay(500);
+	sayDirect("OK");
+	// Set Pin
+
+	(btatcrlf) ? command = (String)"AT+PIN" + MY_ROBOTS_PIN + (String)"\r\n" : command = (String)"AT+PIN" + MY_ROBOTS_PIN;
+	Serial.print(command);
+	Serial.setTimeout(3000);
+	delay(500);
+	sayDirect("OK");
+
+	// Disable indications
+
+	(btatcrlf) ? command = (String)"AT+ENABLEIND0" + (String)"\r\n" : command = (String)"AT+ENABLEIND0";
+	Serial.print(command);
+	Serial.setTimeout(3000);
+	delay(500);
+	sayDirect("OK");
+
+	// Set S4A Baud rate
+
+	(btatcrlf) ? command = (String)"AT+BAUD7" + (String)"\r\n" : command = (String)"AT+BAUD7";
+
+	Serial.print(command);
+	Serial.setTimeout(3000);
+	delay(500);
+	sayDirect("OK");
+
+	Serial.end();
+
+	return(true); // setup complete
 }
 
 /*==============================================================================
@@ -942,7 +1372,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 	byte data;
 	int slaveRegister;
 	unsigned int delayTime;
-	
+
 	switch (command) {
 	case I2C_REQUEST:
 		mode = argv[1] & I2C_READ_WRITE_MODE_MASK;
@@ -1056,7 +1486,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 		break;
 	case SERVO_CONFIG:
 		if (argc > 4) {
-			
+
 			// these vars are here for clarity, they'll optimized away by the compiler
 			byte pin = argv[0];
 			int minPulse = argv[1] + (argv[2] << 7);
@@ -1161,8 +1591,12 @@ void sysexCallback(byte command, byte argc, byte *argv)
 		serialFeature.handleSysex(command, argc, argv);
 #endif
 		break;
+
+	/////////////////////////////////////////////////////
+	//////// CRE Cases
+	////////////////////////////////////////////////////
 	case CRE_ULTRASOUND:
-		{ 
+	{
 		// Ensure ultrasound pins have the correct sense
 		setPinModeCallback(HCSR04_TRIGGER, OUTPUT);
 		setPinModeCallback(HCSR04_ECHO, INPUT);
@@ -1173,71 +1607,116 @@ void sysexCallback(byte command, byte argc, byte *argv)
 		Firmata.write(STRING_DATA);
 		Serial.println((byte)range);  // Can we use Firmata.write(ULTRASOUND); Firmata.write(range);?
 		Firmata.write(END_SYSEX);
-		}
-		break;
-	case CRE_SAY:
-	{
-		uint8_t i = 0;
-		for (i; (i < argc) && (i < TEXT_TO_SAY_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
-			textToSayBuffer[i] = argv[i];
-		}
-		textToSayLen = i;
-		isTextToSay = true;
 	}
+	break;
+	case CRE_AUDIO:
+		mode = argv[0];
+		switch (mode) {
+		case AUDIO_SAY:
+		{
+			uint8_t i = 1;
+			for (i; (i < argc) && (i < TEXT_TO_SAY_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+				textToSayBuffer[i] = argv[i];
+			}
+			textToSayLen = i;
+			isTextToSay = true;
+		}
 		break;
+		case AUDIO_MELODY_BLTIN:
+		{
+			
+			uint8_t melody = argv[1] % AUDIO_MELODIES_BLTIN;
+
+			uint8_t melody_record_start = 0;
+
+			for (uint8_t i = 0; i < melody; i++) {  // Work out melodies location
+				melody_record_start += pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start])) + 1; // melody record number_of_notes (+1);
+			}
+
+			melodyToPlayLen = pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start])); 
+
+			for (uint8_t i = 0; i < melodyToPlayLen; i++) {
+				melodyToPlayNoteBuffer[i] = pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start + i + 1])); // offset the melody record start for first note in record
+				melodyToPlayDurationBuffer[i] = pgm_read_byte(&(AUDIO_MELODIES_DURATIONS[melody_record_start + i + 1]));
+			}
+
+			isMelodyToPlay = true;
+		}
+		break;
+		case AUDIO_MELODY_USR:
+		{	
+			melodyToPlayLen = 0;
+			for (uint8_t i = 1; i < argc  && (melodyToPlayLen < MELODY_TO_PLAY_BUFFER_LEN); i += 3) { // each note have three bytes <freqency high byte, frequency low byte, duration> Silently drop notes > MAX_BUFFER
+
+				melodyToPlayNoteBuffer[melodyToPlayLen] = (argv[i] << 8) | argv[i + 1];
+				melodyToPlayDurationBuffer[melodyToPlayLen] = argv[i + 2];
+				melodyToPlayLen++;
+			}
+			isMelodyToPlay = true;
+		}
+		break;
+		case AUDIO_TONE:
+		{
+			melodyToPlayNoteBuffer[0] = (argv[1] << 8) | argv[2];
+			melodyToPlayDurationBuffer[0] = 1000 / ((argv[3] << 8) | argv[4]);
+			melodyToPlayLen = 1;
+			isMelodyToPlay = true;
+		}
+		break;
+		}
+	break;
 	case CRE_LED_DISPLAY:
 		mode = argv[0];
 		switch (mode) {
 		case LED_SET_IMAGE:
 			if (argv[1] < LED_DISPLAY_IMAGES_LEN) { // Stay silent if argv value greater than display images
-				uint64_t character;
-				character = pgm_read_dword(&(LED_DISPLAY_IMAGES[argv[1]][0])); // High
-				character = (character << 32) | pgm_read_dword(&(LED_DISPLAY_IMAGES[argv[1]][1])); // Low
-				setLEDisplay(character);
+				setLEDDisplayImage(argv[1]);
 			}
-			break;
+		break;
 		case LED_SET_SCROLL_TEXT:
 		{
-			for (uint8_t i = 1; (i < argc) && (i < TEXT_TO_SCROLL_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
-				textToScrollBuffer[i - 1] = argv[i];
+			if (argv[1] == true) {
+				for (uint8_t i = 2; (i < argc) && (i < TEXT_TO_SCROLL_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+					textToScrollBuffer[i - 2] = argv[i];
+				}
+				textToScrollLen = argc - 2;
+				updateTextToScroll(true);
+				isTextToScroll = true;
 			}
-			textToScrollLen = argc - 1;
-			isTextToScroll = true;
+			else {
+				isTextToScroll = false;
+				restoreLEDDisplay();
+			}
+
 		}
-			break;
+		break;
 		case LED_SET_NUMBER:
-			// Construct a two digit number for display
-			if (argv[1] < LED_DIGITS_LEN && argv[2] < LED_DIGITS_LEN) {
-				uint64_t digit_tens, digit_units;
-				digit_tens = pgm_read_dword(&(LED_DISPLAY_DIGITS[argv[1]][0])); // High
-				digit_tens = (digit_tens << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[argv[1]][1])); // Low
-				digit_units = pgm_read_dword(&(LED_DISPLAY_DIGITS[argv[2]][0])); // High
-				digit_units = (digit_units << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[argv[2]][1])); // Low
-				setLEDisplay((digit_tens >> 4) | digit_units);
+			if (argv[1] >= 0 && argv[1] < LED_DIGITS_LEN * 10) {
+				setLEDDisplayDigits(argv[1]);
 			}
-			break;
+		break;
 		case LED_SET_ROW_DATA:
 		{
 			if ((argc - 1) == MAX72XX_WIDTH) {
-				uint64_t rowData = 0; 
+				uint64_t rowData = 0;
 				for (uint8_t i = 1; i < argc; i++) {
 					rowData = (rowData << 8) | (argv[i] & 0xFF);
 				}
 				setLEDisplay(rowData);
 			}
 		}
-			break;
+		break;
 		case LED_SET_SET_PIXEL:
 			if (argv[1] < MAX72XX_WIDTH && argv[2] < MAX72XX_HEIGHT) {
 				ledDisplay.setLed(0, argv[1], argv[2], argv[3]);
 			}
-			break;
+		break;
 		case LED_SET_CLEAR:
 			isTextToScroll = false;
-			setLEDisplay(0x0);
-			break;
-		}
+			setLEDDisplayImage(LED_DISPLAY_BLANK);
 		break;
+		}
+	break;
 	case CRE_SWING_ARMS:
 		if (argc == 2) {
 			if (argv[1] == true) {
@@ -1251,7 +1730,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 				stopArmsSwing();
 			}
 		}
-		break;
+	break;
 	case CRE_LOOK_AROUND:
 		if (argc == 2) {
 			if (argv[1] == true) {
@@ -1265,7 +1744,105 @@ void sysexCallback(byte command, byte argc, byte *argv)
 				stopHeadSwing();
 			}
 		}
-		break;
+	break;
+	case CRE_HCO6_CMD:
+	{
+			// Wait for S4A to disconnect from HC-06 and enter into AT mode
+
+			for (uint8_t i = 0; i < 4; i++) {
+				sayDirect("ok");
+				delay(1000);
+			}
+			
+			// Type HC05 firmware
+			Serial.print("AT\r\n");
+			Serial.setTimeout(1000);
+			String responsecrlf = Serial.readString();
+
+			// Type HC06 firmware
+			Serial.print("AT");		
+			Serial.setTimeout(1000);
+			String response = Serial.readString();
+
+			// Were we successful?
+
+			if (responsecrlf.startsWith("OK") || response.startsWith("OK")) {
+				mode = argv[0];
+				
+				switch (mode) {
+				case HC06_CMD_SETNAME:
+				{
+					// Set Name
+
+					String hc06Command = "AT+NAME";  // Build command string
+
+					// Read data buffer
+					for (uint8_t i = 1; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+						hc06Command += (char)argv[i];
+					}
+					
+					// type HC05 firmware
+					if (responsecrlf.startsWith("OK")) {
+						hc06Command += (String)"\r\n";
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+					}
+
+					//type HC06 firmware
+					if (response.startsWith("OK")) {
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+					}
+
+					sayDirect("ok ok ok");
+				}
+				break;
+				case HC06_CMD_SETPIN:
+				{
+					String hc06Command = (String)"AT+PIN"; // Build command string
+
+					// Read data buffer
+					uint8_t i = 0;
+					for (i = 2; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+						hc06Command += argv[i];
+					}
+
+					// type HC05 firmware
+					if (responsecrlf.startsWith("OK")) {
+						hc06Command += (String)"\r\n";
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+					}
+
+
+					//type HC06 firmware
+					if (response.startsWith("OK")) {
+						Serial.print(hc06Command);
+						Serial.setTimeout(3000);
+						delay(500);
+					}
+
+					sayDirect("ok ok ok");
+				}
+				break;
+				default:
+					sayDirect("{}{}{}{}{}{}{}{}{}"); // Signal Error
+				}
+			}
+			else {
+				sayDirect("{}{}{}{}{}{}{}{}{}"); // Signal Error
+			}
+	}
+	break;
 	}
 }
 
@@ -1337,6 +1914,9 @@ void systemResetCallback()
 
 void setup()
 {
+
+	setHC06S4A();  // setup HC06
+
 	Firmata.setFirmwareVersion(FIRMATA_FIRMWARE_MAJOR_VERSION, FIRMATA_FIRMWARE_MINOR_VERSION);
 
 	Firmata.attach(ANALOG_MESSAGE, analogWriteCallback);
@@ -1354,34 +1934,15 @@ void setup()
 	// Firmata.begin(Serial1);
 	// However do not do this if you are using SERIAL_MESSAGE
 
-	Firmata.begin(57600);  // NOTE: change this back to 57600
+	Firmata.begin(57600);
 	while (!Serial) {
 		; // wait for serial port to connect. Needed for ATmega32u4-based boards and Arduino 101
 	}
-	
+
 	systemResetCallback();  // reset to default config
-	// Firmata.printFirmwareVersion();
+
 	initCreativeRobotixPlatform(); // Initialise robot
 }
-
-//void staticReportVersionCallback(void * context) { if (context) { myFirmataPrintVersion(); } }
-
-/*
-void myFirmataPrintVersion(void)
-{
-static bool once = false;
-
-if (!once) {
-Firmata.printFirmwareVersion();
-}
-else {
-Firmata.write(REPORT_VERSION);
-Firmata.write(FIRMATA_PROTOCOL_MAJOR_VERSION);
-Firmata.write(FIRMATA_PROTOCOL_MINOR_VERSION);
-}
-}
-*/
-
 
 /*==============================================================================
 * LOOP()
@@ -1389,7 +1950,6 @@ Firmata.write(FIRMATA_PROTOCOL_MINOR_VERSION);
 void loop()
 {
 	byte pin, analogPin;
-	static bool sendFirmwareVersion = false;
 
 	/* DIGITALREAD - as fast as possible, check for changes and output them to the
 	* FTDI buffer using Serial.print()  */
@@ -1398,7 +1958,6 @@ void loop()
 	/* STREAMREAD - processing incoming messagse as soon as possible, while still
 	* checking digital inputs.  */
 	while (Firmata.available()) {
-		if (!sendFirmwareVersion) { Firmata.printFirmwareVersion(); sendFirmwareVersion = true; } /* Addresses Bluetooth connection issue */
 		Firmata.processInput();
 	}
 
@@ -1426,9 +1985,10 @@ void loop()
 		// Do CRE updates ;
 
 		if (isTextToSay) updateTextToSay();
-		if (isTextToScroll) updateTextToScroll();
+		if (isTextToScroll) updateTextToScroll(false);
 		if (isArmsSwing) updateArmsSwing();
 		if (isHeadSwing) updateHeadSwing();
+		if (isMelodyToPlay) updateMelodyToPlay();
 	}
 	
 #ifdef FIRMATA_SERIAL_FEATURE
