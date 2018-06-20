@@ -97,8 +97,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'змінити статус цифрового роз\u2019єму %digitalPin на %b',
 
-    'set servo %servoPin to %servoValue':
-        'змінити статус роз\u2019єму серво %servoPin нa %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'змінити статус роз\u2019єму серво %digitalPin нa %servoValue',
 
     'set pin %pwmPin to value %n':
         'змінити статус роз\u2019єму PWM %pwmPin на %n',

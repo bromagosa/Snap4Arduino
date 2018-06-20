@@ -104,8 +104,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'nastav digitální pin %digitalPin na %b',
 
-    'set servo %servoPin to %servoValue':
-        'nastav servo %servoPin na %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'nastav servo %digitalPin na %servoValue',
 
     'set pin %pwmPin to value %n':
         'nastav PWM pin %pwmPin na %n',

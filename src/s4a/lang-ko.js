@@ -111,8 +111,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         '디지털 핀 %digitalPin 을 %b 로 설정하기',
 
-    'set servo %servoPin to %servoValue':
-        '서보 핀 %servoPin 을 %servoValue 로 설정하기',
+    'set servo %digitalPin to %servoValue':
+        '서보 핀 %digitalPin 을 %servoValue 로 설정하기',
 
     'set pin %pwmPin to value %n':
         'PWM 핀 %pwmPin 을 %n 으로 설정하기',

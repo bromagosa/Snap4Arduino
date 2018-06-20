@@ -119,8 +119,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         's\u00e4tt digital pin %digitalPin till %b',
 
-    'set servo %servoPin to %servoValue':
-        's\u00e4tt servo %servoPin till %servoValue',
+    'set servo %digitalPin to %servoValue':
+        's\u00e4tt servo %digitalPin till %servoValue',
 
     'set pin %pwmPin to value %n':
         's\u00e4tt pin %pwmPin till v\u00e4rde %n',
