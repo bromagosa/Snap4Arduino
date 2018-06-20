@@ -108,8 +108,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         '数字脚 %digitalPin 设置成 %b',
 
-    'set servo %servoPin to %servoValue':
-        '%servoPin 脚的舵机设置成 %servoValue',
+    'set servo %digitalPin to %servoValue':
+        '%digitalPin 脚的舵机设置成 %servoValue',
 
     'set pin %pwmPin to value %n':
         '%pwmPin 脚的值设置成 %n',

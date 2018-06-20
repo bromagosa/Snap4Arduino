@@ -109,8 +109,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'määra digitaalviigule %digitalPin väärtus %b',
 
-    'set servo %servoPin to %servoValue':
-        'määra servoviigule %servoPin väärtus %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'määra servoviigule %digitalPin väärtus %servoValue',
 
     'set pin %pwmPin to value %n':
         'määra viigule %pwmPin väärtus %n',
