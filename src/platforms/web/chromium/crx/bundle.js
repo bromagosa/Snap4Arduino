@@ -89,12 +89,38 @@ Dispatcher.prototype.getAnalogPinValue = function (boardId, aPin) {
 };
 
 Dispatcher.prototype.getArduinoBoardParam = function (boardId, name) {
-    var board = Boards[boardId],
-        boardNameTemp = board[name];
+    var board = Boards[boardId];
+        currentBoardName = board[name];
+    if (currentBoardName !== null) {
         board[name] = null;
-    return boardNameTemp;
+    }
+    return currentBoardName;
 };
 
+Dispatcher.prototype.checkArduinoBoardParam = function (boardId, name) {
+    var board = Boards[boardId];
+    return board[name];
+};
+
+Dispatcher.prototype.i2cConfig = function (boardId) {
+    var board = Boards[boardId];
+    board.i2cConfig();
+};
+
+Dispatcher.prototype.i2cWrite = function (boardId, address, reg, bytes) {
+    var board = Boards[boardId];
+    board.i2cWrite(address, reg, bytes);
+};
+
+Dispatcher.prototype.i2cReadOnce = function (boardId, address, reg, callback) {
+    var board = Boards[boardId];
+    board.i2cReadOnce(
+        Number(address),
+        Number(reg),
+        function (response) {
+            board['i2cResponse-' + Number(address)] = response;
+        });
+};
 
 },{"firmata":16}],2:[function(require,module,exports){
 'use strict'
