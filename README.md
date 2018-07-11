@@ -139,3 +139,6 @@ This repository contains only source files. The old, huge (2Gb+!) repository tha
 ## History
 
 Snap4Arduino was started in 2013 as a side project in the [Edutec](http://edutec.citilab.eu) research group from [Citilab](http://citilab.eu) (Cornellà, Barcelona), but was soon turned into a full fledged project when it began to gain user base and became clear that it had potential. Since then, it has been used in primary schools, high schools, universities, code clubs, artistic installations and individuals from all around the world. It has received localization contributions for 13 different languages, and projects such as Phiro (India), SmartBlock (Turkey), First Makers (Chile) or ROKIT Brick (South Korea) have based their software solutions in modified versions of Snap4Arduino. From June 2016 until August 2017 it was supported and developed at Arduino.org. Nowadays it is being independently developed by Bernat Romagosa, Joan Guillén and several contributors.
+
+## Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before sending us any pull requests. Thank you!
