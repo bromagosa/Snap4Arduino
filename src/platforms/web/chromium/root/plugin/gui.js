@@ -54,10 +54,26 @@ IDE_Morph.prototype.version = function() {
 IDE_Morph.prototype.openIn = function (world) {
     var hash, myself = this, urlLanguage = null;
 
-    SnapCloud.initSession(
+    this.cloud.initSession(
         function (username) {
             if (username) {
                 myself.source = 'cloud';
+                if (!myself.cloud.verified) {
+                        new DialogBoxMorph().inform(
+                            'Unverified account',
+                            'Your account is still unverified.\n' +
+                            'Please use the verification link that\n' +
+                            'was sent to your email address when you\n' +
+                            'signed up.\n\n' +
+                            'If you cannot find that email, please\n' +
+                            'check your spam folder. If you still\n' +
+                            'cannot find it, please use the "Resend\n' +
+                            'Verification Email..." option in the cloud\n' +
+                            'menu.',
+                            world,
+                            myself.cloudIcon(null, new Color(0, 180, 0))
+                        );
+                }
             }
         }
     );
@@ -67,7 +83,7 @@ IDE_Morph.prototype.openIn = function (world) {
     world.userMenu = this.userMenu;
 
     // override SnapCloud's user message with Morphic
-    SnapCloud.message = function (string) {
+    this.cloud.message = function (string) {
         var m = new MenuMorph(null, string),
             intervalHandle;
         m.popUpCenteredInWorld(world);
@@ -126,6 +142,9 @@ IDE_Morph.prototype.openIn = function (world) {
         if (dict.noExitWarning) {
             window.onbeforeunload = nop;
         }
+        if (dict.lang) {
+            myself.setLanguage(dict.lang, null, true); // don't persist
+        }
     }
 
     // dynamic notifications from non-source text files
@@ -157,6 +176,13 @@ IDE_Morph.prototype.openIn = function (world) {
                 )) {
                 this.droppedText(hash);
             } else {
+                idx = hash.indexOf("&");
+                if (idx > 0) {
+                    dict = myself.cloud.parseDict(hash.substr(idx));
+                    dict.editMode = true;
+                    hash = hash.slice(0, idx);
+                    applyFlags(dict);
+                }
                 this.droppedText(getURL(hash));
             }
         } else if (location.hash.substr(0, 5) === '#run:') {
@@ -174,7 +200,7 @@ IDE_Morph.prototype.openIn = function (world) {
             } else {
                 this.rawOpenProjectString(getURL(hash));
             }
-            applyFlags(SnapCloud.parseDict(location.hash.substr(5)));
+            applyFlags(myself.cloud.parseDict(location.hash.substr(5)));
         } else if (location.hash.substr(0, 9) === '#present:') {
             this.shield = new Morph();
             this.shield.color = this.color;
@@ -183,10 +209,10 @@ IDE_Morph.prototype.openIn = function (world) {
             myself.showMessage('Fetching project\nfrom the cloud...');
 
             // make sure to lowercase the username
-            dict = SnapCloud.parseDict(location.hash.substr(9));
+            dict = myself.cloud.parseDict(location.hash.substr(9));
             dict.Username = dict.Username.toLowerCase();
 
-            SnapCloud.getPublicProject(
+            myself.cloud.getPublicProject(
                 dict.ProjectName,
                 dict.Username,
                 function (projectData) {
@@ -224,9 +250,9 @@ IDE_Morph.prototype.openIn = function (world) {
             myself.showMessage('Fetching project\nfrom the cloud...');
 
             // make sure to lowercase the username
-            dict = SnapCloud.parseDict(location.hash.substr(7));
+            dict = myself.cloud.parseDict(location.hash.substr(7));
 
-            SnapCloud.getPublicProject(
+            myself.cloud.getPublicProject(
                 dict.ProjectName,
                 dict.Username,
                 function (projectData) {
@@ -260,9 +286,10 @@ IDE_Morph.prototype.openIn = function (world) {
             myself.showMessage('Fetching project\nfrom the cloud...');
 
             // make sure to lowercase the username
-            dict = SnapCloud.parseDict(location.hash.substr(4));
+            dict = myself.cloud.parseDict(location.hash.substr(4));
+            dict.Username = dict.Username.toLowerCase();
 
-            SnapCloud.getPublicProject(
+            myself.cloud.getPublicProject(
                 dict.ProjectName,
                 dict.Username,
                 function (projectData) {
@@ -276,7 +303,7 @@ IDE_Morph.prototype.openIn = function (world) {
             );
         } else if (location.hash.substr(0, 6) === '#lang:') {
             urlLanguage = location.hash.substr(6);
-            this.setLanguage(urlLanguage);
+            this.setLanguage(urlLanguage, null, true); // don't persist
             this.loadNewProject = true;
         } else if (location.hash.substr(0, 7) === '#signup') {
             this.createCloudAccount();
@@ -284,7 +311,6 @@ IDE_Morph.prototype.openIn = function (world) {
             this.startSnapJr();
         }
     this.loadNewProject = false;
-
     }
 
     if (this.userLanguage) {
