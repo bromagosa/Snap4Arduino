@@ -24,7 +24,7 @@ Last updated August 17th, 2017
 
 Creative Science Foundation Creative Robotix Platform Modifications.
 
-Last updated June 18th, 2018 
+Last updated September 9th, 2018
 
 Compile Notes:
 
@@ -32,7 +32,7 @@ Additional libraies required for compile
 
 http://playground.arduino.cc/Code/NewPing
 
-New Ping conflicts with the Tone functions, edit the NewPing.h file 
+New Ping conflicts with the Tone functions, edit the NewPing.h file
 and set the TIMMER_ENABLED setting to 'false'.  The header file can
 be found under the 'Arduino/libraries/NewPing' folder.
 
@@ -42,7 +42,7 @@ https://github.com/wayoda/LedControl
 
 
 // Edit this to rename your robot, you may also rename your robot via Firmata 
-   
+
 #define MY_ROBOTS_NAME		"Codee"
 
 
@@ -83,19 +83,29 @@ https://github.com/wayoda/LedControl
 #define CRE_SWING_ARMS				0x0B
 #define CRE_LOOK_AROUND				0x0C
 #define CRE_HCO6_CMD				0x0D
+#define CRE_VELOCITY				0x0E
 
 // CRE configuration
-#define CRE_DEFAULT_CONFIGURATION_INPUTS 0x000400 // each bit: 1 = pin in INPUT, 0 = anything else
+#define CRE_DEFAULT_CONFIGURATION_INPUTS 0x000C00 // each bit: 1 = pin in INPUT, 0 = anything else, configures pins 10 and 12 as digital inputs.
 
 #define IS_PIN_DIGITAL_INPUT(p)        ((CRE_DEFAULT_CONFIGURATION_INPUTS >> p) & 0x01 )
+
+// Demo
+#define PIN_DEMO				12
+
+// Wheels, 
+
+#define PIN_LEFT_WHEEL_SERVO	2
+#define PIN_RIGHT_WHEEL_SERVO	3
+
+#define VELOCITY_LEFT			0
+#define VELOCITY_RIGHT			1
 
 // Arms, head and mouth pin assignments
 
 #define PIN_LEFT_ARM_SERVO		4
 #define PIN_RIGHT_ARM_SERVO		5
 #define PIN_HEAD_SERVO			6
-#define PIN_MOUTH_RED			14
-#define PIN_MOUTH_GREEN			15
 
 // Behaviour limits for arms and head
 
@@ -121,14 +131,15 @@ https://github.com/wayoda/LedControl
 
 #define SPEAKER					13
 
-#define TEXT_TO_SAY_BUFFER_LEN	30
+#define TEXT_TO_SAY_BUFFER_LEN	40
 
-#define MELODY_TO_PLAY_BUFFER_LEN 40
+#define MELODY_TO_PLAY_BUFFER_LEN 30
 
 #define AUDIO_SAY			0
 #define AUDIO_MELODY_BLTIN	1
 #define AUDIO_MELODY_USR	2
 #define AUDIO_TONE			3
+#define AUDIO_MELODY_SPEED	4
 
 #define NOTE_RST 0
 #define NOTE_B0  31
@@ -222,7 +233,7 @@ https://github.com/wayoda/LedControl
 #define NOTE_DS8 4978
 #define NOTE_P0	 0000
 
-#define AUDIO_MELODIES_BLTIN	4
+#define AUDIO_MELODIES_BLTIN	5
 
 const static uint16_t AUDIO_MELODIES_NOTES[] PROGMEM = {
 	// Green Sleeves 
@@ -249,13 +260,13 @@ const static uint16_t AUDIO_MELODIES_NOTES[] PROGMEM = {
 	// Happy Birthday
 	25,
 	NOTE_G3, NOTE_G3,
-	NOTE_A3, NOTE_G3, NOTE_C4, 
+	NOTE_A3, NOTE_G3, NOTE_C4,
 	NOTE_B3, NOTE_G3, NOTE_G3,
 	NOTE_A3, NOTE_G3, NOTE_D4,
 	NOTE_C4, NOTE_G3, NOTE_G3,
-	NOTE_G4, NOTE_E4, NOTE_C4, 
-	NOTE_B3, NOTE_A3, NOTE_G4, NOTE_G4, 
-	NOTE_E4, NOTE_C4, NOTE_D4, 
+	NOTE_G4, NOTE_E4, NOTE_C4,
+	NOTE_B3, NOTE_A3, NOTE_G4, NOTE_G4,
+	NOTE_E4, NOTE_C4, NOTE_D4,
 	NOTE_C4,
 	// Star Wars
 	40,
@@ -267,7 +278,22 @@ const static uint16_t AUDIO_MELODIES_NOTES[] PROGMEM = {
 	NOTE_D4, NOTE_A4,
 	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
 	NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_D5, NOTE_A4,
-	NOTE_G4, NOTE_FS4, NOTE_G4, NOTE_E4
+	NOTE_G4, NOTE_FS4, NOTE_G4, NOTE_E4,
+	// Chariots of Fire
+	81,
+	NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_E4, NOTE_RST, NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_RST, NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_E4, NOTE_RST, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_C4,
+	NOTE_C4, NOTE_RST, NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_E4, NOTE_RST, NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_RST, NOTE_C4, NOTE_F4, NOTE_G4, NOTE_A4,
+	NOTE_G4, NOTE_E4, NOTE_RST, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_C4,
+	NOTE_C4, NOTE_RST, NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4,
+	NOTE_B4, NOTE_G4, NOTE_A4, NOTE_F4, NOTE_G4, NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4,
+	NOTE_B4, NOTE_RST, NOTE_C5, NOTE_B4, NOTE_A4, NOTE_G4,
+	NOTE_B4, NOTE_G4, NOTE_A4, NOTE_F4, NOTE_G4, NOTE_E4, NOTE_F4, NOTE_E4, NOTE_C4,
+	NOTE_C4
 };
 
 const uint8_t AUDIO_MELODIES_NOTES_LEN = sizeof(AUDIO_MELODIES_NOTES) / sizeof(uint16_t);
@@ -286,36 +312,51 @@ const static uint8_t AUDIO_MELODIES_DURATIONS[] PROGMEM = {
 	1,
 	// Mary Had a Little Lamb
 	26,
-	4, 4, 4, 4,    
-	4, 4, 2,    
-	4, 4, 2,   
+	4, 4, 4, 4,
 	4, 4, 2,
-	4, 4, 4, 4,    
-	4, 4, 4, 4,        
-	4, 4, 4, 4,       
+	4, 4, 2,
+	4, 4, 2,
+	4, 4, 4, 4,
+	4, 4, 4, 4,
+	4, 4, 4, 4,
 	1,
 	// Happy Birthday
 	25,
-	8, 8, 
-	4, 4, 4, 
-	2, 8, 8, 
-	4, 4, 4, 
-	2, 8, 8, 
-	4, 4, 4, 
-	4, 4, 8, 8, 
-	4, 4, 4, 
+	8, 8,
+	4, 4, 4,
+	2, 8, 8,
+	4, 4, 4,
+	2, 8, 8,
+	4, 4, 4,
+	4, 4, 8, 8,
+	4, 4, 4,
 	2,
 	// Star Wars
-	40, 
-	12, 12, 12, 
+	40,
+	12, 12, 12,
 	2, 2, 8,
-	12, 12, 12, 2, 4, 
-	12, 12, 12, 2, 4, 
-	12, 12, 12, 2, 8, 12, 12, 12, 
-	2, 2, 
 	12, 12, 12, 2, 4,
-	12, 12, 12, 2, 4, 
-	12, 12, 12, 2
+	12, 12, 12, 2, 4,
+	12, 12, 12, 2, 8, 12, 12, 12,
+	2, 2,
+	12, 12, 12, 2, 4,
+	12, 12, 12, 2, 4,
+	12, 12, 12, 2,
+	// Chariots of fire
+	81,
+	8, 12, 12, 12,
+	4, 4, 8, 8, 12, 12, 12,
+	2, 8, 8, 12, 12, 12,
+	4, 4, 8, 8, 12, 12, 12,
+	2, 8, 8, 12, 12, 12,
+	4, 4, 8, 8, 12, 12, 12,
+	2, 8, 8, 12, 12, 12,
+	4, 4, 8, 8, 12, 12, 12,
+	2, 8, 8, 12, 12, 12,
+	4, 16, 4, 16, 4, 16, 12, 12, 12,
+	2, 8, 8, 12, 12, 12,
+	4, 16, 4, 16, 4, 16, 12, 12, 12,
+	2
 };
 
 const uint8_t AUDIO_MELODIES_DURATIONS_LEN = sizeof(AUDIO_MELODIES_DURATIONS) / sizeof(uint8_t);
@@ -329,7 +370,7 @@ const static uint16_t NOTES[] PROGMEM = { // NOTE_P0 included to force a nice ha
 	NOTE_A6, NOTE_AS1, NOTE_B6, NOTE_P0, NOTE_C6, NOTE_CS6, NOTE_D6, NOTE_DS6, NOTE_E6, NOTE_P0, NOTE_F6, NOTE_FS6, NOTE_G6, NOTE_GS6,	// Scale C6 
 	NOTE_A7, NOTE_AS1, NOTE_B7, NOTE_P0, NOTE_C7, NOTE_CS7, NOTE_D7, NOTE_DS7, NOTE_E7, NOTE_P0, NOTE_F7, NOTE_FS7, NOTE_G7, NOTE_GS7,	// Scale C7 
 	NOTE_P0, NOTE_P0, NOTE_P0, NOTE_P0, NOTE_C8, NOTE_CS8, NOTE_D1, NOTE_DS8															// Scale C8 
-	};
+};
 
 const uint8_t NOTES_LEN = sizeof(NOTES) / sizeof(uint16_t);
 
@@ -509,7 +550,7 @@ const int LED_DISPLAY_CHARACTERS_LEN = sizeof(LED_DISPLAY_CHARACTERS) / sizeof(u
 #define LED_DISPLAY_TYPE_ASCII			2
 
 
-#define TEXT_TO_SCROLL_BUFFER_LEN		30
+#define TEXT_TO_SCROLL_BUFFER_LEN		40
 
 /*==============================================================================
 * GLOBAL VARIABLES
@@ -522,7 +563,7 @@ SerialFirmata serialFeature;
 /* analog inputs */
 int analogInputsToReport = 0; // bitwise array to store pin reporting
 
-									/* digital input ports */
+							  /* digital input ports */
 byte reportPINs[TOTAL_PORTS];       // 1 = report this port, 0 = silence
 byte previousPINs[TOTAL_PORTS];     // previous 8 bits sent
 
@@ -590,11 +631,13 @@ LedControl ledDisplay = LedControl(MAX72XX_DIN, MAX72XX_CLK, MAX72XX_CS, 0);
 
 NewPing sonar(HCSR04_TRIGGER, HCSR04_ECHO, HCSR04_MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
-boolean isArmsSwing = false;		
-boolean isHeadSwing = false;			
-boolean isTextToScroll = false;	 
+boolean isArmsSwing = false;
+boolean isHeadSwing = false;
+boolean isTextToScroll = false;
 boolean isTextToSay = false;
 boolean isMelodyToPlay = false;
+
+boolean isUserMelody = false;
 
 uint8_t ledDisplayImage = 0, ledDisplayDigits = 0, ledDisplayASCII = 0;
 
@@ -605,7 +648,8 @@ uint8_t armSwingSpeed = 0, headSwingSpeed = 0;
 uint8_t textToScrollLen = 0;
 byte textToScrollBuffer[TEXT_TO_SCROLL_BUFFER_LEN];
 
-uint8_t	melodyToPlayLen = 0;
+float melodyToPlaySpeed = 1.0;
+uint8_t	melodyToPlayLen = 0, melodyRecordStart = 0;
 uint16_t melodyToPlayNoteBuffer[MELODY_TO_PLAY_BUFFER_LEN];
 uint8_t melodyToPlayDurationBuffer[MELODY_TO_PLAY_BUFFER_LEN];
 
@@ -623,7 +667,6 @@ uint8_t hc06DataBuffer[HC06_DATA_BUFFER_LEN];
 *============================================================================*/
 
 void initCreativeRobotixPlatform() {
-	uint64_t character;
 
 	// Initialise the MAX72XX display 
 
@@ -631,7 +674,7 @@ void initCreativeRobotixPlatform() {
 	ledDisplay.setIntensity(0, 7);		// Set the brightness to (7), maximum value (15)
 	ledDisplay.clearDisplay(0);			// and clear the display
 
-	// LED Display to neutral
+										// LED Display to neutral
 
 	setLEDDisplayImage(LED_DISPLAY_NEUTRAL);
 
@@ -641,6 +684,106 @@ void initCreativeRobotixPlatform() {
 	setLEDDisplayImage(LED_DISPLAY_SMILE);
 }
 
+boolean demoCreativeRobotixPlatform() {
+
+	uint8_t counter = 0;
+	uint8_t melody = 4;
+
+	pinMode(PIN_DEMO, INPUT_PULLUP);  // Why do we need to do this? Should already be set by setup()
+
+	if (digitalRead(PIN_DEMO) == HIGH) {
+		return (false);
+	}
+
+	// Ensure ultrasound pins have the correct sense
+	setPinModeCallback(HCSR04_TRIGGER, OUTPUT);
+	setPinModeCallback(HCSR04_ECHO, INPUT);
+
+	armSwingSpeed = 2;
+	isArmsSwing = true;
+	headSwingSpeed = 2;
+	isHeadSwing = true;
+
+	setMelodytoPlay(melody);
+	isUserMelody = false;
+	isMelodyToPlay = true;
+
+	// Move forwards
+	setVelocityLeftWheel(100);
+	setVelocityRightWheel(80);
+
+	delay(2000);
+
+	// Stop
+
+	setVelocityLeftWheel(90);
+	setVelocityRightWheel(90);
+
+	delay(250);
+
+	// Move backwards
+	setVelocityLeftWheel(80);
+	setVelocityRightWheel(100);
+
+	delay(2000);
+
+	// Stop
+	setVelocityLeftWheel(90);
+	setVelocityRightWheel(90);
+
+	// Event Loop 
+	while (true) {
+		if (isTextToSay) updateTextToSay();
+		if (isTextToScroll) updateTextToScroll(false);
+		if (isArmsSwing) updateArmsSwing();
+		if (isHeadSwing) updateHeadSwing();
+		if (isMelodyToPlay) {
+			updateMelodyToPlay(isUserMelody);
+		}
+		else {
+			// Stop Head
+			isHeadSwing = false;
+
+			// Step Arms
+			isArmsSwing = false;
+
+			// Read ultrasound
+
+			uint8_t range = sonar.ping_cm(); // Take reading in cm
+
+			if (range) {
+				setLEDDisplayDigits(range);
+				setLeftArm(90 - ARM_SWING_MAX_DEGREES);
+				setRightArm(90 + ARM_SWING_MAX_DEGREES);
+
+				if (range == 10) {
+					counter++;
+
+					if (counter == 128) {
+						counter = 0;
+
+						setMelodytoPlay((++melody) % AUDIO_MELODIES_BLTIN);
+						isUserMelody = false;
+						isMelodyToPlay = true;
+						isArmsSwing = true;
+						isHeadSwing = true;
+						setLEDDisplayImage(LED_DISPLAY_SMILE);
+					}
+				}
+				else {
+					counter = 0;
+					char out = (126 - HCSR04_MAX_DISTANCE) + range; // TODO: Bug, when set to 128. Range returns 61? sayDirect casues freeze.
+					sayDirect((String)out);
+				}
+			}
+			else {
+				setLEDDisplayImage(LED_DISPLAY_SMILE);
+				setLeftArm(90);
+				setRightArm(90);
+			}
+		}
+	}
+}
 
 void restoreLEDDisplay(void) {
 	switch (ledDisplayType) {
@@ -670,9 +813,9 @@ void setLEDDisplayImage(uint8_t image) {
 
 void setLEDDisplayDigits(uint8_t number) {
 	uint64_t digit_tens, digit_units;
-	digit_tens = pgm_read_dword(&(LED_DISPLAY_DIGITS[int(number/10)][0])); // High
+	digit_tens = pgm_read_dword(&(LED_DISPLAY_DIGITS[int(number / 10)][0])); // High
 	digit_tens = (digit_tens << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[int(number / 10)][1])); // Low
-	digit_units = pgm_read_dword(&(LED_DISPLAY_DIGITS[number - (int(number/10)*10)][0])); // High
+	digit_units = pgm_read_dword(&(LED_DISPLAY_DIGITS[number - (int(number / 10) * 10)][0])); // High
 	digit_units = (digit_units << 32) | pgm_read_dword(&(LED_DISPLAY_DIGITS[number - (int(number / 10) * 10)][1])); // Low
 	setLEDisplay((digit_tens >> 4) | digit_units);
 	ledDisplayDigits = number;
@@ -706,7 +849,7 @@ void updateTextToSay() {
 	static unsigned long toneDuration;		// store current tone duration
 
 	l_currentMillis = millis();
-	
+
 	if (character >= textToSayLen) { // All done, reset
 		isTextToSay = false;
 		character = 0;
@@ -729,9 +872,22 @@ void updateTextToSay() {
 	}
 }
 
-void updateMelodyToPlay() {
+void setMelodytoPlay(uint8_t melody) {
+	melodyRecordStart = 0; // Reset the record start
+
+	for (uint8_t i = 0; i < melody; i++) {  // Work out melodies location
+		melodyRecordStart += pgm_read_word(&(AUDIO_MELODIES_NOTES[melodyRecordStart])) + 1; // melody record number_of_notes (+1);
+	}
+
+	melodyToPlayLen = pgm_read_word(&(AUDIO_MELODIES_NOTES[melodyRecordStart]));
+
+	melodyRecordStart = melodyRecordStart + 1; // offset the melody record start for first note in record
+}
+
+void updateMelodyToPlay(boolean _isUserMelody) {
 	/* timer variables */
 	static uint8_t note = 0;
+	static uint16_t noteFrequency;
 	static boolean noteActive = false, notePause = false;
 	static unsigned long l_currentMillis;	// store the current value from millis()
 	static unsigned long l_previousMillis;	// for comparison with currentMillis
@@ -745,10 +901,17 @@ void updateMelodyToPlay() {
 		note = 0;
 		melodyToPlayLen = 0;
 	}
-	else { // Still have a character to say, have we finished the tone?
+	else { // Still have a note to play, have we finished the note?
 		if (!noteActive) { // If no active note, play the next one
-			noteDuration = (1000 / melodyToPlayDurationBuffer[note]);
-			tone(SPEAKER, melodyToPlayNoteBuffer[note], noteDuration); // convert character to suitable frequency, currently arbitary, update?
+			if (_isUserMelody) {
+				noteDuration = ((1000.0 / melodyToPlaySpeed) / (float)melodyToPlayDurationBuffer[note]);
+				noteFrequency = melodyToPlayNoteBuffer[note];
+			}
+			else {
+				noteDuration = ((1000.0 / melodyToPlaySpeed) / (float)pgm_read_byte(&(AUDIO_MELODIES_DURATIONS[melodyRecordStart + note])));
+				noteFrequency = pgm_read_word(&(AUDIO_MELODIES_NOTES[melodyRecordStart + note]));
+			}
+			tone(SPEAKER, noteFrequency, noteDuration);
 			noteActive = true;
 			l_previousMillis = l_currentMillis;
 		}
@@ -783,7 +946,7 @@ void updateTextToScroll(boolean reset) {
 	if (reset) {  // Reset the state
 		character = 0;
 		character_previous = 1, character_scroll = 0;
-		current_character = 0, screen = 0, column_update = 0; 
+		current_character = 0, screen = 0, column_update = 0;
 	}
 
 	if ((l_currentMillis - l_previousMillis) > scrollInterval) {
@@ -805,7 +968,7 @@ void updateTextToScroll(boolean reset) {
 		column_update = (current_character & (0x0101010101010101 << character_scroll)) << ((MAX72XX_WIDTH - 1) - character_scroll); // character_scroll selects next column to shift in on the right
 		screen = screen | column_update; // update the screen with the column 
 
-		// update screen
+										 // update screen
 
 		setLEDisplay(screen);
 
@@ -835,17 +998,14 @@ void updateArmsSwing() {
 
 	l_currentMillis = millis();
 
-	if (!servos[servoPinMap[PIN_RIGHT_ARM_SERVO]].attached()) setPinModeCallback(PIN_RIGHT_ARM_SERVO, PIN_MODE_SERVO);
-	if (!servos[servoPinMap[PIN_LEFT_ARM_SERVO]].attached()) setPinModeCallback(PIN_LEFT_ARM_SERVO, PIN_MODE_SERVO);
-
 	if ((l_currentMillis - l_previousMillis) > armSwingInterval) {
 
-		if (angle < (90 - ARM_SWING_MAX_DEGREES) || angle > (90 + ARM_SWING_MAX_DEGREES)) direction = direction * -1; // change direction
+		if (angle < (90 - ARM_SWING_MAX_DEGREES) || angle >(90 + ARM_SWING_MAX_DEGREES)) direction = direction * -1; // change direction
 
 		angle = angle + (armSwingSpeed * direction);
 
-		analogWriteCallback(PIN_RIGHT_ARM_SERVO, angle);
-		analogWriteCallback(PIN_LEFT_ARM_SERVO, angle);
+		setLeftArm(angle);
+		setRightArm(angle);
 
 		// update variables
 		l_previousMillis = l_currentMillis;
@@ -857,6 +1017,39 @@ void stopArmsSwing() {
 	setPinModeCallback(PIN_LEFT_ARM_SERVO, PIN_MODE_OUTPUT);
 }
 
+void setLeftArm(uint8_t angle) {
+	// Enable servos?
+	if (servoPinMap[PIN_LEFT_ARM_SERVO] == 255 || !servos[servoPinMap[PIN_LEFT_ARM_SERVO]].attached()) setPinModeCallback(PIN_LEFT_ARM_SERVO, PIN_MODE_SERVO);
+
+	if (angle < (90 - ARM_SWING_MAX_DEGREES)) angle = 90 - ARM_SWING_MAX_DEGREES;
+	if (angle >(90 + ARM_SWING_MAX_DEGREES)) angle = 90 + ARM_SWING_MAX_DEGREES;
+
+	analogWriteCallback(PIN_LEFT_ARM_SERVO, angle);
+}
+
+void setRightArm(uint8_t angle) {
+	// Enable servos?
+	if (servoPinMap[PIN_RIGHT_ARM_SERVO] == 255 || !servos[servoPinMap[PIN_RIGHT_ARM_SERVO]].attached()) setPinModeCallback(PIN_RIGHT_ARM_SERVO, PIN_MODE_SERVO);
+
+	if (angle < (90 - ARM_SWING_MAX_DEGREES)) angle = 90 - ARM_SWING_MAX_DEGREES;
+	if (angle >(90 + ARM_SWING_MAX_DEGREES)) angle = 90 + ARM_SWING_MAX_DEGREES;
+
+	analogWriteCallback(PIN_RIGHT_ARM_SERVO, angle);
+}
+
+
+void setVelocityLeftWheel(uint8_t velocity) {
+	if (servoPinMap[PIN_LEFT_WHEEL_SERVO] == 255 || !servos[servoPinMap[PIN_LEFT_WHEEL_SERVO]].attached()) setPinModeCallback(PIN_LEFT_WHEEL_SERVO, PIN_MODE_SERVO);
+
+	analogWriteCallback(PIN_LEFT_WHEEL_SERVO, velocity);
+}
+
+void setVelocityRightWheel(uint8_t velocity) {
+	if (servoPinMap[PIN_RIGHT_WHEEL_SERVO] == 255 || !servos[servoPinMap[PIN_RIGHT_WHEEL_SERVO]].attached()) setPinModeCallback(PIN_RIGHT_WHEEL_SERVO, PIN_MODE_SERVO);
+
+	analogWriteCallback(PIN_RIGHT_WHEEL_SERVO, velocity);
+}
+
 void updateHeadSwing() {
 	static uint8_t angle = 90;
 	static int8_t direction = 1;
@@ -865,15 +1058,13 @@ void updateHeadSwing() {
 
 	l_currentMillis = millis();
 
-	if (!servos[servoPinMap[PIN_HEAD_SERVO]].attached()) setPinModeCallback(PIN_HEAD_SERVO, PIN_MODE_SERVO);
-	
 	if ((l_currentMillis - l_previousMillis) > headSwingInterval) {
 
 		angle = angle + (headSwingSpeed * direction);
 
-		if (angle < (90 - HEAD_SWING_MAX_DEGREES) || angle > (90 + HEAD_SWING_MAX_DEGREES)) direction = direction * -1; // change direction
+		if (angle < (90 - HEAD_SWING_MAX_DEGREES) || angle >(90 + HEAD_SWING_MAX_DEGREES)) direction = direction * -1; // change direction
 
-		analogWriteCallback(PIN_HEAD_SERVO, angle);
+		setHead(angle);
 
 		// update variables
 		l_previousMillis = l_currentMillis;
@@ -884,13 +1075,25 @@ void stopHeadSwing() {
 	setPinModeCallback(PIN_HEAD_SERVO, PIN_MODE_OUTPUT);
 }
 
-void sayDirect(String text) { 
+void setHead(uint8_t angle) {
+	// Enable servos?
+
+	if (servoPinMap[PIN_HEAD_SERVO] == 255 || !servos[servoPinMap[PIN_HEAD_SERVO]].attached()) setPinModeCallback(PIN_HEAD_SERVO, PIN_MODE_SERVO);
+
+	if (angle < (90 - HEAD_SWING_MAX_DEGREES)) angle = 90 - HEAD_SWING_MAX_DEGREES;
+	if (angle >(90 + HEAD_SWING_MAX_DEGREES)) angle = 90 + HEAD_SWING_MAX_DEGREES;
+
+	analogWriteCallback(PIN_HEAD_SERVO, angle);
+}
+
+void sayDirect(String text) {
 	// Say text string, uses delay, private use only
-	uint8_t state = 5;
 	for (uint8_t i = 0; i < text.length(); i++) {
-		tone(SPEAKER, (128 - text[i]) * 100, text[i] / 2);
-		delay(text[i] / 2);
-		noTone(SPEAKER);
+		if (text[i] < 128) {
+			tone(SPEAKER, (128 - text[i]) * 100, text[i] / 2); // Arbitary frequency mapping, for printable characters only.
+			delay(text[i] / 2);
+			noTone(SPEAKER);
+		}
 	}
 }
 
@@ -903,7 +1106,7 @@ boolean setHC06S4A(void) {
 	if (analogRead(PIN_SETUP_HC06) > 50) { // Nothing to do 
 		return (false);
 	}
-	
+
 	// Discover HC-06 current baudrate
 
 	uint8_t baudrates = sizeof(baudrate) / sizeof(baudrate[0]);
@@ -948,7 +1151,7 @@ boolean setHC06S4A(void) {
 			btatcrlf = false;
 			break; // Yes, got it.
 		}
-		
+
 		Serial.end();
 	}
 
@@ -1592,9 +1795,9 @@ void sysexCallback(byte command, byte argc, byte *argv)
 #endif
 		break;
 
-	/////////////////////////////////////////////////////
-	//////// CRE Cases
-	////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////  //TODO: Tidy up cases...
+		//////// CRE Cases
+		////////////////////////////////////////////////////
 	case CRE_ULTRASOUND:
 	{
 		// Ensure ultrasound pins have the correct sense
@@ -1602,7 +1805,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 		setPinModeCallback(HCSR04_ECHO, INPUT);
 
 		uint8_t range = sonar.ping_cm(); // Take reading in cm
-		// Write result
+										 // Write result
 		Firmata.write(START_SYSEX);
 		Firmata.write(STRING_DATA);
 		Serial.println((byte)range);  // Can we use Firmata.write(ULTRASOUND); Firmata.write(range);?
@@ -1624,47 +1827,47 @@ void sysexCallback(byte command, byte argc, byte *argv)
 		break;
 		case AUDIO_MELODY_BLTIN:
 		{
-			
+
+			// Locate the melody in the melody table 
+
 			uint8_t melody = argv[1] % AUDIO_MELODIES_BLTIN;
 
-			uint8_t melody_record_start = 0;
+			setMelodytoPlay(melody);
 
-			for (uint8_t i = 0; i < melody; i++) {  // Work out melodies location
-				melody_record_start += pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start])) + 1; // melody record number_of_notes (+1);
-			}
-
-			melodyToPlayLen = pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start])); 
-
-			for (uint8_t i = 0; i < melodyToPlayLen; i++) {
-				melodyToPlayNoteBuffer[i] = pgm_read_word(&(AUDIO_MELODIES_NOTES[melody_record_start + i + 1])); // offset the melody record start for first note in record
-				melodyToPlayDurationBuffer[i] = pgm_read_byte(&(AUDIO_MELODIES_DURATIONS[melody_record_start + i + 1]));
-			}
-
+			isUserMelody = false;
 			isMelodyToPlay = true;
 		}
 		break;
 		case AUDIO_MELODY_USR:
-		{	
+		{
 			melodyToPlayLen = 0;
-			for (uint8_t i = 1; i < argc  && (melodyToPlayLen < MELODY_TO_PLAY_BUFFER_LEN); i += 3) { // each note have three bytes <freqency high byte, frequency low byte, duration> Silently drop notes > MAX_BUFFER
+			for (uint8_t i = 1; i < argc && (melodyToPlayLen < MELODY_TO_PLAY_BUFFER_LEN); i += 3) { // each note has three bytes <freqency high byte, frequency low byte, duration> Silently drop notes > MAX_BUFFER
 
-				melodyToPlayNoteBuffer[melodyToPlayLen] = (argv[i] << 8) | argv[i + 1];
+				melodyToPlayNoteBuffer[melodyToPlayLen] = (argv[i] << 8) | argv[i + 1];  // Recombine HIGH / LOW bytes 
 				melodyToPlayDurationBuffer[melodyToPlayLen] = argv[i + 2];
 				melodyToPlayLen++;
 			}
+
+			isUserMelody = true;
 			isMelodyToPlay = true;
 		}
 		break;
 		case AUDIO_TONE:
 		{
 			melodyToPlayNoteBuffer[0] = (argv[1] << 8) | argv[2];
-			melodyToPlayDurationBuffer[0] = 1000 / ((argv[3] << 8) | argv[4]);
+			melodyToPlayDurationBuffer[0] = (1000.0 / (float)((argv[3] << 8) | argv[4])) / melodyToPlaySpeed; // Rescale with melodyToPlaySpeed
 			melodyToPlayLen = 1;
+			isUserMelody = true;
 			isMelodyToPlay = true;
 		}
 		break;
+		case AUDIO_MELODY_SPEED:
+		{
+			melodyToPlaySpeed = (float)((argv[1] << 8) | argv[2]) / 100.0;
 		}
-	break;
+		break;
+		}
+		break;
 	case CRE_LED_DISPLAY:
 		mode = argv[0];
 		switch (mode) {
@@ -1672,7 +1875,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 			if (argv[1] < LED_DISPLAY_IMAGES_LEN) { // Stay silent if argv value greater than display images
 				setLEDDisplayImage(argv[1]);
 			}
-		break;
+			break;
 		case LED_SET_SCROLL_TEXT:
 		{
 			if (argv[1] == true) {
@@ -1694,7 +1897,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 			if (argv[1] >= 0 && argv[1] < LED_DIGITS_LEN * 10) {
 				setLEDDisplayDigits(argv[1]);
 			}
-		break;
+			break;
 		case LED_SET_ROW_DATA:
 		{
 			if ((argc - 1) == MAX72XX_WIDTH) {
@@ -1710,13 +1913,13 @@ void sysexCallback(byte command, byte argc, byte *argv)
 			if (argv[1] < MAX72XX_WIDTH && argv[2] < MAX72XX_HEIGHT) {
 				ledDisplay.setLed(0, argv[1], argv[2], argv[3]);
 			}
-		break;
+			break;
 		case LED_SET_CLEAR:
 			isTextToScroll = false;
 			setLEDDisplayImage(LED_DISPLAY_BLANK);
-		break;
+			break;
 		}
-	break;
+		break;
 	case CRE_SWING_ARMS:
 		if (argc == 2) {
 			if (argv[1] == true) {
@@ -1730,7 +1933,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
 				stopArmsSwing();
 			}
 		}
-	break;
+		break;
 	case CRE_LOOK_AROUND:
 		if (argc == 2) {
 			if (argv[1] == true) {
@@ -1744,103 +1947,114 @@ void sysexCallback(byte command, byte argc, byte *argv)
 				stopHeadSwing();
 			}
 		}
-	break;
+		break;
 	case CRE_HCO6_CMD:
 	{
-			// Wait for S4A to disconnect from HC-06 and enter into AT mode
+		// Wait for S4A to disconnect from HC-06 and enter into AT mode
 
-			for (uint8_t i = 0; i < 4; i++) {
-				sayDirect("ok");
-				delay(1000);
+		for (uint8_t i = 0; i < 4; i++) {
+			sayDirect("ok");
+			delay(1000);
+		}
+
+		// Type HC05 firmware
+		Serial.print("AT\r\n");
+		Serial.setTimeout(1000);
+		String responsecrlf = Serial.readString();
+
+		// Type HC06 firmware
+		Serial.print("AT");
+		Serial.setTimeout(1000);
+		String response = Serial.readString();
+
+		// Were we successful?
+
+		if (responsecrlf.startsWith("OK") || response.startsWith("OK")) {
+			mode = argv[0];
+
+			switch (mode) {
+			case HC06_CMD_SETNAME:
+			{
+				// Set Name
+
+				String hc06Command = "AT+NAME";  // Build command string
+
+												 // Read data buffer
+				for (uint8_t i = 1; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+					hc06Command += (char)argv[i];
+				}
+
+				// type HC05 firmware
+				if (responsecrlf.startsWith("OK")) {
+					hc06Command += (String)"\r\n";
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
+				}
+
+				//type HC06 firmware
+				if (response.startsWith("OK")) {
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
+				}
+
+				sayDirect("ok ok ok");
 			}
-			
-			// Type HC05 firmware
-			Serial.print("AT\r\n");
-			Serial.setTimeout(1000);
-			String responsecrlf = Serial.readString();
+			break;
+			case HC06_CMD_SETPIN:
+			{
+				String hc06Command = (String)"AT+PIN"; // Build command string
 
-			// Type HC06 firmware
-			Serial.print("AT");		
-			Serial.setTimeout(1000);
-			String response = Serial.readString();
-
-			// Were we successful?
-
-			if (responsecrlf.startsWith("OK") || response.startsWith("OK")) {
-				mode = argv[0];
-				
-				switch (mode) {
-				case HC06_CMD_SETNAME:
-				{
-					// Set Name
-
-					String hc06Command = "AT+NAME";  // Build command string
-
-					// Read data buffer
-					for (uint8_t i = 1; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
-						hc06Command += (char)argv[i];
-					}
-					
-					// type HC05 firmware
-					if (responsecrlf.startsWith("OK")) {
-						hc06Command += (String)"\r\n";
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-					}
-
-					//type HC06 firmware
-					if (response.startsWith("OK")) {
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-					}
-
-					sayDirect("ok ok ok");
+													   // Read data buffer
+				uint8_t i = 0;
+				for (i = 2; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
+					hc06Command += argv[i];
 				}
-				break;
-				case HC06_CMD_SETPIN:
-				{
-					String hc06Command = (String)"AT+PIN"; // Build command string
 
-					// Read data buffer
-					uint8_t i = 0;
-					for (i = 2; (i < argc) && (i < HC06_DATA_BUFFER_LEN); i++) { // Stay silent if text is longer than buffer
-						hc06Command += argv[i];
-					}
-
-					// type HC05 firmware
-					if (responsecrlf.startsWith("OK")) {
-						hc06Command += (String)"\r\n";
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-					}
-
-
-					//type HC06 firmware
-					if (response.startsWith("OK")) {
-						Serial.print(hc06Command);
-						Serial.setTimeout(3000);
-						delay(500);
-					}
-
-					sayDirect("ok ok ok");
+				// type HC05 firmware
+				if (responsecrlf.startsWith("OK")) {
+					hc06Command += (String)"\r\n";
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
 				}
-				break;
-				default:
-					sayDirect("{}{}{}{}{}{}{}{}{}"); // Signal Error
+
+
+				//type HC06 firmware
+				if (response.startsWith("OK")) {
+					Serial.print(hc06Command);
+					Serial.setTimeout(3000);
+					delay(500);
 				}
+
+				sayDirect("ok ok ok");
 			}
-			else {
+			break;
+			default:
 				sayDirect("{}{}{}{}{}{}{}{}{}"); // Signal Error
 			}
+		}
+		else {
+			sayDirect("{}{}{}{}{}{}{}{}{}"); // Signal Error
+		}
+	}
+	break;
+	case CRE_VELOCITY:
+	{
+		if (argv[0] != 0x00) {
+			setVelocityLeftWheel(argv[0]);
+		}
+
+		if (argv[1] != 0x00) {
+			setVelocityRightWheel(argv[1]);
+		}
 	}
 	break;
 	}
@@ -1870,7 +2084,7 @@ void systemResetCallback()
 		portConfigInputs[i] = 0;  // until activated
 		previousPINs[i] = 0;
 	}
-	
+
 	for (byte i = 0; i < TOTAL_PINS; i++) {
 		// pins with analog capability default to analog input
 		// otherwise, pins default to digital output
@@ -1880,8 +2094,8 @@ void systemResetCallback()
 		}
 		else if (IS_PIN_DIGITAL(i)) {
 			if (IS_PIN_DIGITAL_INPUT(i)) {
-				// sets pin to input, configures portConfigInputs
-				setPinModeCallback(i, INPUT);
+				// sets pin to input, configures portConfigInputs, with PULL_UP enabled.
+				setPinModeCallback(i, PIN_MODE_PULLUP);
 			}
 			else {
 				// sets the output to 0, configures portConfigInputs
@@ -1899,16 +2113,16 @@ void systemResetCallback()
 
 	/* send digital inputs to set the initial state on the host computer,
 	* since once in the loop(), this firmware will only send on change */
-	
+
 	/*
 	TODO: this can never execute, since no pins default to digital input
 	but it will be needed when/if we support EEPROM stored config
 	*/
-	
-	for (byte i=0; i < TOTAL_PORTS; i++) {
-	outputPort(i, readPort(i, portConfigInputs[i]), true);
+
+	for (byte i = 0; i < TOTAL_PORTS; i++) {
+		outputPort(i, readPort(i, portConfigInputs[i]), true);
 	}
-	
+
 	isResetting = false;
 }
 
@@ -1942,6 +2156,8 @@ void setup()
 	systemResetCallback();  // reset to default config
 
 	initCreativeRobotixPlatform(); // Initialise robot
+
+	demoCreativeRobotixPlatform(); // Do we demo? 
 }
 
 /*==============================================================================
@@ -1988,10 +2204,11 @@ void loop()
 		if (isTextToScroll) updateTextToScroll(false);
 		if (isArmsSwing) updateArmsSwing();
 		if (isHeadSwing) updateHeadSwing();
-		if (isMelodyToPlay) updateMelodyToPlay();
+		if (isMelodyToPlay) updateMelodyToPlay(isUserMelody);
 	}
-	
+
 #ifdef FIRMATA_SERIAL_FEATURE
 	serialFeature.update();
 #endif
 }
+
