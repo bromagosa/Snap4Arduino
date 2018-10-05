@@ -59,7 +59,13 @@ IDE_Morph.prototype.settingsMenu = function () {
                 'toggleServer',
                 this.isServerOn ? 'uncheck to stop\nHTTP server' : 'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino'
         );
-
+        if (this.isServerOn) {
+            menu.addItem(
+                (this.isStagePublic ? '\u2611 ' : '\u2610 ') + localize('Public stage'),
+                'togglePublicStage',
+                this.isStagePublic ? 'uncheck to prevent the stage\nfrom being viewed\nfrom the HTTP server' : 'check to allow the stage\nto be viewed\nfrom the HTTP server'
+            );
+        }
         // network serial port option
         menu.addItem(
             (Arduino.prototype.networkPortsEnabled ? '\u2611 ' : '\u2610 ') + localize('Network serial ports'),
