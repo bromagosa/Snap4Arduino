@@ -11,6 +11,7 @@ IDE_Morph.prototype.init = function (globals) {
     this.httpServer.setTimeout(500);
 
     this.isServerOn = false;
+    this.isStagePublic = true;
 };
 
 IDE_Morph.prototype.toggleServer = function () {
@@ -19,6 +20,10 @@ IDE_Morph.prototype.toggleServer = function () {
     } else {
         this.startServer();
     }
+};
+
+IDE_Morph.prototype.togglePublicStage = function () {
+    this.isStagePublic = this.isStagePublic ? false : true;
 };
 
 IDE_Morph.prototype.startServer = function () {
@@ -87,21 +92,22 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
 
                     if (bcMessage.length > 0) {
 
-                        stage.lastMessage = bcMessage;
-
-                        rcvrs.forEach(function (morph) {
-                            if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
-                                morph.allHatBlocksFor(bcMessage).forEach(function (block) {
-                                    stage.threads.startProcess(
-                                        block,
-                                        morph,
-                                        stage.isThreadSafe
-                                )});
-                            }
-                        });
-
-                        response.write('broadcast ' + bcMessage);
-
+                        if (bcMessage.substr(0,1) == '+') {
+                            stage.lastMessage = bcMessage;
+                            rcvrs.forEach(function (morph) {
+                                if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
+                                    morph.allHatBlocksFor(bcMessage).forEach(function (block) {
+                                        stage.threads.startProcess(
+                                            block,
+                                            morph,
+                                            stage.isThreadSafe
+                                    )});
+                                }
+                            });
+                            response.write('broadcast ' + bcMessage);
+                        } else {
+                            response.write('Public broadcast messages must start with the character +');
+                        }
                     } else {
                         response.write('No message provided');
                     }
@@ -118,7 +124,9 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                             value = decodeURIComponent(message.slice(command[0].length+command[1].length+2)),
                             stage = myself.stage;
 
-                        if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
+                        if (varName.substr(0,1) != '+') {
+                            response.write('Only variables starting with the character + can be edited by the webserver');
+                        } else if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
                             response.write('Variable ' + varName + ' does not exist');
                         } else {
                             stage.globalVariables().setVar(varName, value, stage);
@@ -135,7 +143,9 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     stage.children.concat(stage).forEach(function (morph) {
                         if (morph instanceof SpriteMorph || morph instanceof StageMorph) {
                             morph.allMessageNames().forEach(function (message) {
-                                contents += ' "' + message + '"';
+                                if (message.substr(0,1) == '+') {
+                                    contents += ' "' + message + '"';
+                                }
                             });
                         }
                     });
@@ -149,7 +159,9 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                         stage = myself.stage;
 
                     Object.keys(stage.globalVariables().vars).forEach(function (varName) {
-                        contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value.toString();
+                        if (varName.substr(0,1) == '+' || varName.substr(0,1) == '-') {
+                            contents += ' "' + varName + '" ' + stage.globalVariables().vars[varName].value.toString();
+                        }
                     });
 
                     response.write(contents);
@@ -159,7 +171,9 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                     var stage = myself.stage,
                         varName = decodeURIComponent(command[1]);
-                    if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
+                    if (varName.substr(0,1) != '+' && varName.substr(0,1) != '-') {
+                        response.write('Public variables must start with the character - or + (if they are also editable)');
+                    } else if (Object.keys(stage.globalVariables().vars).indexOf(varName) == -1) {
                         response.write('Variable ' + varName + ' does not exist');
                     } else {
                         response.write(stage.globalVariables().vars[varName].value.toString());
@@ -167,21 +181,31 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                     break;
 
                 case 'stage':
-                    var contents = '<html><img id="stage" src="' + myself.stage.fullImageClassic().toDataURL() + '" /><script>' +
-                        'var ajax = new XMLHttpRequest();' +
-                        'function getData() {' + 
+                    if (myself.isStagePublic) {
+                        var contents = '<html><img id="stage" src="' + myself.stage.fullImageClassic().toDataURL() + '" /><script>' +
+                            'var ajax = new XMLHttpRequest();' +
+                            'function getData() {' + 
                             'var time = new Date();' +
                             'ajax.open("GET", "stageimg", false); ajax.send();' +
                             'document.getElementById("stage").src = ajax.responseText;' +
                             'setTimeout(getData, Math.min(new Date() - time, 100));' + 
-                        '}; getData();' +
-                        '</script></html>';
-                    response.write(contents);
+                            '}; getData();' +
+                            '</script></html>';
+                        response.write(contents);
+                    } else {
+                        response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+                        response.write('Stage is not public');
+                    }
                     break;
 
                 case 'stageimg':
-                    response.setHeader('Cache-Control', 'no-cache');
-                    response.write(myself.stage.fullImageClassic().toDataURL());
+                    if (myself.isStagePublic) {
+                        response.setHeader('Cache-Control', 'no-cache');
+                        response.write(myself.stage.fullImageClassic().toDataURL());
+                    } else {
+                        response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
+                        response.write('Stage is not public');
+                    }
                     break;
 
                 case 'push':

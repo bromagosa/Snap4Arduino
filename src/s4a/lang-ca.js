@@ -196,7 +196,25 @@ s4aTempDict = {
         'Inicia Snap4Arduino en un\nmode de blocs amb icones\nper els/les programadors/es més joves',
 
     'Loading Snap Jr.':
-        'S\'està carregant Snap Júnior'
+        'S\'està carregant Snap Júnior',
+
+    'HTTP server':
+        'Servidor HTTP',
+
+    'uncheck to stop\nHTTP server':
+        'desmarqueu per aturar\nel servidor HTTP',
+
+    'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino':
+        'marqueu per iniciar\nel servidor HTTP, permetent\nel control remot\nde Snap4Arduino',
+
+    'Public stage':
+        'Escenari públic',
+
+    'uncheck to prevent the stage\nfrom being viewed\nfrom the HTTP server':
+        'desmarqueu per evitar que l\'escenari\nes vegi des del servidor HTTP',
+
+    'check to allow the stage\nto be viewed\nfrom the HTTP server':
+        'marqueu per permetre que l\'escenari\nes vegi des del servidor HTTP'
 
 };
 
