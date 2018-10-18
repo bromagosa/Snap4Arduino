@@ -7,8 +7,11 @@ Process.prototype.reportAnalogReading = function (pin) {
 
         if (board.pins[board.analogPins[pin]].mode != board.MODES.ANALOG) {
             board.pinMode(board.analogPins[pin], board.MODES.ANALOG);
+            board.pins[board.analogPins[pin]].report = -1;
         } else {
-            if (board.pins[board.analogPins[pin]].report == 1) {
+            if (board.pins[board.analogPins[pin]].report == -1) {
+                board.pins[board.analogPins[pin]].report = 1;
+            } else if (board.pins[board.analogPins[pin]].report == 1) {
                 board.pins[board.analogPins[pin]].report = 0;
                 board.getAnalogPinValue(board.analogPins[pin]);
             } else if (board.pins[board.analogPins[pin]].report == 2) {
@@ -35,8 +38,11 @@ Process.prototype.reportDigitalReading = function (pin) {
         if (board.pins[pin].mode != board.MODES.INPUT) {
             board.pinMode(pin, board.MODES.INPUT);
             board.reportDigitalPin(pin, 1);
+            board.pins[pin].report = -1;
         } else {
-            if (board.pins[pin].report == 1) {
+            if (board.pins[pin].report == -1) {
+                board.pins[pin].report = 1;
+            }else if (board.pins[pin].report == 1) {
                 board.pins[pin].report = 0;
                 board.getDigitalPinValue(pin);
             } else if (board.pins[pin].report == 2) {
