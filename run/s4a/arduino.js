@@ -331,6 +331,7 @@ Arduino.prototype.connect = function (port, verify, channel) {
 
                 myself.hideMessage();
                 myself.board.getArduinoBoardParam = nop;
+                myself.board.checkArduinoBoardParam = nop;
 
                 ide.inform(myself.owner.name, localize('An Arduino board has been connected. Happy prototyping!'));   
             } else {

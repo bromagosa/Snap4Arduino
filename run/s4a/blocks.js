@@ -32,7 +32,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                     true
                     );
             break;
-        case '%servoPin':
+        case '%digitalPin':  // All digitals have modes INPUT, OUTPUT, SERVO AND PULLUP
             part = new InputSlotMorph(
                     null,
                     true,
@@ -42,7 +42,7 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                             board = sprite.arduino.board;
 
                         if (board) {
-                            return sprite.arduino.pinsSettableToMode(board.MODES.SERVO);
+                            return sprite.arduino.pinsSettableToMode(board.MODES.INPUT);
                         } else {
                             return [];
                         }
@@ -86,37 +86,6 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                         } else { 
                             return [];
                         } 
-                    }
-                    );
-            part.originalChanged = part.changed;
-            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
-            break;
-        case '%digitalPin':
-            part = new InputSlotMorph(
-                    null,
-                    true,
-                    function() {
-                        // Get board associated to currentSprite
-                        var sprite = ide.currentSprite,
-                            board = sprite.arduino.board;
-
-                        if (board) {
-                            var pinNumbers = [],
-                                pins = board.pins.filter(
-                                        function (each){ 
-                                            return each.analogChannel == 127 
-                                        });
-                            
-                            pins.forEach(
-                                    function (each) {
-                                        pinNumbers.push(pins.indexOf(each).toString());
-                                    });
-
-                            return pinNumbers;
-
-                        } else {
-                            return [];
-                        }
                     }
                     );
             part.originalChanged = part.changed;
