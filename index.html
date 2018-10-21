@@ -463,7 +463,8 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/broadcast=<b>MESSAGE</b></p>
 
-                        <p>This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular <samp>When I receive [message]</samp> block.</p>
+                        <p>This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular <samp>When I receive [MESSAGE]</samp> block.</p>
+                        <p><i class="fa fa-exclamation-circle"></i> These <mark>public messages must begin with the <b>+</b> character</mark>. The rest of the messages are private and they are not considered.</p>
                         <h6><i class="fa fa-external-link fa-3"> Updating the value of a Snap4Arduino variable</i></h6>
                     </div>
                 </div>
@@ -478,7 +479,7 @@
                         <p>Point your browser to http://<b>IP</b>:42001/vars-update=<b>VARIABLE-NAME=VARIABLE-VALUE</b><br><br>
 
                         This will set the global variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.</p>
-                        <p>This only works for global variables. Bear in mind that variables with names containing the '<b>=</b>' character can not be used, even though Snap<i>!</i> supports them.</p>
+                        <p><i class="fa fa-exclamation-circle"></i> This only works for <mark>global variables that start with the <b>+</b> character</mark>. The other variables are not editable. Bear in mind that variables with names containing the '<b>=</b>' character can not be used, even though Snap<i>!</i> supports them.</p>
                         <p>You can also update multiple variables at once by means of a POST request (see below).</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Finding out which messages is Snap4Arduino listening for</i></h6>
@@ -492,7 +493,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-messages<br><br>
 
-                        This will show a list of all message names for which Snap4Arduino has When I receive [message] hat blocks.</p>
+                        This will show a list of all message names for which Snap4Arduino has <samp>When I receive [message]</samp> hat blocks and they start with the <b>+</b> character (the other messages are private).</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting variables and their values from Snap4Arduino</i></h6>
                     </div>
@@ -505,7 +506,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-vars<br><br>
 
-                        This will show a list of all global variables defined in Snap4Arduino, along with their current value.</p>
+                        This will show a list of all global variables defined in Snap4Arduino and whose name starts with the <b>+</b> or with the <b>-</b> character (<b>+</b> variables are editable and <b>-</b> are readable) , along with their current value.</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting the value of a single variables from Snap4Arduino</i></h6>
                     </div>
@@ -519,7 +520,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-var=<b>VARIABLE-NAME</b><br><br>
 
-                        This will return the value of the variable ready for you to use, no string manipulation needed.</p>
+                        <i class="fa fa-exclamation-circle"></i> This will return the value of the variable ready for you to use, no string manipulation needed. The variable <mark>must start with the <b>+</b> or with the <b>-</b> character to be public</mark>.</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting a real-time stream of the stage in Snap4Arduino</i></h6>
                     </div>
@@ -537,7 +538,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/stage<br><br>
                         This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.</p>
-                        <p>You will be presented with an auto-refreshing HTML page, enabling you to watch the stage contents in your browser, though in a non-interactive way.</p>
+                        <p>You will be presented with an auto-refreshing HTML page, enabling you to watch the stage contents in your browser, though in a non-interactive way. <mark><i>Public Stage</i> must be checked</mark> in the <i>settings</i> menu; otherwise, the stage is not public.</p>
                         <h6><i class="fa fa-external-link fa-3"> Getting a snapshot of the stage in Snap4Arduino</i></h6>
                     </div>
                 </div>
@@ -553,7 +554,7 @@
                     <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/stageimg</p>
-                        <p>This will render a snapshot of the Snap4Arduino stage in the form of an image encoded in base64 that you can use for any purpose.</p>
+                        <p>This will render a snapshot of the Snap4Arduino stage in the form of an image encoded in base64 that you can use for any purpose. Again, <mark><i>Public Stage</i> must be checked</mark> in the <i>settings</i> menu; otherwise, the stage is not public.</p>
                         <h6><i class="fa fa-external-link fa-3"> POST. Updating multiple variables of Snap4Arduino from an HTML form</i></h6>
                     </div>
                 </div>
