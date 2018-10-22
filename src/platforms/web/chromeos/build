@@ -36,7 +36,7 @@ echo "======="
 echo
 
 if ! test -e environments/web/chromeos/Snap4Arduino.pem; then
-    print_error "Could not find a valid private key.\nPlease make sure Snap4Arduino.pem is located under environments/web/chromeos/"
+    print_error "There isn't Snap4Arduino.pem (chromium extension private key) under environments/web/chromeos\nChromium extension is being built into a folder. To build the crx file, you need the pem key."
 else
     if command -v chromium-browser; then
         chromium-browser --pack-extension=tmp --pack-extension-key=environments/web/chromeos/Snap4Arduino.pem
@@ -56,4 +56,9 @@ echo
 
 rm -rf releases/web/chromeos
 mkdir -p releases/web/chromeos
-mv tmp.crx releases/web/chromeos/Snap4Arduino.crx
+
+if test -e tmp.crx; then
+    mv tmp.crx releases/web/chromeos/Snap4Arduino.crx
+else
+    mv tmp releases/web/chromeos/crx
+fi
