@@ -158,7 +158,7 @@
                             <li>Auto-configurable pinouts and high level hardware abstractions</li>
                             <li>You can interact with multiple boards at the same time</li>
                             <li>Desktop-based versions for the three major OSes</li>
-                            <li><a href="http://snap4arduino.rocks/run/">Online</a> version that can be connected to Arduino boards with a Chrome/Chromium <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">plugin</a></li>
+                            <li><a href="http://snap4arduino.rocks/run/">Online</a> version that can connect to Arduino boards via a Chrome/Chromium <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">plugin</a></li>
                             <li>Free software licensed under the Affero GPLv3</li>
                             <li>Transpilation of simple scripts into Arduino sketches</li>
                             <li>HTTP protocol for remote control and live-streaming of the <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> stage</li>
@@ -181,7 +181,7 @@
                     </div><!-- .col-md-7 close -->
                     <div class="col-md-4">
                         <div class="block">
-                            <p>There are currently desktop versions for GNU/Linux, MacOSX and Microsoft Windows, a web version (available <a href="http://Snap4Arduino.rocks/run/" target="_blank">online</a>) and connectable by a Chrome/Chromium plugin, and other experimental versions.</p>
+                            <p>There are currently desktop versions for GNU/Linux, MacOSX and Microsoft Windows, a web version (available <a href="http://Snap4Arduino.rocks/run/" target="_blank">online</a>, requires a <a href="#plugin">Chrome/Chromium plugin</a>), and other experimental versions.</p>
                             <br><br>
                             The project and all its components (including Snap<i>!</i>) are registered under public free software licenses (<a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank">AGPLv3</a> and <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a>), so you can download the <a href="https://github.com/bromagosa/Snap4Arduino" target="_blank">sources</a> and pretty much do whatever you want with them!<br>
                             <br>Please download the version that matches your operating system.
@@ -233,11 +233,11 @@
                             <li>Snap4Arduino will now be able to interact with your board.</li>
                         </ol>
                         </p>
-                        <p>These instructions are needed to prepare your device (board). If you have an Arduino with the firmware installed, you don't worry about this... and you only need Snap4Arduino software. Anyway, to make sure you will have not problems with drivers (for Windows OS) or permissions, installing Arduino IDE can be a good idea.</p>
-                        <p>StandardFirmata is the basic requirement for your devices but you can implement more features using others Firmatas. See <i>Devices</i> section to get more info.<p/>
+                        <p>The previous instructions cover the initial setup of your board. If your Arduino board comes with Firmata preinstalled or you have previously installed it yourself, you don't need to follow them again. Still, to prevent any possible issues with drivers (on Windows) or permissions, it may be a good idea to install the Arduino IDE anyway.</p>
+                        <p>StandardFirmata is the basic requirement for a board to be reachable from Snap4Arduino, but you can get extended features by using others Firmata versions. See the <a href="#devices">Devices</a> section for more information.<p/>
                         <br><br>
                         <h6>ChromeOS app</h6>
-                        <p>You can install <i>ChromeOS app</i> from the <i>Chrome Web Store</i> or download the package, uncompress it and drag and drop the <i>crx</i> file into the <samp>chrome://extensions</samp> browser tab. This is a limited version of Snap4Arduino, but you can use it offline easily.<p>
+                        <p>You can install the <i>ChromeOS app</i> from the <i>Chrome Web Store</i> or download the package, uncompress it and drag and drop the <i>crx</i> file into the <samp>chrome://extensions</samp> browser tab. This is a limited version of Snap4Arduino that doesn't support extended Firmata versions of the Snap<em>!</em> JavaScript block.<p>
                     </div>
                     <div class="col-md-4">
                         <h6>GNU/Linux</h6>
@@ -248,8 +248,8 @@
                         <p>Unzip the package and run the <b>Snap4Arduino</b> package. If you wish, you can move it to your <b>Applications</b> folder so you can access it as a regular app.</p>
                         <h6>Microsoft Windows</h6>
                         <p>Just unzip the package and run the installer.</p>
-                        <h6>Web version for Chrome/Chromium</h6>
-                        <p><a href="http://snap4arduino.rocks/run" target="_blank">Online version</a> requires a <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">Chrome/Chromium plugin</a> to connect to Arduino boards. To install it, just download <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">the plugin package</a>, unzip it and get the <i>Chrome_Snap4ArduinoConnector_ 1.2.7</i> folder. Then, go to <strong>chrome://extensions</strong> in your browser, activate the <i>developer mode</i> and drag and drop that folder inside.<br><br>
+                        <h6 id="plugin">Web version for Chrome/Chromium</h6>
+                        <p><a href="http://snap4arduino.rocks/run" target="_blank">Online version</a> requires a <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">Chrome/Chromium plugin</a> to connect to Arduino boards. To install it, just download <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_chrome-plugin_1.2.7.zip">the plugin package</a> and unzip it. This will create a folder named <i>Chrome_Snap4ArduinoConnector_ 1.2.7</i>. Then, go to <strong>chrome://extensions</strong> in your browser, activate the <i>developer mode</i> and drag and drop that folder into that browser tab.<br><br>
                         If you prefer to run it offline or in your own server, use <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/1.2.7/Snap4Arduino_web-chromium_1.2.7.zip">this downloadable version.</a></p>
                         <h6>Embedded</h6>
                         <p>The embedded command line version works in any GNU/Linux based machine, including embedded platforms and single board computers. New generation Arduino boards like Yun, Tian or Industrial 101 can run this version right inside the board, and if you have a regular Arduino and any kind of Gnu/Linux based single board computer, you can always have the latter be the host computer to the Arduino board, giving autonomy to your project without having to modify your Snap4Arduino program at all.</p>
@@ -420,12 +420,12 @@
                         </ul>
                         </p>
                         <hr>
-                        <p>And you can use any device (not only Arduinos) running a Firmata firmware. For example <b>ESP8266</b> and <b>nodeMCU</b> are widely used.</p>
-                        <p>And more... Other devices like <b>Picaxe boards</b>, <b>micro:bit</b>, Lego <b>WeDo</b>, <b>Boost</b>... can be used with Snap! (and of course also with Snap4Arduino) using different middlewares. More info <a href="https://github.com/jguille2/SA5/blob/master/README.md#another-firmata-boards" target="_blank">here</a></p>
+                        <p>Also note that you can use any type of board (not just Arduino) as long as it can run Firmata. For example, <b>ESP8266</b> and <b>NodeMCU</b> boards are being widely used with Snap4Arduino.</p>
+                        <p>Additionally, other devices like <b>Picaxe</b>, <b>micro:bit</b>, Lego <b>WeDo</b> or <b>Boost</b> can also be used in Snap<em>!</em> (and thus in Snap4Arduino) by means of different middleware packages. Read more about it <a href="https://github.com/jguille2/SA5/blob/master/README.md#another-firmata-boards" target="_blank">here</a>.</p>
                     </div>
                     <div class="col-md-4">
                         <h6>User-contributed Firmata versions</h6>
-                        <p>Snap4Arduino libraries include <b>SA5Firmata</b> and <b>Creative Robotix</b> blocks, and these require their own firmata: 
+                        <p>Snap4Arduino libraries include <b>SA5Firmata</b> and <b>Creative Robotix</b>, which require their own Firmata versions: 
                         <ul>
                             <li>Joan Guillén's <a href="https://github.com/jguille2/SA5/blob/master/README.md" target="_blank">SA5Firmata</a> is another super-Firmata modification that adds tone, pulse and ping functions, along with support for DHT11 humidity and temperature sensors, ultrasound sensors, Nunchuks and message sending and receiving over IR.</li>
                             <li>The <a href="http://www.creative-science.org/" target="_blank">Creative Science Foundation</a>'s <a href="https://github.com/segertonGH/Creative-Robotix-Educational-Platform-Snap4Arduino-Firmata" target="_blank">Creative Robotix Firmata</a> is a Firmata version for use with the Creative Robotix Educational Platform.</li>
@@ -467,7 +467,7 @@
                         <p>Point your browser to http://<b>IP</b>:42001/broadcast=<b>MESSAGE</b></p>
 
                         <p>This will broadcast the message <b>MESSAGE</b> to Snap4Arduino, where you can capture it with a regular <samp>When I receive [MESSAGE]</samp> block.</p>
-                        <p><i class="fa fa-exclamation-circle"></i> These <mark>public messages must begin with the <b>+</b> character</mark>. The rest of the messages are private and they are not considered.</p>
+                        <p><i class="fa fa-exclamation-circle"></i> These <mark>public messages must begin with the <b>+</b> character</mark>. The rest of the messages are treated as private and thus are not accessible from the network.</p>
                         <h6><i class="fa fa-external-link fa-3"> Updating the value of a Snap4Arduino variable</i></h6>
                     </div>
                 </div>
@@ -482,7 +482,7 @@
                         <p>Point your browser to http://<b>IP</b>:42001/vars-update=<b>VARIABLE-NAME=VARIABLE-VALUE</b><br><br>
 
                         This will set the global variable called <b>VARIABLE-NAME</b> to the value <b>VARIABLE-VALUE</b>.</p>
-                        <p><i class="fa fa-exclamation-circle"></i> This only works for <mark>global variables that start with the <b>+</b> character</mark>. The other variables are not editable. Bear in mind that variables with names containing the '<b>=</b>' character can not be used, even though Snap<i>!</i> supports them.</p>
+                        <p><i class="fa fa-exclamation-circle"></i> This only works for <mark>global variables that start with the <b>+</b> character</mark>. Any other variables are not editable. Bear in mind that variables with names containing the '<b>=</b>' character can not be used, even though Snap<i>!</i> supports them.</p>
                         <p>You can also update multiple variables at once by means of a POST request (see below).</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Finding out which messages is Snap4Arduino listening for</i></h6>
@@ -496,7 +496,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-messages<br><br>
 
-                        This will show a list of all message names for which Snap4Arduino has <samp>When I receive [message]</samp> hat blocks and they start with the <b>+</b> character (the other messages are private).</p>
+                        This will show a list of all message names for which Snap4Arduino has <samp>When I receive [message]</samp> hat blocks, as long as the message starts with the <b>+</b> character (other messages are private).</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting variables and their values from Snap4Arduino</i></h6>
                     </div>
@@ -509,7 +509,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-vars<br><br>
 
-                        This will show a list of all global variables defined in Snap4Arduino and whose name starts with the <b>+</b> or with the <b>-</b> character (<b>+</b> variables are editable and <b>-</b> are readable) , along with their current value.</p>
+                        This will show a list of all global variables defined in Snap4Arduino whose name starts with the <b>+</b> or with the <b>-</b> character (variables starting with <b>+</b> are editable, while variables starting with <b>-</b> are only readable), along with their current value.</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting the value of a single variables from Snap4Arduino</i></h6>
                     </div>
@@ -523,7 +523,7 @@
 
                         <p>Point your browser to http://<b>IP</b>:42001/send-var=<b>VARIABLE-NAME</b><br><br>
 
-                        <i class="fa fa-exclamation-circle"></i> This will return the value of the variable ready for you to use, no string manipulation needed. The variable <mark>must start with the <b>+</b> or with the <b>-</b> character to be public</mark>.</p>
+                        <i class="fa fa-exclamation-circle"></i> This will return the value of the variable ready for you to use, no string manipulation needed. The variable <mark>must start with the <b>+</b> or <b>-</b> character to be accessible from the network</mark>.</p>
 
                         <h6><i class="fa fa-external-link fa-3"> Getting a real-time stream of the stage in Snap4Arduino</i></h6>
                     </div>
@@ -540,8 +540,8 @@
                     <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/stage<br><br>
-                        This will render a real time version of what's going on in the stage. Like demonstrated in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.</p>
-                        <p>You will be presented with an auto-refreshing HTML page, enabling you to watch the stage contents in your browser, though in a non-interactive way. <mark><i>Public Stage</i> must be checked</mark> in the <i>settings</i> menu; otherwise, the stage is not public.</p>
+                        This will render a real time version of what's going on in the stage, like shown in <a href="https://www.youtube.com/watch?v=7WMurQs4J9U" target="_blank">this video</a>.</p>
+                        <p>You will be presented with an auto-refreshing HTML page, enabling you to watch the stage contents in your browser, though in a non-interactive way. You need to enable <mark><i>Public Stage</i></mark> from the <i>settings</i> menu for this to work. Otherwise, the stage is not accessible from the network.</p>
                         <h6><i class="fa fa-external-link fa-3"> Getting a snapshot of the stage in Snap4Arduino</i></h6>
                     </div>
                 </div>
@@ -557,7 +557,7 @@
                     <div class="col-md-8">      		
 
                         <p>Point your browser to http://<b>IP</b>:42001/stageimg</p>
-                        <p>This will render a snapshot of the Snap4Arduino stage in the form of an image encoded in base64 that you can use for any purpose. Again, <mark><i>Public Stage</i> must be checked</mark> in the <i>settings</i> menu; otherwise, the stage is not public.</p>
+                        <p>This will render a snapshot of the Snap4Arduino stage in the form of an image encoded in base64 that you can use for any purpose. You need to enable <mark><i>Public Stage</i></mark> from the <i>settings</i> menu for this to work. Otherwise, the stage is not accessible from the network.</p>
                         <h6><i class="fa fa-external-link fa-3"> POST. Updating multiple variables of Snap4Arduino from an HTML form</i></h6>
                     </div>
                 </div>
@@ -581,7 +581,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <h5>Contact</h5>
-                        <p>Snap4Arduino is being developed by Bernat Romagosa and Joan Guillén. You can always reach them at bernat (at) snap4arduino (dot) rocks or jguille2 (at) xtec (dot) cat. Please use our <a href="https://github.com/bromagosa/Snap4Arduino/issues" target="_blank">GitHub issue tracker</a> for reporting issues.
+                        <p>Snap4Arduino is being developed by Bernat Romagosa and Joan Guillén. You can always reach them at bernat (at) snap4arduino (dot) rocks or jguille2 (at) xtec (dot) cat. Please use our <a href="https://github.com/bromagosa/Snap4Arduino/issues" target="_blank">GitHub issue tracker</a> for reporting issues, and our <a href="https://forum.snap.berkeley.edu/c/extensions/Snap4Arduino">Snap<em>!</em> forum category</a> for anything else.
                         </p>
                     </div>
                     <div class="col-md-4">
