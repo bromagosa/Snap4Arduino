@@ -1,5 +1,22 @@
 # CHANGELOG
 
+### 1.2.7
+
+* Snap! updated to 4.2.1.4 Martí version
+  - New _Recover from cloud_ feature
+  - Vector paint editor added
+  - Basque translation
+  - Tools lib tranlated into Catalan, French and Spanish
+  - New libraries _Text to speech_, _Bigger data_, _Create variables_, _JSON data_ and _Parallelization_
+  - Experimental JIT
+  - New _random_ and _center_ input options
+  - "Zero steps" paints a dot
+* Basque translation by Asier Iturralde
+* New libraries: _Creative Robotix_ and _SA5Firmata_
+* Public/private options into HTTP server feature
+* I2C library improved and enabled for _online_ version
+* Digital pins dropdown fixed
+
 ### 1.2.6
 
 * Korean translation by @ljb7977
