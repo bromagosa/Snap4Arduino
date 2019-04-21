@@ -171,14 +171,11 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
-        + 'Copyright \u24B8 2018 Bernat Romagosa\n'
-        + 'http://romagosa.work\n'
-        + 'bernat@snap4arduino.rocks\n'
 
-        + 'Copyright \u24B8 2016 Bernat Romagosa and Arduino.org\n'
+        + 'Copyright \u24B8 2019 Bernat Romagosa and Joan Guillén\n'
+        + 'https://github.com/bromagosa/snap4arduino\n\n'
 
-        + 'Arduino.org supported the development and maintenance\n'
-        + 'of Snap4Arduino from June 2016 until August 2017.\n\n'
+        + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
 
         + 'Copyright \u24B8 2015 Citilab\n'
         + 'edutec@citilab.eu\n\n'
@@ -196,7 +193,6 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         + 'José García, Joan Güell and Víctor Casado: SnapJr mode,\n'
         + 'architectural decisions, several bug reports, testing and\n'
         + 'unvaluable help in many other regards.\n'
-        + 'Joan Guillén: Too many contributions to fit in here, thanks!\n'
         + 'Josep Ferràndiz: Extensive testing, vision\n'
         + 'Frank Hunleth: GNU/Linux 64b version\n'
         + 'Ove Risberg: Network to serial port functionality\n'
@@ -209,8 +205,11 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         + 'Sjoerd Dirk Meijer: Dutch translation\n'
         + 'Lior Assouline: Hebrew translation\n'
         + 'Manuel Menezes de Sequeira: Portuguese (Portugal) translation\n'
-        + 'Hasso Tepper: Estonian translation'
-        + 'Triyan W. Nugroho: Bahasa Indonesian translation';
+        + 'Hasso Tepper: Estonian translation\n'
+        + 'Triyan W. Nugroho: Bahasa Indonesian translation\n'
+        + 'Huseyin Yildiz: Turkish translation\n'
+        + 'Lee Jubeen: Korean translation\n'
+        + 'Asier Iturralde: Basque translation';
 
     creditsBtn = dlg.addButton(
         function () {
