@@ -214,7 +214,11 @@ s4aTempDict = {
         'desmarqueu per evitar que l\'escenari\nes vegi des del servidor HTTP',
 
     'check to allow the stage\nto be viewed\nfrom the HTTP server':
-        'marqueu per permetre que l\'escenari\nes vegi des del servidor HTTP'
+        'marqueu per permetre que l\'escenari\nes vegi des del servidor HTTP',
+    'red':
+        'vermell',
+    'blue':
+        'blau'
 
 };
 
