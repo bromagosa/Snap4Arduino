@@ -102,16 +102,13 @@ IDE_Morph.prototype.projectMenu = function () {
         'Experimental feature!\nScripts written under this\n'
             + 'mode will be translatable\nas Arduino sketches'
     );
-    if (shiftClicked) {
-        menu.addLine();
-        menu.addItem(
-            'Start a Snap Jr. session', 
-            'startSnapJr',
-            'Start Snap4Arduino in an\nicon-based blocks mode\n'
-                + 'for the youngest programmers',
-            new Color(100, 0, 0)
-        );
-    }
+    menu.addLine();
+    menu.addItem(
+        'Start a Snap Jr. session', 
+        'startSnapJr',
+        'Start Snap4Arduino in an\nicon-based blocks mode\n'
+            + 'for the youngest programmers'
+    );
 
     menu.popup(this.world(), pos);
 };
