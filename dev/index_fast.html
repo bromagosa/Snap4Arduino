@@ -72,12 +72,12 @@
                     }
                 };
 
-                loop();
+                setInterval(loop, 1); // fast version, current calls "loop();"
             };
 
 
             function loop() {
-                requestAnimationFrame(loop);
+                // fast version. Currant has "requestAnimationFrame(loop);"
                 world.doOneCycle();
             };
             
