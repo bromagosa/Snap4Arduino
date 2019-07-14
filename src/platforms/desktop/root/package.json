@@ -42,5 +42,5 @@
             "url": "https://github.com/bromagosa/Snap4Arduino.git"
        }
     ],
-    "chromium-args": "--disable-raf-throttling --enable-logging=stderr"
+    "chromium-args": "--disable-raf-throttling"
 }
