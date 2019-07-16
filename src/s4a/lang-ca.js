@@ -218,7 +218,19 @@ s4aTempDict = {
     'red':
         'vermell',
     'blue':
-        'blau'
+        'blau',
+    'SnapJunior Blocks':
+        'Blocs de l\'Snap Junior',
+    'SnapJuniorPlus Blocks':
+        'Blocs extra per l\'Snap Junior',
+    'Icon-based blocks for the youngest programmers.':
+        'Blocs amb icones per als programadors i programadores més joves.',
+    'Extra blocks for SnapJunior.':
+        'Blocs per afegir funcionalitats a l\'Snap Junior',
+    'Blocks for TdRSTEAM shield v1, using SA5Firmata firmware.':
+        'Blocs per la TdRSTEAM v1, utilitzant el SA5Firmata.',
+    'Blocks for TdRSTEAM shield v2, using SA5Firmata firmware.':
+        'Blocs per la TdRSTEAM v2, utilitzant el SA5Firmata.'
 
 };
 
