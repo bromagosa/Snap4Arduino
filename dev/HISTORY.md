@@ -2,10 +2,40 @@
 
 ## in development:
 * **New Features:**
-    * experimental tolerant color collision detection (in dev mode)
 * **Notable Changes:**
 * **Notable Fixes:**
 * **Translation Updates:**
+
+## v5.0.4
+* **Notable Fixes:**
+    * fixed a glitch when running a generic WHEN hat block with a literal Boolean input
+    * fixed a bug in the SHOW PICTURE block of the "Pixels" library 
+
+### 2019-07-10
+* threads: fixed a glitch when running a generic WHEN hat block with a literal Boolean input
+* fixed a bug in the SHOW PICTURE block of the "Pixels" library
+* tweaked "messages" menu for custom blocks, thanks, Joan!
+* maintenance release
+
+## v5.0.3
+* **Notable Change:**
+    * CSV-parsing auto-detects the most likely delimiter among comma, semi-colon, pipe and tab
+
+### 2019-07-10
+* threads: enhanced CSV-parsing to auto-detect the most likely delimiter among comma, semi-colon, pipe and tab
+* maintenance release
+
+## v5.0.2
+* **New Feature:**
+    * experimental tolerant color collision detection (in dev mode)
+* **Notable Fixes:**
+    * fixed a layout glitch for variadic C-shaped input slots, thanks, Bernat, for reporting it!
+    * updated the manual for the new WRITE block, thanks, Brian
+
+### 2019-07-09
+* blocks: fixed a layout glitch for variadic C-shaped input slots, thanks, Bernat, for reporting it!
+* updated the manual for the new WRITE block, thanks, Brian (was #2448)
+* maintenance release
 
 ### 2019-07-08
 * new dev version
