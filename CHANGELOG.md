@@ -1,5 +1,16 @@
 # CHANGELOG
 
+### 5.0
+
+* Snap! updated to 5.0.5
+  - Many changes and new features here! 
+* Working with the new Snap! cloud and its new features
+* New SnapJunior version
+* Two libraries for SnapJr blocks
+* Two more libraries for TdRSTEAM shields (v1 and v2)
+* Three Pin special option menus for custom blocks
+* Serveral fixes and updates
+
 ### 1.2.7
 
 * Snap! updated to 4.2.1.4 Martí version
