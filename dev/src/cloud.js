@@ -34,7 +34,7 @@
 /*global modules, hex_sha512*/
 
 modules = modules || {};
-modules.cloud = '2019-July-01';
+modules.cloud = '2019-July-17';
 
 // Global stuff
 
@@ -980,11 +980,15 @@ Cloud.prototype.getUserCollections = function (
                 encodeURIComponent(collectionUsername) :
                 '%username') +
             '/collections?' +
-            this.encodeDict({
-                page: page || '',
-                pagesize: page ? pageSize || 16 : '',
-                matchtext: searchTerm ? encodeURIComponent(searchTerm) : ''
-            }),
+            this.encodeDict(
+                page > 0 ?
+                    {
+                        page: page,
+                        pagesize: pageSize || 16,
+                        matchtext:
+                            searchTerm ? encodeURIComponent(searchTerm) : ''
+                    } : {}
+            ),
         onSuccess,
         onError,
         'Could not fetch collections'
