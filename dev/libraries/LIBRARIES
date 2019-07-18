@@ -37,4 +37,4 @@ SA5Firmata_ir.xml	SA5FirmataIR	SA5Firmata with IR features at the expense of sim
 TdRSTEAMv1.xml	TdR STEAM v1	Blocks for TdRSTEAM shield v1, using SA5Firmata firmware.
 TdRSTEAMv2.xml	TdR STEAM v2	Blocks for TdRSTEAM shield v2, using SA5Firmata firmware.
 Creative_Robotix.xml	Creative Robotix Platform	Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware.
-blankLib.xml	--- ---	End of libraries
+blankLib.xml	--- ---	End of Snap4Arduino libraries.
