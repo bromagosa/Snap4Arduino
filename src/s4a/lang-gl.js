@@ -110,7 +110,7 @@ s4aTempDict = {
         'Conectando tarxeta no porto\n',
 
     'An Arduino board has been connected. Happy prototyping!':
-        'Conectouse satisfactoriamente unha tarxeta Arduino.\n¡Feliz prototipaxe!',
+        'Conectouse satisfactoriamente unha tarxeta Arduino.\nFeliz prototipaxe!',
 
     'Board was disconnected from port\n':
         'Desconectouse a tarxeta do porto\n',
