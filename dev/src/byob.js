@@ -108,7 +108,7 @@ BooleanSlotMorph, XML_Serializer, SnapTranslator*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.byob = '2019-July-15';
+modules.byob = '2019-July-24';
 
 // Declarations
 
@@ -748,9 +748,9 @@ CustomCommandBlockMorph.prototype.refreshPrototype = function () {
         }
     });
 
-    // remember the edited prototype spec
-    protoSpec = this.specFromFragments();
-
+    // remember the edited prototype spec,
+    // and prevent removing the last one
+    protoSpec = this.specFromFragments() || this.blockSpec;
 
     // update the prototype's type
     // and possibly exchange 'this' for 'myself'
@@ -2821,7 +2821,6 @@ BlockLabelFragmentMorph.prototype.mouseClickLeft = function () {
 
 BlockLabelFragmentMorph.prototype.updateBlockLabel = function (newFragment) {
     var prot = this.parentThatIsA(BlockMorph);
-
     this.fragment = newFragment;
     if (prot) {
         prot.refreshPrototype();
@@ -3209,9 +3208,9 @@ InputSlotDialogMorph.prototype.getInput = function () {
                 this.slots.defaultInputField.getValue();
         }
         return lbl;
-    } else if (!this.noDelete) {
-        this.fragment.isDeleted = true;
     }
+    // otherwise remove the fragment
+    this.fragment.isDeleted = true;
     return null;
 };
 

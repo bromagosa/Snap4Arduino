@@ -206,7 +206,8 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         + 'Triyan W. Nugroho: Bahasa Indonesian translation\n'
         + 'Huseyin Yildiz: Turkish translation\n'
         + 'Lee Jubeen: Korean translation\n'
-        + 'Asier Iturralde: Basque translation';
+        + 'Asier Iturralde: Basque translation\n'
+        + 'Serhiy Kryzhanovsky: Ukrainian translation';
 
     creditsBtn = dlg.addButton(
         function () {

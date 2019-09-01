@@ -61,20 +61,26 @@ s4aTempDict = {
     'stopped (1500)':
         'parado (1500)',
 
+    'disconnected':
+        'desconectado',
+
     'angle (0-180)':
         'ángulo (0-180)',
 
     'connect to Arduino':
-        'conectar a Arduíno',
+        'conectar a Arduino',
 
     'disconnect Arduino':
-        'desconectar Arduíno',
+        'desconectar Arduino',
 
     'Connect Arduino':
-        'Conectar Arduíno',
+        'Conectar Arduino',
 
     'Disconnect Arduino':
         'Desconectar Arduino',
+
+    'arduino connected?':
+        'Arduino está conectado?',
 
     'analog reading %analogPin':
         'lectura analóxica %analogPin',
@@ -83,10 +89,10 @@ s4aTempDict = {
         'lectura dixital %digitalPin',
 
     'connect arduino at %s':
-        'conectar Arduíno ao porto %s',
+        'conectar Arduino ao porto %s',
 
     'disconnect arduino':
-        'desconectar Arduíno',
+        'desconectar Arduino',
 
     'setup digital pin %digitalPin as %pinMode':
         'configurar pin %digitalPin como %pinMode',
@@ -104,7 +110,7 @@ s4aTempDict = {
         'Conectando tarxeta no porto\n',
 
     'An Arduino board has been connected. Happy prototyping!':
-        'Conectouse exitosamente unha tarxeta Arduíno.\n¡Feliz prototipaxe!',
+        'Conectouse satisfactoriamente unha tarxeta Arduino.\nFeliz prototipaxe!',
 
     'Board was disconnected from port\n':
         'Desconectouse a tarxeta do porto\n',
@@ -113,7 +119,7 @@ s4aTempDict = {
         'Parece que alguén desconectou o cable!',
 
     'Error connecting the board.':
-        'Erro ao conectar a tarxeta',
+        'Produciuse un erro ao conectar a tarxeta',
 
     'There is already a board connected to this sprite':
         'Xa existe unha tarxeta conectada a este obxecto',
@@ -143,16 +149,82 @@ s4aTempDict = {
         'Porto de rede',
 
     'Enter hostname or ip address:':
-        'Introduza o nome do host ou a súa dirección IP',
+        'Introduza o nome da máquina ou o seu enderezo IP',
 
     'Connecting to network port:\n':
-        'Conectando a porto de rede:\n',
+        'Conectando ao porto de rede:\n',
 
     'This may take a few seconds...':
-        'isto pode tardar uns segundos...',
+        'isto pode levar uns segundos...',
 
     'Network serial ports':
         'Portos serie sobre rede'
+
+    'Open from URL...':
+        'Abrir dende un URL...',
+
+    'Save, share and get URL...':
+        'Garda, comparte e amosa o URL...',
+
+    'This project is now public at the following URL:':
+        'Este proxecto é público, accesíbel dende o URL:',
+
+    'About Snap4Arduino...':
+        'Sobre Snap4Arduino...',
+   
+    'Snap4Arduino website':
+        'Web do Snap4Arduino',
+  
+    'Snap4Arduino repository':
+        'Repositoro do Snap4Arduino',
+ 
+    'Start a Snap Jr. session':
+        'Iniciar unha sesión de Snap Junior',
+
+    'Start Snap4Arduino in an\nicon-based blocks mode\nfor the youngest programmers':
+        'Inicia Snap4Arduino nun\nmodo de bloques con iconas\npara os/as programadores/as máis novos/as',
+
+    'Loading Snap Jr.':
+        'Snap Junior está a cargarse',
+
+    'HTTP server':
+        'Servidor HTTP',
+
+    'uncheck to stop\nHTTP server':
+        'desmarque para deter\no servidor HTTP',
+
+    'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino':
+        'márqueo para iniciar\no servidor HTTP, permitindo\no control remoto\nde Snap4Arduino',
+
+    'Public stage':
+        'Escenario público',
+
+    'uncheck to prevent the stage\nfrom being viewed\nfrom the HTTP server':
+        'desmarqueo para evitar que o escenario\nsexa visto dende o servidor HTTP',
+
+    'check to allow the stage\nto be viewed\nfrom the HTTP server':
+        'márqueo para permitir que o escenario\nsexa visto dende o servidor HTTP',
+    'red':
+        'vermello',
+    'blue':
+        'azul',
+    'SnapJunior Blocks':
+        'Bloques do Snap Junior',
+    'SnapJuniorPlus Blocks':
+        'Máis bloques para o Snap Junior',
+    'Icon-based blocks for the youngest programmers.':
+        'Bloques con iconas para os programadores e programadoras máis novos/as.',
+    'Extra blocks for SnapJunior.':
+        'Bloques para engadir funcionalidades ao Snap Junior',
+    'Blocks for TdRSTEAM shield v1, using SA5Firmata firmware.':
+        'Bloques para a TdRSTEAM v1, empregado o SA5Firmata.',
+    'Blocks for TdRSTEAM shield v2, using SA5Firmata firmware.':
+        'Bloques para a TdRSTEAM v2, empregando o SA5Firmata.',
+    'Libraries below this point are specific to Snap4Arduino.':
+        'As bibliotecas baixo este punto son específicas para Snap4Arduino.',
+    'End of Snap4Arduino libraries.':
+        'Final das bibliotecas do Snap4Arduino.'
+
 };
 
 // Add attributes to original SnapTranslator.dict.gl

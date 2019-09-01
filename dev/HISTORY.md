@@ -6,6 +6,82 @@
 * **Notable Fixes:**
 * **Translation Updates:**
 
+## v5.1.0
+* **New Features:**
+    * new "paste on" block in the pen category, prints a sprite onto another one
+    * new "r-g-b-a" option in "(aspect) AT (location)" sensing reporter, returns a 4-item list of values from 0-255 (same as pixels from a costume)
+    * "temporary?" attribute is now programmatically settable (in the SET->my... block)
+* **Notable Changes:**
+    * generated costumes that are not in the wardrobe are now made persistent in the project (saved & restored)
+* **Notable Fixes:**
+    * fixed tainted audio context for auto-playing projects when the user interacts, thanks, Bernat!
+    * saved clones no longer forget if they inherit the "costume #" attribute
+* **Translation Updates:**
+    * German
+    * Galician, thanks, Miguel!
+
+### 2019-08-08
+* store: allow wardrobe-less costumes to be shared among several sprites (e.g. when inheriting the "costume #" attribute)
+* objects: fixed an issue when a sprite inherits both the wardrobe and the costume #
+* store, objects: fixed the bug that made clones forget inheritance of costume # when saved
+* prepared minor release
+
+### 2019-08-07
+* new dev version
+* blocks, threads: added "r-g-b-a" option to (aspect) AT (location) reporter in the sensing category
+* blocks, threads: made "temporary?" attribute for clones settable (in the SET->my... block)
+* objects: made the "paste on" block avaible in the "pen" palette
+* fix for tainted audio context when the user interacts with an auto-playing project
+* store: persist temporary costumes that aren't in the wardrobe (e.g. generated graphics, maps, paste-ups) 
+* German translation update
+* Galician translation update, thanks, Miguel!
+
+## v5.0.9
+* **New Feature:**
+    * new experimental "paste on" block in the "pen" category, currently hidden in dev mode
+* **Notable Fixes:**
+    * resolved scroll bar conflicts (allow vertical scrolling past horizontal scroll bar), thanks, Michael!
+    * support for importing OGG audio files, thanks, Bernat!
+* **Translation Update:**
+    * Chinese, thanks, Simon!
+
+### 2019-08-06
+* new dev version
+* objects, threads: new experimental "paste on" block in the "pen" category, hidden in dev mode
+* morphic: resolved scroll bar conflicts (allow vertical scrolling past horizontal scroll bar), thanks, Michael!
+* gui: fixed color of scripts scroll frame
+* morphic: support for importing OGG audio files, thanks, Bernat!
+* Chinese translation update, thanks, Simon!
+* prepared maintenance release
+
+## v5.0.8
+* **Notable Fix:**
+    * fixed default names for 'script variables' block
+
+### 2019-07-25
+* blocks: fixed default names for 'script variables' block
+* prepared maintenance release
+
+## v5.0.7
+* **Notable Fix:**
+    * fixed #2041
+
+### 2019-07-24
+* byob: fixed #2041
+* prepared maintenance release
+
+## v5.0.6
+* **Notable Fix:**
+    * IME text editing support, thanks, Zhenlei Jia @swiperthefox!
+
+### 2019-07-23
+* morphic: minor code reformatting for LINTers
+* prepared maintenance release
+
+### 2019-07-22
+* new dev version
+* morphic, blocks: support for enhanced character set keyboard input, thanks, @swiperthefox!
+
 ## v5.0.5
 * **Notable Fix:**
     * fixed cloud project collection support, thanks Bernat!

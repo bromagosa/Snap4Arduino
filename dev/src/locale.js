@@ -42,7 +42,7 @@
 
 /*global modules, contains*/
 
-modules.locale = '2019-June-25';
+modules.locale = '2019-August-06';
 
 // Global stuff
 
@@ -237,7 +237,7 @@ SnapTranslator.dict.zh_CN = {
     'translator_e-mail':
         'ubertao@qq.com/djh@rhjxx.cn',
     'last_changed':
-        '2019-01-11'
+        '2019-08-06'
 };
 
 SnapTranslator.dict.eo = {
@@ -574,11 +574,11 @@ SnapTranslator.dict.gl = {
     'language_name':
         'Galego',
     'language_translator':
-        'tecnoloxia',
+        'tecnoloxia <2016>,Miguel A. Bouzada <2019>',
     'translator_e-mail':
-        '',
+        'mbouzada@gmail.com',
     'last_changed':
-        '2016-11-09'
+        '2019-07-29'
 };
 
 SnapTranslator.dict.eu = {

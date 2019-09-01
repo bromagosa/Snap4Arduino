@@ -61,7 +61,7 @@ StageMorph, SpriteMorph, StagePrompterMorph, Note, modules, isString, copy,
 isNil, WatcherMorph, List, ListWatcherMorph, alert, console, TableMorph, Color,
 TableFrameMorph, ColorSlotMorph, isSnapObject, Map, newCanvas, Symbol*/
 
-modules.threads = '2019-July-15';
+modules.threads = '2019-August-07';
 
 var ThreadManager;
 var Process;
@@ -3762,6 +3762,31 @@ Process.prototype.changePenHSVA = Process.prototype.changeHSVA;
 Process.prototype.setBackgroundHSVA = Process.prototype.setHSVA;
 Process.prototype.changeBackgroundHSVA = Process.prototype.changeHSVA;
 
+// Process pasting primitives
+
+Process.prototype.doPasteOn = function (name, thisObj, stage) {
+    // allow for lists of sprites and also check for temparary clones,
+    // as in Scratch 2.0,
+    var myself = this,
+        those;
+    thisObj = thisObj || this.blockReceiver();
+    stage = stage || thisObj.parentThatIsA(StageMorph);
+    if (stage.name === name) {
+        name = stage;
+    }
+    if (isSnapObject(name)) {
+        return thisObj.pasteOn(name);
+    }
+    if (name instanceof List) { // assume all elements to be sprites
+        those = name.itemsArray();
+    } else {
+        those = this.getObjectsNamed(name, thisObj, stage); // clones
+    }
+    those.forEach(function (each) {
+        myself.doPasteOn(each, thisObj, stage);
+    });
+};
+
 // Process temporary cloning (Scratch-style)
 
 Process.prototype.createClone = function (name) {
@@ -3948,6 +3973,7 @@ Process.prototype.reportAspect = function (aspect, location) {
     //      'saturation'    - hsv SATURATION on a scale of 0 - 100
     //      'brightness'    - hsv VALUE on a scale of 0 - 100
     //      'transparency'  - rgba ALPHA on a reversed (!) scale of 0 - 100
+    //      'r-g-b-a'       - list of rgba values on a scale of 0 - 255 each
     //      'sprites'       - a list of sprites at the location, empty if none
     //
     // right input (location):
@@ -4023,6 +4049,9 @@ Process.prototype.reportAspect = function (aspect, location) {
 
     }
 
+    if (choice === 'r-g-b-a') {
+        return new List([clr.r, clr.g, clr.b, Math.round(clr.a * 255)]);
+    }
     if (idx < 0 || idx > 3) {
         return;
     }
@@ -4402,12 +4431,10 @@ Process.prototype.doSet = function (attribute, value) {
     case 'temporary?':
         this.assertType(rcvr, 'sprite');
         this.assertType(value, 'Boolean');
-        if (rcvr.world().isDevMode) {
-            if (value) {
-                rcvr.release();
-            } else {
-                rcvr.perpetuate();
-            }
+        if (value) {
+            rcvr.release();
+        } else {
+            rcvr.perpetuate();
         }
         break;
     case 'name':

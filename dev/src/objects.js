@@ -84,7 +84,7 @@ BlockEditorMorph, BlockDialogMorph, PrototypeHatBlockMorph,  BooleanSlotMorph,
 localize, TableMorph, TableFrameMorph, normalizeCanvas, VectorPaintEditorMorph,
 HandleMorph, AlignmentMorph, Process, XML_Element, WorldMap*/
 
-modules.objects = '2019-July-15';
+modules.objects = '2019-August-08';
 
 var SpriteMorph;
 var StageMorph;
@@ -676,6 +676,14 @@ SpriteMorph.prototype.initBlocks = function () {
             type: 'reporter',
             category: 'pen',
             spec: 'pen trails'
+        },
+
+        // Pen - experimental primitives for development mode
+        doPasteOn: {
+            dev: true,
+            type: 'command',
+            category: 'pen',
+            spec: 'paste on %spr'
         },
 
         // Control
@@ -1902,12 +1910,12 @@ SpriteMorph.prototype.drawNew = function () {
             cst = this.costume;
             handle = setInterval(
                 function () {
-                    myself.wearCostume(cst);
+                    myself.wearCostume(cst, true);
                     clearInterval(handle);
                 },
                 100
             );
-            return myself.wearCostume(null);
+            return myself.wearCostume(null, true);
 
         }
     }
@@ -2316,6 +2324,8 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(block('write'));
         blocks.push('-');
         blocks.push(block('reportPenTrailsAsCostume'));
+        blocks.push('-');
+        blocks.push(block('doPasteOn'));
         blocks.push('=');
         blocks.push(this.makeBlockButton(cat));
 
@@ -3571,6 +3581,7 @@ SpriteMorph.prototype.doPlaySound = function (name) {
     if (sound) {
         aud = document.createElement('audio');
         aud.src = sound.audio.src;
+        ctx.resume(); // needed to fix tainted context in case of autoplay
         source = ctx.createMediaElementSource(aud);
         source.connect(gain);
         if (pan) {
@@ -4309,6 +4320,114 @@ SpriteMorph.prototype.setSize = function (size) {
 
 SpriteMorph.prototype.changeSize = function (delta) {
     this.setSize(this.size + (+delta || 0));
+};
+
+// SpriteMorph printing on another sprite:
+
+SpriteMorph.prototype.pasteOn = function (target) {
+    // draw my costume onto a copy of the target's costume scaled and rotated
+    // so it appears as though I'm "stamped" onto it.
+
+    var sourceHeading = (this.rotationStyle === 1) ? this.heading : 90,
+        targetHeading = (target.rotationStyle === 1) ? target.heading : 90,
+        sourceCostume, targetCostume, ctx,
+        relRot, relScale, stageScale,
+        centerDist, centerDelta, centerAngleRadians, center,
+        originDist, originAngleRadians,
+        spriteCenter, thisCenter, relPos, pos;
+
+    // prevent pasting an object onto itself
+    if (this === target) {return; }
+
+    // check if both source and target have costumes,
+    // rasterize copy of target costume if it's an SVG
+    if (this.costume && target.costume) {
+        sourceCostume = this.costume;
+        if (sourceCostume instanceof SVG_Costume) {
+            sourceCostume = sourceCostume.rasterized();
+        }
+        if (target.costume instanceof SVG_Costume) {
+            targetCostume = target.costume.rasterized();
+        } else {
+            targetCostume = target.costume.copy();
+        }
+    } else {
+        return;
+    }
+
+    // do the math:
+    if (target instanceof SpriteMorph) {
+        if (this instanceof SpriteMorph) {
+            // stamp a sprite on a sprite:
+            relRot = sourceHeading - targetHeading;
+            relScale = this.scale / target.scale;
+            stageScale = this.parentThatIsA(StageMorph).scale;
+            centerDist = target.center().distanceTo(this.center());
+            centerDelta = this.center().subtract(target.center());
+            centerAngleRadians = Math.atan2(centerDelta.y, centerDelta.x);
+            center = new Point(
+                    sourceCostume.width(),
+                    sourceCostume.height()
+                ).multiplyBy(0.5 * this.scale * stageScale);
+            originDist = center.distanceTo(new Point(0, 0));
+            originAngleRadians = Math.atan2(center.y, center.x);
+            spriteCenter = new Point(
+                    target.costume.width(),
+                    target.costume.height()
+                ).multiplyBy(0.5 * target.scale * stageScale)
+                .rotateBy(radians(relRot));
+            thisCenter = spriteCenter.distanceAngle(
+                    centerDist,
+                    degrees(centerAngleRadians) - sourceHeading + 180
+                );
+            relPos = thisCenter.distanceAngle(
+                    originDist,
+                    degrees(originAngleRadians) -90
+                );
+            pos = relPos.divideBy(stageScale)
+                .divideBy(relScale)
+                .divideBy(target.scale);
+        } else { // if the stage is the source
+            // stamp the stage on a sprite:
+            relRot = 90 - targetHeading;
+            relScale = 1 / target.scale;
+            centerDist = target.center().distanceTo(this.position());
+            centerDelta = this.position().subtract(target.center());
+            centerAngleRadians = Math.atan2(centerDelta.y, centerDelta.x);
+            center = new Point(
+                    target.costume.width(),
+                    target.costume.height()
+                ).multiplyBy(0.5 * target.scale)
+                .rotateBy(radians(90 - targetHeading));
+            pos = center.distanceAngle(
+                    centerDist / this.scale,
+                    degrees(centerAngleRadians) + 90
+                );
+        }
+    } else { // if the stage is the target
+        // stamp a sprite on the stage:
+        relRot = sourceHeading - 90;
+        relScale = this.scale;
+        center = this.center().subtract(target.position())
+                .divideBy(this.scale * target.scale)
+                .rotateBy(radians(sourceHeading - 90));
+        pos = center.subtract(
+                new Point(
+                    sourceCostume.width(),
+                    sourceCostume.height()
+                ).multiplyBy(0.5)
+            );
+    }
+
+    // draw my costume onto the target's costume copy:
+    ctx = targetCostume.contents.getContext('2d');
+    ctx.rotate(radians(relRot));
+    ctx.scale(relScale, relScale);
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.drawImage(sourceCostume.contents, pos.x, pos.y);
+
+    // make the target wear the new costume
+    target.doSwitchToCostume(targetCostume);
 };
 
 // SpriteMorph pen up and down:
@@ -6383,7 +6502,15 @@ SpriteMorph.prototype.refreshInheritedAttribute = function (aName) {
         break;
     case 'costume #':
         this.cachedPropagation = true;
-        this.doSwitchToCostume(this.getCostumeIdx(), true);
+        if (this.inheritsAttribute('costumes')) {
+            // if inheriting the whole wardrobe,
+            // just switch to the exemplar's costume
+            this.wearCostume(this.exemplar.costume, true);
+        } else {
+            // otherwise switch to the own costume of the
+            // corresponing number
+            this.doSwitchToCostume(this.getCostumeIdx(), true);
+        }
         break;
     case 'volume':
         this.cachedPropagation = true;
@@ -8162,6 +8289,8 @@ StageMorph.prototype.blockTemplates = function (category) {
         blocks.push(block('setBackgroundHSVA'));
         blocks.push('-');
         blocks.push(block('reportPenTrailsAsCostume'));
+        blocks.push('-');
+        blocks.push(block('doPasteOn'));
         blocks.push('=');
         blocks.push(this.makeBlockButton(cat));
 
@@ -8651,6 +8780,10 @@ StageMorph.prototype.setBackgroundColor = StageMorph.prototype.setColor;
 
 StageMorph.prototype.getPenAttribute
     = SpriteMorph.prototype.getPenAttribute;
+
+// StageMorph printing on another sprite:
+
+StageMorph.prototype.pasteOn = SpriteMorph.prototype.pasteOn;
 
 // StageMorph pseudo-inherited behavior
 
