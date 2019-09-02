@@ -4043,3 +4043,269 @@ Translation Updates:
 ------
 * Threads: initialize Process>>gensyms with null (because it's hardly ever needed)
 * Objects: remove obsolete STOP primitive from the stage's palette
+
+=== v4.1.2.7 maintenance release ===
+
+180319
+------
+* new Vector Paint Editor, thanks, Carles Paredes and Bernat Romagosa!
+
+180320
+------
+* Threads: refactored experimental JS-compiler
+* Threads: enabled variables access for experimental JS-compiler
+
+180322
+------
+* Threads: extended implicit parameters handling for experimental JS-Compiler
+* Threads: new experimental atomic HOFs utilizing JIT compilation (MAP, KEEP, SORT)
+* new experimental "Big Data" library using JIT compiler
+
+180323
+------
+* Threads: new experimental atomic COMBINE utilizing JIT compiler
+* added atomic COMBINE to new experimental "Bigger Data" library
+* removed unused blocks from the audio comp library
+* added and removed atomic FOR EACH to new experimental "Bigger Data" library
+
+180412
+------
+* Threads: disable detecting collision with hidden sprites
+
+180413
+------
+* Objects: added implicit parameter count to experimental JIT compile reporter
+
+180416
+------
+* Blocks: only preserve filled rings when collapsing ring-typed multi-arg-slots
+* Blocks: minor tweaks
+
+180424
+------
+* added 'name' selector to pixel library
+
+180425
+------
+* GUI: fixed rearranging sound icons in the jukebox
+* GUI: fixed scrolling for the jukebox (updating the sounds list version)
+* GUI: only randomize position when shift-clicking on new turtle-sprite button
+
+180427
+------
+* GUI: when creating a new sprite only randomize color and direction when shift-clicking
+
+180502
+------
+* Blocks, Threads: added "center" to drop-down options of location blocks (GO TO, POINT TOWARDS, DISTANCE TO and DIRECTION TO)
+* updated German translation
+* disabled keyboard shortcuts for green-flag (cmd-enter) and stop (esc) in presentation mode
+* Blocks, Threads: added options for sprite attributes to the SET block
+
+180503
+------
+* GUI: (again) randomize pen color when creating a new sprite
+
+180508
+------
+* Threads: tweaked JS-Compiler to better handle process related ops
+
+180524
+------
+* Blocks: fixed rendering and layout of variadic C-shaped input slots
+
+180604
+------
+* Blocks: tweaked layout of variadic C-shaped input slots
+
+180605
+------
+* VectorPaint: fixed rotation center editing for existing costumes
+* VectorPaint: fixed initial rendering, so costumes can be re-opened after saving
+* Symbols: fixed 'polygon' symbol rendering
+
+180606
+------
+* updated German translation, thanks, Jadga!
+* updated Portuguese translation, thanks, Manuel!
+* new Project Cloud Backups feature, thanks, Bernat!
+* BYOB, Blocks, Threads, Store: fixed support for numerical custom block input names
+
+180608
+------
+* Blocks, Objects: new experimental "When I am stopped" event option
+* Threads: Prevent terminated threads from forking new ones and from cloning
+
+180609
+------
+* Objects, Threads: Also trigger "When I am stopped" when programmatically calling "stop all"
+
+180611
+------
+* Objects, Threads: fixed #2108 (added drop-down menu to "letter _ of _ ")
+* German translation update
+
+180612
+------
+* Renamed vectorPaint.js to sketch.js
+* GUI: updated credits for Carles Paredes
+* "Pixels" library: Enabled multiple references to the same pixel (variable)
+
+180614
+------
+* Threads: Prevent terminated threads from launching new ones
+* prepared v4.2 rc
+
+180615
+------
+* BYOB: fixed #2043 (regression)
+
+180617
+------
+* GUI: fixed cloud scope issues
+
+180618
+------
+* Threads: added capability to JIT-compile command scripts to JS
+
+180620
+------
+* Sketch: enable right-click to select secondary color in vector paint editor
+* GUI: allow only one instance of Camera and Sound Recorder to open
+* new "webcam snap" reporter in the "Pixels" library
+* new "record" reporter in the "Audio Comp" library
+
+180621
+------
+* Threads, Objects: made "When I am stopped" scripts atomic, so you can use loops
+
+=== v4.2 major release ===
+
+v4.2 New Features:
+* "recover project" feature, (cloud backups), thanks, Bernat Romagosa!
+* vector paint editor, thanks, Carles Paredes and Bernat Romagosa!
+* "When I am stopped" event option, runs one atomic frame before terminating, use-case: stop robots when a user hits the stop button
+* experimental JIT compiler for atomic HOFs, used in new "Bigger Data" library
+* new library for programmatically creating variables, thanks, Brian Harvey!
+* added options for sprite attributes to the SET block
+* new "webcam snap" reporter in the "Pixels" library
+* new "record" reporter in the "Audio Comp" library
+* added "name" selector to the "Pixels" library
+* added drop-down menu to "letter _ of _ ", adjusted all translations (thanks, Joan!)
+
+Notable Changes:
+* hidden sprites can no longer be collision detected (but can test for other sprites)
+* new sprites created by pressing the arrow button no point in random directions (unless you hold down the shift-key)
+* new "center" option for location blocks (GO TO, POINT TOWARDS, DISTANCE TO and DIRECTION TO)
+* disabled keyboard shortcuts for green-flag (cmd-enter) and stop (esc) in presentation mode
+
+Notable Fixes:
+* rearranging and scrolling sound icons
+* rendering and layout of variadic C-shaped input slots
+* when collapsing ring-typed multi-arg slots only filled rings are preserved
+* support for numerical custom block input names
+* no more "leftover" clones when pressing the stop button or executing the STOP block 
+
+Translation Updates:
+* German, thanks, Jadga!
+* Portuguese, thanks, Manuel!
+* Catalan, thanks, Joan!
+
+
+180703
+------
+* speed up HTTP based hardware APIs (by not waiting for the result if the URL reporter is used inside a REPORT block within a custom COMMAND block definition)
+
+180705
+------
+* Threads: added JIT compiler support for "change variable" primitive
+* Threads: optimized RUN with reportURL (fire-and-forget)
+
+180706
+------
+* Objects: fixed #2142 - search and keyboard entry support for custom block translations
+
+180709
+------
+* Portuguese translation update, thanks, Manuel!
+* New Basque translation, thanks, Asier Iturralde Sarasola!
+* French translation update, thanks, Nathalie and Joan!
+* Spanish, Catalan and French translations of the tools library, thanks, Joan!
+* New JSON library, thanks, Bernat!
+* URL cache issue fix, thanks, Joan!
+
+=== v4.2.1 minor release ===
+
+v4.2.1 New Features:
+* new libraries for parallelization and JSON support
+* new "loudness" reporter in audio comp library, thanks, Bernat!
+
+Notable Changes:
+* significant speed-up for HTTP based robot APIs such as the Hummingbird kit
+
+Notable Fixes:
+* "When I am stopped" hat block now also works for stacks of HTTP based robot commands
+* resolved name conflicts in pixels and audio comp libraries
+
+Translation Updates:
+* New Basque translation, thanks, Asier Iturralde Sarasola!
+* Portuguese, thanks, Manuel!
+* French, thanks, Nathalie and Joan!
+* Spanish, Catalan and French translations of the tools library, thanks, Nathalie and Joan!
+
+180710
+------
+* Threads, GUI: reverted Cache-Control header for HTTP requests b/c of CORS issues
+
+=== v4.2.1.1 maintenance release ===
+
+180710
+------
+* Threads, GUI: fixed #712 - false "reporter didn't report" error messages
+
+180711
+------
+* GUI: added support for "&lang=nn" url parameter, made it non-permanent
+* Threads: fixed outer script variable scope for TELL/ASK and OF
+* Tools: fixed JOIN WORDS and LIST -> SENTENCE
+
+180712
+------
+* Threads: tweaked outer script variable scope for TELL/ASK and OF
+* Blocks: fixed #2145 - newlines in block labels conflict with input declarations
+* GUI: increased project dialog width to accommodate translations for the "recover" button
+
+180713
+------
+* Blocks: enabled smart ternary Boolean slots by default
+
+=== v4.2.1.2 maintenance release ===
+
+New Feature:
+* new "&lang=nn" url parameter for specifying a session translation in a web-link
+
+Changed:
+* smart ternary Boolean slots - only 2 states except inside rings and in the palette
+* made project dialog wider to accommodate translations for the "recover" button
+
+Fixes:
+* corrected scope for outer script variables in inter-sprite messages (TELL, ASK, OF)
+* eliminated false "reporter didn't report" error messages
+
+
+180719
+------
+* Threads: fixed a regression conflict between "when I am stopped" and broadcasts
+
+=== v4.2.1.3 maintenance release ===
+
+180909
+------
+* new dev version
+* Threads: fixed #2176 ('arguments' not found for calling empty multi-slots)
+* Blocks: enabled drop-down for "inherit" command for clone-initialization scripts
+
+=== v4.2.1.4 maintenance release ===
+
+
+=== in development ===

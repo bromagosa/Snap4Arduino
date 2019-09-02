@@ -17,9 +17,17 @@ speech_module.xml	Text to speech	output text using speech synthesis.
 animation_module.xml	Animation	glide, grow and rotate using easing functions.
 pixel_module.xml	Pixels	manipulate costumes pixel-wise.
 audioComp_module.xml	Audio Comp	analyze, manipulate and generate sound samples.
+atomic_HOFs_module.xml	"Bigger" Data	[EXPERIMENTAL] crunch large lists very fast
+make-variables.xml	create variables in program	declare global or sprite-local variables in a script
+json.xml	Deal with JSON data	Turn JSON strings into lists with the listify block, then retrieve data out of them by using the value at key block.
+parallel_module.xml	Parallelization	Run several scripts in parallel and wait until all are done.
 scale.xml	Scale between ranges	Scale a value from a range to another. Useful to map sensor values into stage coordinates, or to map sensors into actuators.
 phiro.xml	Phiro robot	Control the Phiro robotic car.
 i2c.xml	I2C	Send and receive data from I2C-enabled sensors and actuators.
 NeoPixel.xml	NeoPixel	NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.
 braccio.xml	Braccio arm	The Braccio robotic arm is an educational simple arm with a grip on its end. You need to install BraccioFirmata into the board before being able to use this library.
 snapJrLib.xml	SnapJunior Blocks	Icon-based blocks for the youngest programmers.
+SA5Firmata_tone.xml	SA5Firmata	Adding extra features to StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck and dht11 blocks. It requires SA5Firmata_tone firmware.
+SA5Firmata_ir.xml	SA5FirmataIR	SA5Firmata with IR features at the expense of simplifying the tone function. It requires SA5Firmata_ir firmware.
+Creative_Robotix.xml	Creative Robotix Platform	Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware.
+

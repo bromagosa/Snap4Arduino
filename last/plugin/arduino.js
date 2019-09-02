@@ -109,6 +109,10 @@ Arduino.prototype.populateBoard = function (board) {
     board.getDigitalPinValue = function (pin) { postal.sendCommand('getDigitalPinValue', [board.id, pin], function (response) { board.pins[pin].value = response; board.pins[pin].report = 2;}); };
     board.getAnalogPinValue = function (aPin) { postal.sendCommand('getAnalogPinValue', [board.id, aPin], function (response) { board.pins[aPin].value = response; board.pins[aPin].report = 2;}); };
     board.getArduinoBoardParam = function (name) {postal.sendCommand('getArduinoBoardParam', [board.id, name], function (response) { board[name] = response;}); };
+    board.checkArduinoBoardParam = function (name) {postal.sendCommand('checkArduinoBoardParam', [board.id, name], function (response) { board[name] = response;}); };
+    board.i2cConfig = function () {postal.sendCommand('i2cConfig', [board.id]); };
+    board.i2cWrite = function (address, reg, bytes) { postal.sendCommand('i2cWrite', [board.id, address, reg, bytes]); };
+    board.i2cReadOnce = function (address, reg, callback) { postal.sendCommand('i2cReadOnce', [board.id, address, reg], function (response) { board['i2cResponse-' + Number(address)] = response; }); };
 
 };
 

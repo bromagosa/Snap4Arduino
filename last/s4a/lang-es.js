@@ -108,8 +108,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'fijar pin digital %digitalPin en %b',
 
-    'set servo %servoPin to %servoValue':
-        'fijar servo %servoPin en %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'fijar servo %digitalPin en %servoValue',
 
     'set pin %pwmPin to value %n':
         'fijar pin %pwmPin al valor %n',
@@ -187,7 +187,25 @@ s4aTempDict = {
         'Repositorio de Snap4Arduino',
 
     'Start a Snap Jr. session':
-        'Inicia una sesión de Snap Junior'
+        'Inicia una sesión de Snap Junior',
+
+    'HTTP server':
+        'Servidor HTTP',
+
+    'uncheck to stop\nHTTP server':
+        'desmarcar para detener\nel servidor HTTP',
+
+    'check to start\nHTTP server, allowing\nremote control\nof Snap4Arduino':
+        'marcar para iniciar\nel servidor HTTP, habilitando\nel control remoto\nde Snap4Arduino',
+
+    'Public stage':
+        'Escenario público',
+
+    'uncheck to prevent the stage\nfrom being viewed\nfrom the HTTP server':
+        'desmarcar para evitar que el escenario\nse visualice desde el servidor HTTP',
+
+    'check to allow the stage\nto be viewed\nfrom the HTTP server':
+        'marcar para permitir que el escenario\nse visualice desde el servidor HTTP'
 };
 
 // Add attributes to original SnapTranslator.dict.es

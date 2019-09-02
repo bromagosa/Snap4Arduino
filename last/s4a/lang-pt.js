@@ -108,8 +108,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'coloca no pino digital %digitalPin o valor booleano %b',
 
-    'set servo %servoPin to %servoValue':
-        'coloca o servo %servoPin %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'coloca o servo %digitalPin %servoValue',
 
     'set pin %pwmPin to value %n':
         'coloca no pino (PWM) %pwmPin o valor %n',

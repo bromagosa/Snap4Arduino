@@ -97,8 +97,8 @@ s4aTempDict = {
     'set digital pin %digitalPin to %b':
         'изменить статус цифрового разъема %digitalPin на %b',
 
-    'set servo %servoPin to %servoValue':
-        'изменить статус разъема серво %servoPin нa %servoValue',
+    'set servo %digitalPin to %servoValue':
+        'изменить статус разъема серво %digitalPin нa %servoValue',
 
     'set pin %pwmPin to value %n':
         'изменить статус разъема PWM %pwmPin на %n',
