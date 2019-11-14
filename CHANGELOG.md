@@ -1,5 +1,10 @@
 # CHANGELOG
 
+### 5.3.3.1 (pre-release)
+
+* Snap! upadated to 5.3.4dev (5.3.3 and 1 fix more)
+* Fixing broken Galego translate of Snap4Arduino
+
 ### 5.1
 
 * Snap! updated to 5.1.0
