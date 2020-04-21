@@ -22,7 +22,13 @@
             "http://snap4arduino.org/*",
             "http://snap4arduino.rocks/*",
             "https://snap4arduino.rocks/*"
-        ],
+            
+            "https://soundscope-website.web.app/*",
+            "http://soundscope-website.web.app/*",
+            "https://www.maketolearn.org/*",
+            "http://www.maketolearn.org/*",
+            "https://soundscope-website-beta.s3.amazonaws.com/*"
+	],
         "accepts_tls_channel_id": false
     },
     "icons": { "16": "icon-16.png", "128": "icon-128.png" },
