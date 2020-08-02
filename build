@@ -118,6 +118,7 @@ build() {
 
         echo "Fetching Snap4Arduino Costumes..."
         cp -R src/Costumes/*.png tmp/Costumes
+        cp -R src/Costumes/*.svg tmp/Costumes
         cat src/Costumes/COSTUMES >> tmp/Costumes/COSTUMES
         cat src/Costumes/COSTUMES >> tmp/Costumes/COSTUMES-full
 
