@@ -157,12 +157,229 @@ IDE_Morph.prototype.fileImport = function () {
     inp.click();
 };
 
+//Not decorated to show original Snap! logo
+IDE_Morph.prototype.aboutSnap = function () {
+    var dlg, aboutTxt, noticeTxt, creditsTxt, versions = '', translations,
+        module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
+        world = this.world();
+
+    aboutTxt = 'Snap! 6.1.0\nBuild Your Own Blocks\n\n'
+        + 'Copyright \u24B8 2008-2020 Jens M\u00F6nig and '
+        + 'Brian Harvey\n'
+        + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
+        + '        Snap! is developed by the University of California, '
+        + 'Berkeley and SAP        \n'
+        + 'with support from the National Science Foundation (NSF),\n'
+        + 'MIOsoft and YC Research.\n'
+        + 'The design of Snap! is influenced and inspired by Scratch,\n'
+        + 'from the Lifelong Kindergarten group at the MIT Media Lab\n\n'
+
+        + 'for more information see https://snap.berkeley.edu';
+
+    noticeTxt = localize('License')
+        + '\n\n'
+        + 'Snap! is free software: you can redistribute it and/or modify\n'
+        + 'it under the terms of the GNU Affero General Public License as\n'
+        + 'published by the Free Software Foundation, either version 3 of\n'
+        + 'the License, or (at your option) any later version.\n\n'
+
+        + 'This program is distributed in the hope that it will be useful,\n'
+        + 'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'
+        + 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n'
+        + 'GNU Affero General Public License for more details.\n\n'
+
+        + 'You should have received a copy of the\n'
+        + 'GNU Affero General Public License along with this program.\n'
+        + 'If not, see http://www.gnu.org/licenses/\n\n'
+
+        + 'Want to use Snap! but scared by the open-source license?\n'
+        + 'Get in touch with us, we\'ll make it work.';
+
+    creditsTxt = localize('Contributors')
+        + '\n\nNathan Dinsmore: Saving/Loading, Snap-Logo Design, '
+        + '\ncountless bugfixes and optimizations'
+        + '\nMichael Ball: Time/Date UI, Library Import Dialog,'
+        + '\ncountless bugfixes and optimizations'
+        + '\nBernat Romagosa: Countless contributions'
+        + '\nBartosz Leper: Retina Display Support'
+        + '\nZhenlei Jia and Dariusz Dorożalski: IME text editing'
+        + '\nKen Kahn: IME support and countless other contributions'
+        + '\nJosep Ferràndiz: Video Motion Detection'
+        + '\nJoan Guillén: Countless contributions'
+        + '\nKartik Chandra: Paint Editor'
+        + '\nCarles Paredes: Initial Vector Paint Editor'
+        + '\n"Ava" Yuan Yuan, Dylan Servilla: Graphic Effects'
+        + '\nKyle Hotchkiss: Block search design'
+        + '\nBrian Broll: Many bugfixes and optimizations'
+        + '\nIan Reynolds: UI Design, Event Bindings, '
+        + 'Sound primitives'
+        + '\nJadga Hügle: Icons and countless other contributions'
+        + '\nIvan Motyashov: Initial Squeak Porting'
+        + '\nLucas Karahadian: Piano Keyboard Design'
+        + '\nDavide Della Casa: Morphic Optimizations'
+        + '\nAchal Dave: Web Audio'
+        + '\nJoe Otto: Morphic Testing and Debugging';
+
+    for (module in modules) {
+        if (Object.prototype.hasOwnProperty.call(modules, module)) {
+            versions += ('\n' + module + ' (' +
+                            modules[module] + ')');
+        }
+    }
+    if (versions !== '') {
+        versions = localize('current module versions:') + ' \n\n' +
+            'morphic (' + morphicVersion + ')' +
+            versions;
+    }
+    translations = localize('Translations') + '\n' + SnapTranslator.credits();
+
+    dlg = new DialogBoxMorph();
+
+    function txt(textString) {
+        var tm = new TextMorph(
+                textString,
+                dlg.fontSize,
+                dlg.fontStyle,
+                true,
+                false,
+                'center',
+                null,
+                null,
+                MorphicPreferences.isFlat ? null : new Point(1, 1),
+                WHITE
+            ),
+            scroller,
+            maxHeight = world.height() - dlg.titleFontSize * 10;
+        if (tm.height() > maxHeight) {
+            scroller = new ScrollFrameMorph();
+            scroller.acceptsDrops = false;
+            scroller.contents.acceptsDrops = false;
+            scroller.bounds.setWidth(tm.width());
+            scroller.bounds.setHeight(maxHeight);
+            scroller.addContents(tm);
+            scroller.color = new Color(0, 0, 0, 0);
+            return scroller;
+        }
+        return tm;
+    }
+
+
+    dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //changed in Snap4Arduino
+    btn1 = dlg.buttons.children[0];
+    translatorsBtn = dlg.addButton(
+        () => {
+            dlg.addBody(txt(translations));
+            dlg.body.fixLayout();
+            btn1.show();
+            btn2.show();
+            btn3.hide();
+            btn4.hide();
+            licenseBtn.hide();
+            translatorsBtn.hide();
+            dlg.fixLayout();
+            dlg.setCenter(world.center());
+        },
+        'Translators...'
+    );
+    btn2 = dlg.addButton(
+        () => {
+            dlg.addBody(txt(aboutTxt));
+            dlg.body.fixLayout();
+            btn1.show();
+            btn2.hide();
+            btn3.show();
+            btn4.show();
+            licenseBtn.show();
+            translatorsBtn.hide();
+            dlg.fixLayout();
+            dlg.setCenter(world.center());
+        },
+        'Back...'
+    );
+    btn2.hide();
+    licenseBtn = dlg.addButton(
+        () => {
+            dlg.addBody(txt(noticeTxt));
+            dlg.body.fixLayout();
+            btn1.show();
+            btn2.show();
+            btn3.hide();
+            btn4.hide();
+            licenseBtn.hide();
+            translatorsBtn.hide();
+            dlg.fixLayout();
+            dlg.setCenter(world.center());
+        },
+        'License...'
+    );
+    btn3 = dlg.addButton(
+        () => {
+            dlg.addBody(txt(versions));
+            dlg.body.fixLayout();
+            btn1.show();
+            btn2.show();
+            btn3.hide();
+            btn4.hide();
+            licenseBtn.hide();
+            translatorsBtn.hide();
+            dlg.fixLayout();
+            dlg.setCenter(world.center());
+        },
+        'Modules...'
+    );
+    btn4 = dlg.addButton(
+        () => {
+            dlg.addBody(txt(creditsTxt));
+            dlg.body.fixLayout();
+            btn1.show();
+            btn2.show();
+            translatorsBtn.show();
+            btn3.hide();
+            btn4.hide();
+            licenseBtn.hide();
+            dlg.fixLayout();
+            dlg.setCenter(world.center());
+        },
+        'Credits...'
+    );
+    translatorsBtn.hide();
+    dlg.fixLayout();
+};
+
 IDE_Morph.prototype.aboutSnap4Arduino = function () {
     var dlg, aboutTxt, creditsTxt, translations,
     module, aboutBtn, creditsBtn,
     world = this.world();
 
     dlg = new DialogBoxMorph();
+
+    function txt(textString) {
+        var tm = new TextMorph(
+                textString,
+                dlg.fontSize,
+                dlg.fontStyle,
+                true,
+                false,
+                'center',
+                null,
+                null,
+                MorphicPreferences.isFlat ? null : new Point(1, 1),
+                WHITE
+            ),
+            scroller,
+            maxHeight = world.height() - dlg.titleFontSize * 10;
+        if (tm.height() > maxHeight) {
+            scroller = new ScrollFrameMorph();
+            scroller.acceptsDrops = false;
+            scroller.contents.acceptsDrops = false;
+            scroller.bounds.setWidth(tm.width());
+            scroller.bounds.setHeight(maxHeight);
+            scroller.addContents(tm);
+            scroller.color = new Color(0, 0, 0, 0);
+            return scroller;
+        }
+        return tm;
+    }
 
     this.getURL('version', function (version) {
         
@@ -181,7 +398,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         + 'by the Edutec research group at the Citilab, Cornellà de\n'
         + 'Llobregat (Barcelona).'
 
-        dlg.inform('About Snap4Arduino', aboutTxt, world);
+        dlg.inform('About Snap4Arduino', aboutTxt, world, this.logo.cachedTexture);
     });
     
     creditsTxt = localize('Contributors')
@@ -211,31 +428,28 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 
     creditsBtn = dlg.addButton(
         function () {
-            dlg.body.text = creditsTxt;
-            dlg.body.drawNew();
+            dlg.addBody(txt(creditsTxt));
+            dlg.body.fixLayout();
             aboutBtn.show();
             creditsBtn.hide();
             dlg.fixLayout();
-            dlg.drawNew();
             dlg.setCenter(world.center());
         },
         'Contributions...'
     );
     aboutBtn = dlg.addButton(
         function () {
-            dlg.body.text = aboutTxt;
-            dlg.body.drawNew();
+            dlg.addBody(txt(aboutTxt));
+            dlg.body.fixLayout();
             aboutBtn.hide();
             creditsBtn.show();
             dlg.fixLayout();
-            dlg.drawNew();
             dlg.setCenter(world.center());
         },
         'About Snap4Arduino...'
     );
     aboutBtn.hide();
     dlg.fixLayout();
-    dlg.drawNew();
 };
 
 IDE_Morph.prototype.originalGetCostumesList = IDE_Morph.prototype.getCostumesList;
@@ -266,29 +480,93 @@ IDE_Morph.prototype.createLogo = function () {
     }
 
     this.logo = new Morph();
-    this.logo.texture = 's4a_logo_sm.png'; // Overriden
-    this.logo.drawNew = function () {
-        this.image = newCanvas(this.extent());
-        var context = this.image.getContext('2d'),
-            gradient = context.createLinearGradient(
+
+    // the logo texture is not loaded dynamically as an image, but instead
+    // hard-copied here to avoid tainting the world canvas. This lets us
+    // use Snap's (and Morphic's) color pickers to sense any pixel which
+    // otherwise would be compromised by annoying browser security.
+
+    // this.logo.texture = this.logoURL; // original code, commented out
+    this.logo.texture = 's4a_logo_sm.png'; // Overriden for Snap4Arduino
+    this.snapLogo = new Image();
+    this.snapLogo.src = "data:image/png;base64," +
+        "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" +
+        "gg=="; 
+
+    this.logo.render = function (ctx) {
+        var gradient = ctx.createLinearGradient(
                 0,
                 0,
                 this.width(),
                 0
-        );
+            );
         gradient.addColorStop(0, 'black');
         gradient.addColorStop(0.5, myself.frameColor.toString());
-        context.fillStyle = MorphicPreferences.isFlat ?
-            myself.frameColor.toString() : gradient;
-        context.fillRect(0, 0, this.width(), this.height());
-        if (this.texture) {
-            this.drawTexture(this.texture);
+        ctx.fillStyle = MorphicPreferences.isFlat ?
+                myself.frameColor.toString() : gradient;
+        ctx.fillRect(0, 0, this.width(), this.height());
+        if (this.cachedTexture) {
+            this.renderCachedTexture(ctx);
+        } else if (this.texture) {
+            this.renderTexture(this.texture, ctx);
         }
     };
 
-    this.logo.drawCachedTexture = function () {
-        var context = this.image.getContext('2d');
-        context.drawImage(
+    this.logo.renderCachedTexture = function (ctx) {
+        ctx.drawImage(
             this.cachedTexture,
             5,
             Math.round((this.height() - this.cachedTexture.height) / 2)
@@ -300,7 +578,7 @@ IDE_Morph.prototype.createLogo = function () {
         myself.snapMenu();
     };
 
-    this.logo.color = new Color();
+    this.logo.color = BLACK;
     this.logo.setExtent(new Point(200, 28)); // dimensions are fixed
     this.add(this.logo);
 };
@@ -425,11 +703,11 @@ IDE_Morph.prototype.doSaveAndShare = function () {
     this.showMessage('Saving project\nto the cloud...');
     this.setProjectName(projectName);
 
-    SnapCloud.saveProject(
+    Cloud.saveProject(
         this,
         function () {
             myself.showMessage('sharing\nproject...');
-            SnapCloud.shareProject(
+            Cloud.shareProject(
                 projectName,
                 null, // username is implicit
                 function () {
@@ -447,7 +725,7 @@ IDE_Morph.prototype.showProjectUrl = function (projectName) {
     var info = new DialogBoxMorph(),
         label = localize('This project is now public at the following URL:'), 
         txt = new InputFieldMorph(
-            SnapCloud.urlForMyProject(projectName),
+            this.cloud.urlForMyProject(projectName),
             false, // no numeric
             null, // no choices
             false // readOnly, to get a selected text
@@ -457,7 +735,6 @@ IDE_Morph.prototype.showProjectUrl = function (projectName) {
     info.createLabel();
     info.addBody(txt);
     info.addButton('ok', 'OK');
-    info.drawNew();
     info.fixLayout();
     info.popUp(this.world());
 };
@@ -593,43 +870,44 @@ IDE_Morph.prototype.createCategories = function () {
     }
     this.categories = new Morph();
     this.categories.color = this.groupColor;
-    this.categories.silentSetWidth(this.logo.width()); // width is fixed
+    this.categories.bounds.setWidth(this.paletteWidth);
+    // this.categories.getRenderColor = ScriptsMorph.prototype.getRenderColor;
 
     function addCategoryButton(category) {
         var labelWidth = 75,
             colors = [
                 myself.frameColor,
-                myself.frameColor.darker(50),
+                myself.frameColor.darker(MorphicPreferences.isFlat ? 5 : 50),
                 SpriteMorph.prototype.blockColor[category]
             ],
             button;
 
         button = new ToggleButtonMorph(
-                colors,
-                myself, // the IDE is the target
-                function () {
-                    myself.currentCategory = category;
-                    myself.categories.children.forEach(function (each) {
-                        each.refresh();
-                    });
-                    myself.refreshPalette(true);
-                },
-                category[0].toUpperCase().concat(category.slice(1)), // label
-                function () {  // query
-                    return myself.currentCategory === category;
-                },
-                null, // env
-                null, // hint
-                null, // template cache
-                labelWidth, // minWidth
-                true // has preview
+            colors,
+            myself, // the IDE is the target
+            () => {
+                myself.currentCategory = category;
+                myself.categories.children.forEach(each =>
+                    each.refresh()
                 );
+                myself.refreshPalette(true);
+            },
+            category[0].toUpperCase().concat(category.slice(1)), // label
+            () => myself.currentCategory === category, // query
+            null, // env
+            null, // hint
+            labelWidth, // minWidth
+            true // has preview
+        );
 
         button.corner = 8;
         button.padding = 0;
         button.labelShadowOffset = new Point(-1, -1);
         button.labelShadowColor = colors[1];
         button.labelColor = myself.buttonLabelColor;
+        if (MorphicPreferences.isFlat) {
+            button.labelPressColor = WHITE;
+        }
         button.fixLayout();
         button.refresh();
         myself.categories.add(button);
@@ -641,9 +919,9 @@ IDE_Morph.prototype.createCategories = function () {
             buttonHeight = myself.categories.children[0].height(),
             border = 3,
             rows =  Math.ceil((myself.categories.children.length) / 2),
-            xPadding = (myself.categories.width()
-                    - border
-                    - buttonWidth * 2) / 3,
+            xPadding = (200 // myself.logo.width()
+                - border
+                - buttonWidth * 2) / 3,
             yPadding = 2,
             l = myself.categories.left(),
             t = myself.categories.top(),
@@ -651,25 +929,24 @@ IDE_Morph.prototype.createCategories = function () {
             row,
             col;
 
-        myself.categories.children.forEach(function (button) {
+        myself.categories.children.forEach(button => {
             i += 1;
             row = Math.ceil(i / 2);
             col = 2 - (i % 2);
             button.setPosition(new Point(
                 l + (col * xPadding + ((col - 1) * buttonWidth)),
                 t + (row * yPadding + ((row - 1) * buttonHeight) + border)
-                )
-            );
+            ));
         });
 
         myself.categories.setHeight(
             (rows + 1) * yPadding
-            + rows * buttonHeight
-            + 2 * border
-            );
+                + rows * buttonHeight
+                + 2 * border
+        );
     }
 
-    SpriteMorph.prototype.categories.forEach(function (cat) {
+    SpriteMorph.prototype.categories.forEach(cat => {
         if (!contains(['lists'], cat)) {
             addCategoryButton(cat);
         }
@@ -677,6 +954,7 @@ IDE_Morph.prototype.createCategories = function () {
     fixCategoriesLayout();
     this.add(this.categories);
 };
+
 
 // Show URL of public projects in project list
 ProjectDialogMorph.prototype.originalInstallCloudProjectList = ProjectDialogMorph.prototype.installCloudProjectList;
