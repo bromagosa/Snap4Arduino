@@ -331,14 +331,10 @@ SpriteMorph.prototype.freshPalette = function (category) {
         ry = 0,
         blocks,
         hideNextSpace = false,
-        myself = this,
         stage = this.parentThatIsA(StageMorph),
-        oldFlag = Morph.prototype.trackChanges,
         shade = new Color(140, 140, 140),
         searchButton,
         makeButton;
-
-    Morph.prototype.trackChanges = false;
 
     palette.owner = this;
     palette.padding = unit / 2;
@@ -358,7 +354,8 @@ SpriteMorph.prototype.freshPalette = function (category) {
     searchButton.padding = 1;
     searchButton.hint = localize('find blocks') + '...';
     searchButton.labelShadowColor = shade;
-    searchButton.drawNew();
+    searchButton.edge = 0;
+    searchButton.padding = 3;
     searchButton.fixLayout();
 	palette.toolBar.add(searchButton);
 
@@ -371,7 +368,8 @@ SpriteMorph.prototype.freshPalette = function (category) {
     makeButton.padding = 1;
     makeButton.hint = localize('Make a block') + '...';
     makeButton.labelShadowColor = shade;
-    makeButton.drawNew();
+    makeButton.edge = 0;
+    makeButton.padding = 3;
     makeButton.fixLayout();
     palette.toolBar.add(makeButton);
 
@@ -391,11 +389,20 @@ SpriteMorph.prototype.freshPalette = function (category) {
                     [
                         'doDeclareVariables',
                         'reportNewList',
+                        'reportNumbers',
                         'reportCONS',
                         'reportListItem',
                         'reportCDR',
                         'reportListLength',
+                        'reportListIndex',
+                        'reportConcatenatedLists',
                         'reportListContainsItem',
+                        'reportListIsEmpty',
+                        'doForEach',
+                        'reportMap',
+                        'reportKeep',
+                        'reportFindFirst',
+                        'reportCombine',
                         'doAddToList',
                         'doDeleteFromList',
                         'doInsertInList',
@@ -406,19 +413,20 @@ SpriteMorph.prototype.freshPalette = function (category) {
         function hasHiddenPrimitives() {
             var defs = SpriteMorph.prototype.blocks,
                 hiddens = StageMorph.prototype.hiddenPrimitives;
-            return Object.keys(hiddens).some(function (any) {
-                return !isNil(defs[any]) && (defs[any].category === category
-                    || contains((more[category] || []), any));
-            });
+            return Object.keys(hiddens).some(any =>
+                !isNil(defs[any]) &&
+                    (defs[any].category === category ||
+                        contains((more[category] || []), any))
+            );
         }
 
         function canHidePrimitives() {
-            return palette.contents.children.some(function (any) {
-                return contains(
+            return palette.contents.children.some(any =>
+                contains(
                     Object.keys(SpriteMorph.prototype.blocks),
                     any.selector
-                );
-            });
+                )
+            );
         }
 
         menu.addPair(
@@ -429,7 +437,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
                 ),
                 localize('find blocks') + '...'
             ],
-            function () {myself.searchBlocks(); },
+            () => this.searchBlocks(),
             '^F'
         );
         if (canHidePrimitives()) {
@@ -437,14 +445,14 @@ SpriteMorph.prototype.freshPalette = function (category) {
                 'hide primitives',
                 function () {
                     var defs = SpriteMorph.prototype.blocks;
-                    Object.keys(defs).forEach(function (sel) {
+                    Object.keys(defs).forEach(sel => {
                         if (defs[sel].category === category) {
                             StageMorph.prototype.hiddenPrimitives[sel] = true;
                         }
                     });
-                    (more[category] || []).forEach(function (sel) {
-                        StageMorph.prototype.hiddenPrimitives[sel] = true;
-                    });
+                    (more[category] || []).forEach(sel =>
+                        StageMorph.prototype.hiddenPrimitives[sel] = true
+                    );
                     ide.flushBlocksCache(category);
                     ide.refreshPalette();
                 }
@@ -456,14 +464,14 @@ SpriteMorph.prototype.freshPalette = function (category) {
                 function () {
                     var hiddens = StageMorph.prototype.hiddenPrimitives,
                         defs = SpriteMorph.prototype.blocks;
-                    Object.keys(hiddens).forEach(function (sel) {
+                    Object.keys(hiddens).forEach(sel => {
                         if (defs[sel] && (defs[sel].category === category)) {
                             delete StageMorph.prototype.hiddenPrimitives[sel];
                         }
                     });
-                    (more[category] || []).forEach(function (sel) {
-                        delete StageMorph.prototype.hiddenPrimitives[sel];
-                    });
+                    (more[category] || []).forEach(sel =>
+                        delete StageMorph.prototype.hiddenPrimitives[sel]
+                    );
                     ide.flushBlocksCache(category);
                     ide.refreshPalette();
                 }
@@ -482,7 +490,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
         }
     }
 
-    blocks.forEach(function (block) {
+    blocks.forEach(block => {
         if (block === null) {
             return;
         }
@@ -509,7 +517,6 @@ SpriteMorph.prototype.freshPalette = function (category) {
                 x = block.right() + unit / 2;
                 ry = block.bottom();
             } else {
-                // if (block.fixLayout) {block.fixLayout(); }
                 x = 0;
                 y += block.height();
             }
@@ -521,7 +528,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
     if (stage) {
         y += unit * 1.6;
 
-        stage.globalBlocks.forEach(function (definition) {
+        stage.globalBlocks.forEach(definition => {
             var block;
             if (definition.category === category ||
                     (category === 'variables'
@@ -542,7 +549,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
     // local custom blocks:
 
     y += unit * 1.6;
-    this.customBlocks.forEach(function (definition) {
+    this.customBlocks.forEach(definition => {
         var block;
         if (definition.category === category ||
                 (category === 'variables'
@@ -563,7 +570,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
 
     // y += unit * 1.6;
     if (this.exemplar) {
-        this.inheritedBlocks(true).forEach(function (definition) {
+        this.inheritedBlocks(true).forEach(definition => {
             var block;
             if (definition.category === category ||
                     (category === 'variables'
@@ -586,8 +593,6 @@ SpriteMorph.prototype.freshPalette = function (category) {
 
     palette.scrollX(palette.padding);
     palette.scrollY(palette.padding);
-
-    Morph.prototype.trackChanges = oldFlag;
     return palette;
 };
 
@@ -680,10 +685,10 @@ SpriteMorph.prototype.arduinoWatcher = function (selector, label, color, pin) {
         if (newValue !== this.currentValue) {
             this.changed();
             this.cellMorph.contents = newValue;
-            this.cellMorph.drawNew();
+            this.cellMorph.fixLayout();
             if (!isNaN(newValue)) {
                 this.sliderMorph.value = newValue;
-                this.sliderMorph.drawNew();
+                this.sliderMorph.fixLayout();
             }
             this.fixLayout();
             this.currentValue = newValue;

@@ -198,6 +198,9 @@ s4aTempDict = {
     'Loading Snap Jr.':
         'S\'està carregant Snap Júnior',
 
+    'Show project URL':
+        'Mostra la URL del projecte',
+
     'HTTP server':
         'Servidor HTTP',
 

@@ -68,17 +68,21 @@
     2018
     Jan 22 - floodfill alpha tweak (Bernat)
     Mar 19 - vector paint editor (Bernat)
+
+    2020 Apr 14 - Morphic2 migration (Jens)
+    2020 May 17 - Pipette alpha fix (Joan)
+    2020 July 13 - modified scale buttons (Jadga)
 */
 
 /*global Point, Rectangle, DialogBoxMorph, AlignmentMorph, PushButtonMorph,
-Color, SymbolMorph, newCanvas, Morph, TextMorph, Costume, SpriteMorph, nop,
+Color, SymbolMorph, newCanvas, Morph, StringMorph, Costume, SpriteMorph, nop,
 localize, InputFieldMorph, SliderMorph, ToggleMorph, ToggleButtonMorph,
 BoxMorph, modules, radians, MorphicPreferences, getDocumentPositionOf,
 StageMorph, isNil, SVG_Costume*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.paint = '2019-February-22';
+modules.paint = '2020-July-13';
 
 // Declarations
 
@@ -124,7 +128,7 @@ PaintEditorMorph.prototype.buildContents = function () {
 
     this.addBody(new AlignmentMorph('row', this.padding));
     this.controls = new AlignmentMorph('column', this.padding / 2);
-    this.controls.alignment = 'left';
+    this.controls.alignment = 'center';
 
     this.edits = new AlignmentMorph('row', this.padding / 2);
     this.buildEdits();
@@ -164,7 +168,6 @@ PaintEditorMorph.prototype.buildContents = function () {
 
     this.refreshToolButtons();
     this.fixLayout();
-    this.drawNew();
 };
 
 PaintEditorMorph.prototype.buildToolbox = function () {
@@ -216,7 +219,6 @@ PaintEditorMorph.prototype.buildToolbox = function () {
     });
 
     this.toolbox.bounds = this.toolbox.fullBounds().expandBy(inset * 2);
-    this.toolbox.drawNew();
 };
 
 PaintEditorMorph.prototype.buildEdits = function () {
@@ -240,10 +242,9 @@ PaintEditorMorph.prototype.buildEdits = function () {
                     'This will erase your current drawing.\n' +
                     'Are you sure you want to continue?',
                     'Switch to vector editor?',
-                    function () {
-                        myself.switchToVector();
-                    },
-                    nop
+                    () => {
+                        setTimeout(() => {myself.switchToVector(); });
+                    }
                 );
             } else {
                 myself.switchToVector();
@@ -257,20 +258,24 @@ PaintEditorMorph.prototype.buildEdits = function () {
 PaintEditorMorph.prototype.buildScaleBox = function () {
     var paper = this.paper;
     this.scaleBox.add(this.pushButton(
-        "grow",
-        function () {paper.scale(0.05, 0.05); }
+        new SymbolMorph('grow', 18),
+        function () {paper.scale(0.05, 0.05); },
+        'grow'
     ));
     this.scaleBox.add(this.pushButton(
-        "shrink",
-        function () {paper.scale(-0.05, -0.05); }
+        new SymbolMorph('shrink', 18),
+        function () {paper.scale(-0.05, -0.05); },
+        'shrink'
     ));
     this.scaleBox.add(this.pushButton(
-        "flip ↔",
-        function () {paper.scale(-2, 0); }
+        new SymbolMorph('flipHorizontal', 18),
+        function () {paper.scale(-2, 0); },
+        'flip horizontal'
     ));
     this.scaleBox.add(this.pushButton(
-        "flip ↕",
-        function () {paper.scale(0, -2); }
+        new SymbolMorph('flipVertical', 18),
+        function () {paper.scale(0, -2); },
+        'flip vertical'
     ));
     this.scaleBox.fixLayout();
 };
@@ -282,21 +287,21 @@ PaintEditorMorph.prototype.openIn = function (
     callback,
     anIDE
 ) {
+    var myself = this;
     // Open the editor in a world with an optional image to edit
     this.oldim = oldim;
     this.callback = callback || nop;
     this.ide = anIDE;
 
     this.processKeyUp = function () {
-        this.shift = false;
-        this.propertiesControls.constrain.refresh();
+        myself.shift = false;
+        myself.propertiesControls.constrain.refresh();
     };
 
     this.processKeyDown = function () {
-        this.shift = this.world().currentKey === 16;
-        this.propertiesControls.constrain.refresh();
+        myself.shift = myself.world().currentKey === 16;
+        myself.propertiesControls.constrain.refresh();
     };
-
     //merge oldim:
     if (this.oldim) {
         this.paper.automaticCrosshairs = isNil(oldrc);
@@ -316,12 +321,7 @@ PaintEditorMorph.prototype.openIn = function (
 };
 
 PaintEditorMorph.prototype.fixLayout = function () {
-    var oldFlag = Morph.prototype.trackChanges;
-
     this.changed();
-    oldFlag = Morph.prototype.trackChanges;
-    Morph.prototype.trackChanges = false;
-
     if (this.paper) {
         this.paper.buildContents();
         this.paper.drawNew();
@@ -329,8 +329,6 @@ PaintEditorMorph.prototype.fixLayout = function () {
     if (this.controls) {this.controls.fixLayout(); }
     if (this.body) {this.body.fixLayout(); }
     PaintEditorMorph.uber.fixLayout.call(this);
-
-    Morph.prototype.trackChanges = oldFlag;
     this.changed();
 };
 
@@ -355,16 +353,12 @@ PaintEditorMorph.prototype.cancel = function () {
 };
 
 PaintEditorMorph.prototype.switchToVector = function () {
-    var myself = this;
+
     this.object = new SVG_Costume(new Image(), '', new Point(0,0));
     this.object.edit(
         this.world(),
         this.ide,
-        true,
-        this.oncancel,
-        function() {
-            myself.ide.currentSprite.changed();
-        }
+        true
     );
 };
 
@@ -372,45 +366,53 @@ PaintEditorMorph.prototype.populatePropertiesMenu = function () {
     var c = this.controls,
         myself = this,
         pc = this.propertiesControls,
-        alpen = new AlignmentMorph("row", this.padding);
+        alpen = new AlignmentMorph("row", this.padding),
+        brushControl = new AlignmentMorph("column", 3);
+        
+    brushControl.alignment = "left";
 
     pc.primaryColorViewer = new Morph();
-    pc.primaryColorViewer.setExtent(new Point(180, 50));
+    pc.primaryColorViewer.isCachingImage = true;
+
+    pc.primaryColorViewer.render = function (ctx) {
+        var color = myself.paper.settings.primarycolor,
+            i,
+            j;
+        if (color === "transparent") {
+            for (i = 0; i < 180; i += 5) {
+                for (j = 0; j < 15; j += 5) {
+                    ctx.fillStyle =
+                        ((j + i) / 5) % 2 === 0 ?
+                                        "rgba(0, 0, 0, 0.2)" :
+                                        "rgba(0, 0, 0, 0.5)";
+                    ctx.fillRect(i, j, 5, 5);
+
+                }
+            }
+        } else {
+            ctx.fillStyle = color.toString();
+            ctx.fillRect(0, 0, 180, 15);
+        }
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = Math.min(myself.paper.settings.linewidth, 20);
+        ctx.beginPath();
+        ctx.lineCap = "round";
+        ctx.moveTo(20, 30);
+        ctx.lineTo(160, 30);
+        ctx.stroke();
+    };
+
+    pc.primaryColorViewer.setExtent(new Point(180, 40));
     pc.primaryColorViewer.color = new Color(0, 0, 0);
+
     pc.colorpicker = new PaintColorPickerMorph(
         new Point(180, 100),
         function (color) {
-            var ni = newCanvas(pc.primaryColorViewer.extent()),
-                ctx = ni.getContext("2d"),
-                i,
-                j;
             myself.paper.settings.primarycolor = color;
-            if (color === "transparent") {
-                for (i = 0; i < 180; i += 5) {
-                    for (j = 0; j < 15; j += 5) {
-                        ctx.fillStyle =
-                            ((j + i) / 5) % 2 === 0 ?
-                                            "rgba(0, 0, 0, 0.2)" :
-                                            "rgba(0, 0, 0, 0.5)";
-                        ctx.fillRect(i, j, 5, 5);
-
-                    }
-                }
-            } else {
-                ctx.fillStyle = color.toString();
-                ctx.fillRect(0, 0, 180, 15);
-            }
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = Math.min(myself.paper.settings.linewidth, 20);
-            ctx.beginPath();
-            ctx.lineCap = "round";
-            ctx.moveTo(20, 30);
-            ctx.lineTo(160, 30);
-            ctx.stroke();
-            pc.primaryColorViewer.image = ni;
-            pc.primaryColorViewer.changed();
+            pc.primaryColorViewer.rerender();
         }
     );
+    pc.colorpicker.isCachingImage = true;
     pc.colorpicker.action(new Color(0, 0, 0));
 
     pc.penSizeSlider = new SliderMorph(0, 20, 5, 5);
@@ -424,24 +426,26 @@ PaintEditorMorph.prototype.populatePropertiesMenu = function () {
         myself.paper.settings.linewidth = num;
         pc.colorpicker.action(myself.paper.settings.primarycolor);
     };
+
     pc.penSizeField = new InputFieldMorph("5", true, null, false);
     pc.penSizeField.contents().minWidth = 20;
     pc.penSizeField.setWidth(25);
     pc.penSizeField.accept = function () {
         var val = parseFloat(pc.penSizeField.getValue());
         pc.penSizeSlider.value = val;
-        pc.penSizeSlider.drawNew();
         pc.penSizeSlider.updateValue();
         this.setContents(val);
         myself.paper.settings.linewidth = val;
-        this.world().keyboardReceiver = myself;
+        this.world().keyboardFocus = myself;
         pc.colorpicker.action(myself.paper.settings.primarycolor);
     };
+
     alpen.add(pc.penSizeSlider);
     alpen.add(pc.penSizeField);
     alpen.color = myself.color;
     alpen.fixLayout();
-    pc.penSizeField.drawNew();
+
+    pc.penSizeField.fixLayout();
     pc.constrain = new ToggleMorph(
         "checkbox",
         this,
@@ -449,12 +453,18 @@ PaintEditorMorph.prototype.populatePropertiesMenu = function () {
         "Constrain proportions of shapes?\n(you can also hold shift)",
         function () {return myself.shift; }
     );
+    pc.constrain.label.isBold = false;
+
     c.add(pc.colorpicker);
     //c.add(pc.primaryColorButton);
     c.add(pc.primaryColorViewer);
-    c.add(new TextMorph(localize("Brush size")));
-    c.add(alpen);
-    c.add(pc.constrain);
+    brushControl.add(
+        new StringMorph(localize("Brush size") + ":", 10, null, true)
+    );
+    brushControl.add(alpen);
+    brushControl.add(pc.constrain);
+    brushControl.fixLayout();
+    c.add(brushControl);
 };
 
 PaintEditorMorph.prototype.toolButton = function (icon, hint) {
@@ -476,8 +486,6 @@ PaintEditorMorph.prototype.toolButton = function (icon, hint) {
     );
 
     button.hint = hint;
-    button.drawNew();
-    button.fixLayout();
     return button;
 };
 
@@ -512,7 +520,7 @@ PaintEditorMorph.prototype.getUserColor = function () {
             // needed for retina-display support
             return;
         }
-        color.a = 255;
+        color.a = 1;
         myself.propertiesControls.colorpicker.action(color);
     };
 
@@ -541,16 +549,14 @@ function PaintColorPickerMorph(extent, action) {
 }
 
 PaintColorPickerMorph.prototype.init = function (extent, action) {
+    this.isCachingImage = true;
     this.setExtent(extent || new Point(200, 100));
     this.action = action || nop;
-    this.drawNew();
 };
 
-PaintColorPickerMorph.prototype.drawNew = function () {
+PaintColorPickerMorph.prototype.render = function (ctx) {
     var x = 0,
         y = 0,
-        can = newCanvas(this.extent()),
-        ctx = can.getContext("2d"),
         colorselection,
         r;
     for (x = 0; x < this.width(); x += 1) {
@@ -587,7 +593,6 @@ PaintColorPickerMorph.prototype.drawNew = function () {
             }
         }
     }
-    this.image = can;
 };
 
 PaintColorPickerMorph.prototype.mouseDownLeft = function (pos) {
@@ -624,10 +629,10 @@ PaintCanvasMorph.prototype.init = function (shift) {
     this.dragRect = new Rectangle();
     // rectangle with origin being the starting drag position and
     // corner being the current drag position
-    this.mask = newCanvas(this.extent(), true); // Temporary canvas
-    this.paper = newCanvas(this.extent(), true); // Actual canvas
-    this.erasermask = newCanvas(this.extent(), true); // eraser memory
-    this.background = newCanvas(this.extent()); // checkers
+    this.mask = null; // Temporary canvas
+    this.paper = null; // Actual canvas
+    this.erasermask = null; // eraser memory
+    this.background = null; // checkers
     this.settings = {
         "primarycolor": new Color(0, 0, 0, 255), // usually fill color
         "secondarycolor": new Color(0, 0, 0, 255), // (unused)
@@ -642,8 +647,9 @@ PaintCanvasMorph.prototype.init = function (shift) {
     // should we calculate the center of the image ourselves,
     // or use the user position
     this.automaticCrosshairs = true;
-    this.noticesTransparentClick = true; // optimization
+    this.isCachingImage = true;
     this.buildContents();
+    this.drawNew();
 };
 
 // Calculate the center of all the non-transparent pixels on the canvas.
@@ -726,7 +732,7 @@ PaintCanvasMorph.prototype.clearCanvas = function () {
 };
 
 PaintCanvasMorph.prototype.toolChanged = function (tool) {
-    this.mask = newCanvas(this.extent(), true);
+    this.mask = newCanvas(this.extent(), true, this.mask);
     if (tool === "crosshairs") {
         this.updateAutomaticCenter();
         this.drawcrosshair();
@@ -739,6 +745,7 @@ PaintCanvasMorph.prototype.drawcrosshair = function (context) {
     var ctx = context || this.mask.getContext("2d"),
         rp = this.rotationCenter;
 
+    ctx.save();
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'black';
     ctx.clearRect(0, 0, this.mask.width, this.mask.height);
@@ -784,8 +791,9 @@ PaintCanvasMorph.prototype.drawcrosshair = function (context) {
     ctx.lineTo(rp.x, this.mask.height);
     ctx.stroke();
 
+    ctx.restore();
+
     this.drawNew();
-    this.changed();
 };
 
 PaintCanvasMorph.prototype.floodfill = function (sourcepoint) {
@@ -867,7 +875,7 @@ PaintCanvasMorph.prototype.mouseDownLeft = function (pos) {
     }
     if (this.settings.primarycolor === "transparent" &&
             this.currentTool !== "crosshairs") {
-        this.erasermask = newCanvas(this.extent(), true);
+        this.erasermask = newCanvas(this.extent(), true, this.erasermask);
         this.merge(this.paper, this.erasermask);
     }
 };
@@ -1017,8 +1025,8 @@ PaintCanvasMorph.prototype.mouseMove = function (pos) {
     }
     this.previousDragPoint = relpos;
     this.drawNew();
-    this.changed();
     mctx.restore();
+    this.changed();
 };
 
 PaintCanvasMorph.prototype.mouseClickLeft = function () {
@@ -1032,10 +1040,10 @@ PaintCanvasMorph.prototype.mouseLeaveDragging
     = PaintCanvasMorph.prototype.mouseClickLeft;
 
 PaintCanvasMorph.prototype.buildContents = function () {
-    this.background = newCanvas(this.extent());
-    this.paper = newCanvas(this.extent(), true);
-    this.mask = newCanvas(this.extent(), true);
-    this.erasermask = newCanvas(this.extent(), true);
+    this.background = newCanvas(this.extent(), false, this.background);
+    this.paper = newCanvas(this.extent(), true, this.paper);
+    this.mask = newCanvas(this.extent(), true, this.mask);
+    this.erasermask = newCanvas(this.extent(), true, this.erasermask);
     var i, j, bkctx = this.background.getContext("2d");
     for (i = 0; i < this.background.width; i += 5) {
         for (j = 0; j < this.background.height; j += 5) {
@@ -1050,18 +1058,21 @@ PaintCanvasMorph.prototype.buildContents = function () {
 };
 
 PaintCanvasMorph.prototype.drawNew = function () {
-    var can = newCanvas(this.extent(), true);
+    var can = newCanvas(this.extent(), true, this.cachedImage);
     this.merge(this.background, can);
     this.merge(this.paper, can);
     this.merge(this.mask, can);
-    this.image = can;
+    this.cachedImage = can;
     this.drawFrame();
 };
+
+PaintCanvasMorph.prototype.rerender // ugly hack, but hey, it works ;-) jens
+    = PaintCanvasMorph.prototype.drawNew;
 
 PaintCanvasMorph.prototype.drawFrame = function () {
     var context, borderColor;
 
-    context = this.image.getContext('2d');
+    context = this.cachedImage.getContext('2d');
     if (this.parent) {
         this.color = this.parent.color.lighter(this.contrast * 0.75);
         borderColor = this.parent.color;
