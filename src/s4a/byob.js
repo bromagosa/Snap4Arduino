@@ -52,6 +52,15 @@ CustomBlockDefinition.prototype.dropDownMenuOf = function (inputName) {
                            }
                        };
             }
+            if (fname == 'servoValues') {
+                return {
+                    'angle (0-180)' : 90,
+                    'stopped (1500)' : ['stopped'], 
+                    'clockwise (1500-1000)' : ['clockwise'],
+                    'counter-clockwise (1500-2000)' : ['counter-clockwise'],
+                    'disconnected' : ['disconnected']
+                };
+            }
         }
         return this.originalDropDownMenuOf(inputName);
     }
@@ -65,7 +74,8 @@ BlockLabelFragment.prototype.hasSpecialMenu = function () {
         [
             '§_digitalPins',
             '§_analogPins',
-            '§_pwmPins'
+            '§_pwmPins',
+            '§_servoValues'
         ],
         this.options
     );
@@ -90,5 +100,6 @@ InputSlotDialogMorph.prototype.specialOptionsMenu = function () {
     addSpecialOptions('digitalPins', '§_digitalPins');
     addSpecialOptions('analogPins', '§_analogPins');
     addSpecialOptions('pwmPins', '§_pwmPins');
+    addSpecialOptions('servoValues', '§_servoValues');
     return menu;
 };
