@@ -72,6 +72,9 @@ s4aTempDict = {
     'stopped (1500)':
         'parado (1500)',
 
+    'disconnected':
+        'desconectado',
+
     'angle (0-180)':
         'ángulo (0-180)',
 
