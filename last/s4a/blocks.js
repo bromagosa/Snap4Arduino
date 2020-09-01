@@ -48,6 +48,8 @@ SyntaxElementMorph.prototype.labelPart = function(spec) {
                         }
                     }
                     );
+            part.originalChanged = part.changed;
+            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
             break;
         case '%pwmPin':
             part = new InputSlotMorph(

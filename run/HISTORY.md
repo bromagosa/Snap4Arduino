@@ -2,9 +2,657 @@
 
 ## in development:
 * **New Features:**
-* **Notable Changes:**
-* **Notable Fixes:**
+    * show message senders and receivers from the blocks context menu, thanks, Bernat!
+    * new "Database" library operating on localstore, thanks, Jadga!
 * **Translation Updates:**
+    * Catalan, thanks, Joan!
+
+### 2020-08-31
+* Catalan translation update, thanks, Joan!
+
+### 2020-08-18
+* blocks: tweaked menu separator line above "senders.../receivers..." to only show once
+
+### 2020-08-08
+* blocks: changed "show senders/receivers" menu entry to "senders.../receivers..."
+* gui: tweaked SpriteIconMorph>>flash() for flat design mode
+
+### 2020-08-07
+* new dev version
+* added new localstorage library
+* show message senders / receivers from the blocks context menu, thanks, Bernat!
+
+## 6.1.4:
+* fixed "green flag" symbol size for embedded proects (for real ^^)=
+
+## 6.1.3:
+* **Notable Changes:**
+    * exporting pictures of (semi-) faded blocks now includes the cropped solid background color
+    * "to lowercase" reporter now also in Strings library, thanks, Brian!
+* **Notable Fixes:**
+    * fixed restoring ringed inputs when relabelling and compiling HOFs
+    * added viewport, thanks, Radman!
+    * fixed "green flag" symbol size for community website, thanks, Bernat!
+* **Translation Updates:**
+    * Catalan, thanks, Joan!
+    * Portuguese, thanks, Manuel!
+
+### 2020-08-05
+* threads: experimental hyperized reporter-if, commented out for now
+* blocks: fixed restoring ringed inputs when relabelling and compiling HOFs
+* added viewport, thanks, Radman!
+* Catalan translation update, thanks, Joan!
+* Portuguese translation update, thanks, Manuel!
+* added blocks to Strings library, thanks, Brian!
+* fixed "green flag" symbol size for community website, thanks, Bernat!
+
+### 2020-08-04
+* new dev version
+* blocks: include background color when exporting (semi-) transparent script pics 
+
+## 6.1.2:
+* fixed variable scope for ASK/TELL
+
+### 2020-08-01
+* threads: fixed variable scope for ASK/TELL
+
+## 6.1.1:
+* rolled back scope binding change
+
+### 2020-07-31
+* rolled back scope binding change
+
+## 6.1.0:
+* **New Features:**
+    * fade blocks
+* **Documentation Updates:**
+    * added migration guide for Morphic2/Snap!6
+* **Notable Changes:**
+    * changed label of green "length of" reporter to "length of text"
+    * new iconic buttons for grow, shrink and flip actions in the paint editor, thanks, Jadga!
+    * UI: automatically switch to scripts tab when dragging a block into the editor pane
+    * slightly darker default (non-flat) IDE colors, more cotrast
+    * enabled grouping the libraries dialog, thanks, Brian!
+    * cleaned up, grouped and annotated libraries, thanks, Brian!
+    * updated "About Snap!" dialog box
+* **Notable Fixes:**
+    * fixed FOR EACH for hybrid lists, thanks, Brian!
+    * fixed script execution behavior when turning turbo mode off programmatically, thanks, Jadga, for reporting it.
+    * fixed keyboard shortcuts for saving projects (ctrl + s), finding blocks (ctrl + f) etc..
+    * fixed shift-key constrain mode and "clear" in paint and vector editors, thanks, Joan!
+    * made remaining synchronous http requests asynch (url: #open, #run)
+    * update the Hand's position on mouse-down - avoid triggering at the origin point if clicking before the mouse has been moved
+    * fixed a list-watcher direct-editing index offset bug
+    * fixed input slider target update rendering
+    * fixed sprite speech balloon display for sounds
+    * library browser: import selected library on pressing enter
+    * fixed binding contexts to other receivers (variable scope for ASK / TELL)
+    * fixed numeric input fields in dialog boxes
+    * fixed reacting to keyboard input in dialog boxes
+    * fixed zoom blocks type-in dialog
+    * made stack-highlights un-touchable
+* **Translation Updates:**
+    * German
+
+### 2020-07-30
+* gui: updated Jadga as contributor in credits
+* prepared release
+
+### 2020-07-29
+* blocks: made stack-highlights un-touchable
+
+### 2020-07-28
+* blocks: tweaked stack-highlight for (partially) faded blocks
+
+### 2020-07-27
+* threads: fixed binding contexts to other receivers (variable scope for ASK / TELL)
+* gui: updated "About Snap!" dialog box
+* gui: library browser: import selected library on pressing enter
+* widgets: fixed numeric input fields in dialog boxes
+* widgets: fixed reacting to keyboard input in dialog boxes
+* blocks: fixed zoom blocks type-in dialog
+
+### 2020-07-26
+* objects: fixed sprite speech balloon display for sounds
+* cleaned up, grouped and annotated libraries, thanks, Brian!
+
+### 2020-07-24
+* gui: cleaned up block-fading pre-sets
+* updated German translation
+* gui: tweaked IDE colors for block-fading
+* blocks, threads, byob, widgets: tweaked block representations in widgets for fading
+* blocks, byob: tweaked more block representations in widgets for fading
+
+### 2020-07-23
+* morphic: fixed mouseDown events for touch devices
+* morphic, gui: added separators to list morphs, '~' for the libraries dialog
+* blocks: tweaked block-fading coloring 
+
+### 2020-07-22
+* morphic, blocks, gui: tweaked block-fading mouse-over
+* blocks, threads: tweaked context visualizations to be alpha-independent
+* gui: save block-transparency in  settings 
+* morphic: fixed input slider target update rendering
+
+### 2020-07-21
+* blocks: tweaked block highlights for fade-out
+* widgets, gui: tweaked scripts tab for fade-out
+* blocks, gui: tweaked default mode colors to slightly darker
+
+### 2020-07-20
+* objects: fixed a list-watcher direct-editing offset bug
+* morphic: update the Hand's position on mouse-down - avoid triggering at the origin point
+* symbols: added hooks for dynamic coloring
+* blocks: added blocks-fading support for symbols (under construction)
+* morphic: tweaked transparency of grabbed morphs
+
+### 2020-07-19
+* blocks: blocks-fade-out support for label arrows (under construction)
+* blocks: blocks-fade-out support for multi-line inputs (under construction)
+
+### 2020-07-17
+* morphic, blocks: blocks-fadeout (under construction)
+
+### 2020-07-15
+* morphic: made keyboard handler (more) invisible, thanks, Bernat!
+* gui: made remaining synchronous http requests asynch (url: #open, #run)
+* morphic, gui: switch to scripts tab when dragging a block into the editor pane
+* blocks: refactored transparency handling for syntax elements
+
+### 2020-07-13
+* paint, symbols: new iconic buttons for grow, shrink and flip actions, thanks, Jadga!
+* sketch: tweaked layout to match the paint editor's
+* fixed shift-key constrain mode and "clear" in paint and vector editors, thanks, Joan!
+
+### 2020-07-10
+* morphic: prevent the browser from hijacking cmd-d/f/i/p/s key events
+* added migration guide for Morphic2/Snap!6
+* updated Eisenbergification library, thanks, Brian!
+
+### 2020-07-09
+* new dev version
+* threads: fixed FOR EACH for hybrid lists, thanks, Brian!
+* threads: fixed script execution behavior when turning turbo mode off programmatically, thanks, Jadga, for reporting it.
+* locale: added English translation for 'length of %s' to 'length of text %s' to avoid confusion among both blocks
+* updated German translation for 'length of %s'
+
+## 6.0.0:
+* **New Features:**
+    * new Morphic architecture, faster loading, smaller memory footprint, mobile-friendly
+    * hyper-blocks
+    * new "send msg to sprite" primitive in control
+    * new  "index of" primitive in lists
+    * new fast "append" reporter in lists
+    * show login status in the cloud button (outline = logged out, solid = logged in)
+    * custom drop-downs (experimental, uses JS)
+    * blockify lists / tables with atomic values in watchers
+    * extended libraries (APL, thanks, Brian) and programmatic handling of variables (thanks, Joan)
+    * "result pic..." context menu entry for reporters (used to be hidden "script pic with result..." option)
+    * more block relabelling options, e.g. for loops
+    * prefix keys in custom drop-down menus with '§_' to only show them if the shift-key is pressed
+    * new "id" option in the monadic function reporter primitive (hyperizable to support deep copies of nested lists)
+    * new api for creating new lists for embedded Snap sessions
+* **Notable Changes:**
+    * repeated WARPs inside loops have been sped up
+    * duplicated blocks / scripts are grabbed by their top-left corner rather than their center
+    * close all widgets when opening a new project
+    * scan first ten rows of a list to determine the number of columns to show in table views
+    * give duplicated custom block definitions unique names
+    * sort sound and message names in drop-down menus alphabetically
+    * changed result for FIND to empty instead of false if none is found
+    * new flat design
+    * increased contrast in dark mode
+    * toggling Retina support has been hidden (because it no longer works the same)
+* **Notable Fixes:**
+    * multi-c slots embedding reporters has been disabled
+    * programmatically changing a clone from "permanent" to "temporary" now works in presentation mode
+    * costumes and sounds of clones are now properly shadowed when modifying them programmatically
+    * fixed editing cells in multi-page list watchers
+    * recursive calls to "broadcast and wait" execute smoothly again
+    * expanding a collapsed comment or clicking on it now brings it to the front
+    * long project titles no longer overlap other buttons in the control bar
+    * "empty" continuations referring to the end of a script no longer throw an error.
+* **Translation Updates:**
+    * New Hebrew translation
+    * Ukranian
+    * Catalan
+    * Portuguese
+    * Chinese
+    * Japanese
+    * Bengali
+    * German
+
+## 5.4.5:
+* **Notable Change:**
+    * always record audio in mono
+* **Translation Update:**
+    * German, thanks, Sven!
+
+### 2020-01-28
+* new dev version
+* gui: record sounds in mono
+* gui, objects: force stereo audio recordings to mono
+* Germans translation tweak, thanks, Sven!
+
+## 5.4.4:
+* **Notable Fixes**
+    * fixed strings library format
+    * automatically remove orphaned variable watchers
+
+### 2020-01-11
+* objects: automatically remove orphaned variable watchers
+* prepared patch
+
+### 2020-01-10
+* fixed strings library format
+
+## 5.4.3:
+* **Notable Fix**
+    * render Boolean slots correctly after mouse-over
+
+### 2020-01-06
+* blocks: reset BooleanSlotMorph canvas context's global alpha after rendering the slider button 
+* prepared patch
+
+## 5.4.2:
+* **Notable Fix:**
+    * prevent Morphs from sharing canvasses when rerendering
+
+### 2020-01-04
+* morphic: fixed tagging of shared Canvasses
+* prepared patch
+
+## 5.4.1:
+* **Notable Change:**
+    * optimized loading projects
+* **Notable Fix:**
+    * reduced distortion and clicks when playing notes
+* **Translation Update:**
+    * Catalan
+
+### 2020-01-03
+* new dev version
+* morphic: recycle cached Canvasses
+* gui: recycle cached Canvasses
+* objects: recycle cached Canvasses
+* blocks: recycle cached Canvasses
+* widgets: recycle cached Canvasses
+* byob: recycle cached Canvasses
+* symbols: recycle cached Canvasses
+* symbols: recycle cached Canvasses
+* Catalan translation update
+* objects: tweaked notes to reduce distortion and clicks
+* prepared minor release
+
+## 5.4.0:
+* **New Features:**
+    * log pen vectors
+    * export pen trails as SVG
+    * access pen trails as SVG_Costume: new "pen vectors" reporter variant of "pen trails"
+    * new Snap! API: broadcast and react to messages, access global variables from outside Snap!
+* **Notable Change:**
+    * when creating a costume from pen trails (raster or vector) make its rotation center the position of the sprite
+* **Notable Fixes:**
+    * support null-serialization in list-csv conversions
+    * avoid circular inheritance when using blocks to set sprites' parents
+* **Translation Updates:**
+    * NEW Slovak translation, thanks, Peter Lukacovic
+    * German
+
+### 2019-12-19
+* objects, threads: refactored inheritance circularity avoidance
+* prepared release
+
+### 2019-12-18
+* gui, api: rearranged Snap! API into its own file
+* added API documentation
+* threads: avoid circular inheritance when using blocks to set sprites' parents
+
+### 2019-12-16
+* gui, objects: added ability to add general message listeners for "any" message
+* gui: added IDE >> getMessages() to Snap! API
+* gui: refactored IDE >> addMessageListenerForAll(callback)
+
+### 2019-12-15
+* gui, threads:  new Snap! API: programmatically broadcast messages and optionally wait from outside Snap!
+* gui: added global variable access methods to the new Snap! API
+* gui, objects: added ability to add message listeners to broadcasts
+
+### 2019-12-13
+* added direct relabelling option to pen trails blocks' context menus
+
+### 2019-12-10
+* NEW Slovak translation, thanks, Peter Lukacovic
+
+### 2019-12-09
+* store: save and restore "log pen trails" setting in project file
+
+### 2019-12-08
+* lists: support null-serialization in list-csv conversions
+
+### 2019-12-07
+* threads: turn "log pen trails" off when loading or creating a new project
+
+### 2019-12-05
+* threads: set the rotation point of "pen vectors" costumes to the position of the sprite that creates them
+* objects: set the rotation point of "pen trails" costumes to the position of the sprite that creates them
+
+### 2019-12-03
+* objects, blocks, threads, gui: added "log pen vectors" session setting
+* updated German translation
+
+### 2019-12-02
+* new dev version
+* objects: export pen trails as SVG (under construction)
+* threads: new "pen trails (SVG)" reporter (experimental, hidden in dev)
+* objects, threads: adjusted rotation center of SVG-pen-trails
+* objects: added aspect racio governance and generator tags to trails SVGs
+* threads: catch empty trails log when trying to generate a vector trails costume
+* objects: support relabelling "pen trails" to "pen trails (SVG)" and vice-versa
+* gui: added "svg" entry to the stage icon's context menu
+* objects: renamed "pen trails (SVG)" to "pen vectors"
+* German translation update
+* cleaned up change markers
+
+## v5.3.8:
+* **Notable Change:**
+    * optimized color collision detection
+
+### 2019-11-29
+* new dev version
+* objects, threads: optimized color collision detection
+* prepared release
+
+## v5.3.7:
+* **Notable Fixes:**
+    * wait until the camera actually records something when turning video capture "on"
+    * only report video capture as "on" when the camera actually records something
+
+### 2019-11-19
+* threads: when turning video capture "on" wait until the camera actually records something
+* prepared release
+
+### 2019-11-18
+* new dev version
+* threads: only report video capture as "on" when the camera actually records something
+
+## v5.3.6:
+* **Notable Fix:**
+    * fixed variadic reporters library 
+
+## v5.3.5:
+* **Notable Fix:**
+    * make sure list watchers are correctly initiailized 
+
+## v5.3.4:
+* **Notable Fixes:**
+    * allowed reserved JS object property names as variable names in Snap (e.g. "constructor")
+    * disabled direct editing of list watchers for non-literal typed lists (such as costumes) in speech bubbles and prompters
+    * now preserving the sprite's rotation point when taking a video-snap on it
+    * now preventing costumes from becoming "broken" when pasting video snaps on them while the camera is not yet fully initialized
+    * now catching sub-pixel sized thumbnails
+
+### 2019-11-15
+* objects: prevent costumes from becoming "broken" when pasting video snaps on them while the camera is not yet fully initialized
+* objects: catch sub-pixel sized thumbnails 
+* prepared release
+
+### 2019-11-14
+* lists: disabled direct editing of list watchers for non-literal typed lists (such as costumes) in speech bubbles and prompters
+* objects: preserve the sprite's rotation point when taking a video-snap on it
+
+### 2019-11-13
+* new dev version
+* threads: allowed reserved JS object property names as variable names in Snap (e.g. "constructor")
+
+## v5.3.3:
+* **Notable Change:**
+    * dropdown translation improvements, thanks, Joan!
+* **Notable Fixes:**
+    * fixed submenu translation control for dropdowns
+    * fixed help screens for "distance to _" and "answer" primitives, thanks, Brian and Michael!
+* **Translation Update:**
+    * Catalan
+
+### 2019-11-12
+* new dev version
+* drop-down menu translation improvements by Joan
+* submenu-title translation control
+* help screen fixes by Brian and Michael 
+* prepared release
+
+## v5.3.2:
+* **Notable Fixes:**
+    * fixed #2518 (broken localization system)
+    * fixed size of MY help screen, thanks, Brian
+* **Translation Updates:**
+    * Catalan, thanks, Joan
+
+### 2019-11-06
+* new dev version
+* morphic, blocks: reverted recent changes to tranlation mechanism
+* morphic: added support for "verbatim" (untranslated) menu items
+* blocks: don't translate variable names in drop-down menus
+* objects: don't translate variable names in "delete a variable" button menu
+* blocks: don't translate variable names in "inherit" block menu
+* blocks: fixed dropdown menu generation for untranslated items
+* blocks: don't translate message names in drow-down menus
+* blocks: don't translate names in dropdowns
+* byob: don't translate items in dropdowns
+* help: fixed size of MY help screen, thanks, Brian
+* prepared release
+
+## v5.3.1:
+* **Notable Fixes:**
+    * no longer translate variable names in drop-down menus for which translations exist
+    * fixed zero extent costume creation, thanks, Bernat!
+
+### 2019-11-05
+* threads: fixed zero extent costume creation, thanks, Bernat!
+* prepared release
+
+### 2019-11-04
+* new dev version
+* morphic: limit translation of menu items to specially marked ones
+* blocks: translate "my" submenu label in "set" block
+
+## v5.3.0:
+* **New Features:**
+    * expanding the rings in "map", "keep" and "find" shows 3 inputs named "value", "index" and "list" 
+    * limited expanding rings in special HOFs to 3 parameters
+    * calling an empty reporter-ring with no formal parameters passing a single argument treats it as the identity function of that argument
+* **Notable Changes:**
+    * dropping a ring parameter inside a reporter-ring no longer replaces the ring
+* **Notable Fix:**
+    * fixed the initial scale of new clones when the stage has been resized
+* **Translation Update:**
+    * German
+
+### 2019-11-02
+* blocks: limit expanding rings in special HOFs to 3 parameters
+* blocks: renamed default special HOF parameters to "item, index, list"
+* updated German translation
+* blocks: dropping a ring parameter inside a reporter-ring no longer replaces the ring
+* threads: calling an empty reporter-ring with no formal parameters passing a single argument treats it as the identity function of that argument
+* blocks: renamed default special HOF parameter "item" to "value"
+* updated German translation for "value"
+* objects: fixed the initial scale of new clones when the stage has been resized
+* prepared release
+
+### 2019-11-01
+* new dev version
+* expanding the rings in "map", "keep" and "find" shows 3 inputs named "item", "idx" and "data"
+* German translation update for "idx" and "data"
+
+## v5.2.5:
+* **Notable Fix:**
+    * resume AudioContext on every request
+
+### 2019-10-30
+* objects: resume AudioContext on every request
+
+## v5.2.4:
+* **Notable Changes:**
+    * optimized performance for backgrounds and pen trails
+    * optimized performance for sprite rendering and rotation
+    * added support for counting down using the "numbers" reporter
+* **Notable Fixes:**
+    * fixed FOR so it can take numbers entered as text (bug report by Kathy from Piazza)
+    * removed "current" option from "switch to costume" block's drop-down menu
+
+### 2019-10-30
+* threads: optimized HOF primitives to only assert input types once
+* objects: documented new canvas architecture for sprites
+* prepared release
+
+### 2019-10-29
+* threads: added support for counting down using the "numbers" reporter
+* morphic: improved canvas recycling
+* objects: optimized sprite rendering and rotating
+* threads: FOR so it can take numbers entered as text (bug report by Kathy from Piazza)
+
+### 2019-10-28
+* new dev version
+* morphic: enable recycling and deep copying canvas elements
+* objects, maps: recycle Stage layers - optimizes backgrounds and pen trails frame rate
+* blocks: removed "current" option from "switch to costume" block's drop-down menu
+
+## v5.2.3:
+* **Notable Changes:*
+    * added sprite dimension selectors to the OF reporter's dropdown menu
+
+### 2019-10-25
+* blocks, threads: added sprite dimension selectors to the OF reporter's dropdown menu
+* prepared patch
+
+## v5.2.2:
+* **Notable Fix:**
+    * more optimizations for collision detection
+    * **Translation Update:**
+    * Catalan
+
+### 2019-10-25
+* morphic, objects: optimized collision detection yet more
+* prepared patch
+
+## v5.2.1:
+* **Notable Fix:**
+    * optimized collision detection
+
+### 2019-10-24
+* morphic, objects: optimized collision detection
+* prepared patch
+
+## v5.2.0:
+* **New Features:**
+    * new media creation primitives:
+    * new primitive in "looks": NEW COSTUME from a list of pixels and dimensions, allowing CURRENT
+    * new primitive in "sound": NEW SOUND from a list of samples
+    * added selectors for sprites' and the stage's bounding box (LEFT, RIGHT, TOP, BOTTOM) to MY dropdown
+    * new experimental entry for "green flag pressed" in the BROADCAST block's dropdown when the shift key is pressed
+* **Notable Changes:**
+    * running STOP ALL now also toggles (pauses and resumes) all generic WHEN hat blocks (just like pressing the stop button)
+    * changed default name for new costumes created with STRETCH etc. to localized 'costume'
+* **Notable Fixes:**
+    * loading a project that fires STOP ALL from a WHEN hat block no longer "hangs" Snap
+    * fixed pixel-manipulation distortions on newly imported hi-res images
+    * assert that dimensions given for STRETCH are finite numbers (avoid crash)
+    * disabled direct editing of list watchers for non-literal typed lists (such as costumes, avoids unloadable projects)
+    * fixed occasional "dead clicks" on buttons and menu items
+* **Translation Updates:**
+    * English
+    * German
+
+### 2019-10-24
+* prepared release
+
+### 2019-10-23
+* lists: disabled direct editing of list watchers for non-literal typed lists (such as costumes)
+
+### 2019-10-22
+* morphic: url-clicking fix by @brollb, updated morphic documentation
+* pushed dev version to release-candidate status
+* objects: normalized (de-retinized) costume thumbnails, fixed pixel-manipulation distortions on newly imported hi-res images
+
+### 2019-10-21
+* blocks, threads: new experimental entry for "green flag pressed" in the BROADCAST block's dropdown when the shift key is pressed
+* updated English and German translations for `__shout__go__`
+* updated German translation for new media creation primitives
+* objects: rearranged "looks" and "sound" palettes for new media creation primitives
+
+### 2019-10-20
+* objects, threads: added "new sound" from list of samples primitive reporter to "sound" category
+* objects, threads: added sampling rate input to "new sound" primitive
+* threads: changed default name for new costumes created with STRETCH etc. to localized 'costume'
+* threads: generate stereo sounds
+* threads: added list type assertion for samples to "new sound" primitive
+* objects: tweaked labels for "new costume" and "new sound" primitives
+* objects: delegate (quasi-inherit) Stage>>newSoundName() from Sprite
+
+### 2019-10-18
+* objects, blocks, threads: added dimension getters for the stage
+* German translation update (left, right, top, bottom selectors in MY)
+* blocks, objects, threads: added "new costume" primitive reporter to "looks" category
+
+### 2019-10-17
+* objects, blocks, threads: added selectors for sprites' bounding box (left, right, top, bottom) to MY dropdown
+
+### 2019-10-16
+* new dev version
+* morphic: added "enableLinks" flag to text elements, off by default
+* widgets: made only URLs inside dialog boxes' bodies clickable
+* threads: running STOP ALL now also pauses (pauses and resumes) all generic WHEN hat blocks
+* threads: removed a conflicting thread from STOP ALL - loading a project that fires STOP ALL from a WHEN hat block no longer "hangs" Snap
+* threads: assert that dimensions given for STRETCH block are finite numbers
+
+## v5.1.1:
+* **New Features:**
+    * new cloud-menu entry: "Open in Community Site", thanks, Michael!
+    * accept a list of pixels in the SWITCH TO COSTUME block
+    * URLs in dialog boxes are now clickable and can open new browser tabs, thanks, Brian Broll! 
+* **Notable Changes:**
+    * made "i" upvar inside FOR loop's C-Shape slot mutable by user script
+    * prevent switching to another sprite if a block editor is open (so local blocks of different sprites don't mix)
+    * display a permanent warning when using IE
+* **Notable Fixes:**
+    * typing strings into the search-field again shows relevant blocks (regression from IME)
+    * fixed project dialog's search-field behevior (regression from IME)
+    * morphic collision detection off-by-1 fix, thanks, Dariusz!
+    * fixed MY PARTS so mutating the result list has no effect
+    * fixed a typo in the OF-reporter's help screen, thanks, @jasonappah
+    * enable costumes created in the vector editor to be stretchable in Firefox, thanks, @coproc
+* **Translation Updates:**
+    * Catalan
+    * Ukrainian, thanks, 
+    * Galician, thanks, Bernat
+    * Turkish, thanks, Turgut!
+    * German
+
+### 2019-10-15
+* gui: prevent switching to another sprite if a block editor is open (so local blocks of different sprites don't mix)
+* updated German translation
+* gui: simplified asset loading scheduler
+* gui: display a permenent warning when using IE
+* prepared release
+
+### 2019-10-14
+* morphic: new "reactToInput" text-editing event
+* objects: fixed #2485 (find blocks and text-entry mode feature)
+* gui: fixed ProjectDialog's search field behavior for IME 
+* threads: fixed MY PARTS so mutating the result list has no effect
+* threads: made "i" upvar inside FOR loop's C-Shape slot mutable by user script
+* URLs in dialog boxes are now clickable and can open new browser tabs, thanks, Brian Broll!
+
+### 2019-10-11
+* objects, threads: accept a list of pixels in the SWITCH TO COSTUME block
+
+### 2019-10-09
+* new dev version
+* morphic: collision detection off-by-1 fix, thanks, @DarDoro
+* translation updates for: Catalan, Ukrainian, Galician and Turkish
+* gui: new cloud- menu entry: "Open in Community Site", thanks, Michael!
+* fixed a typo in the OF-reporter's help screen, thanks, @jasonappah
+* enable costumes created in the vector editor to be stretchable in Firefox, thanks, @coproc
 
 ## v5.1.0
 * **New Features:**

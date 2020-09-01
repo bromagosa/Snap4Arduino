@@ -77,7 +77,6 @@ Arduino.prototype.showMessage = function (msg) {
     this.message.labelString = this.owner.name;
     this.message.createLabel();
     if (msg) { this.message.addBody(txt) };
-    this.message.drawNew();
     this.message.fixLayout();
     this.message.popUp(world);
     this.message.show();

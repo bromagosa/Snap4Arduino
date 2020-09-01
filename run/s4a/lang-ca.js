@@ -198,6 +198,9 @@ s4aTempDict = {
     'Loading Snap Jr.':
         'S\'està carregant Snap Júnior',
 
+    'Show project URL':
+        'Mostra la URL del projecte',
+
     'HTTP server':
         'Servidor HTTP',
 
@@ -219,22 +222,45 @@ s4aTempDict = {
         'vermell',
     'blue':
         'blau',
-    'SnapJunior Blocks':
-        'Blocs de l\'Snap Junior',
-    'SnapJuniorPlus Blocks':
-        'Més blocs per l\'Snap Junior',
-    'Icon-based blocks for the youngest programmers.':
-        'Blocs amb icones per als programadors i programadores més joves.',
-    'Extra blocks for SnapJunior.':
-        'Blocs per afegir funcionalitats a l\'Snap Junior',
-    'Blocks for TdRSTEAM shield v1, using SA5Firmata firmware.':
-        'Blocs per la TdRSTEAM v1, utilitzant el SA5Firmata.',
-    'Blocks for TdRSTEAM shield v2, using SA5Firmata firmware.':
-        'Blocs per la TdRSTEAM v2, utilitzant el SA5Firmata.',
+//Llibreries
     'Libraries below this point are specific to Snap4Arduino.':
         'Les llibreries de sota són específiques per Snap4Arduino.',
-    'End of Snap4Arduino libraries.':
-        'Final de les llibreries d\'Snap4Arduino.'
+    'Scale between ranges':
+        'Escala entre intervals',
+    'Scale a value from a range to another. Useful to map sensor values into stage coordinates, or to map sensors into actuators.':
+        'Escala un valor d\'un interval a un altre. Útil per mapejar els valors dels sensors a les coordenades de l\'escenari o per passar valors dels sensors directament als actuadors.',
+    'SnapJunior Blocks':
+        'Blocs de l\'Snap Junior',
+    'Icon-based blocks for the youngest programmers.':
+        'Blocs amb icones per als programadors i programadores més joves.',
+    'SnapJuniorPlus Blocks':
+        'Més blocs per l\'Snap Junior',
+    'Extra blocks for SnapJunior.':
+        'Blocs per afegir funcionalitats a l\'Snap Junior',
+
+    'I2C':
+        'I2C',
+    'Send and receive data from I2C-enabled sensors and actuators.':
+        'Envia i rep dades pel protocol I2C de sensors i actuadors.',
+    'Adding extra features to StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck and dht11 blocks. It requires SA5Firmata_tone firmware.':
+        'Afegeix funcionalitats al StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck i dht11. Requereix que el dispositiu tingui el firmware SA5Firmata_tone.',
+    'SA5Firmata with IR features at the expense of simplifying the tone function. It requires SA5Firmata_ir firmware.':
+        'SA5Firmata amb funcionalitats IR, limitant les funcionalitats del tone. Requereix que el dispositiu tingui el firmware SA5Firmata_IR.',
+
+    'Blocks for the TdRSTEAM shield v1. Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.':
+        'Blocs per la TdRSTEAM v1. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitas del brunzidor (tone).',
+    'Blocks for the TdRSTEAM shield v2, Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.':
+        'Blocs per la TdRSTEAM v2. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitas del brunzidor (tone).',
+    'Imagina Shield':
+        'Placa Imagina',
+    'Blocks for the Imagina shield. Use StandardFirmata, SA5Firmata_tone to add buzzer features or SA5Firmata_IR for buzzer and IR features.':
+        'Blocs per la placa Imagina. Utilitza el StandardFirmata, el S5AFirmata_tone per afegir les funcionalitats del brunzidor (tone) o el SA5Firmata_IR per tenir brunzidor (simplificat) i funcionalitats IR.',
+    'Echidna Boards':
+        'Plaques Echidna',
+    'Blocks for the Echidna boards. Use StandarFirmata or SA5Firmata_tone to add more buzzer features.':
+        'Blocs per les plaques Echidna. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitats del brunzidor (tone).',
+    'Blocks for the NodeMCU board using StandardFirmata. It has also blocks for a motor shield.':
+        'Blocs per la placa NodeMCU utilitzant el StandardFirmata. També incorpora blocs per la placa de motors.'
 
 };
 

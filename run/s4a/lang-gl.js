@@ -158,7 +158,7 @@ s4aTempDict = {
         'isto pode levar uns segundos...',
 
     'Network serial ports':
-        'Portos serie sobre rede'
+        'Portos serie sobre rede',
 
     'Open from URL...':
         'Abrir dende un URL...',

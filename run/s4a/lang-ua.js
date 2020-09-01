@@ -73,7 +73,7 @@ s4aTempDict = {
 		'зупинено (1500)',
 
 	'angle (0-180)':
-		'під кутом (0-180)',
+		'кут (0-180)',
 
     'connect to Arduino':
         'з\u2019єднатися з Arduino',
@@ -94,22 +94,22 @@ s4aTempDict = {
         'цифрове значення %digitalPin',
 
     'connect arduino at %s':
-        'З\u2019єднатися з arduino використовуючи %s',
+        'з\u2019єднатися з arduino використовуючи %s',
 
     'disconnect arduino':
-        'Від\u2019єднатися від arduino',
+        'від\u2019єднатися від arduino',
 
     'setup digital pin %digitalPin as %pinMode':
-        'налаштувати режим цифрового піну %digitalPin як %pinMode',
+        'налаштувати цифровий пін %digitalPin як %pinMode',
 
     'set digital pin %digitalPin to %b':
-        'змінити статус цифрового піну %digitalPin на %b',
+        'встановити цифровий пін %digitalPin як %b',
 
     'set servo %digitalPin to %servoValue':
-        'змінити статус піну серво %digitalPin нa %servoValue',
+        'встановити пін серво %digitalPin як %servoValue',
 
     'set pin %pwmPin to value %n':
-        'змінити статус піну PWM %pwmPin на %n',
+        'встановити пін PWM %pwmPin як %n',
 
     'Connecting board at port\n': 
         'З\u2019єднання з платою через порт\n',

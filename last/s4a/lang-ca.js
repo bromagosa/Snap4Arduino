@@ -214,7 +214,27 @@ s4aTempDict = {
         'desmarqueu per evitar que l\'escenari\nes vegi des del servidor HTTP',
 
     'check to allow the stage\nto be viewed\nfrom the HTTP server':
-        'marqueu per permetre que l\'escenari\nes vegi des del servidor HTTP'
+        'marqueu per permetre que l\'escenari\nes vegi des del servidor HTTP',
+    'red':
+        'vermell',
+    'blue':
+        'blau',
+    'SnapJunior Blocks':
+        'Blocs de l\'Snap Junior',
+    'SnapJuniorPlus Blocks':
+        'Més blocs per l\'Snap Junior',
+    'Icon-based blocks for the youngest programmers.':
+        'Blocs amb icones per als programadors i programadores més joves.',
+    'Extra blocks for SnapJunior.':
+        'Blocs per afegir funcionalitats a l\'Snap Junior',
+    'Blocks for TdRSTEAM shield v1, using SA5Firmata firmware.':
+        'Blocs per la TdRSTEAM v1, utilitzant el SA5Firmata.',
+    'Blocks for TdRSTEAM shield v2, using SA5Firmata firmware.':
+        'Blocs per la TdRSTEAM v2, utilitzant el SA5Firmata.',
+    'Libraries below this point are specific to Snap4Arduino.':
+        'Les llibreries de sota són específiques per Snap4Arduino.',
+    'End of Snap4Arduino libraries.':
+        'Final de les llibreries d\'Snap4Arduino.'
 
 };
 

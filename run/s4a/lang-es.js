@@ -72,6 +72,9 @@ s4aTempDict = {
     'stopped (1500)':
         'parado (1500)',
 
+    'disconnected':
+        'desconectado',
+
     'angle (0-180)':
         'ángulo (0-180)',
 
@@ -205,7 +208,47 @@ s4aTempDict = {
         'desmarcar para evitar que el escenario\nse visualice desde el servidor HTTP',
 
     'check to allow the stage\nto be viewed\nfrom the HTTP server':
-        'marcar para permitir que el escenario\nse visualice desde el servidor HTTP'
+        'marcar para permitir que el escenario\nse visualice desde el servidor HTTP',
+
+//Libraries
+    'Libraries below this point are specific to Snap4Arduino.':
+        'Las siguientes bibliotecas son específicas de Snap4Arduino.',
+    'Scale between ranges':
+        'Escala entre intervalos',
+    'Scale a value from a range to another. Useful to map sensor values into stage coordinates, or to map sensors into actuators.':
+        'Escala un valor de un intervalo a otro. Útil para mapear valores de sensores a las coordenadas del escenario o para pasar directamente valores de sensores a actuadores.',
+    'SnapJunior Blocks':
+        'Bloques del Snap Junior',
+    'Icon-based blocks for the youngest programmers.':
+        'Bloques con iconos para los programadores y programadoras más jóvenes.',
+    'SnapJuniorPlus Blocks':
+        'Más bloques para el Snap Junior',
+    'Extra blocks for SnapJunior.':
+        'Bloques para añadir funcionalidades al Snap Junior',
+
+    'I2C':
+        'I2C',
+    'Send and receive data from I2C-enabled sensors and actuators.':
+        'Envía y recibe datos por el protocolo I2C de sensores y actuadores.',
+    'Adding extra features to StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck and dht11 blocks. It requires SA5Firmata_tone firmware.':
+        'Añade funcionalidades al StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck i dht11. Necesita que el dispositivo tenga el firmware SA5Firmata_tone.',
+    'SA5Firmata with IR features at the expense of simplifying the tone function. It requires SA5Firmata_ir firmware.':
+        'SA5Firmata con funcionalidades IR, limitando las funcionalidades del tone. Necesita que el dispositivo tinga el firmware SA5Firmata_IR.',
+
+    'Blocks for the TdRSTEAM shield v1. Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.':
+        'Bloques para la TdRSTEAM v1. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone).',
+    'Blocks for the TdRSTEAM shield v2, Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.':
+        'Bloques para la TdRSTEAM v2. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone).',
+    'Imagina Shield':
+        'Placa Imagina',
+    'Blocks for the Imagina shield. Use StandardFirmata, SA5Firmata_tone to add buzzer features or SA5Firmata_IR for buzzer and IR features.':
+        'Bloques para la placa Imagina. Utiliza el StandardFirmata, el S5AFirmata_tone para añadir las funcionalidades del zumbador (tone) o el SA5Firmata_IR para tener zumbador (simplificado) y funcionalidades IR.',
+    'Echidna Boards':
+        'Placas Echidna',
+    'Blocks for the Echidna boards. Use StandarFirmata or SA5Firmata_tone to add more buzzer features.':
+        'Bloques para las placas Echidna. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone).',
+    'Blocks for the NodeMCU board using StandardFirmata. It has also blocks for a motor shield.':
+        'Bloques para la placa NodeMCU utilitzando el StandardFirmata. También incorpora bloques para la placa de motores.'
 };
 
 // Add attributes to original SnapTranslator.dict.es

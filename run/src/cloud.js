@@ -34,7 +34,7 @@
 /*global modules, hex_sha512*/
 
 modules = modules || {};
-modules.cloud = '2019-July-17';
+modules.cloud = '2020-May-17';
 
 // Global stuff
 
@@ -47,8 +47,8 @@ function Cloud() {
 }
 
 Cloud.prototype.init = function () {
-    this.urlBasePath = '/api/v1';
-    this.url = this.determineCloudDomain() + this.urlBasePath;
+    this.apiBasePath = '/api/v1';
+    this.url = this.determineCloudDomain() + this.apiBasePath;
     this.username = null;
 };
 
@@ -56,7 +56,7 @@ Cloud.prototype.init = function () {
 Cloud.MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 Cloud.prototype.knownDomains = {
-    'Snap!Cloud' : 'https://cloud.snap.berkeley.edu',
+    'Snap!Cloud' : 'https://snap.berkeley.edu',
     'Snap!Cloud (cs10)' : 'https://snap-cloud.cs10.org',
     'Snap!Cloud (staging)': 'https://snap-staging.cs10.org',
     'localhost': 'http://localhost:8080',
@@ -460,6 +460,14 @@ Cloud.prototype.getPublishedProjectList = function (
     var path = '/projects' +
     		(username ? '/' + encodeURIComponent(username) : '') +
 	        '?ispublished=true';
+
+    if (!username) {
+        // When requesting the global list of published projects, filter out
+        // those with project names that are typical of online courses like
+        // Teals or BJC. When requesting a user's published projects, show them
+        // all.
+        path += '&filtered=true';
+    }
 
     if (withThumbnail) {
         path += '&withthumbnail=true';
@@ -1097,4 +1105,18 @@ Cloud.prototype.removeEditorFromCollection = function (
         onError,
         'Could not remove editor from collection'
     );
+};
+
+// Paths to front-end pages
+/*
+    This list of paths is incomplete, we will add them as necessary.
+    Important: a path is a string *without* a domain.
+    These paths are not prefixed by `apiBasePath`.
+*/
+
+Cloud.prototype.showProjectPath = function (username, projectname) {
+    return '/project?' + this.encodeDict({
+        user: username,
+        project: projectname
+    });
 };

@@ -413,7 +413,7 @@ SnapTranslator.dict.gl = {
     'pen down':
         'baixar lapis',
     'pen up':
-        'subir lapis',,
+        'subir lapis',
     'pen down?':
         'lapis abaixo?',
     'set pen color to %clr':
@@ -1024,7 +1024,7 @@ SnapTranslator.dict.gl = {
     'detach from':
         'soltar de',
     'detach all parts':
-        'soltar todas as partes',able
+        'soltar todas as partes',
     'export...':
         'exportar…',
     'parent...':
@@ -2502,10 +2502,10 @@ SnapTranslator.dict.gl = {
 	'Please make sure your web browser is up to date\nand your camera is properly configured. \n\nSome browsers also require you to access Snap!\nthrough HTTPS to use the camera.\n\nPlase replace the "http://" part of the address\nin your browser by "https://" and try again.':
         'Comprobe que o navegador está actualizado\ne a webcam ben configurada.\n\nAlgúns navegadores tamén requiren\nHTTPS para empregar a cámara.\n\nPode probalo cambiando o enderezo «http://»\npor «https://»".',
     'Uploading ':
-        'Enviando,
+        'Enviando',
     'Repeat Password:':
         'Repite o contrasinal:',
-    '%asp at %loc' :
+    '%asp at %loc':
         '%asp en %loc' ,
     'sprites':
         'obxectos',
@@ -2577,7 +2577,7 @@ SnapTranslator.dict.gl = {
         'Analise da distribución de frecuencias',
     'World Map':
         'Mapa do mundo',
-    'create variables in program':
+    'Create variables in program':
         'Creando variábeis dende o programa',
     'Deal with JSON data':
         'Tratar con datos JSON',
@@ -2629,8 +2629,8 @@ SnapTranslator.dict.gl = {
         '[EXPERIMENTAL] Procesar listas grandes de forma moi rápida.',
     '[EXPERIMENTAL] analyze data for frequency distribution':
         '[EXPERIMENTAL] Analizar datos para obter a súa distribución de frecuencias.',
-    'declare global or sprite-local variables in a script':
-        'Declarar variábeis globais ou de obxecto a partires dun programa.',
+    'Create and manage global/sprite/script variables in a script':
+        'Crear e xestionar "global/sprite/script" variábeis a partires dun programa.',
     'Turn JSON strings into lists with the listify block, then retrieve data out of them by using the value at key block.':
         'Transforma as cadeas JSON en listas co bloque «listify» (listar), e após recupera datos delas usando o valor do bloque de chaves.',
     'Run several scripts in parallel and wait until all are done.':
