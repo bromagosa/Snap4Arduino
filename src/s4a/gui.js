@@ -386,7 +386,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
 
-        + 'Copyright \u24B8 2019 Bernat Romagosa and Joan Guillén\n'
+        + 'Copyright \u24B8 2018-2020 Bernat Romagosa and Joan Guillén\n'
         + 'https://github.com/bromagosa/snap4arduino\n\n'
 
         + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
