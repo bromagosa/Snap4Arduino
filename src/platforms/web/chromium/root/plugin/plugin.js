@@ -1,4 +1,6 @@
-var extensionId = 'meajklokhjoflbimamdbhpdjlondmgpi',
+var currentExtensionId = 'fhmkennllhhclkcjcdaegceilcefedle',
+    oldExtensionId = 'meajklokhjoflbimamdbhpdjlondmgpi',
+    extensionId = currentExtensionId,
     postal = new Postal(),
     firmata = {
         Board: function(port, callback) {
@@ -28,3 +30,21 @@ Postal.prototype.sendCommand = function (command, args, callback) {
 chrome.serial = {
     getDevices: function (callback) { postal.sendCommand('getDevices', null, callback) }
 };
+
+// Checking if Snap4Arduino Connector (current or old, with different 'extensionId') are present
+chrome.runtime.sendMessage(extensionId, {command:'getDevices'}, function (devices) { 
+    if (chrome.runtime.lastError) {
+        console.log("Current connector not found");
+        extensionId = oldExtensionId;
+        chrome.runtime.sendMessage(extensionId, {command:'getDevices'}, function (devices) {
+            if (chrome.runtime.lastError) {
+                console.log("Old connector has not been found either");
+                extensionId = currentExtensionId;
+            } else {
+                console.log("Old connector found successfully");
+            }
+        });
+    } else {
+        console.log("Current connector found successfully");
+    }
+});
