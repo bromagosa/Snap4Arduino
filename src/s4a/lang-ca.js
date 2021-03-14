@@ -260,7 +260,32 @@ s4aTempDict = {
     'Blocks for the Echidna boards. Use StandarFirmata or SA5Firmata_tone to add more buzzer features.':
         'Blocs per les plaques Echidna. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitats del brunzidor (tone).',
     'Blocks for the NodeMCU board using StandardFirmata. It has also blocks for a motor shield.':
-        'Blocs per la placa NodeMCU utilitzant el StandardFirmata. També incorpora blocs per la placa de motors.'
+        'Blocs per la placa NodeMCU utilitzant el StandardFirmata. També incorpora blocs per la placa de motors.',
+// Temporaly, adding new 6.7.1 Snap! strings (already added for Snap! 7)
+    '%la of %l':
+        '%la de %l',
+    'rank':
+        'rang',
+    'dimensions':
+        'dimensions',
+    'flatten':
+        'aplanament',
+    'columns':
+        'columnes',
+    'reverse':
+        'revers',
+    'lines':
+        'línies',
+   'reshape %l to %nums':
+        'redimensiona %l a %nums',
+    'Undelete sprites...':
+        'Recupera objectes...',
+    'Bring back deleted sprites':
+        'Recupera objectes esborrats',
+    'trash is empty':
+        'la paperera està buida',
+    'clear undrop queue':
+        'esborra la llista d\'accions desades'
 
 };
 

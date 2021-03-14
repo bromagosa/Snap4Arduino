@@ -163,8 +163,8 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 6.2.0 - dev -\nBuild Your Own Blocks\n\n'
-        + 'Copyright \u24B8 2008-2020 Jens M\u00F6nig and '
+    aboutTxt = 'Snap! 6.7.1\nBuild Your Own Blocks\n\n'
+        + 'Copyright \u24B8 2008-2021 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
         + '        Snap! is developed by the University of California, '
@@ -386,7 +386,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
 
-        + 'Copyright \u24B8 2018-2020 Bernat Romagosa and Joan Guillén\n'
+        + 'Copyright \u24B8 2018-2021 Bernat Romagosa and Joan Guillén\n'
         + 'https://github.com/bromagosa/snap4arduino\n\n'
 
         + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
