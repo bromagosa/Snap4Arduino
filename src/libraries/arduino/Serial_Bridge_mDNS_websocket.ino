@@ -368,7 +368,7 @@ void handleSave() {
   if (config) ESP.reset();
 }
 
-int write_EEPROM(int address, String &s){
+int write_EEPROM(int address, const String &s){
     for(int i=0; i < s.length(); i++) {
        EEPROM.write(address++, s.charAt(i));
     }
