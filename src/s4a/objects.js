@@ -482,11 +482,11 @@ SpriteMorph.prototype.freshPalette = function (category) {
 
     // primitives:
 
-    blocks = this.blocksCache[category];
+    blocks = this.primitivesCache[category];
     if (!blocks) {
         blocks = this.blockTemplates(category);
         if (this.isCachingPrimitives) {
-            this.blocksCache[category] = blocks;
+            this.primitivesCache[category] = blocks;
         }
     }
 
