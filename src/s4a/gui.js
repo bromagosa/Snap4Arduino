@@ -862,7 +862,7 @@ IDE_Morph.prototype.version = function () {
 
 // Can't be decorated, and we need to make sure the "other" category
 // shows up
-IDE_Morph.prototype.createCategories = function () {
+IDE_Morph.prototype.createCategoriesv6 = function () {
     var myself = this;
 
     if (this.categories) {
@@ -954,7 +954,217 @@ IDE_Morph.prototype.createCategories = function () {
     fixCategoriesLayout();
     this.add(this.categories);
 };
+IDE_Morph.prototype.createCategories = function () {
+    var myself = this,
+        categorySelectionAction = this.scene.unifiedPalette ? scrollToCategory
+            : changePalette,
+        categoryQueryAction = this.scene.unifiedPalette ? queryTopCategory
+            : queryCurrentCategory;
 
+    if (this.categories) {
+        this.categories.destroy();
+    }
+    this.categories = new Morph();
+    this.categories.color = this.groupColor;
+    this.categories.bounds.setWidth(this.paletteWidth);
+    this.categories.buttons = [];
+
+    this.categories.refresh = function () {
+        this.buttons.forEach(cat => {
+            cat.refresh();
+            if (cat.state) {
+                cat.scrollIntoView();
+            }
+        });
+    };
+
+    this.categories.refreshEmpty = function () {
+        var dict = myself.currentSprite.emptyCategories();
+        dict.variables = dict.variables || dict.lists || dict.other;
+        this.buttons.forEach(cat => {
+            if (dict[cat.category]) {
+                cat.enable();
+            } else {
+                cat.disable();
+            }
+        });
+    };
+
+    function changePalette(category) {
+        return () => {
+            myself.currentCategory = category;
+            myself.categories.buttons.forEach(each =>
+                each.refresh()
+            );
+            myself.refreshPalette(true);
+        };
+    }
+
+    function scrollToCategory(category) {
+        return () => myself.scrollPaletteToCategory(category);
+    }
+
+    function queryCurrentCategory(category) {
+        return () => myself.currentCategory === category;
+    }
+
+    function queryTopCategory(category) {
+        return () => myself.topVisibleCategoryInPalette() === category;
+    }
+
+    function addCategoryButton(category) {
+        var labelWidth = 75,
+            colors = [
+                myself.frameColor,
+                myself.frameColor.darker(MorphicPreferences.isFlat ? 5 : 50),
+                SpriteMorph.prototype.blockColor[category]
+            ],
+            button;
+
+        button = new ToggleButtonMorph(
+            colors,
+            myself, // the IDE is the target
+            categorySelectionAction(category),
+            category[0].toUpperCase().concat(category.slice(1)), // label
+            categoryQueryAction(category), // query
+            null, // env
+            null, // hint
+            labelWidth, // minWidth
+            true // has preview
+        );
+
+        button.category = category;
+        button.corner = 8;
+        button.padding = 0;
+        button.labelShadowOffset = new Point(-1, -1);
+        button.labelShadowColor = colors[1];
+        button.labelColor = myself.buttonLabelColor;
+        if (MorphicPreferences.isFlat) {
+            button.labelPressColor = WHITE;
+        }
+        button.fixLayout();
+        button.refresh();
+        myself.categories.add(button);
+        myself.categories.buttons.push(button);
+        return button;
+    }
+
+    function addCustomCategoryButton(category, color) {
+        var labelWidth = 168,
+            colors = [
+                myself.frameColor,
+                myself.frameColor.darker(MorphicPreferences.isFlat ? 5 : 50),
+                color
+            ],
+            button;
+
+        button = new ToggleButtonMorph(
+            colors,
+            myself, // the IDE is the target
+            categorySelectionAction(category),
+            category, // label
+            categoryQueryAction(category), // query
+            null, // env
+            null, // hint
+            labelWidth, // minWidth
+            true // has preview
+        );
+
+        button.category = category;
+        button.corner = 8;
+        button.padding = 0;
+        button.labelShadowOffset = new Point(-1, -1);
+        button.labelShadowColor = colors[1];
+        button.labelColor = myself.buttonLabelColor;
+        if (MorphicPreferences.isFlat) {
+            button.labelPressColor = WHITE;
+        }
+        button.fixLayout();
+        button.refresh();
+        myself.categories.add(button);
+        myself.categories.buttons.push(button);
+        return button;
+    }
+
+    function fixCategoriesLayout() {
+        var buttonWidth = myself.categories.children[0].width(),
+            buttonHeight = myself.categories.children[0].height(),
+            more = SpriteMorph.prototype.customCategories.size,
+            border = 3,
+            xPadding = (200 // myself.logo.width()
+                - border
+                - buttonWidth * 2) / 3,
+            yPadding = 2,
+            l = myself.categories.left(),
+            t = myself.categories.top(),
+            scroller,
+            row,
+            col,
+            i;
+
+        myself.categories.children.forEach((button, i) => {
+            row = i < 8 ? i % 4 : (i == 8 || i == 9) ? 4 : i - 5; // fixing Other and Arduino categories
+            col = (i < 4 || (i > 7 && i != 9)) ? 1 : 2; // fixing Other and Arduino categories
+            button.setPosition(new Point(
+                l + (col * xPadding + ((col - 1) * buttonWidth)),
+                t + ((row + 1) * yPadding + (row * buttonHeight) + border) +
+                    (i > 9 ? border + 2 : 0) // 7 -> 9
+            ));
+        });
+        // Scroller from 6 (5 in Snap!) because Snap4Arduino
+        // has already an extra categories row (for Other and Arduino)
+        if (more > 5) { // 6->5
+            scroller = new ScrollFrameMorph(null, null, myself.sliderColor);
+            scroller.setColor(myself.groupColor);
+            scroller.acceptsDrops = false;
+            scroller.contents.acceptsDrops = false;
+            scroller.setPosition(
+                new Point(0, myself.categories.children[10].top()) // 8->10
+            );
+            scroller.setWidth(myself.paletteWidth);
+            scroller.setHeight(buttonHeight * 5 + yPadding * 4); // 6,5 -> 5,4
+
+            for (i = 0; i < more; i += 1) {
+                scroller.addContents(myself.categories.children[10]); // 8->10
+            }
+            myself.categories.add(scroller);
+            myself.categories.setHeight(
+                (5 + 1) * yPadding // 4 -> 5
+                    + 5 * buttonHeight // 4 -> 5
+                    + 5 * (yPadding + buttonHeight) + border + 2 // 6->5
+                    + 2 * border
+            );
+        } else {
+            myself.categories.setHeight(
+                (5 + 1) * yPadding // 4 -> 5
+                    + 5 * buttonHeight // 4 -> 5
+                    + (more ?
+                        (more * (yPadding + buttonHeight) + border + 2)
+                            : 0)
+                    + 2 * border
+            );
+        }
+    }
+
+    SpriteMorph.prototype.categories.forEach(cat => {
+        if (!contains(['lists'], cat)) { // Removing "other" filter
+            addCategoryButton(cat);
+        }
+    });
+
+    // sort alphabetically
+    Array.from(
+        SpriteMorph.prototype.customCategories.keys()
+    ).sort().forEach(name =>
+        addCustomCategoryButton(
+            name,
+            SpriteMorph.prototype.customCategories.get(name)
+        )
+    );
+
+    fixCategoriesLayout();
+    this.add(this.categories);
+};
 
 // Show URL of public projects in project list
 ProjectDialogMorph.prototype.originalInstallCloudProjectList = ProjectDialogMorph.prototype.installCloudProjectList;
