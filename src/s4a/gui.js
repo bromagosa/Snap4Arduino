@@ -888,7 +888,7 @@ IDE_Morph.prototype.createCategories = function () {
 
     this.categories.refreshEmpty = function () {
         var dict = myself.currentSprite.emptyCategories();
-        dict.variables = dict.variables || dict.lists || dict.other;
+        dict.variables = dict.variables || dict.lists; // removing Other cat
         this.buttons.forEach(cat => {
             if (dict[cat.category]) {
                 cat.enable();
@@ -1110,4 +1110,74 @@ ProjectDialogMorph.prototype.addUserMenuToListItems = function () {
         }
     });
 };
+//Can't be decorated.
+//Other category scrolls to other group blocks (not to "wrap")
+IDE_Morph.prototype.scrollPaletteToCategory = function (category) {
+    var palette = this.palette,
+        msecs = this.isAnimating ? 200 : 0,
+        firstInCategory,
+        delta;
 
+    if (palette.isForSearching) {
+        this.refreshPalette();
+        palette = this.palette;
+    }
+    firstInCategory = palette.contents.children.find(
+        (block) => {return block.category === category &&
+                           block.selector != 'doWarp' &&
+                           block.selector != 'doDeclareVariables' &&
+                           !(block instanceof RingMorph);
+    });
+    if (firstInCategory === undefined) {return; }
+    delta = palette.top() - firstInCategory.top() + palette.padding;
+    if (delta === 0) {return; }
+    this.world().animations.push(new Animation(
+        y => { // setter
+            palette.contents.setTop(y);
+            palette.contents.keepInScrollFrame();
+            palette.adjustScrollBars();
+        },
+        () => palette.contents.top(), // getter
+        delta, // delta
+        msecs, // duration in ms
+        t => Math.pow(t, 6), // easing
+        null // onComplete
+    ));
+};
+
+//Can't be decorated.
+//Other blocks point to Other category (even "doDeclareVariables')
+IDE_Morph.prototype.topVisibleCategoryInPalette = function () {
+    // private - answer the topmost (partially) visible
+    // block category in the palette, so it can be indicated
+    // as "current category" in the category selection buttons
+    var top;
+    if (!this.palette) {return; }
+    top = this.palette.contents.children.find(morph =>
+        morph.category && morph.bounds.intersects(this.palette.bounds)
+    );
+    if (top) {
+        if (top.category === 'other') {
+            if (top.selector === 'doWarp') {
+                return 'control';
+            }
+            if (top instanceof RingMorph) {
+                return 'operators';
+            }
+            if (top.selector === 'doDeclareVariables') {
+                return 'variables';
+            }
+            return 'other';
+        }
+        if (top.category === 'lists') {
+            return 'variables';
+        }
+        return top.category;
+    }
+    return null;
+};
+IDE_Morph.prototype.originalFixLayout = IDE_Morph.prototype.fixLayout;
+IDE_Morph.prototype.fixLayout = function (situation) {
+    this.originalFixLayout(situation);
+    this.categories.refreshEmpty();
+};
