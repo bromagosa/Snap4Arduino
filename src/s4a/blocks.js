@@ -1,103 +1,78 @@
-// labelPart() proxy
+// adding labelParts
 
-SyntaxElementMorph.prototype.originalLabelPart = SyntaxElementMorph.prototype.labelPart;
-SyntaxElementMorph.prototype.labelPart = function(spec) {
-    var part,
-        block = this;
-
-    switch (spec) {
-        case '%servoValue':
-            part = new InputSlotMorph(
-                    null,
-                    false,
-                    {
-                        'angle (0-180)' : [90],
-                        'stopped (1500)' : ['stopped'], 
-                        'clockwise (1500-1000)' : ['clockwise'],
-                        'counter-clockwise (1500-2000)' : ['counter-clockwise'],
-                        'disconnected' : ['disconnected']
-                    }
-                    );
-            break;
-        case '%pinMode':
-            part = new InputSlotMorph(
-                    null,
-                    false,
-                    {
-                        'digital input' : ['digital input'],
-                        'digital output' : ['digital output'] ,
-                        'PWM' : ['PWM'],
-                        'servo' : ['servo']
-                    },
-                    true
-                    );
-            break;
-        case '%digitalPin':  // All digitals have modes INPUT, OUTPUT, SERVO AND PULLUP
-            part = new InputSlotMorph(
-                    null,
-                    true,
-                    function() { 
-                        // Get board associated to currentSprite
-                        var sprite = ide.currentSprite,
-                            board = sprite.arduino.board;
-
-                        if (board) {
-                            return sprite.arduino.pinsSettableToMode(board.MODES.INPUT);
-                        } else {
-                            return [];
-                        }
-                    }
-                    );
-            part.originalChanged = part.changed;
-            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
-            break;
-        case '%pwmPin':
-            part = new InputSlotMorph(
-                    null,
-                    true,
-                    function() { 
-                        // Get board associated to currentSprite
-                        var sprite = ide.currentSprite,
-                            board = sprite.arduino.board;
-
-                        if (board) {
-                            // Can't use map because we need to construct keys dynamically
-                            var pins = {};
-                            Object.keys(sprite.arduino.pinsSettableToMode(board.MODES.PWM)).forEach(function (each) { pins[each + '~'] = each });
-                            return pins;
-                        } else {
-                            return [];
-                        }
-                    }
-                    );
-            break;
-        case '%analogPin':
-            part = new InputSlotMorph(
-                    null,
-                    true,
-                    function() { 
-                        // Get board associated to currentSprite
-                        var sprite = ide.currentSprite,
-                            board = sprite.arduino.board;
-                        
-                        if (board) { 
-                            return board.analogPins.map(
-                                    function (each){
-                                        return (each - board.analogPins[0]).toString();
-                                    });
-                        } else { 
-                            return [];
-                        } 
-                    }
-                    );
-            part.originalChanged = part.changed;
-            part.changed = function () { part.originalChanged(); if (block.toggle) { block.toggle.refresh(); } };
-            break;
-        default:
-            part = this.originalLabelPart(spec);
+SyntaxElementMorph.prototype.labelParts = {
+    ...SyntaxElementMorph.prototype.labelParts,
+    '%servoValue': {
+        type: 'input',
+        menu: {
+            'angle (0-180)' : [90],
+            'stopped (1500)' : ['stopped'], 
+            'clockwise (1500-1000)' : ['clockwise'],
+            'counter-clockwise (1500-2000)' : ['counter-clockwise'],
+            'disconnected' : ['disconnected']
+            }
+    },
+    '%pinMode': {
+        type: 'input',
+        menu: {
+            'digital input' : ['digital input'],
+            'digital output' : ['digital output'] ,
+            'PWM' : ['PWM'],
+            'servo' : ['servo']
+            }
+    },
+    '%digitalPin': {
+        type: 'input',
+        tags: 'numeric',
+        menu: 'digitalPinMenu'
+    },
+    '%pwmPin': {
+        type: 'input',
+        tags: 'numeric',
+        menu: 'pwmPinMenu'
+    },
+    '%analogPin': {
+        type: 'input',
+        tags: 'numeric',
+        menu: 'analogPinMenu'
     }
-    return part;
 };
+
+InputSlotMorph.prototype.digitalPinMenu = function (searching) {
+    var dict = {},
+        sprite = ide.currentSprite,
+        board = sprite.arduino.board; // Get board associated to currentSprite
+    // All digitals have modes INPUT, OUTPUT, SERVO AND PULLUP
+    if (!searching && board) { dict = sprite.arduino.pinsSettableToMode(board.MODES.INPUT); }
+    return dict;
+};
+
+InputSlotMorph.prototype.pwmPinMenu = function (searching) {
+    var dict = {},
+        sprite = ide.currentSprite,
+        board = sprite.arduino.board; // Get board associated to currentSprite
+    if (!searching && board) {
+        Object.keys(sprite.arduino.pinsSettableToMode(board.MODES.PWM)).forEach(
+            function (each) { dict[each + '~'] = each }
+        );
+    }
+    return dict;
+};
+
+InputSlotMorph.prototype.analogPinMenu = function (searching) {
+    var dict = {},
+        sprite = ide.currentSprite,
+        board = sprite.arduino.board; // Get board associated to currentSprite
+    if (!searching && board) {
+        board.analogPins.forEach(
+            function (each) {
+                analogPin = (each - board.analogPins[0]).toString();
+                dict[analogPin] = analogPin;
+            }
+        );    }
+    return dict;
+};
+
 
 BlockMorph.prototype.originalUserMenu = BlockMorph.prototype.userMenu;
 BlockMorph.prototype.userMenu = function () {
