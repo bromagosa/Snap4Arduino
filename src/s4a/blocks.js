@@ -87,6 +87,21 @@ BlockMorph.prototype.userMenu = function () {
     return menu;
 };
 
+// Refreshing watchers state info when pin is changed 
+SyntaxElementMorph.prototype.originalLabelPart = SyntaxElementMorph.prototype.labelPart;
+SyntaxElementMorph.prototype.labelPart = function (spec) {
+    var part = this.originalLabelPart(spec),
+        block = this;
+    if (part.choices === 'analogPinMenu' || part.choices === 'digitalPinMenu') {
+        part.originalChanged = part.changed;
+        part.changed = function () {
+            part.originalChanged();
+            if (block.toggle) { block.toggle.refresh(); }
+        };
+    }
+    return part;
+};
+
 BlockMorph.prototype.transpileToC = function () {
     var ide = this.parentThatIsA(IDE_Morph),
         safeChars = {"á": "a", "à": "a", "ä": "a",
