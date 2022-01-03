@@ -21,13 +21,13 @@ echo
 
 cp -RL src/platforms/web/chromium/crx tmp
 
-echo
-echo "======="
-echo "Setting version name..."
-echo "======="
-echo
+#echo
+#echo "======="
+#echo "Setting version name..."
+#echo "======="
+#echo
 
-sed -E 's/.*"version".*/  "version": "'`cat src\/version`'",/' src/platforms/web/chromium/crx/manifest.json > tmp/crx/manifest.json
+#sed -E 's/.*"version".*/    "version": "'`cat src\/version`'",/' src/platforms/web/chromium/crx/manifest.json > tmp/crx/manifest.json
 
 echo
 echo "======="

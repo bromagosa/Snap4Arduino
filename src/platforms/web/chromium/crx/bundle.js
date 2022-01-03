@@ -109,7 +109,11 @@ Dispatcher.prototype.i2cConfig = function (boardId) {
 
 Dispatcher.prototype.i2cWrite = function (boardId, address, reg, bytes) {
     var board = Boards[boardId];
-    board.i2cWrite(address, reg, bytes);
+    if (arguments.length === 3) {
+        board.i2cWrite(address, reg);
+    } else {
+        board.i2cWrite(address, reg, bytes);
+    }
 };
 
 Dispatcher.prototype.i2cReadOnce = function (boardId, address, reg, callback) {
@@ -120,6 +124,11 @@ Dispatcher.prototype.i2cReadOnce = function (boardId, address, reg, callback) {
         function (response) {
             board['i2cResponse-' + Number(address)] = response;
         });
+};
+
+Dispatcher.prototype.i2cWriteReg = function (boardId, address, reg, byte) {
+    var board = Boards[boardId];
+    board.i2cWriteReg(address, reg, byte);
 };
 
 },{"firmata":16}],2:[function(require,module,exports){

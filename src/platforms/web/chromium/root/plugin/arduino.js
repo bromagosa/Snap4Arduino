@@ -111,9 +111,15 @@ Arduino.prototype.populateBoard = function (board) {
     board.getArduinoBoardParam = function (name) {postal.sendCommand('getArduinoBoardParam', [board.id, name], function (response) { board[name] = response;}); };
     board.checkArduinoBoardParam = function (name) {postal.sendCommand('checkArduinoBoardParam', [board.id, name], function (response) { board[name] = response;}); };
     board.i2cConfig = function () {postal.sendCommand('i2cConfig', [board.id]); };
-    board.i2cWrite = function (address, reg, bytes) { postal.sendCommand('i2cWrite', [board.id, address, reg, bytes]); };
+    board.i2cWrite = function (address, reg, bytes) {
+        if (arguments.length === 2) {
+            postal.sendCommand('i2cWrite', [board.id, address, reg]);
+        } else {
+            postal.sendCommand('i2cWrite', [board.id, address, reg, bytes]);
+        }
+    };
     board.i2cReadOnce = function (address, reg, callback) { postal.sendCommand('i2cReadOnce', [board.id, address, reg], function (response) { board['i2cResponse-' + Number(address)] = response; }); };
-
+    board.i2cWriteReg = function (address, reg, byte) {postal.sendCommand('i2cWriteReg', [board.id, address, reg, byte]); };
 };
 
 // Fake Buffer definition, needed by some Firmata extensions
