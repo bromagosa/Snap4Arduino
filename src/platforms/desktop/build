@@ -32,7 +32,8 @@ echo
 rm -rf releases/desktop/Snap4Arduino/$platform
 rm -rf releases/$1
 
-environments/node_modules/nw-builder/bin/nwbuild -v 0.34.5 -p $platform tmp -o releases/desktop
+#environments/node_modules/nw-builder/bin/nwbuild -v 0.34.5 -p $platform tmp -o releases/desktop
+environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
 
 mkdir -p releases/$1
 mv releases/desktop/Snap4Arduino/$platform/* releases/$1
