@@ -1181,3 +1181,12 @@ IDE_Morph.prototype.fixLayout = function (situation) {
     this.originalFixLayout(situation);
     this.categories.refreshEmpty();
 };
+
+//To flush "other" when "variables are called (for "extension" and "codification" blocks)
+IDE_Morph.prototype.originalFlushBlocksCache = IDE_Morph.prototype.flushBlocksCache;
+IDE_Morph.prototype.flushBlocksCache = function (category) {
+    if (category === 'variables') {
+        this.originalFlushBlocksCache('other');
+    }
+    this.originalFlushBlocksCache(category);
+};

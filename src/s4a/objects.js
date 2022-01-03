@@ -185,8 +185,40 @@ SpriteMorph.prototype.initBlocks();
 SpriteMorph.prototype.originalBlockTemplates = SpriteMorph.prototype.blockTemplates;
 SpriteMorph.prototype.blockTemplates = function (category) {
     var myself = this,
-        blocks = myself.originalBlockTemplates(category); 
+        blocks = myself.originalBlockTemplates(category);
+    if (category === 'variables') {
+        if (SpriteMorph.prototype.showingExtensions) {
+            blocks.splice(-3);
+        }
+        if (StageMorph.prototype.enableCodeMapping) {
+            blocks.splice(-6);
+        }
+    }
+    if (category === 'other') {
+    function block(selector, isGhosted) {
+        if (StageMorph.prototype.hiddenPrimitives[selector] && !all) {
+            return null;
+        }
+        var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
+        newBlock.isTemplate = true;
+        if (isGhosted) {newBlock.ghost(); }
+        return newBlock;
+    }
+        if (SpriteMorph.prototype.showingExtensions) {
+            //blocks.push('=');
+            blocks.push(block('doApplyExtension'));
+            blocks.push(block('reportApplyExtension'));
+        }
 
+        if (StageMorph.prototype.enableCodeMapping) {
+            blocks.push('=');
+            blocks.push(block('doMapCodeOrHeader'));
+            blocks.push(block('doMapValueCode'));
+            blocks.push(block('doMapListCode'));
+            blocks.push('-');
+            blocks.push(block('reportMappedCode'));
+        }
+    }
     if (category === 'arduino') {
         //  Button that triggers a connection attempt 
         this.arduinoConnectButton = new PushButtonMorph(
