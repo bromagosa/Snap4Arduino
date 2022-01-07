@@ -776,7 +776,7 @@ void sysexCallback(byte command, byte argc, byte *argv)
         if (freq <32){
           noTone(pin);
         }else if (dur == 0){
-          tone(pin,freq);
+          noTone(pin);//tone(pin,freq); original
         }else {
           tone(pin,freq,dur);
         }
