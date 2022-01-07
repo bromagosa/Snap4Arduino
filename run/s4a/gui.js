@@ -163,8 +163,8 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 6.2.0 - dev -\nBuild Your Own Blocks\n\n'
-        + 'Copyright \u24B8 2008-2020 Jens M\u00F6nig and '
+    aboutTxt = 'Snap! 7.0.4\nBuild Your Own Blocks\n\n'
+        + 'Copyright \u24B8 2008-2022 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
         + '        Snap! is developed by the University of California, '
@@ -202,6 +202,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\ncountless bugfixes and optimizations'
         + '\nBernat Romagosa: Countless contributions'
         + '\nBartosz Leper: Retina Display Support'
+        + '\nDariusz Dorożalski: Web Serial Support'
         + '\nZhenlei Jia and Dariusz Dorożalski: IME text editing'
         + '\nKen Kahn: IME support and countless other contributions'
         + '\nJosep Ferràndiz: Video Motion Detection'
@@ -262,7 +263,6 @@ IDE_Morph.prototype.aboutSnap = function () {
         }
         return tm;
     }
-
 
     dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //changed in Snap4Arduino
     btn1 = dlg.buttons.children[0];
@@ -386,7 +386,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
 
-        + 'Copyright \u24B8 2018-2020 Bernat Romagosa and Joan Guillén\n'
+        + 'Copyright \u24B8 2018-2022 Bernat Romagosa and Joan Guillén\n'
         + 'https://github.com/bromagosa/snap4arduino\n\n'
 
         + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
@@ -770,7 +770,7 @@ IDE_Morph.prototype.newArduinoProject = function() {
 
     // toggle codification
     StageMorph.prototype.enableCodeMapping = true;
-    this.currentSprite.blocksCache.variables = null;
+    this.currentSprite.primitivesCache.variables = null;
 
     // UI changes
     // Ok, these decorator names are getting silly
@@ -863,7 +863,11 @@ IDE_Morph.prototype.version = function () {
 // Can't be decorated, and we need to make sure the "other" category
 // shows up
 IDE_Morph.prototype.createCategories = function () {
-    var myself = this;
+    var myself = this,
+        categorySelectionAction = this.scene.unifiedPalette ? scrollToCategory
+            : changePalette,
+        categoryQueryAction = this.scene.unifiedPalette ? queryTopCategory
+            : queryCurrentCategory;
 
     if (this.categories) {
         this.categories.destroy();
@@ -871,7 +875,50 @@ IDE_Morph.prototype.createCategories = function () {
     this.categories = new Morph();
     this.categories.color = this.groupColor;
     this.categories.bounds.setWidth(this.paletteWidth);
-    // this.categories.getRenderColor = ScriptsMorph.prototype.getRenderColor;
+    this.categories.buttons = [];
+
+    this.categories.refresh = function () {
+        this.buttons.forEach(cat => {
+            cat.refresh();
+            if (cat.state) {
+                cat.scrollIntoView();
+            }
+        });
+    };
+
+    this.categories.refreshEmpty = function () {
+        var dict = myself.currentSprite.emptyCategories();
+        dict.variables = dict.variables || dict.lists; // removing Other cat
+        this.buttons.forEach(cat => {
+            if (dict[cat.category]) {
+                cat.enable();
+            } else {
+                cat.disable();
+            }
+        });
+    };
+
+    function changePalette(category) {
+        return () => {
+            myself.currentCategory = category;
+            myself.categories.buttons.forEach(each =>
+                each.refresh()
+            );
+            myself.refreshPalette(true);
+        };
+    }
+
+    function scrollToCategory(category) {
+        return () => myself.scrollPaletteToCategory(category);
+    }
+
+    function queryCurrentCategory(category) {
+        return () => myself.currentCategory === category;
+    }
+
+    function queryTopCategory(category) {
+        return () => myself.topVisibleCategoryInPalette() === category;
+    }
 
     function addCategoryButton(category) {
         var labelWidth = 75,
@@ -885,21 +932,16 @@ IDE_Morph.prototype.createCategories = function () {
         button = new ToggleButtonMorph(
             colors,
             myself, // the IDE is the target
-            () => {
-                myself.currentCategory = category;
-                myself.categories.children.forEach(each =>
-                    each.refresh()
-                );
-                myself.refreshPalette(true);
-            },
+            categorySelectionAction(category),
             category[0].toUpperCase().concat(category.slice(1)), // label
-            () => myself.currentCategory === category, // query
+            categoryQueryAction(category), // query
             null, // env
             null, // hint
             labelWidth, // minWidth
             true // has preview
         );
 
+        button.category = category;
         button.corner = 8;
         button.padding = 0;
         button.labelShadowOffset = new Point(-1, -1);
@@ -911,50 +953,126 @@ IDE_Morph.prototype.createCategories = function () {
         button.fixLayout();
         button.refresh();
         myself.categories.add(button);
+        myself.categories.buttons.push(button);
+        return button;
+    }
+
+    function addCustomCategoryButton(category, color) {
+        var labelWidth = 168,
+            colors = [
+                myself.frameColor,
+                myself.frameColor.darker(MorphicPreferences.isFlat ? 5 : 50),
+                color
+            ],
+            button;
+
+        button = new ToggleButtonMorph(
+            colors,
+            myself, // the IDE is the target
+            categorySelectionAction(category),
+            category, // label
+            categoryQueryAction(category), // query
+            null, // env
+            null, // hint
+            labelWidth, // minWidth
+            true // has preview
+        );
+
+        button.category = category;
+        button.corner = 8;
+        button.padding = 0;
+        button.labelShadowOffset = new Point(-1, -1);
+        button.labelShadowColor = colors[1];
+        button.labelColor = myself.buttonLabelColor;
+        if (MorphicPreferences.isFlat) {
+            button.labelPressColor = WHITE;
+        }
+        button.fixLayout();
+        button.refresh();
+        myself.categories.add(button);
+        myself.categories.buttons.push(button);
         return button;
     }
 
     function fixCategoriesLayout() {
         var buttonWidth = myself.categories.children[0].width(),
             buttonHeight = myself.categories.children[0].height(),
+            more = SpriteMorph.prototype.customCategories.size,
             border = 3,
-            rows =  Math.ceil((myself.categories.children.length) / 2),
             xPadding = (200 // myself.logo.width()
                 - border
                 - buttonWidth * 2) / 3,
             yPadding = 2,
             l = myself.categories.left(),
             t = myself.categories.top(),
-            i = 0,
+            scroller,
             row,
-            col;
+            col,
+            i;
 
-        myself.categories.children.forEach(button => {
-            i += 1;
-            row = Math.ceil(i / 2);
-            col = 2 - (i % 2);
+        myself.categories.children.forEach((button, i) => {
+            row = i < 8 ? i % 4 : (i == 8 || i == 9) ? 4 : i - 5; // fixing Other and Arduino categories
+            col = (i < 4 || (i > 7 && i != 9)) ? 1 : 2; // fixing Other and Arduino categories
             button.setPosition(new Point(
                 l + (col * xPadding + ((col - 1) * buttonWidth)),
-                t + (row * yPadding + ((row - 1) * buttonHeight) + border)
+                t + ((row + 1) * yPadding + (row * buttonHeight) + border) +
+                    (i > 9 ? border + 2 : 0) // 7 -> 9
             ));
         });
+        // Scroller from 6 (5 in Snap!) because Snap4Arduino
+        // has already an extra categories row (for Other and Arduino)
+        if (more > 5) { // 6->5
+            scroller = new ScrollFrameMorph(null, null, myself.sliderColor);
+            scroller.setColor(myself.groupColor);
+            scroller.acceptsDrops = false;
+            scroller.contents.acceptsDrops = false;
+            scroller.setPosition(
+                new Point(0, myself.categories.children[10].top()) // 8->10
+            );
+            scroller.setWidth(myself.paletteWidth);
+            scroller.setHeight(buttonHeight * 5 + yPadding * 4); // 6,5 -> 5,4
 
-        myself.categories.setHeight(
-            (rows + 1) * yPadding
-                + rows * buttonHeight
-                + 2 * border
-        );
+            for (i = 0; i < more; i += 1) {
+                scroller.addContents(myself.categories.children[10]); // 8->10
+            }
+            myself.categories.add(scroller);
+            myself.categories.setHeight(
+                (5 + 1) * yPadding // 4 -> 5
+                    + 5 * buttonHeight // 4 -> 5
+                    + 5 * (yPadding + buttonHeight) + border + 2 // 6->5
+                    + 2 * border
+            );
+        } else {
+            myself.categories.setHeight(
+                (5 + 1) * yPadding // 4 -> 5
+                    + 5 * buttonHeight // 4 -> 5
+                    + (more ?
+                        (more * (yPadding + buttonHeight) + border + 2)
+                            : 0)
+                    + 2 * border
+            );
+        }
     }
 
     SpriteMorph.prototype.categories.forEach(cat => {
-        if (!contains(['lists'], cat)) {
+        if (!contains(['lists'], cat)) { // Removing "other" filter
             addCategoryButton(cat);
         }
     });
+
+    // sort alphabetically
+    Array.from(
+        SpriteMorph.prototype.customCategories.keys()
+    ).sort().forEach(name =>
+        addCustomCategoryButton(
+            name,
+            SpriteMorph.prototype.customCategories.get(name)
+        )
+    );
+
     fixCategoriesLayout();
     this.add(this.categories);
 };
-
 
 // Show URL of public projects in project list
 ProjectDialogMorph.prototype.originalInstallCloudProjectList = ProjectDialogMorph.prototype.installCloudProjectList;
@@ -992,4 +1110,83 @@ ProjectDialogMorph.prototype.addUserMenuToListItems = function () {
         }
     });
 };
+//Can't be decorated.
+//Other category scrolls to other group blocks (not to "wrap")
+IDE_Morph.prototype.scrollPaletteToCategory = function (category) {
+    var palette = this.palette,
+        msecs = this.isAnimating ? 200 : 0,
+        firstInCategory,
+        delta;
 
+    if (palette.isForSearching) {
+        this.refreshPalette();
+        palette = this.palette;
+    }
+    firstInCategory = palette.contents.children.find(
+        (block) => {return block.category === category &&
+                           block.selector != 'doWarp' &&
+                           block.selector != 'doDeclareVariables' &&
+                           !(block instanceof RingMorph);
+    });
+    if (firstInCategory === undefined) {return; }
+    delta = palette.top() - firstInCategory.top() + palette.padding;
+    if (delta === 0) {return; }
+    this.world().animations.push(new Animation(
+        y => { // setter
+            palette.contents.setTop(y);
+            palette.contents.keepInScrollFrame();
+            palette.adjustScrollBars();
+        },
+        () => palette.contents.top(), // getter
+        delta, // delta
+        msecs, // duration in ms
+        t => Math.pow(t, 6), // easing
+        null // onComplete
+    ));
+};
+
+//Can't be decorated.
+//Other blocks point to Other category (even "doDeclareVariables')
+IDE_Morph.prototype.topVisibleCategoryInPalette = function () {
+    // private - answer the topmost (partially) visible
+    // block category in the palette, so it can be indicated
+    // as "current category" in the category selection buttons
+    var top;
+    if (!this.palette) {return; }
+    top = this.palette.contents.children.find(morph =>
+        morph.category && morph.bounds.intersects(this.palette.bounds)
+    );
+    if (top) {
+        if (top.category === 'other') {
+            if (top.selector === 'doWarp') {
+                return 'control';
+            }
+            if (top instanceof RingMorph) {
+                return 'operators';
+            }
+            if (top.selector === 'doDeclareVariables') {
+                return 'variables';
+            }
+            return 'other';
+        }
+        if (top.category === 'lists') {
+            return 'variables';
+        }
+        return top.category;
+    }
+    return null;
+};
+IDE_Morph.prototype.originalFixLayout = IDE_Morph.prototype.fixLayout;
+IDE_Morph.prototype.fixLayout = function (situation) {
+    this.originalFixLayout(situation);
+    this.categories.refreshEmpty();
+};
+
+//To flush "other" when "variables are called (for "extension" and "codification" blocks)
+IDE_Morph.prototype.originalFlushBlocksCache = IDE_Morph.prototype.flushBlocksCache;
+IDE_Morph.prototype.flushBlocksCache = function (category) {
+    if (category === 'variables') {
+        this.originalFlushBlocksCache('other');
+    }
+    this.originalFlushBlocksCache(category);
+};

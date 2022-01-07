@@ -34,7 +34,7 @@
 /*global modules, hex_sha512*/
 
 modules = modules || {};
-modules.cloud = '2020-May-17';
+modules.cloud = '2021-February-04';
 
 // Global stuff
 
@@ -49,6 +49,12 @@ function Cloud() {
 Cloud.prototype.init = function () {
     this.apiBasePath = '/api/v1';
     this.url = this.determineCloudDomain() + this.apiBasePath;
+    this.username = null;
+    this.disabled = false;
+};
+
+Cloud.prototype.disable = function () {
+    this.disabled = true;
     this.username = null;
 };
 
@@ -162,6 +168,8 @@ Cloud.prototype.request = function (
     errorMsg,
     wantsRawResponse,
     body) {
+
+    if (this.disabled) { return; }
 
     var request = new XMLHttpRequest(),
         myself = this,
@@ -344,7 +352,7 @@ Cloud.prototype.login = function (
 };
 
 Cloud.prototype.signup = function (
-	username,
+    username,
     password,
     passwordRepeat,
     email,
@@ -353,7 +361,7 @@ Cloud.prototype.signup = function (
 ) {
     this.request(
         'POST',
-        '/users/' + encodeURIComponent(username) + '?' + this.encodeDict({
+        '/users/' + encodeURIComponent(username.trim()) + '?' + this.encodeDict({
             email: email,
             password: hex_sha512(password),
             password_repeat: hex_sha512(passwordRepeat)

@@ -7,7 +7,7 @@
     written by Jens Mönig
     jens@moenig.org
 
-    Copyright (C) 2020 by Jens Mönig
+    Copyright (C) 2021 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -64,13 +64,15 @@
 
 // Global settings /////////////////////////////////////////////////////
 
-/*global modules, Point, Morph, fontHeight, SliderMorph, isString, detect,
-MorphicPreferences, FrameMorph, HandleMorph, DialogBoxMorph, StringMorph,
-SpriteMorph, Context, Costume, BlockEditorMorph, SymbolMorph, List, IDE_Morph,
-SyntaxElementMorph, MenuMorph, SpriteBubbleMorph, SpeechBubbleMorph, Sound,
-CellMorph, ListWatcherMorph, isNil, BoxMorph, Variable, isSnapObject*/
+/*global modules, Point, Morph, fontHeight, SliderMorph, isString, detect, List,
+MorphicPreferences, FrameMorph, HandleMorph, DialogBoxMorph, StringMorph, isNil,
+SpriteMorph, Context, Costume, BlockEditorMorph, SymbolMorph, IDE_Morph, Sound,
+SyntaxElementMorph, MenuMorph, SpriteBubbleMorph, SpeechBubbleMorph, CellMorph,
+ListWatcherMorph, BoxMorph, Variable, isSnapObject, useBlurredShadows*/
 
-modules.tables = '2020-May-18';
+/*jshint esversion: 6*/
+
+modules.tables = '2021-July-05';
 
 var Table;
 var TableCellMorph;
@@ -358,10 +360,12 @@ TableCellMorph.prototype.render = function (ctx) {
     if (dta instanceof HTMLCanvasElement) {
         x = Math.max((width - dta.width) / 2, 0);
         y = Math.max((height - dta.height) / 2, 0);
-        ctx.shadowOffsetX = 4;
-        ctx.shadowOffsetY = 4;
-        ctx.shadowBlur = 4;
-        ctx.shadowColor = 'lightgray';
+        if (useBlurredShadows) {
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'lightgray';
+        }
         ctx.drawImage(dta, x, y);
     } else { // text
         ctx.font = font;
@@ -379,7 +383,7 @@ TableCellMorph.prototype.render = function (ctx) {
 TableCellMorph.prototype.dataRepresentation = function (dta) {
     if (dta instanceof Morph) {
         if (isSnapObject(dta)) {
-            return dta.thumbnail(new Point(40, 40));
+            return dta.thumbnail(new Point(40, 40), null, true); // no watchers
         } else {
             return dta.fullImage();
         }

@@ -7,7 +7,7 @@
     written by Jens Mönig
     jens@moenig.org
 
-    Copyright (C) 2020 by Jens Mönig
+    Copyright (C) 2021 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -79,13 +79,15 @@
 
 // Global settings /////////////////////////////////////////////////////
 
-/*global TriggerMorph, modules, Color, Point, BoxMorph, radians, ZERO,
-StringMorph, Morph, TextMorph, nop, detect, StringFieldMorph, BLACK, WHITE,
-HTMLCanvasElement, fontHeight, SymbolMorph, localize, SpeechBubbleMorph,
-ArrowMorph, MenuMorph, isString, isNil, SliderMorph, MorphicPreferences,
-ScrollFrameMorph, MenuItemMorph, Note*/
+/*global TriggerMorph, modules, Color, Point, BoxMorph, radians, ZERO, Note,
+StringMorph, Morph, TextMorph, nop, detect, StringFieldMorph, ColorPaletteMorph,
+HTMLCanvasElement, fontHeight, SymbolMorph, localize, SpeechBubbleMorph, isNil,
+ArrowMorph, MenuMorph, isString, SliderMorph, MorphicPreferences, BLACK, WHITE,
+ScrollFrameMorph, MenuItemMorph, useBlurredShadows, getDocumentPositionOf*/
 
-modules.widgets = '2020-July-27';
+/*jshint esversion: 6*/
+
+modules.widgets = '2021-November-09';
 
 var PushButtonMorph;
 var ToggleButtonMorph;
@@ -1194,15 +1196,22 @@ ToggleMorph.prototype.createLabel = function () {
     if (this.toggleElement === null) {
         if (this.element) {
             if (this.element instanceof Morph) {
-                this.toggleElement = new ToggleElementMorph(
-                    this.target,
-                    this.action,
-                    this.element,
-                    this.query,
-                    this.environment,
-                    this.hint,
-                    this.builder
-                );
+                if (this.element.isTemplate) {
+                    this.toggleElement = this.element;
+                    if (!this.element.mouseDownLeft) {
+                        this.element.mouseDownLeft = nop;
+                    }
+                } else {
+                    this.toggleElement = new ToggleElementMorph(
+                        this.target,
+                        this.action,
+                        this.element,
+                        this.query,
+                        this.environment,
+                        this.hint,
+                        this.builder
+                    );
+                }
             } else if (this.element instanceof HTMLCanvasElement) {
                 this.toggleElement = new Morph();
                 this.toggleElement.isCachingImage = true;
@@ -1244,7 +1253,8 @@ ToggleMorph.prototype.refresh = function () {
     } else {
         this.tick.hide();
     }
-    if (this.toggleElement && this.toggleElement.refresh) {
+    if (this.toggleElement && this.toggleElement.refresh &&
+            !this.toggleElement.isToggleLabel) {
         this.toggleElement.refresh();
     }
 };
@@ -1882,6 +1892,248 @@ DialogBoxMorph.prototype.promptVector = function (
 
     if (!this.key) {
         this.key = 'vector' + title;
+    }
+
+    this.popUp(world);
+};
+
+DialogBoxMorph.prototype.promptRGB = function (
+    title,
+    color,
+    world,
+    pic,
+    msg
+) {
+    var clr = new AlignmentMorph('row', 4),
+        iw = this.fontSize * 4,
+        rInp = new InputFieldMorph(color.r.toString(), true),
+        gInp = new InputFieldMorph(color.g.toString(), true),
+        bInp = new InputFieldMorph(color.b.toString(), true),
+        rCol = new AlignmentMorph('column', 2),// +++
+        gCol = new AlignmentMorph('column', 2),
+        bCol = new AlignmentMorph('column', 2),
+        inp = new AlignmentMorph('column', 2),
+        bdy = new AlignmentMorph('column', this.padding);
+
+    function labelText(string) {
+        return new TextMorph(
+            localize(string),
+            10,
+            null, // style
+            false, // bold
+            null, // italic
+            null, // alignment
+            null, // width
+            null, // font name
+            MorphicPreferences.isFlat ? null : new Point(1, 1),
+            WHITE // shadowColor
+        );
+    }
+
+    function constrain(num) {
+        return Math.max(0, Math.min(num, 255));
+    }
+
+    rInp.contents().minWidth = iw;
+    rInp.setWidth(iw);
+    gInp.contents().minWidth = iw;
+    gInp.setWidth(iw);
+    bInp.contents().minWidth = iw;
+    bInp.setWidth(iw);
+
+    inp.alignment = 'left';
+    inp.setColor(this.color);
+    bdy.setColor(this.color);
+    rCol.alignment = 'left';
+    rCol.setColor(this.color);
+    gCol.alignment = 'left';
+    gCol.setColor(this.color);
+    bCol.alignment = 'left';
+    bCol.setColor(this.color);
+
+    rCol.add(labelText('red'));
+    rCol.add(rInp);
+    gCol.add(labelText('green'));
+    gCol.add(gInp);
+    bCol.add(labelText('blue'));
+    bCol.add(bInp); // +++
+    clr.add(rCol);
+    clr.add(gCol);
+    clr.add(bCol);
+    inp.add(clr);
+
+    if (msg) {
+        bdy.add(labelText(msg));
+    }
+
+    bdy.add(inp);
+
+    clr.fixLayout();
+    rCol.fixLayout();
+    gCol.fixLayout();
+    bCol.fixLayout();
+    inp.fixLayout();
+    bdy.fixLayout();
+
+    this.labelString = title;
+    this.createLabel();
+    if (pic) {this.setPicture(pic); }
+
+    this.addBody(bdy);
+
+    this.addButton('ok', 'OK');
+
+    this.addButton('cancel', 'Cancel');
+    this.fixLayout();
+
+    this.edit = function () {
+        rInp.edit();
+    };
+
+    this.getInput = function () {
+        return new Color(
+            constrain(rInp.getValue()),
+            constrain(gInp.getValue()),
+            constrain(bInp.getValue())
+        );
+    };
+
+    if (!this.key) {
+        this.key = 'RGB' + title;
+    }
+
+    this.popUp(world);
+};
+
+DialogBoxMorph.prototype.promptCategory = function (
+    title,
+    name,
+    color,
+    world,
+    pic,
+    msg
+) {
+    var row = new AlignmentMorph('row', 4),
+        field = new InputFieldMorph(name),
+        picker = new BoxMorph(2, 1),
+        inp = new AlignmentMorph('column', 2),
+        bdy = new AlignmentMorph('column', this.padding),
+        side;
+
+    function labelText(string) {
+        return new TextMorph(
+            localize(string),
+            10,
+            null, // style
+            false, // bold
+            null, // italic
+            null, // alignment
+            null, // width
+            null, // font name
+            MorphicPreferences.isFlat ? null : new Point(1, 1),
+            WHITE // shadowColor
+        );
+    }
+
+    field.setWidth(160);
+    side = field.height() * 0.8;
+    picker.setExtent(new Point(side, side));
+    picker.setColor(color);
+
+    picker.mouseClickLeft = () => {
+        var hand = world.hand,
+            posInDocument = getDocumentPositionOf(world.worldCanvas),
+            mouseMoveBak = hand.processMouseMove,
+            mouseDownBak = hand.processMouseDown,
+            mouseUpBak = hand.processMouseUp,
+            pal = new ColorPaletteMorph(null, new Point(160, 100));
+
+        world.add(pal);
+        pal.setPosition(picker.topRight().add(new Point(this.edge,0)));
+
+        hand.processMouseMove = (event) => {
+            var clr = world.getGlobalPixelColor(hand.position());
+            hand.setPosition(new Point(
+                event.pageX - posInDocument.x,
+                event.pageY - posInDocument.y
+            ));
+            if (!clr.a) {
+                // ignore transparent,
+                // needed for retina-display support
+                return;
+            }
+            picker.setColor(clr);
+        };
+
+        hand.processMouseDown = nop;
+
+        hand.processMouseUp = () => {
+            pal.destroy();
+            hand.processMouseMove = mouseMoveBak;
+            hand.processMouseDown = mouseDownBak;
+            hand.processMouseUp = mouseUpBak;
+        };
+    };
+
+    picker.mouseClickRight = () => {
+        new DialogBoxMorph(
+            this,
+            (clr) => picker.setColor(clr),
+            this
+        ).promptRGB(
+            "Category color",
+            picker.color,
+            this.world(),
+            null, // pic
+            null // msg
+        );
+    };
+
+    inp.alignment = 'left';
+    inp.setColor(this.color);
+    bdy.setColor(this.color);
+    row.setColor(this.color);
+
+    row.add(field);
+    row.add(picker);
+    inp.add(row);
+
+    if (msg) {
+        bdy.add(labelText(msg));
+    }
+
+    bdy.add(inp);
+
+    row.fixLayout();
+    field.fixLayout();
+    picker.fixLayout();
+    inp.fixLayout();
+    bdy.fixLayout();
+
+    this.labelString = title;
+    this.createLabel();
+    if (pic) {this.setPicture(pic); }
+
+    this.addBody(bdy);
+
+    this.addButton('ok', 'OK');
+
+    this.addButton('cancel', 'Cancel');
+    this.fixLayout();
+
+    this.edit = function () {
+        field.edit();
+    };
+
+    this.getInput = function () {
+        return {
+            name: field.getValue(),
+            color: picker.color.copy()
+        };
+    };
+
+    if (!this.key) {
+        this.key = 'category' + title;
     }
 
     this.popUp(world);
@@ -3100,7 +3352,7 @@ InputFieldMorph.prototype.getValue = function () {
     var num,
         contents = this.contents();
     if (this.isNumeric) {
-        num = parseFloat(contents.text);
+        num = parseFloat(contents.text.text);
         if (!isNaN(num)) {
             return num;
         }
@@ -3154,9 +3406,11 @@ InputFieldMorph.prototype.drawRectBorder = function (ctx) {
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
 
-    ctx.shadowOffsetY = shift;
-    ctx.shadowBlur = this.edge * 4;
-    ctx.shadowColor = this.cachedClrDark;
+    if (useBlurredShadows) {
+        ctx.shadowOffsetY = shift;
+        ctx.shadowBlur = this.edge * 4;
+        ctx.shadowColor = this.cachedClrDark;
+    }
 
     gradient = ctx.createLinearGradient(
         0,

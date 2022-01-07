@@ -185,88 +185,111 @@ SpriteMorph.prototype.initBlocks();
 SpriteMorph.prototype.originalBlockTemplates = SpriteMorph.prototype.blockTemplates;
 SpriteMorph.prototype.blockTemplates = function (category) {
     var myself = this,
-        blocks = myself.originalBlockTemplates(category); 
+        blocks = myself.originalBlockTemplates(category);
+    if (category === 'variables') {
+        if (SpriteMorph.prototype.showingExtensions) {
+            blocks.splice(-3);
+        }
+        if (StageMorph.prototype.enableCodeMapping) {
+            blocks.splice(-6);
+        }
+    }
+    if (category === 'other') {
+    function block(selector, isGhosted) {
+        if (StageMorph.prototype.hiddenPrimitives[selector] && !all) {
+            return null;
+        }
+        var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
+        newBlock.isTemplate = true;
+        if (isGhosted) {newBlock.ghost(); }
+        return newBlock;
+    }
+        if (SpriteMorph.prototype.showingExtensions) {
+            //blocks.push('=');
+            blocks.push(block('doApplyExtension'));
+            blocks.push(block('reportApplyExtension'));
+        }
 
-    //  Button that triggers a connection attempt 
-
-    this.arduinoConnectButton = new PushButtonMorph(
+        if (StageMorph.prototype.enableCodeMapping) {
+            blocks.push('=');
+            blocks.push(block('doMapCodeOrHeader'));
+            blocks.push(block('doMapValueCode'));
+            blocks.push(block('doMapListCode'));
+            blocks.push('-');
+            blocks.push(block('reportMappedCode'));
+        }
+    }
+    if (category === 'arduino') {
+        //  Button that triggers a connection attempt 
+        this.arduinoConnectButton = new PushButtonMorph(
             null,
             function () {
                 myself.arduino.attemptConnection();
             },
             'Connect Arduino'
-            );
-
-    //  Button that triggers a disconnection from board
-
-    this.arduinoDisconnectButton = new PushButtonMorph(
+        );
+        //  Button that triggers a disconnection from board
+        this.arduinoDisconnectButton = new PushButtonMorph(
             null,
             function () {
                 myself.arduino.disconnect();;
             },
             'Disconnect Arduino'
-            );
+        );
+        function arduinoWatcherToggle (selector) {
+            if (StageMorph.prototype.hiddenPrimitives[selector]) {
+                return null;
+            }
+            var info = SpriteMorph.prototype.blocks[selector];
 
-    function arduinoWatcherToggle (selector) {
-        if (StageMorph.prototype.hiddenPrimitives[selector]) {
-            return null;
-        }
-        var info = SpriteMorph.prototype.blocks[selector];
-
-        return new ToggleMorph(
-            'checkbox',
-            this,
-            function () {
-                var reporter = detect(blocks, function (each) {
+            return new ToggleMorph(
+                'checkbox',
+                this,
+                function () {
+                    var reporter = detect(blocks, function (each) {
                         return (each.selector === selector)
                     }),
                     pin = reporter.inputs()[0].contents().text;
 
-                if (!pin) { return };
+                    if (!pin) { return };
 
-                myself.arduinoWatcher(
-                    selector,
-                    localize(info.spec),
-                    myself.blockColor[info.category],
-                    pin
-                );
-            },
-            null,
-            function () {
-                var reporter = detect(blocks, function (each) {
-                    return (each && each.selector === selector)
-                });
+                    myself.arduinoWatcher(
+                        selector,
+                        localize(info.spec),
+                        myself.blockColor[info.category],
+                        pin
+                    );
+                },
+                null,
+                function () {
+                    var reporter = detect(blocks, function (each) {
+                        return (each && each.selector === selector)
+                    });
 
-                return reporter &&
-                    myself.showingArduinoWatcher(selector, reporter.inputs()[0].contents().text);
-            },
-            null
-        );
-    };
-
-    function blockBySelector (selector) {
-        if (StageMorph.prototype.hiddenPrimitives[selector]) {
-            return null;
+                    return reporter &&
+                        myself.showingArduinoWatcher(selector, reporter.inputs()[0].contents().text);
+                },
+                null
+            );
+        };
+        function blockBySelector (selector) {
+            if (StageMorph.prototype.hiddenPrimitives[selector]) {
+                return null;
+            }
+            var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
+            newBlock.isTemplate = true;
+            return newBlock;
+        };
+        var analogToggle = arduinoWatcherToggle('reportAnalogReading'),
+            reportAnalog = blockBySelector('reportAnalogReading'),
+            digitalToggle = arduinoWatcherToggle('reportDigitalReading'),
+            reportDigital = blockBySelector('reportDigitalReading');
+        if (reportAnalog) {
+            reportAnalog.toggle = analogToggle;
         }
-        var newBlock = SpriteMorph.prototype.blockForSelector(selector, true);
-        newBlock.isTemplate = true;
-        return newBlock;
-    };
-
-    var analogToggle = arduinoWatcherToggle('reportAnalogReading'),
-        reportAnalog = blockBySelector('reportAnalogReading'),
-        digitalToggle = arduinoWatcherToggle('reportDigitalReading'),
-        reportDigital = blockBySelector('reportDigitalReading');
-    
-    if (reportAnalog) {
-        reportAnalog.toggle = analogToggle;
-    }
-
-    if (reportDigital) {
-        reportDigital.toggle = digitalToggle;
-    }
-
-    if (category === 'arduino') {
+        if (reportDigital) {
+            reportDigital.toggle = digitalToggle;
+        }
         blocks.push(this.arduinoConnectButton);
         blocks.push(this.arduinoDisconnectButton);
         blocks.push('-');
@@ -283,55 +306,22 @@ SpriteMorph.prototype.blockTemplates = function (category) {
         blocks.push(reportAnalog);
         blocks.push(digitalToggle);
         blocks.push(reportDigital);
-
-    } else if (category === 'other') {
-        button = new PushButtonMorph(
-                null,
-                function () {
-                    var ide = myself.parentThatIsA(IDE_Morph),
-                    stage = myself.parentThatIsA(StageMorph);
-                    new BlockDialogMorph(
-                        null,
-                        function (definition) {
-                            if (definition.spec !== '') {
-                                if (definition.isGlobal) {
-                                    stage.globalBlocks.push(definition);
-                                } else {
-                                    myself.customBlocks.push(definition);
-                                }
-                                ide.flushPaletteCache();
-                                ide.refreshPalette();
-                                new BlockEditorMorph(definition, myself).popUp();
-                            }
-                        },
-                        myself
-                        ).prompt(
-                            'Make a block',
-                            null,
-                            myself.world()
-                            );
-                },
-                'Make a block'
-            );
-//        button.userMenu = helpMenu;
-        button.selector = 'addCustomBlock';
-        button.showHelp = BlockMorph.prototype.showHelp;
-        blocks.push(button);
     }
-
     return blocks;
 };
-
 // Removing 'other' blocks from 'variables' category
 SpriteMorph.prototype.freshPalette = function (category) {
-    var palette = new ScrollFrameMorph(null, null, this.sliderColor),
+    var myself = this,
+        palette = new ScrollFrameMorph(null, null, this.sliderColor),
         unit = SyntaxElementMorph.prototype.fontSize,
+        ide,
+        showCategories,
+        showButtons,
         x = 0,
         y = 5,
         ry = 0,
         blocks,
         hideNextSpace = false,
-        stage = this.parentThatIsA(StageMorph),
         shade = new Color(140, 140, 140),
         searchButton,
         makeButton;
@@ -342,7 +332,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
     palette.growth = new Point(0, MorphicPreferences.scrollBarSize);
 
     // toolbar:
-    
+
     palette.toolBar = new AlignmentMorph('column');
 
     searchButton = new PushButtonMorph(
@@ -357,7 +347,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
     searchButton.edge = 0;
     searchButton.padding = 3;
     searchButton.fixLayout();
-	palette.toolBar.add(searchButton);
+    palette.toolBar.add(searchButton);
 
     makeButton = new PushButtonMorph(
         this,
@@ -378,56 +368,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
 
     // menu:
     palette.userMenu = function () {
-        var menu = new MenuMorph(),
-            ide = this.parentThatIsA(IDE_Morph),
-            more = {
-                operators:
-                    ['reifyScript', 'reifyReporter', 'reifyPredicate'],
-                control:
-                    ['doWarp'],
-                variables:
-                    [
-                        'doDeclareVariables',
-                        'reportNewList',
-                        'reportNumbers',
-                        'reportCONS',
-                        'reportListItem',
-                        'reportCDR',
-                        'reportListLength',
-                        'reportListIndex',
-                        'reportConcatenatedLists',
-                        'reportListContainsItem',
-                        'reportListIsEmpty',
-                        'doForEach',
-                        'reportMap',
-                        'reportKeep',
-                        'reportFindFirst',
-                        'reportCombine',
-                        'doAddToList',
-                        'doDeleteFromList',
-                        'doInsertInList',
-                        'doReplaceInList'
-                    ]
-            };
-
-        function hasHiddenPrimitives() {
-            var defs = SpriteMorph.prototype.blocks,
-                hiddens = StageMorph.prototype.hiddenPrimitives;
-            return Object.keys(hiddens).some(any =>
-                !isNil(defs[any]) &&
-                    (defs[any].category === category ||
-                        contains((more[category] || []), any))
-            );
-        }
-
-        function canHidePrimitives() {
-            return palette.contents.children.some(any =>
-                contains(
-                    Object.keys(SpriteMorph.prototype.blocks),
-                    any.selector
-                )
-            );
-        }
+        var menu = new MenuMorph();
 
         menu.addPair(
             [
@@ -437,57 +378,83 @@ SpriteMorph.prototype.freshPalette = function (category) {
                 ),
                 localize('find blocks') + '...'
             ],
-            () => this.searchBlocks(),
+            () => myself.searchBlocks(),
             '^F'
         );
-        if (canHidePrimitives()) {
+        menu.addItem(
+            'hide blocks...',
+            () => new BlockVisibilityDialogMorph(myself).popUp(myself.world())
+        );
+        menu.addLine();
+        menu.addItem(
+            'make a category...',
+            () => this.parentThatIsA(IDE_Morph).createNewCategory()
+        );
+        if (SpriteMorph.prototype.customCategories.size) {
             menu.addItem(
-                'hide primitives',
-                function () {
-                    var defs = SpriteMorph.prototype.blocks;
-                    Object.keys(defs).forEach(sel => {
-                        if (defs[sel].category === category) {
-                            StageMorph.prototype.hiddenPrimitives[sel] = true;
-                        }
-                    });
-                    (more[category] || []).forEach(sel =>
-                        StageMorph.prototype.hiddenPrimitives[sel] = true
-                    );
-                    ide.flushBlocksCache(category);
-                    ide.refreshPalette();
-                }
-            );
-        }
-        if (hasHiddenPrimitives()) {
-            menu.addItem(
-                'show primitives',
-                function () {
-                    var hiddens = StageMorph.prototype.hiddenPrimitives,
-                        defs = SpriteMorph.prototype.blocks;
-                    Object.keys(hiddens).forEach(sel => {
-                        if (defs[sel] && (defs[sel].category === category)) {
-                            delete StageMorph.prototype.hiddenPrimitives[sel];
-                        }
-                    });
-                    (more[category] || []).forEach(sel =>
-                        delete StageMorph.prototype.hiddenPrimitives[sel]
-                    );
-                    ide.flushBlocksCache(category);
-                    ide.refreshPalette();
-                }
+                'delete a category...',
+                () => this.parentThatIsA(IDE_Morph).deleteUserCategory()
             );
         }
         return menu;
     };
 
-    // primitives:
+    if (category === 'unified') {
+        // In a Unified Palette custom blocks appear following each category,
+        // but there is only 1 make a block button (at the end).
+        ide = this.parentThatIsA(IDE_Morph);
+        showCategories = ide.scene.showCategories;
+        showButtons = ide.scene.showPaletteButtons;
+        blocks = SpriteMorph.prototype.allCategories().reduce(
+            (blocks, category) => {
+                let header = [this.categoryText(category), '-'],
+                    primitives = this.getPrimitiveTemplates(category),
+                    customs = this.customBlockTemplatesForCategory(category),
+                    showHeader = showCategories &&
+                        !['lists'].includes(category) && // removing "other" exclusion
+                        (primitives.some(item =>
+                            item instanceof BlockMorph) || customs.length);
 
-    blocks = this.blocksCache[category];
-    if (!blocks) {
-        blocks = this.blockTemplates(category);
-        if (this.isCachingPrimitives) {
-            this.blocksCache[category] = blocks;
-        }
+                // hide category names
+                if (!showCategories && category !== 'variables') {
+                    primitives = primitives.filter(each =>
+                        each !== '-' && each !== '=');
+                }
+
+                // hide "make / delete a variable" buttons
+                if (!showButtons && category === 'variables') {
+                    primitives = primitives.filter(each =>
+                        !(each instanceof PushButtonMorph &&
+                            !(each instanceof ToggleMorph)));
+                }
+
+                return blocks.concat(
+                    showHeader ? header : [],
+                    primitives,
+                    showHeader ? '=' : null,
+                    customs,
+                    showHeader ? '=' : '-'
+                );
+            },
+            []
+        );
+    } else {
+        // ensure we do not modify the cached array
+        blocks = this.getPrimitiveTemplates(category).slice();
+    }
+
+    if (category !== 'unified' || showButtons) {
+        blocks.push('=');
+        blocks.push(this.makeBlockButton(category));
+    }
+
+    if (category !== 'unified') {
+        blocks.push('=');
+        blocks.push(...this.customBlockTemplatesForCategory(category));
+    }
+    if (category === 'variables') {
+        blocks.push(...this.customBlockTemplatesForCategory('lists'));
+        // blocks.push(...this.customBlockTemplatesForCategory('other'));
     }
 
     blocks.forEach(block => {
@@ -504,7 +471,7 @@ SpriteMorph.prototype.freshPalette = function (category) {
             hideNextSpace = true;
         } else if (block === '#') {
             x = 0;
-            y = ry;
+            y = (ry === 0 ? y : ry);
         } else {
             hideNextSpace = false;
             if (x === 0) {
@@ -512,8 +479,9 @@ SpriteMorph.prototype.freshPalette = function (category) {
             }
             block.setPosition(new Point(x, y));
             palette.addContents(block);
-            if (block instanceof ToggleMorph
-                    || (block instanceof RingMorph)) {
+            if (block instanceof ToggleMorph) {
+                x = block.right() + unit / 2;
+            } else if (block instanceof RingMorph) {
                 x = block.right() + unit / 2;
                 ry = block.bottom();
             } else {
@@ -523,78 +491,11 @@ SpriteMorph.prototype.freshPalette = function (category) {
         }
     });
 
-    // global custom blocks:
-
-    if (stage) {
-        y += unit * 1.6;
-
-        stage.globalBlocks.forEach(definition => {
-            var block;
-            if (definition.category === category ||
-                    (category === 'variables'
-                        && contains(
-                            ['lists'],
-                            definition.category
-                        ))) {
-                block = definition.templateInstance();
-                y += unit * 0.3;
-                block.setPosition(new Point(x, y));
-                palette.addContents(block);
-                x = 0;
-                y += block.height();
-            }
-        });
-    }
-
-    // local custom blocks:
-
-    y += unit * 1.6;
-    this.customBlocks.forEach(definition => {
-        var block;
-        if (definition.category === category ||
-                (category === 'variables'
-                    && contains(
-                        ['lists'],
-                        definition.category
-                    ))) {
-            block = definition.templateInstance();
-            y += unit * 0.3;
-            block.setPosition(new Point(x, y));
-            palette.addContents(block);
-            x = 0;
-            y += block.height();
-        }
-    });
-
-    // inherited custom blocks:
-
-    // y += unit * 1.6;
-    if (this.exemplar) {
-        this.inheritedBlocks(true).forEach(definition => {
-            var block;
-            if (definition.category === category ||
-                    (category === 'variables'
-                        && contains(
-                            ['lists'],
-                            definition.category
-                        ))) {
-                block = definition.templateInstance();
-                y += unit * 0.3;
-                block.setPosition(new Point(x, y));
-                palette.addContents(block);
-                block.ghost();
-                x = 0;
-                y += block.height();
-            }
-        });
-    }
-
-    //layout
-
     palette.scrollX(palette.padding);
     palette.scrollY(palette.padding);
     return palette;
 };
+StageMorph.prototype.freshPalette = SpriteMorph.prototype.freshPalette;
 
 // Sprite duplicates shouldn't share Arduino instances
 

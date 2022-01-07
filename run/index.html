@@ -4,6 +4,15 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Snap4Arduino @AppVersion</title>
         <link rel="icon" href="s4a.ico" type="image/ico">
+        <link rel="manifest" href="manifest.json">
+        <link rel="apple-touch-icon" href="img/app_152.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="white"/>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Snap4Arduino">
+        <meta name="msapplication-TileImage" content="img/app_144.png">
+        <meta name="msapplication-TileColor" content="#FFFFFF">
         <script>
             require = function () {};
         </script>
@@ -23,6 +32,7 @@
         <script type="text/javascript" src="src/objects.js"></script>
         <script type="text/javascript" src="s4a/objects.js"></script>
         <script type="text/javascript" src="plugin/objects.js"></script>
+        <script type="text/javascript" src="src/scenes.js"></script>
         <script type="text/javascript" src="src/gui.js"></script>
         <script type="text/javascript" src="s4a/gui.js"></script>
         <script type="text/javascript" src="plugin/gui.js"></script>
@@ -35,6 +45,8 @@
         <script type="text/javascript" src="src/sketch.js"></script>
         <script type="text/javascript" src="src/video.js"></script>
         <script type="text/javascript" src="src/maps.js"></script>
+        <script type="text/javascript" src="src/extensions.js"></script>
+        <script type="text/javascript" src="s4a/extensions.js"></script>
         <script type="text/javascript" src="src/xml.js"></script>
         <script type="text/javascript" src="src/store.js"></script>
         <script type="text/javascript" src="s4a/store.js"></script>
@@ -49,6 +61,9 @@
                 ide;
 
             window.onload = function () {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js');
+                }
                 world = new WorldMorph(document.getElementById('world'));
 
                 // keepAlive should be handled at the plugin side
