@@ -75,6 +75,9 @@ IDE_Morph.prototype.openIn = function (world) {
     }
 
     function applyFlags(dict) {
+        if (dict.noCloud) {
+            myself.cloud.disable();
+        }
         if (dict.embedMode) {
             myself.setEmbedMode();
         }
@@ -84,7 +87,7 @@ IDE_Morph.prototype.openIn = function (world) {
             myself.toggleAppMode(true);
         }
         if (!dict.noRun) {
-            myself.runScripts();
+            autoRun();
         }
         if (dict.hideControls) {
             myself.controlBar.hide();
@@ -93,9 +96,36 @@ IDE_Morph.prototype.openIn = function (world) {
         if (dict.noExitWarning) {
             window.onbeforeunload = nop;
         }
-        if (dict.lang) {
-            myself.setLanguage(dict.lang, null, true); // don't persist
+        if (dict.blocksZoom) {
+            myself.savingPreferences = false;
+            myself.setBlocksScale(Math.max(1,Math.min(dict.blocksZoom, 12)));
+            myself.savingPreferences = true;
         }
+
+        // only force my world to get focus if I'm not in embed mode
+        // to prevent the iFrame from involuntarily scrolling into view
+        if (!myself.isEmbedMode) {
+            world.worldCanvas.focus();
+        }
+    }
+
+    function autoRun () {
+        // wait until all costumes and sounds are loaded
+        if (isLoadingAssets()) {
+            myself.world().animations.push(
+                new Animation(nop, nop, 0, 200, nop, autoRun)
+            );
+        } else {
+            myself.runScripts();
+        }
+    }
+
+    function isLoadingAssets() {
+        return myself.sprites.asArray().concat([myself.stage]).some(any =>
+            (any.costume ? any.costume.loaded !== true : false) ||
+            any.costumes.asArray().some(each => each.loaded !== true) ||
+            any.sounds.asArray().some(each => each.loaded !== true)
+        );
     }
 
     // dynamic notifications from non-source text files
