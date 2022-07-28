@@ -383,7 +383,7 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
 
     this.getURL('version', function (version) {
         
-        aboutTxt = 'Snap4Arduino ' + version +'\n'
+        aboutTxt = 'Snap4Arduino ' + version +'++\n'
         + 'http://snap4arduino.rocks\n\n'
 
         + 'Copyright \u24B8 2018-2022 Bernat Romagosa and Joan Guillén\n'
