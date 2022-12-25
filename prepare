@@ -49,7 +49,7 @@ pull_nwjs() {
     echo "Pulling nwjs.io builder (nw-builder)"
     mkdir -p environments
     cd environments
-    if ! npm install nw-builder; then
+    if ! npm install nw-builder; then //!important depending your nodejs installation, you will need to install 3.5.7 version to keep compatibility
         print_error "Could not install nw-builder. Won't be able to build any desktop version.\nPlease make sure that you have access to the Internet and both NodeJS and npm are installed in your system."
         cd ..
         exit 1
