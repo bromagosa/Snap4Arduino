@@ -34,7 +34,13 @@ rm -rf releases/$1
 
 #environments/node_modules/nw-builder/bin/nwbuild -v 0.34.5 -p $platform tmp -o releases/desktop
 environments/node_modules/nw-builder/bin/nwbuild -p $platform tmp -o releases/desktop
-
+#notes about nodejs and chromium versions:
+# Sn4A_v6 used (fixed) 0.34.5 (Chromium 70)
+# Sn4A_v7 used (current at the time) 0.60.0 (Chromium 97)
+# WindowsCOMxx issue appears in Chromium73 and continue (current version 108)
+# The last "smooth" version is nodejs 0.36.0 with Chromium 72.0.3626.121
+# But also we have our online version (always using current chromium)
+# ===> We implement a workaround for the COMxx issue to continue with latest versions
 mkdir -p releases/$1
 mv releases/desktop/Snap4Arduino/$platform/* releases/$1
 rm -rf releases/desktop/Snap4Arduino
