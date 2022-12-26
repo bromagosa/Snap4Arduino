@@ -5,12 +5,19 @@ Arduino.prototype.attemptConnection = function () {
         if (this.board === undefined) {
             // Get list of ports (Arduino compatible)
             var ports = world.Arduino.getSerialPorts(function (ports) {
-                var portMenu = new MenuMorph(this, 'select a port');
+                var portMenu = new MenuMorph(this, 'select a port'),
+                    comIssue = /^\\\\\.\\com/i;
                 if (Object.keys(ports).length >= 1) {
                     Object.keys(ports).forEach(function (each) {
-                        portMenu.addItem(each, function () { 
-                            myself.connect(each);
-                        })
+                        if (comIssue.test(each)) {
+                            portMenu.addItem(each.substring(4), function () {
+                                myself.connect(each);
+                            });
+                        } else {
+                            portMenu.addItem(each, function () { 
+                                myself.connect(each);
+                            });
+                        }                    
                     });
                 }
                 portMenu.popUpAtHand(world);
