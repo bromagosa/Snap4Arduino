@@ -99,13 +99,20 @@ Arduino.prototype.attemptConnection = function () {
             // Get list of ports (Arduino compatible)
             Arduino.getSerialPorts(function (ports) {
                 var portMenu = new MenuMorph(this, 'select a port'),
-                    portCount = Object.keys(ports).length;
+                    portCount = Object.keys(ports).length,
+                    comIssue = /^\\\\\.\\com/i;
 
                 if (portCount >= 1) {
                     Object.keys(ports).forEach(function (each) {
-                        portMenu.addItem(each, function () { 
-                            myself.connect(each);
-                        })
+                        if (comIssue.test(each)) {
+                            portMenu.addItem(each.substring(4), function () {
+                                myself.connect(each);
+                            });
+                        } else {
+                            portMenu.addItem(each, function () { 
+                                myself.connect(each);
+                            });
+                        }
                     });
                 }
                 if (networkPortsEnabled) {
@@ -432,7 +439,7 @@ Arduino.isPortLocked = function (port) {
 Arduino.getSerialPorts = function (callback) {
     var myself = this,
         portList = [],
-        portcheck = /usb|DevB|rfcomm|acm|^com/i; // Not sure about rfcomm! We must dig further how bluetooth works in Gnu/Linux
+        portcheck = /usb|DevB|rfcomm|acm|^com|^\\\\\.\\com/i; // workaround for chromium 73-108+ issue with comxx
 
     chrome.serial.getDevices(function (devices) { 
         if (devices) { 
