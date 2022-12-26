@@ -3,7 +3,7 @@ WorldMorph.prototype.Arduino.firmata = firmata;
 WorldMorph.prototype.Arduino.getSerialPorts = function (callback) {
     var myself = this,
     portList = [],
-    portcheck = /usb|DevB|rfcomm|acm|^com/i;
+    portcheck = /usb|DevB|rfcomm|acm|^com|^com|^\\\\\.\\com/i;
 
     chrome.serial.getDevices(function (devices) { 
         devices.forEach(function (device) { 
