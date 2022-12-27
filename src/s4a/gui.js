@@ -157,13 +157,14 @@ IDE_Morph.prototype.fileImport = function () {
     inp.click();
 };
 
-//Not decorated to show original Snap! logo
+//Not decorated because we want to show original Snap! logo
+// Only two lines (marked) are changed from original repo
 IDE_Morph.prototype.aboutSnap = function () {
     var dlg, aboutTxt, noticeTxt, creditsTxt, versions = '', translations,
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 7.0.4\nBuild Your Own Blocks\n\n'
+    aboutTxt = 'Snap! 8.1.0-dev\nBuild Your Own Blocks\n\n'//Sn4A mod
         + 'Copyright \u24B8 2008-2022 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
@@ -212,14 +213,24 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\n"Ava" Yuan Yuan, Dylan Servilla: Graphic Effects'
         + '\nKyle Hotchkiss: Block search design'
         + '\nBrian Broll: Many bugfixes and optimizations'
+        + '\nEckart Modrow: SciSnap! Extension'
+        + '\nBambi Brewer: Birdbrain Robotics Extension Support'
+        + '\nGlen Bull & team: TuneScope Music Extension'
         + '\nIan Reynolds: UI Design, Event Bindings, '
         + 'Sound primitives'
         + '\nJadga Hügle: Icons and countless other contributions'
+        + '\nSimon Walters & Xavier Pi: MQTT extension'
         + '\nIvan Motyashov: Initial Squeak Porting'
         + '\nLucas Karahadian: Piano Keyboard Design'
         + '\nDavide Della Casa: Morphic Optimizations'
         + '\nAchal Dave: Web Audio'
-        + '\nJoe Otto: Morphic Testing and Debugging';
+        + '\nJoe Otto: Morphic Testing and Debugging'
+        + '\n\n'
+        + 'Jahrd, Derec, and Jamet costumes are watercolor paintings'
+        + '\nby Meghan Taylor and represent characters from her'
+        + '\nwebcomic Prophecy of the Circle, licensed to us only'
+        + '\nfor use in Snap! projects. Meghan also painted the Tad'
+        + '\ncostumes, but that character is in the public domain.';
 
     for (module in modules) {
         if (Object.prototype.hasOwnProperty.call(modules, module)) {
@@ -264,7 +275,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         return tm;
     }
 
-    dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //changed in Snap4Arduino
+    dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //Sn4A mod
     btn1 = dlg.buttons.children[0];
     translatorsBtn = dlg.addButton(
         () => {
@@ -386,12 +397,12 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
 
-        + 'Copyright \u24B8 2018-2022 Bernat Romagosa and Joan Guillén\n'
+        + 'Copyright \u24B8 2018-2023 Joan Guillén and Bernat Romagosa\n'
         + 'https://github.com/bromagosa/snap4arduino\n\n'
 
         + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
 
-        + 'Copyright \u24B8 2015 Citilab\n'
+        + 'Copyright \u24B8 2015 Bernat Romagosa and Citilab\n'
         + 'edutec@citilab.eu\n\n'
 
         + 'Snap4Arduino is a modification of Snap! originally developed\n'
