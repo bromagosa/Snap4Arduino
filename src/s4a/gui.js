@@ -20,6 +20,7 @@ SpriteIconMorph.prototype.userMenu = function () {
 
 // Snap! menus
 // Adding Snap4Arduino extra options to snapMenu, projectMenu and settingsMenu
+
 IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
     this.originalSnapMenu();
@@ -46,12 +47,11 @@ IDE_Morph.prototype.snapMenu = function () {
 IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
 IDE_Morph.prototype.settingsMenu = function () {
     this.originalSettingsMenu();
+    var menu = this.world().activeMenu,
+        pos = this.controlBar.settingsButton.bottomLeft();
 
     // adding extra s4a items only for Desktop version
     if (document.title == '') {
-        var menu = this.world().activeMenu,
-            pos = this.controlBar.settingsButton.bottomLeft();
-
         menu.addLine();
         // http server option
         menu.addItem(
@@ -80,8 +80,29 @@ IDE_Morph.prototype.settingsMenu = function () {
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
 
-        menu.popup(this.world(), pos);
+        //menu.popup(this.world(), pos);
     }
+    //Uploading firmware menus for all versions
+    var iframe = document.getElementById('firmwareUploader'),
+        toneButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Tone'),
+        irButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Ir'),
+        stButton = iframe.contentWindow.document.getElementById('UNO_FirmataSt'),
+        firmwaresMenu = function () {
+            var menu =new MenuMorph(this, "Firmwares");
+            menu.addItem('FirmataSA5 tone (recomended)', function() {toneButton.click()});
+            menu.addItem('FirmataSA5 ir', function() {irButton.click()});
+            menu.addItem('Firmata Standard', function() {stButton.click()});
+            return menu;
+        };
+
+    menu.addLine();
+    menu.addMenu('UNO firmware uploader', firmwaresMenu());
+    menu.addItem('Devices supported information', 
+        function() {
+            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
+        }
+    );
+    menu.popup(this.world(), pos);
 };
 
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
