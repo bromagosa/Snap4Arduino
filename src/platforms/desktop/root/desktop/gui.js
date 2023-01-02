@@ -68,7 +68,7 @@ IDE_Morph.prototype.checkForNewVersion = function () {
     this.getURL(
         'https://api.github.com/repos/bromagosa/Snap4Arduino/releases/latest',
         function (response) {
-            var currentName = myself.version(),
+            var currentName = myself.sn4a_version(),
                 current = currentName.split('.'),
                 latestName = JSON.parse(response).tag_name,
                 latest = latestName.split('.'),

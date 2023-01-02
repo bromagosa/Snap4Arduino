@@ -888,7 +888,7 @@ IDE_Morph.prototype.createNewProject = function () {
             );
 };
 
-IDE_Morph.prototype.version = function () {
+IDE_Morph.prototype.sn4a_version = function () {
     return require('fs').readFileSync('version').toString();
 };
 
@@ -1221,4 +1221,48 @@ IDE_Morph.prototype.flushBlocksCache = function (category) {
         this.originalFlushBlocksCache('other');
     }
     this.originalFlushBlocksCache(category);
+};
+
+//Replacing window title
+IDE_Morph.prototype.snap4arduinoTitle = function () {
+    document.title = "Snap4Arduino " +
+        (this.getProjectName() ? this.getProjectName() : this.sn4a_version());
+};
+IDE_Morph.prototype.original_setProjectName = IDE_Morph.prototype.setProjectName;
+IDE_Morph.prototype.setProjectName = function (string) {
+   this.original_setProjectName (string);
+   this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_setProjectNotes = IDE_Morph.prototype.setProjectNotes;
+IDE_Morph.prototype.setProjectNotes = function (string) {
+    this.original_setProjectNotes(string);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_updateChanges = IDE_Morph.prototype.updateChanges;
+IDE_Morph.prototype.updateChanges = function (spriteName, details) {
+    this.original_updateChanges(spriteName, details);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToUserMode = IDE_Morph.prototype.switchToUserMode;
+IDE_Morph.prototype.switchToUserMode = function () {
+    this.original_switchToUserMode();
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToDevMode = IDE_Morph.prototype.switchToDevMode;
+IDE_Morph.prototype.switchToDevMode = function () {
+    this.original_switchToDevMode();
+    this.snap4arduinoTitle();
+};
+SceneIconMorph.prototype.original_renameScene = SceneIconMorph.prototype.renameScene;
+SceneIconMorph.prototype.renameScene = function () {
+    var ide = this.parentThatIsA(IDE_Morph);
+    this.original_renameScene();
+    ide.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_fixLayout = IDE_Morph.prototype.fixLayout;
+IDE_Morph.prototype.fixLayout = function (situation) {
+    this.original_fixLayout(situation);
+    if (situation !== 'refreshPalette') {
+        this.snap4arduinoTitle();
+    }
 };
