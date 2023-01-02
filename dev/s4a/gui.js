@@ -20,6 +20,7 @@ SpriteIconMorph.prototype.userMenu = function () {
 
 // Snap! menus
 // Adding Snap4Arduino extra options to snapMenu, projectMenu and settingsMenu
+
 IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
     this.originalSnapMenu();
@@ -46,12 +47,11 @@ IDE_Morph.prototype.snapMenu = function () {
 IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
 IDE_Morph.prototype.settingsMenu = function () {
     this.originalSettingsMenu();
+    var menu = this.world().activeMenu,
+        pos = this.controlBar.settingsButton.bottomLeft();
 
     // adding extra s4a items only for Desktop version
     if (document.title == '') {
-        var menu = this.world().activeMenu,
-            pos = this.controlBar.settingsButton.bottomLeft();
-
         menu.addLine();
         // http server option
         menu.addItem(
@@ -80,8 +80,29 @@ IDE_Morph.prototype.settingsMenu = function () {
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
 
-        menu.popup(this.world(), pos);
+        //menu.popup(this.world(), pos);
     }
+    //Uploading firmware menus for all versions
+    var iframe = document.getElementById('firmwareUploader'),
+        toneButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Tone'),
+        irButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Ir'),
+        stButton = iframe.contentWindow.document.getElementById('UNO_FirmataSt'),
+        firmwaresMenu = function () {
+            var menu =new MenuMorph(this, "Firmwares");
+            menu.addItem('FirmataSA5 tone (recomended)', function() {toneButton.click()});
+            menu.addItem('FirmataSA5 ir', function() {irButton.click()});
+            menu.addItem('Firmata Standard', function() {stButton.click()});
+            return menu;
+        };
+
+    menu.addLine();
+    menu.addMenu('UNO firmware uploader', firmwaresMenu());
+    menu.addItem('Devices supported information', 
+        function() {
+            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
+        }
+    );
+    menu.popup(this.world(), pos);
 };
 
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
@@ -867,7 +888,7 @@ IDE_Morph.prototype.createNewProject = function () {
             );
 };
 
-IDE_Morph.prototype.version = function () {
+IDE_Morph.prototype.sn4a_version = function () {
     return require('fs').readFileSync('version').toString();
 };
 
@@ -1200,4 +1221,48 @@ IDE_Morph.prototype.flushBlocksCache = function (category) {
         this.originalFlushBlocksCache('other');
     }
     this.originalFlushBlocksCache(category);
+};
+
+//Replacing window title
+IDE_Morph.prototype.snap4arduinoTitle = function () {
+    document.title = "Snap4Arduino " +
+        (this.getProjectName() ? this.getProjectName() : this.sn4a_version());
+};
+IDE_Morph.prototype.original_setProjectName = IDE_Morph.prototype.setProjectName;
+IDE_Morph.prototype.setProjectName = function (string) {
+   this.original_setProjectName (string);
+   this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_setProjectNotes = IDE_Morph.prototype.setProjectNotes;
+IDE_Morph.prototype.setProjectNotes = function (string) {
+    this.original_setProjectNotes(string);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_updateChanges = IDE_Morph.prototype.updateChanges;
+IDE_Morph.prototype.updateChanges = function (spriteName, details) {
+    this.original_updateChanges(spriteName, details);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToUserMode = IDE_Morph.prototype.switchToUserMode;
+IDE_Morph.prototype.switchToUserMode = function () {
+    this.original_switchToUserMode();
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToDevMode = IDE_Morph.prototype.switchToDevMode;
+IDE_Morph.prototype.switchToDevMode = function () {
+    this.original_switchToDevMode();
+    this.snap4arduinoTitle();
+};
+SceneIconMorph.prototype.original_renameScene = SceneIconMorph.prototype.renameScene;
+SceneIconMorph.prototype.renameScene = function () {
+    var ide = this.parentThatIsA(IDE_Morph);
+    this.original_renameScene();
+    ide.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_fixLayout = IDE_Morph.prototype.fixLayout;
+IDE_Morph.prototype.fixLayout = function (situation) {
+    this.original_fixLayout(situation);
+    if (situation !== 'refreshPalette') {
+        this.snap4arduinoTitle();
+    }
 };
