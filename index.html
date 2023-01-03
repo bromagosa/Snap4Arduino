@@ -31,7 +31,7 @@
         <script src="js/scrolling-nav.js"></script>
         <script src="js/jquery.easing.min.js"></script>
 
-        <script>
+        <!--<script>
             $(function(){
                 $(window).scroll(function() {
                     if ($(this).scrollTop() >= 110) {
@@ -42,7 +42,7 @@
                     }
                 });
             });
-        </script>
+        </script>-->
 
         <script src="js/main.js"></script>
 
@@ -50,7 +50,7 @@
     <body>
 
         <!-- Header Start -->
-        <header>
+        <header class="stickytop">
             <div class="container header">
                 <div class="row">
                     <div class="col-md-12">
@@ -69,17 +69,16 @@
                                     </a>
                                 </div>
                                 <div class="collapse navbar-collapse navbarCollapse" id="bs-example-navbar-collapse-1">
-                                    <ul class="nav navbar-nav navbar-right">
-                                        <li class="active"><a class="page-scroll" href="#start">What is it?</a></li>
+                                    <ul class="nav navbar-nav navbar-right" style="background-color:white">
                                         <li><a class="page-scroll" href="#feature">Features</a></li>
-                                        <li><a class="page-scroll" href="#download">Download</a></li>
                                         <li><a class="page-scroll" href="#install">Installation</a></li>
+                                        <li><a class="page-scroll" href="#download">Download</a></li>
+                                        <li><a class="page-scroll" href="#devices">Devices</a></li>
                                         <li><a class="page-scroll" href="#demos">Demos</a></li>
                                         <li><a class="page-scroll" href="#code">Source</a></li>
-                                        <li><a class="page-scroll" href="#devices">Devices</a></li>
                                         <li><a class="page-scroll" href="#http">Http Protocol</a></li>
                                         <li><a class="page-scroll" href="#contact">Contact</a></li>
-                                        <li><a href="/run" class="page-scroll" onClick="" target="_blank"><i class="fa fa-play-circle"></i> Play online</a></li>
+                                        <li style="background-color:#cccccc;border-radius:25px"><a href="/run" class="page-scroll" onClick="" target="_blank"><i class="fa fa-play-circle"></i> Play online</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -170,6 +169,53 @@
             </div>
         </section>
 
+        <section id="install" class="instal-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Installation</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <p>Snap4Arduino requires that you have <a href="http://firmata.org/wiki/Main_Page" target="_blank">StandardFirmata</a> installed in your board.<br>  <br>
+                        To do so, follow these simple steps:
+                        <ol>
+                            <li>If you haven't already, download and install the Arduino environment by following the instructions on <a href="http://arduino.cc/en/Main/Software" target="_blank">http://arduino.cc/en/Main/Software</a>.</li>
+                            <li>Open the <a href="https://www.arduino.cc/en/Main/Software" target="_blank">Arduino IDE</a>, go to File → Examples → Firmata → StandardFirmata</li>
+                            <li>Connect your board to a USB port in your computer</li>
+                            <li>In the Tools menu, select the board version and the serial port where the board is connected</li>
+                            <li>Go to File and click on Upload</li>
+                            <li>Snap4Arduino will now be able to interact with your board.</li>
+                        </ol>
+                        </p>
+                        <p>The previous instructions cover the initial setup of your board. If your Arduino board comes with Firmata preinstalled or you have previously installed it yourself, you don't need to follow them again. Still, to prevent any possible issues with drivers (on Windows) or permissions, it may be a good idea to install the Arduino IDE anyway.</p>
+                        <p>StandardFirmata is the basic requirement for a board to be reachable from Snap4Arduino, but you can get extended features by using others Firmata versions. See the <a href="#devices">Devices</a> section for more information.<p/>
+                        <br><br>
+                        <h6>ChromeOS app</h6>
+                        <p>You can install the <i>ChromeOS app</i> from the <i>Chrome Web Store</i> or download the package, uncompress it and drag and drop the <i>crx</i> file into the <samp>chrome://extensions</samp> browser tab. This is a limited version of Snap4Arduino that doesn't support extended Firmata versions of the Snap<em>!</em> JavaScript block.<p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>GNU/Linux</h6>
+                        <p>
+                        You just need to unpack the package. In most window environments you can just click on <b>Snap4Arduino</b>.
+                        If this fails, you can always run <i>./run</i> from the command line.</p>
+                        <h6>MacOS X</h6>
+                        <p>Unzip the package and run the <b>Snap4Arduino</b> package. If you wish, you can move it to your <b>Applications</b> folder so you can access it as a regular app.</p>
+                        <h6>Microsoft Windows</h6>
+                        <p>Just unzip the package and run the installer.</p>
+                        <h6 id="plugin">Web version for Chrome/Chromium</h6>
+                        <p><a href="http://snap4arduino.rocks/run" target="_blank">Online version</a> requires a <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle">Chrome/Chromium plugin</a> to connect to Arduino boards. To install it, just download <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_web_connector_crx_7.0.zip">the plugin package</a> and unzip it. This will create a folder named <i>crx</i>. Then, go to <strong>chrome://extensions</strong> in your browser, activate the <i>developer mode</i> and drag and drop that folder into that browser tab.<br><br>
+                        If you prefer to run it offline or in your own server, use <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_web-chromium_7.0.4.zip">this downloadable version.</a></p>
+                        <h6>Embedded</h6>
+                        <p>The embedded command line version works in any GNU/Linux based machine, including embedded platforms and single board computers. New generation Arduino boards like Yun, Tian or Industrial 101 can run this version right inside the board, and if you have a regular Arduino and any kind of Gnu/Linux based single board computer, you can always have the latter be the host computer to the Arduino board, giving autonomy to your project without having to modify your Snap4Arduino program at all.</p>
+                        <p>Check out <a href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI" target="_blank">this section</a> of our GitHub wiki.
+                        <br><br>
+                        Happy prototyping!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="download" class="download-section">
             <div class="container">
                 <div class="row">
@@ -213,48 +259,44 @@
             </div>
         </section>
 
-        <section id="install" class="instal-section">
+        <section id="devices" class="devices-section">
             <div class="container">
                 <div class="row">
                     <div class="col-md-4">
-                        <h3>Installation</h3>
+                        <h3>Supported Devices</h3>
+
                     </div>
                     <div class="col-md-4">
-                        <p>Snap4Arduino requires that you have <a href="http://firmata.org/wiki/Main_Page" target="_blank">StandardFirmata</a> installed in your board.<br>  <br>
-                        To do so, follow these simple steps:
-                        <ol>
-                            <li>If you haven't already, download and install the Arduino environment by following the instructions on <a href="http://arduino.cc/en/Main/Software" target="_blank">http://arduino.cc/en/Main/Software</a>.</li>
-                            <li>Open the <a href="https://www.arduino.cc/en/Main/Software" target="_blank">Arduino IDE</a>, go to File → Examples → Firmata → StandardFirmata</li>
-                            <li>Connect your board to a USB port in your computer</li>
-                            <li>In the Tools menu, select the board version and the serial port where the board is connected</li>
-                            <li>Go to File and click on Upload</li>
-                            <li>Snap4Arduino will now be able to interact with your board.</li>
-                        </ol>
-                        </p>
-                        <p>The previous instructions cover the initial setup of your board. If your Arduino board comes with Firmata preinstalled or you have previously installed it yourself, you don't need to follow them again. Still, to prevent any possible issues with drivers (on Windows) or permissions, it may be a good idea to install the Arduino IDE anyway.</p>
-                        <p>StandardFirmata is the basic requirement for a board to be reachable from Snap4Arduino, but you can get extended features by using others Firmata versions. See the <a href="#devices">Devices</a> section for more information.<p/>
-                        <br><br>
-                        <h6>ChromeOS app</h6>
-                        <p>You can install the <i>ChromeOS app</i> from the <i>Chrome Web Store</i> or download the package, uncompress it and drag and drop the <i>crx</i> file into the <samp>chrome://extensions</samp> browser tab. This is a limited version of Snap4Arduino that doesn't support extended Firmata versions of the Snap<em>!</em> JavaScript block.<p>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>GNU/Linux</h6>
                         <p>
-                        You just need to unpack the package. In most window environments you can just click on <b>Snap4Arduino</b>.
-                        If this fails, you can always run <i>./run</i> from the command line.</p>
-                        <h6>MacOS X</h6>
-                        <p>Unzip the package and run the <b>Snap4Arduino</b> package. If you wish, you can move it to your <b>Applications</b> folder so you can access it as a regular app.</p>
-                        <h6>Microsoft Windows</h6>
-                        <p>Just unzip the package and run the installer.</p>
-                        <h6 id="plugin">Web version for Chrome/Chromium</h6>
-                        <p><a href="http://snap4arduino.rocks/run" target="_blank">Online version</a> requires a <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle">Chrome/Chromium plugin</a> to connect to Arduino boards. To install it, just download <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_web_connector_crx_7.0.zip">the plugin package</a> and unzip it. This will create a folder named <i>crx</i>. Then, go to <strong>chrome://extensions</strong> in your browser, activate the <i>developer mode</i> and drag and drop that folder into that browser tab.<br><br>
-                        If you prefer to run it offline or in your own server, use <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_web-chromium_7.0.4.zip">this downloadable version.</a></p>
-                        <h6>Embedded</h6>
-                        <p>The embedded command line version works in any GNU/Linux based machine, including embedded platforms and single board computers. New generation Arduino boards like Yun, Tian or Industrial 101 can run this version right inside the board, and if you have a regular Arduino and any kind of Gnu/Linux based single board computer, you can always have the latter be the host computer to the Arduino board, giving autonomy to your project without having to modify your Snap4Arduino program at all.</p>
-                        <p>Check out <a href="https://github.com/bromagosa/Snap4Arduino/wiki/Autonomy-via-CLI" target="_blank">this section</a> of our GitHub wiki.
-                        <br><br>
-                        Happy prototyping!
+                        You can modify Firmata to have it work with a wide variety of devices that, by default, are not supported.
+
+                        Check out <a href="http://blog.s4a.cat/2015/03/13/Extending-Firmata-for-Snap4Arduino.html" target="_blank">this blog post</a> if you want to do it yourself.
+
+                        Additionally, we will be publishing a series of modified Firmata versions and their corresponding Snap4Arduino block libraries here, so if your device shows up under this list you can just download the extension and start prototyping:
                         </p>
+                        <p>From <a href="http://edutec.citilab.eu/">Citilab Edutec Team</a>:
+                        <ul>
+                            <li>Edutec's <a href="https://github.com/edutec/Snap4ArduinoDev" target="_blank">Snap4ArduinoDev</a> is a super-Firmata modification that allows you to use DHT11 temperature and humidity sensors, capacitive sensors, and stepper motors.</li>
+                            <li><a href="http://blog.s4a.cat/2015/03/24/LCD-Library-for-Snap4Arduino.html" target="_blank">LCD Display</a> - <a href="http://s4a.cat/snap/downloads/LCD-Snap4Arduino.zip">extension files</a></li>
+                            <li><a href="http://blog.s4a.cat/2015/03/31/Ultrasound-Library-for-Snap4Arduino.html" target="_blank">Ultrasound Sensor</a> - <a href="http://s4a.cat/snap/downloads/Ultrasound-Snap4Arduino.zip">extension files</a></li>
+                        </ul>
+                        </p>
+                        <hr>
+                        <p>Also note that you can use any type of board (not just Arduino) as long as it can run Firmata. For example, <b>ESP8266</b> and <b>NodeMCU</b> boards are being widely used with Snap4Arduino.</p>
+                        <p>Additionally, other devices like <b>Picaxe</b>, <b>micro:bit</b>, Lego <b>WeDo</b> or <b>Boost</b> can also be used in Snap<em>!</em> (and thus in Snap4Arduino) by means of different middleware packages. Read more about it <a href="https://github.com/jguille2/SA5/blob/master/README.md#another-firmata-boards" target="_blank">here</a>.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>User-contributed Firmata versions</h6>
+                        <p>Snap4Arduino libraries include <b>SA5Firmata</b> and <b>Creative Robotix</b>, which require their own Firmata versions: 
+                        <ul>
+                            <li>Joan Guillén's <a href="https://github.com/jguille2/SA5/blob/master/README.md" target="_blank">SA5Firmata</a> is another super-Firmata modification that adds tone, pulse and ping functions, along with support for DHT11 humidity and temperature sensors, ultrasound sensors, Nunchuks and message sending and receiving over IR.</li>
+                            <li>The <a href="http://www.creative-science.org/" target="_blank">Creative Science Foundation</a>'s <a href="https://github.com/segertonGH/Creative-Robotix-Educational-Platform-Snap4Arduino-Firmata" target="_blank">Creative Robotix Firmata</a> is a Firmata version for use with the Creative Robotix Educational Platform.</li>
+                            <hr>
+                            <li>Matthew Canham's <a href="https://github.com/mdcanham/Snap4Arduino-Firmata" target="_blank">Snap4Arduino Firmata Collection</a> features several great Firmata modifications.</li>
+                            <li>Chris Clay's <a href="https://github.com/chrisclaynz/Robotics-unleashed" target="_blank">Robotics-unleashed</a> is yet another super-Firmata modification that allows you to control several devices at the same time.</li>
+                        </ul>
+                        </p>
+
                     </div>
                 </div>
             </div>
@@ -390,49 +432,6 @@
                     <div class="col-md-8">
                         <p>You can find our GitHub repo at <a href="https://github.com/bromagosa/Snap4Arduino" target="_blank">Snap4Arduino@GitHub</a>. Please feel free to send us your pull requests and participate in reporting, fixing or commenting on bugs!
                         </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="devices" class="devices-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h3>Supported Devices</h3>
-
-                    </div>
-                    <div class="col-md-4">
-                        <p>
-                        You can modify Firmata to have it work with a wide variety of devices that, by default, are not supported.
-
-                        Check out <a href="http://blog.s4a.cat/2015/03/13/Extending-Firmata-for-Snap4Arduino.html" target="_blank">this blog post</a> if you want to do it yourself.
-
-                        Additionally, we will be publishing a series of modified Firmata versions and their corresponding Snap4Arduino block libraries here, so if your device shows up under this list you can just download the extension and start prototyping:
-                        </p>
-                        <p>From <a href="http://edutec.citilab.eu/">Citilab Edutec Team</a>:
-                        <ul>
-                            <li>Edutec's <a href="https://github.com/edutec/Snap4ArduinoDev" target="_blank">Snap4ArduinoDev</a> is a super-Firmata modification that allows you to use DHT11 temperature and humidity sensors, capacitive sensors, and stepper motors.</li>
-                            <li><a href="http://blog.s4a.cat/2015/03/24/LCD-Library-for-Snap4Arduino.html" target="_blank">LCD Display</a> - <a href="http://s4a.cat/snap/downloads/LCD-Snap4Arduino.zip">extension files</a></li>
-                            <li><a href="http://blog.s4a.cat/2015/03/31/Ultrasound-Library-for-Snap4Arduino.html" target="_blank">Ultrasound Sensor</a> - <a href="http://s4a.cat/snap/downloads/Ultrasound-Snap4Arduino.zip">extension files</a></li>
-                        </ul>
-                        </p>
-                        <hr>
-                        <p>Also note that you can use any type of board (not just Arduino) as long as it can run Firmata. For example, <b>ESP8266</b> and <b>NodeMCU</b> boards are being widely used with Snap4Arduino.</p>
-                        <p>Additionally, other devices like <b>Picaxe</b>, <b>micro:bit</b>, Lego <b>WeDo</b> or <b>Boost</b> can also be used in Snap<em>!</em> (and thus in Snap4Arduino) by means of different middleware packages. Read more about it <a href="https://github.com/jguille2/SA5/blob/master/README.md#another-firmata-boards" target="_blank">here</a>.</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>User-contributed Firmata versions</h6>
-                        <p>Snap4Arduino libraries include <b>SA5Firmata</b> and <b>Creative Robotix</b>, which require their own Firmata versions: 
-                        <ul>
-                            <li>Joan Guillén's <a href="https://github.com/jguille2/SA5/blob/master/README.md" target="_blank">SA5Firmata</a> is another super-Firmata modification that adds tone, pulse and ping functions, along with support for DHT11 humidity and temperature sensors, ultrasound sensors, Nunchuks and message sending and receiving over IR.</li>
-                            <li>The <a href="http://www.creative-science.org/" target="_blank">Creative Science Foundation</a>'s <a href="https://github.com/segertonGH/Creative-Robotix-Educational-Platform-Snap4Arduino-Firmata" target="_blank">Creative Robotix Firmata</a> is a Firmata version for use with the Creative Robotix Educational Platform.</li>
-                            <hr>
-                            <li>Matthew Canham's <a href="https://github.com/mdcanham/Snap4Arduino-Firmata" target="_blank">Snap4Arduino Firmata Collection</a> features several great Firmata modifications.</li>
-                            <li>Chris Clay's <a href="https://github.com/chrisclaynz/Robotics-unleashed" target="_blank">Robotics-unleashed</a> is yet another super-Firmata modification that allows you to control several devices at the same time.</li>
-                        </ul>
-                        </p>
-
                     </div>
                 </div>
             </div>

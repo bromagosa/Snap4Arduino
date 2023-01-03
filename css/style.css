@@ -248,35 +248,35 @@ div#demorow {
     padding-bottom: 60px;
 }
 
-#intro, #download, #demos, #devices, #command {
-  padding: 100px 0;
+#install, #devices, #code, #intro {
+  padding-top: 80px 0;
 }
 
 #intro {
   height:100%;
 }
 
-#intro .block h2, #download .block h2, 
-#demos .block h2, #devices .block h2 {
+#intro .block h2, #install .block h2, 
+#devices .block h2, #code .block h2 {
   padding-top: 35px;
   line-height: 27px;
   margin: 0;
 }
-#intro .block p, #download .block p, 
-#demos .block p, #devices .block p{
+#intro .block p, #install .block p, 
+#devices .block p, #code .block p{
   color: #676767;
 }
-#intro .block img, #download .block img, 
-#demos .block img, #devices .block img {
+#intro .block img, #install .block img, 
+#devices .block img, #code .block img {
   padding-left: 40px;
   width: 100%;
 }
-#intro .section-title, #download .section-title, 
-#demos .section-title, #devices .section-title {
+#intro .section-title, #install .section-title, 
+#devices .section-title, #code .section-title {
   margin-bottom: 0px;
 }
-#intro .section-title p, #download .section-title p, 
-#demos .section-title p, #devices .section-title p  {
+#intro .section-title p, #install .section-title p, 
+#devices .section-title p, #code .section-title p  {
   padding-top: 20px;
 }
 /*--
@@ -374,20 +374,20 @@ div#demorow {
 /*--
 	Feature Start 
 --*/
-#feature, #instal, #code, #http {
+#feature, #download, #demos, #http {
   /*background: url("../img/featue-bg.jpg");*/
   background-color: #f9f9f9;
-  padding: 100px 0;
+  padding-top: 80px 0;
 }
-#feature h2, #instal h2, #code h2, #http h2 {
+#feature h2, #download h2, #demos h2, #http h2 {
   font-size:30px;
   margin-bottom: 30px;
 }
-#feature p, #instal p, #code p, #http p {
+#feature p, #download p, #demos p, #http p {
   color: #676767;
   margin-bottom: 20px;
 }
-#feature .btn-view-works, #instal .btn-view-works, #code .btn-view-works, #http .btn-view-works {
+#feature .btn-view-works, #download .btn-view-works, #demos .btn-view-works, #http .btn-view-works {
   background: #655E7A;
   color: #fff;
   padding: 10px 20px;
@@ -683,7 +683,7 @@ a.btn-small:hover {
 
 /* RESPONSIVE ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-@media (min-width: 992px) and (max-width: 1152px)  {
+@media (min-width: 992px) and (max-width: 1340px)  {
   .container.header {
     padding: 0 10px;
 }  
@@ -703,21 +703,21 @@ header .navbar-default .navbar-nav li a {
 /* TABLET ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
-@media (min-width: 768px) and (max-width: 992px) {
+@media (min-width: 870px) and (max-width: 992px) {
 
 .container.header {
     padding: 0 10px;
 }
 
-header .navbar-brand {
+/*header .navbar-brand {
     padding-top: 18px;
-}
+}*/
     .social-icons li {
     margin: 0 -1px;
 }
 
 header .navbar-default .navbar-nav li a {
-    margin: 20px 5px 0px 5px;
+    margin: 10px 5px 0px 5px;
     font-size: 12px;
 }
 
@@ -730,8 +730,8 @@ header .navbar-default .navbar-nav li a {
 
 /* SMARTPHONE E TABLET ---------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-@media (min-width: 480px) and (max-width: 768px) {
-.navbar-right {
+@media (min-width: 480px) and (max-width: 870px) {
+/*.navbar-right {
     float: left !important;
     margin-right: -15px;
 }
@@ -750,6 +750,20 @@ header.stickytop {
     width: 100%;
     box-shadow: 0 2px 3px rgba(0,0,0,0.1);
     padding: 12px 0px !important;
+}*/
+.container.header {
+    padding: 0 11px;
+}
+    .social-icons li {
+    margin: 0 -1px;
+}
+header .navbar-default .navbar-nav li a {
+    margin: 10px 3px 0px 3px;
+    font-size: 10px;
+}
+.col-md-12 {
+    padding-right: 10px;
+    padding-left: 10px;
 }
 }
 

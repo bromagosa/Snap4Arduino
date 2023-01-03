@@ -9,6 +9,6 @@
 .feature-section, .download-section, .instal-section, .demos-section, 
 .code-section, .devices-section, .http-section, .command-section {
     height: 100%;
-    padding-top: 180px !important;
-    padding-bottom: 180px !important;
+    padding-top: 80px !important;
+    padding-bottom: 0px !important;
 }
