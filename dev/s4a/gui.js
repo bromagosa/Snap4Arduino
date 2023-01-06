@@ -86,18 +86,20 @@ IDE_Morph.prototype.settingsMenu = function () {
     var iframe = document.getElementById('firmwareUploader'),
         toneButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Tone'),
         irButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Ir'),
+        npButton = iframe.contentWindow.document.getElementById('UNO_FirmataNeopixel'),
         stButton = iframe.contentWindow.document.getElementById('UNO_FirmataSt'),
         firmwaresMenu = function () {
             var menu =new MenuMorph(this, "Firmwares");
             menu.addItem('FirmataSA5 tone (recomended)', function() {toneButton.click()});
             menu.addItem('FirmataSA5 ir', function() {irButton.click()});
+            menu.addItem('Firmata neopixel', function() {npButton.click()});
             menu.addItem('Firmata Standard', function() {stButton.click()});
             return menu;
         };
 
     menu.addLine();
     menu.addMenu('UNO firmware uploader', firmwaresMenu());
-    menu.addItem('Devices supported information', 
+    menu.addItem('Devices supported', 
         function() {
             window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
         }
