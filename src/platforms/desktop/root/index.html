@@ -116,12 +116,6 @@
                 world.doOneCycle();
             };
 
-            require('nw.gui').Window.get().on('close', function () {
-                if (confirm(localize('Are you sure you want to leave?'))) {
-                    this.close(true);
-                } 
-            });
-
             // Add menubar for Mac version ('darwin') with node-webkit >10.0 (modules version 14)
             if (process.platform==='darwin' && +process.versions.modules >= 14) {
                 var nw = require('nw.gui');
