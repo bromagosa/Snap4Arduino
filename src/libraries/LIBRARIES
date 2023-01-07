@@ -10,6 +10,7 @@ snapJrPlusLib.xml	SnapJuniorPlus Blocks	Extra blocks for SnapJunior.
 i2c.xml	I2C	Send and receive data from I2C-enabled sensors and actuators.
 SA5Firmata_tone.xml	SA5Firmata	Adding extra features to StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck and dht11 blocks. It requires SA5Firmata_tone firmware.
 SA5Firmata_ir.xml	SA5FirmataIR	SA5Firmata with IR features at the expense of simplifying the tone function. It requires SA5Firmata_ir firmware.
+NeoPixel.xml	NeoPixel	NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.
 ~	~
 ~	~
 TdRSTEAMv1.xml	TdR STEAM v1	Blocks for the TdRSTEAM shield v1. Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.
@@ -20,6 +21,5 @@ nodeMCU.xml	NodeMCU	Blocks for the NodeMCU board using StandardFirmata. It has a
 ~	~
 ~	~
 phiro.xml	Phiro robot	Control the Phiro robotic car.
-NeoPixel.xml	NeoPixel	NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.
 braccio.xml	Braccio arm	The Braccio robotic arm is an educational simple arm with a grip on its end. You need to install BraccioFirmata into the board before being able to use this library.
 Creative_Robotix.xml	Creative Robotix Platform	Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware.
