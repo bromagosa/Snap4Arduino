@@ -51,7 +51,7 @@ IDE_Morph.prototype.settingsMenu = function () {
         pos = this.controlBar.settingsButton.bottomLeft();
 
     // adding extra s4a items only for Desktop version
-    if (document.title == '') {
+    if (typeof process === 'object') {
         menu.addLine();
         // http server option
         menu.addItem(
@@ -80,7 +80,6 @@ IDE_Morph.prototype.settingsMenu = function () {
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
 
-        //menu.popup(this.world(), pos);
     }
     //Uploading firmware menus for all versions
     var iframe = document.getElementById('firmwareUploader'),
@@ -89,7 +88,7 @@ IDE_Morph.prototype.settingsMenu = function () {
         npButton = iframe.contentWindow.document.getElementById('UNO_FirmataNeopixel'),
         stButton = iframe.contentWindow.document.getElementById('UNO_FirmataSt'),
         firmwaresMenu = function () {
-            var menu =new MenuMorph(this, "Firmwares");
+            var menu = new MenuMorph(this, "Firmwares");
             menu.addItem('FirmataSA5 tone (recomended)', function() {toneButton.click()});
             menu.addItem('FirmataSA5 ir', function() {irButton.click()});
             menu.addItem('Firmata neopixel', function() {npButton.click()});
@@ -98,12 +97,17 @@ IDE_Morph.prototype.settingsMenu = function () {
         };
 
     menu.addLine();
-    menu.addMenu('UNO firmware uploader', firmwaresMenu());
-    menu.addItem('Devices supported', 
+    menu.addMenu('Upload firmware on UNO boards', firmwaresMenu());
+    menu.addItem('More supported devices', 
         function() {
-            window.open('http://snap4arduino.rocks', 'Snap4ArduinoWebsite'); 
-        }
-    );
+            window.open('https://snap4arduino.rocks/#devices', 'Snap4ArduinoWebsite'); 
+    });
+    if (typeof process !== 'object') {
+        menu.addItem('Snap4Arduino connector required',
+            function() {
+                window.open('https://snap4arduino.rocks/#install', 'Snap4ArduinoWebsite');
+        });
+    }
     menu.popup(this.world(), pos);
 };
 
