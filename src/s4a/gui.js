@@ -51,7 +51,7 @@ IDE_Morph.prototype.settingsMenu = function () {
         pos = this.controlBar.settingsButton.bottomLeft();
 
     // adding extra s4a items only for Desktop version
-    if (document.title == '') {
+    if (typeof process === 'object') {
         menu.addLine();
         // http server option
         menu.addItem(
@@ -102,7 +102,7 @@ IDE_Morph.prototype.settingsMenu = function () {
         function() {
             window.open('https://snap4arduino.rocks/#devices', 'Snap4ArduinoWebsite'); 
     });
-    if (document.title != '') {
+    if (typeof process !== 'object') {
         menu.addItem('Snap4Arduino connector required',
             function() {
                 window.open('https://snap4arduino.rocks/#install', 'Snap4ArduinoWebsite');
