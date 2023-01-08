@@ -104,7 +104,7 @@
         <section id="news">
             <br>
             <div class="alert alert-info center-block" style="width: 80%;">
-                <i class="fa fa-calendar fa-3x pull-left"></i> <h4>Snap4Arduino 7 released on January 8th 2022<br/> Download <a href="#download">desktop versions</a> or play it <a href="/run">online</a></h4><h5>Online needs a Chrome/Chromium browser with the <i>Snap4Arduino Connector</i> extension (<a href="#download" target="_blank">download it</a> or <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle" target="_blank">install it</a> directly on your Chromebook)</h5>
+                <h4><i class="fa fa-calendar fa-3x pull-left"></i> Snap4Arduino 8.1 released on January 8th 2023</h4><h5>Download <a href="#download">desktop versions</a> or play it <a href="/run">online</a></h5><h6>Online needs a Chromium/Chrome/Edge browser with the <i>Snap4Arduino Connector</i> extension (<a href="#download" target="_blank">download</a> it or <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle" target="_blank">install</a> it directly on your Chromebook)</h6>
             </div>
         </section>
         <!-- Wrapper Start -->
@@ -114,12 +114,10 @@
                     <div class="col-md-4 col-sm-12">
                         <div class="block">
                             <div class="section-title">
-                                <h3>What is it?</h3>
+                                <h3>Snap4Arduino</h3>
                             </div>
                             <p class="whatis">
-                            Snap4Arduino is a modification of the <a href ="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> visual programming language that lets you seamlessly interact with almost all versions of the <a href="http://www.arduino.cc" target="_blank">Arduino</a> board.<br/>
-                            <br/>
-                            You can see a short example of what you can do with it in the video at the rightmost column.</p>
+                            Snap4Arduino is a <a href ="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> extension. A full Snap<i>!</i> implementation that can interact with the physical world, through <a href="#devices">many types of electronic devices</a>, especially those compatible with Arduino.
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-12">
@@ -127,16 +125,14 @@
                             <div class="section-title">
                                 <h3>Snap<i>!</i></h3>
                             </div>
-                            <p>Snap<i>!</i> (<a href ="http://snap.berkeley.edu/" target="_blank">formerly BYOB</a>) is an extended reimplementation of Scratch that allows you to <a href="http://snap.berkeley.edu/" target="_blank">Build Your Own Blocks</a>&trade;. It also features first class heterogeneous lists, first class procedures, and continuations.
-                            These added capabilities make it suitable for a serious introduction to computer science for high school or college students. <br>
-                            <br> <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> is presented by the University of California at Berkeley. It was developed by Jens Mönig, with design input and documentation by Brian Harvey and contributions by students at Berkeley and elsewhere.
+                            <p><a href ="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> is a broadly inviting programming language for kids and adults that's also a platform for serious study of computer science. It is inspired by <a href="https://scratch.mit.edu/" target="_blank">Scratch</a>, written by Jens Mönig and Brian Harvey and presented by the <a href="https://www.berkeley.edu/" target="_blank">University of California at Berkeley.</a>
                             </p>
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-12">
                         <div class="block" id="video-intro">
                             <br />
-                            <div class="youtube" data-embed="I-nQtc9vYWs"><div class="play-button"></div></div>
+                            <div class="youtube" data-embed="c-AADJ37x0A"><div class="play-button"></div></div>
                         </div>
                     </div>
                 </div>
@@ -151,17 +147,13 @@
                     </div>
                     <div class="col-md-8">
                         <ul>
-                            <li>Blocks-based, dynamic, live, concurrent, parallel programming</li>
-                            <li>Almost all <a href="http://www.arduino.cc" target="_blank">Arduino</a> boards supported</li>
-                            <li>Uses standard <a href="http://firmata.org" target="_blank">Firmata</a> firmware</li>
-                            <li>Auto-configurable pinouts and high level hardware abstractions</li>
+                            <li>A full <a href ="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> implementation: blocks-based, dynamic, live, concurrent, parallel programming...</li>
+                            <li>Connecting to any <a href="#devices">Firmata compatible board</a>: UNO, Nano, Mega, Leonardo, MIcro, Due, 101, ESP8266, NodeMCU...</li>
+                            <li><a href="https://snap4arduino.rocks/run/">Web version</a> for Chromebooks and Chromium/Chrome/Edge browsers (<a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle">Snap4Arduino connector</a> required)</li>
+                            <li>Desktop edition for Windows, GNU/Linux and MacOSX with extra <a href="#http">Http server</a> features</li>
                             <li>You can interact with multiple boards at the same time</li>
-                            <li>Desktop-based versions for the three major OSes</li>
-                            <li><a href="http://snap4arduino.rocks/run/">Online</a> version that can connect to Arduino boards via a Chrome/Chromium <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle">plugin</a></li>
+                            <li>Transpiling simple scripts into Arduino sketches</li>
                             <li>Free software licensed under the Affero GPLv3</li>
-                            <li>Transpilation of simple scripts into Arduino sketches</li>
-                            <li>HTTP protocol for remote control and live-streaming of the <a href="http://snap.berkeley.edu/" target="_blank">Snap<i>!</i></a> stage</li>
-                            <li>Command line version for embedded GNU/Linuxes</li>
                         </ul>
                     </div>
                 </div>
@@ -209,13 +201,13 @@
                         <div class="block">
                             <h6>Desktop version</h6>
                             <p>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-win-installer-64_7.0.4.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows installer (64 bits)</a><br>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-win-standalone-64_7.0.4.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows portable (64 bits)</a><br>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-gnu-64_7.0.4.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (64 bits)</a></p>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-osx-64_7.0.4.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MacOSX (64 bits)</a><br>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-win-installer-32_7.0.4.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows installer (32 bits)</a><br>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-win-standalone-32_7.0.4.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows portable (32 bits)</a><br>
-                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_desktop-gnu-32_7.0.4.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (32 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-win-installer-64_8.1.0.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows installer (64 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-win-standalone-64_8.1.0.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows portable (64 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-gnu-64_8.1.0.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (64 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-osx-64_8.1.0.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MacOSX (64 bits)</a><br><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-win-installer-32_8.1.0.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows installer (32 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-win-standalone-32_8.1.0.zip" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> MS Windows portable (32 bits)</a><br>
+                            <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/8.1.0/Snap4Arduino_desktop-gnu-32_8.1.0.tar.gz" class="btn btn-gray btn-sm btn-icon " onClick="" target="_self"><i class="fa fa-arrow-down"></i> GNU/Linux (32 bits)</a></p>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -226,7 +218,7 @@
                             <a href="https://chrome.google.com/webstore/detail/snap4arduino-connector/fhmkennllhhclkcjcdaegceilcefedle" class="btn btn-gray btn-sm btn-icon page-scroll" onClick="" target="_blank"><i class="fa fa-link"></i> Plugin for Chromebooks (chrome web store)</a><br>
                             <a href="https://github.com/bromagosa/Snap4Arduino/releases/download/7.0.4/Snap4Arduino_web_connector_crx_7.0.zip" class="btn btn-gray btn-sm btn-icon page-scroll" onClick="" target="_self"><i class="fa fa-arrow-down"></i> Chrome/Chromium/Edge plugin (download extension)</a>
                             </p>
-                            <p>Current version is 7.0.4 (released on 08/01/2022)</p>
+                            <p>Current version is 8.1.0 (released on 08/01/2023)</p>
                             <p><small>You can also find <a href="https://github.com/bromagosa/snap4arduino/releases">older releases</a> and <a href="https://github.com/bromagosa/Snap4Arduino/wiki/Old-versions" target="blank"> unmaintained versions</a></small></p>
                         </div>
                     </div><!-- .col-md-5 close --><!-- .col-md-5 close -->

@@ -8,7 +8,7 @@
     written by Jens Mönig
     jens@moenig.org
 
-    Copyright (C) 2010-2021 by Jens Mönig
+    Copyright (C) 2010-2022 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -317,7 +317,6 @@
                 var	world1, world2;
 
                 window.onload = function () {
-                    disableRetinaSupport();
                     world1 = new WorldMorph(
                         document.getElementById('world1'), false);
                     world2 = new WorldMorph(
@@ -326,7 +325,7 @@
                 };
 
                 function loop() {
-            requestAnimationFrame(loop);
+                    requestAnimationFrame(loop);
                     world1.doOneCycle();
                     world2.doOneCycle();
                 }
@@ -642,7 +641,7 @@
 
     Drops of image elements from outside the world canvas are dispatched as
 
-        droppedImage(aCanvas, name)
+        droppedImage(aCanvas, name, embeddedData)
         droppedSVG(anImage, name)
 
     events to interested Morphs at the mouse pointer. If you want your Morph
@@ -663,8 +662,22 @@
     droppedImage() event with a canvas containing a rasterized version of the
     SVG.
 
-    The same applies to drops of audio or text files from outside the world
-    canvas.
+    Note that PNG images provide for embedded text comments, which can be used
+    to include code or arbitrary data such as a CSV, JSON or XML file inside
+    the image. Such a payload has to be identified by an agreed-upon marker.
+    The default tag is stored in MorphicPreferences and can be overriden by
+    apps wishing to make use of this feature. If such an embedded text-payload
+    is found inside a PNG it is passed as the optional third "embeddedData"
+    parameter to the "droppedImage()" event. embedded text only applies to PNGs.
+    You can embed a string into the PNG metadata of a PNG by  calling
+
+        embedMetadataPNG(aCanvas, aString)
+
+    with a raster image represented by a canvas and a string that is to be
+    embedded into the PNG's metadata.
+
+    The same event mechanism applies to drops of audio or text files from
+    outside the world canvas.
 
     Those are dispatched as
 
@@ -1276,6 +1289,8 @@
     Jason N (@cyderize) contributed native copy & paste for text editing.
     Bartosz Leper contributed retina display support.
     Zhenlei Jia and Dariusz Dorożalski pioneered IME text editing.
+    Dariusz Dorożalski and Jesus Villalobos contributed embedding blocks
+    into image metadata.
     Bernat Romagosa contributed to text editing and to the core design.
     Michael Ball found and fixed a longstanding scrolling bug.
     Brian Harvey contributed to the design and implementation of submenus.
@@ -1289,11 +1304,12 @@
 
 /*global window, HTMLCanvasElement, FileReader, Audio, FileList, Map*/
 
-/*jshint esversion: 6*/
+/*jshint esversion: 11, bitwise: false*/
 
-var morphicVersion = '2021-December-10';
+var morphicVersion = '2022-November-22';
 var modules = {}; // keep track of additional loaded modules
 var useBlurredShadows = true;
+var keepCanvasInCPU = false;
 
 const ZERO = new Point();
 const BLACK = new Color();
@@ -1303,6 +1319,7 @@ const CLEAR = new Color(0, 0, 0, 0);
 Object.freeze(ZERO);
 Object.freeze(BLACK);
 Object.freeze(WHITE);
+Object.freeze(CLEAR);
 
 var standardSettings = {
     minimumFontHeight: getMinimumFontHeight(), // browser settings
@@ -1318,6 +1335,7 @@ var standardSettings = {
     mouseScrollAmount: 40,
     useSliderForInput: false,
     isTouchDevice: false, // turned on by touch events, don't set
+    pngPayloadMarker: 'Data\tPayload\tEmbedded',
     rasterizeSVGs: false,
     isFlat: false,
     grabThreshold: 5,
@@ -1338,6 +1356,7 @@ var touchScreenSettings = {
     mouseScrollAmount: 40,
     useSliderForInput: false,
     isTouchDevice: true,
+    pngPayloadMarker: 'Data\tPayload\tEmbedded',
     rasterizeSVGs: false,
     isFlat: false,
     grabThreshold: 5,
@@ -1476,6 +1495,9 @@ function newCanvas(extentPoint, nonRetina, recycleMe) {
         canvas = document.createElement('canvas');
         canvas.width = ext.x;
         canvas.height = ext.y;
+        canvas.getContext("2d", {
+            willReadFrequently: keepCanvasInCPU
+        });
     }
     if (nonRetina && canvas.isRetinaEnabled) {
         canvas.isRetinaEnabled = false;
@@ -1509,7 +1531,9 @@ function getMinimumFontHeight() {
         y;
     canvas.width = size;
     canvas.height = size;
-    ctx = canvas.getContext('2d');
+    ctx = canvas.getContext('2d', {
+        willReadFrequently: keepCanvasInCPU
+    });
     ctx.font = '1px serif';
     maxX = ctx.measureText(str).width;
     ctx.fillStyle = 'black';
@@ -1568,6 +1592,41 @@ function copy(target) {
     }
     return c;
 }
+
+function embedMetadataPNG(aCanvas, aString) {
+    var embedTag = MorphicPreferences.pngPayloadMarker,
+        crc32 = (str, crc) => {
+            let table = [...Array(256).keys()].map(it =>
+                [...Array(8)].reduce((cc) =>
+                (cc & 1) ? (0xedb88320 ^ (cc >>> 1)) : (cc >>> 1), it)
+                );
+            crc = [...str].reduce(
+                (crc, ch) => (crc >>> 8) ^ table[(crc ^ ch.charCodeAt(0)) & 0xff],
+                (crc ? crc = 0 : crc) ^ (-1) // (crc ||= 0) ^ (-1)
+            );
+            return ( crc ^ (-1) ) >>> 0;
+        },
+        arr2Str = (arr) =>
+            arr.reduce((res, byte) => res + String.fromCharCode(byte), ''),
+        int2BStr = (val) =>
+            arr2Str(Array.from(new Uint8Array(new Uint32Array( [val] ).buffer)).reverse()),
+        buildChunk = (data) => {
+            let res = "iTXt" + data;
+            return int2BStr(data.length) + res + int2BStr(crc32(res));
+        },
+        parts = aCanvas.toDataURL("image/png").split(","),
+        bPart = atob(parts[1]).split(""),
+        newChunk = buildChunk(
+            "Snap!_SRC\0\0\0\0\0" +
+            embedTag +
+            encodeURIComponent(aString) +
+            embedTag
+        );
+    bPart.splice(-12, 0, ...newChunk);
+    parts[1] = btoa(bPart.join(""));
+    return parts.join(',');
+}
+
 
 // Retina Display Support //////////////////////////////////////////////
 
@@ -1635,7 +1694,9 @@ function enableRetinaSupport() {
 
     // Get the window's pixel ratio for canvas elements.
     // See: http://www.html5rocks.com/en/tutorials/canvas/hidpi/
-    var ctx = document.createElement("canvas").getContext("2d"),
+    var ctx = document.createElement("canvas").getContext("2d", {
+            willReadFrequently: keepCanvasInCPU
+        }),
         backingStorePixelRatio = ctx.webkitBackingStorePixelRatio ||
             ctx.mozBackingStorePixelRatio ||
             ctx.msBackingStorePixelRatio ||
@@ -1721,7 +1782,7 @@ function enableRetinaSupport() {
                 this.height = prevHeight;
             }
         },
-        configurable: true // [Jens]: allow to be deleted an reconfigured
+        configurable: true // [Jens]: allow to be deleted and reconfigured
     });
 
     Object.defineProperty(canvasProto, 'width', {
@@ -1734,12 +1795,14 @@ function enableRetinaSupport() {
                 var pixelRatio = getPixelRatio(this),
                     context;
                 uber.width.set.call(this, width * pixelRatio);
-                context = this.getContext('2d');
+                context = this.getContext('2d', {
+                    willReadFrequently: keepCanvasInCPU
+                });
                 /*
                 context.restore();
                 context.save();
                 */
-                context.scale(pixelRatio, pixelRatio);
+                context?.scale(pixelRatio, pixelRatio);
             } catch (err) {
                 console.log('Retina Display Support Problem', err);
                 uber.width.set.call(this, width);
@@ -1755,12 +1818,14 @@ function enableRetinaSupport() {
             var pixelRatio = getPixelRatio(this),
                 context;
             uber.height.set.call(this, height * pixelRatio);
-            context = this.getContext('2d');
+            context = this.getContext('2d', {
+                willReadFrequently: keepCanvasInCPU
+            });
             /*
             context.restore();
             context.save();
             */
-            context.scale(pixelRatio, pixelRatio);
+            context?.scale(pixelRatio, pixelRatio);
         }
     });
 
@@ -1859,7 +1924,9 @@ function enableRetinaSupport() {
 }
 
 function isRetinaSupported () {
-    var ctx = document.createElement("canvas").getContext("2d"),
+    var ctx = document.createElement("canvas").getContext("2d", {
+            willReadFrequently: keepCanvasInCPU
+        }),
         backingStorePixelRatio = ctx.webkitBackingStorePixelRatio ||
             ctx.mozBackingStorePixelRatio ||
             ctx.msBackingStorePixelRatio ||
@@ -3096,6 +3163,27 @@ Node.prototype.parentThatIsA = function () {
 Node.prototype.parentThatIsAnyOf = function (constructors) {
     // deprecated, use parentThatIsA instead
     return this.parentThatIsA.apply(this, constructors);
+};
+
+Node.prototype.childThatIsA = function () {
+    // including myself
+    // Note: you can pass in multiple constructors to test for
+    var i, hit;
+    for (i = 0; i < arguments.length; i += 1) {
+        if (this instanceof arguments[i]) {
+            return this;
+        }
+    }
+    if (!this.children.length) {
+        return null;
+    }
+    for (i = 0; i < this.children.length; i += 1) {
+        hit = this.childThatIsA.apply(this.children[i], arguments);
+        if (hit) {
+            return hit;
+        }
+    }
+    return null;
 };
 
 // Morphs //////////////////////////////////////////////////////////////
@@ -4435,7 +4523,28 @@ Morph.prototype.developersMenu = function () {
     );
     menu.addItem(
         "pic...",
-        () => window.open(this.fullImage().toDataURL()),
+        () => {
+            var imgURL = this.fullImage().toDataURL(),
+                doc, body, tag, str;
+            try {
+                doc = window.open('', '_blank', 'popup').document;
+                body = doc.getElementsByTagName('body')[0];
+                str = '' + this;
+                doc.title = str;
+                tag = doc.createElement('h1');
+                tag.textContent = str;
+                body.appendChild(tag);
+                tag = doc.createElement('img');
+                tag.alt = str;
+                tag.src = imgURL;
+                body.appendChild(tag);
+            } catch (error) {
+                console.warn(
+                    'failed to popup pic, morph:%O, error:%O, image URL:%O',
+                    this, error, [imgURL]
+                );
+            }
+        },
         'open a new window\nwith a picture of this morph'
     );
     menu.addLine();
@@ -9268,7 +9377,25 @@ TextMorph.prototype.parse = function () {
                         this.maxLineWidth,
                         context.measureText(oldline).width
                     );
-                    oldline = word + ' ';
+                    w = context.measureText(word).width;
+                    if (w > this.maxWidth) {
+                        oldline = '';
+                        word.split('').forEach((letter, idx) => {
+                            w = context.measureText(oldline + letter).width;
+                            if (w > this.maxWidth && oldline.length) {
+                                this.lines.push(oldline);
+                                this.lineSlots.push(slot + idx);
+                                this.maxLineWidth = Math.max(
+                                    this.maxLineWidth,
+                                    context.measureText(oldline).width
+                                );
+                                oldline = '';
+                            }
+                            oldline += letter;
+                        });
+                    } else {
+                        oldline = word + ' ';
+                    }
                 } else {
                     oldline = newline;
                 }
@@ -11142,6 +11269,7 @@ HandMorph.prototype.init = function (aWorld) {
     this.temporaries = [];
     this.touchHoldTimeout = null;
     this.contextMenuEnabled = false;
+    this.touchStartPosition = null;
 
     // properties for caching dragged objects:
     this.cachedFullImage = null;
@@ -11246,7 +11374,11 @@ HandMorph.prototype.dropTargetFor = function (aMorph) {
 };
 
 HandMorph.prototype.grab = function (aMorph) {
-    var oldParent = aMorph.parent;
+    var oldParent;
+    if (!aMorph) {
+        return null;
+    }
+    oldParent = aMorph.parent;
     if (aMorph instanceof WorldMorph) {
         return null;
     }
@@ -11384,6 +11516,10 @@ HandMorph.prototype.processTouchStart = function (event) {
     MorphicPreferences.isTouchDevice = true;
     clearInterval(this.touchHoldTimeout);
     if (event.touches.length === 1) {
+        this.touchStartPosition = new Point(
+            event.touches[0].pageX,
+            event.touches[0].pageY
+        );
         this.touchHoldTimeout = setInterval( // simulate mouseRightClick
             () => {
                 this.processMouseDown({button: 2});
@@ -11400,7 +11536,12 @@ HandMorph.prototype.processTouchStart = function (event) {
 };
 
 HandMorph.prototype.processTouchMove = function (event) {
+    var pos = new Point(event.touches[0].pageX, event.touches[0].pageY);
     MorphicPreferences.isTouchDevice = true;
+    if (this.touchStartPosition.distanceTo(pos) <
+            MorphicPreferences.grabThreshold) {
+        return;
+    }
     if (event.touches.length === 1) {
         var touch = event.touches[0];
         this.processMouseMove(touch);
@@ -11618,7 +11759,7 @@ HandMorph.prototype.processDrop = function (event) {
     onto the world canvas, turn it into an offscreen canvas or audio
     element and dispatch the
 
-        droppedImage(canvas, name)
+        droppedImage(canvas, name, embeddedData)
         droppedSVG(image, name)
         droppedAudio(audio, name)
         droppedText(text, name, type)
@@ -11667,16 +11808,38 @@ HandMorph.prototype.processDrop = function (event) {
     function readImage(aFile) {
         var pic = new Image(),
             frd = new FileReader(),
-            trg = target;
+            trg = target,
+            embedTag = MorphicPreferences.pngPayloadMarker;
+
         while (!trg.droppedImage) {
             trg = trg.parent;
         }
+                
         pic.onload = () => {
-            canvas = newCanvas(new Point(pic.width, pic.height), true);
-            canvas.getContext('2d').drawImage(pic, 0, 0);
-            trg.droppedImage(canvas, aFile.name);
-            bulkDrop();
+            (async () => {
+                // extract embedded data (e.g. blocks)
+                // from the image's metadata if present
+                var buff = new Uint8Array(await aFile?.arrayBuffer()),
+                    strBuff = buff.reduce((acc, b) =>
+                        acc + String.fromCharCode(b), ""),
+                    embedded;
+
+                if (strBuff.includes(embedTag)) {
+                    try {
+                        embedded = decodeURIComponent(
+                            (strBuff)?.split(embedTag)[1]
+                        );
+                    } catch (err) {
+                        console.log(err);
+                    }
+                }
+                canvas = newCanvas(new Point(pic.width, pic.height), true);
+                canvas.getContext('2d').drawImage(pic, 0, 0);
+                trg.droppedImage(canvas, aFile.name, embedded);
+                bulkDrop();
+            })();
         };
+
         frd = new FileReader();
         frd.onloadend = (e) => pic.src = e.target.result;
         frd.readAsDataURL(aFile);
@@ -11907,6 +12070,9 @@ WorldMorph.prototype.init = function (aCanvas, fillPage) {
     this.isDraggable = false;
     this.currentKey = null; // currently pressed key code
     this.worldCanvas = aCanvas;
+    this.worldCanvas.getContext("2d", {
+        willReadFrequently: keepCanvasInCPU
+    });
 
     // additional properties:
     this.stamp = Date.now(); // reference in multi-world setups
@@ -11927,6 +12093,10 @@ WorldMorph.prototype.init = function (aCanvas, fillPage) {
     this.lastEditedText = null;
     this.activeMenu = null;
     this.activeHandle = null;
+
+    if (!fillPage && aCanvas.isRetinaEnabled) {
+        this.initRetina();
+    }
 
     this.initKeyboardHandler();
     this.resetKeyboardHandler();
@@ -12056,6 +12226,17 @@ WorldMorph.prototype.fillPage = function () {
     });
 };
 
+WorldMorph.prototype.initRetina = function () {
+    var canvasHeight = this.worldCanvas.getBoundingClientRect().height,
+        canvasWidth = this.worldCanvas.getBoundingClientRect().width;
+    this.worldCanvas.style.width = canvasWidth + 'px';
+    this.worldCanvas.width = canvasWidth;
+    this.setWidth(canvasWidth);
+    this.worldCanvas.style.height = canvasHeight + 'px';
+    this.worldCanvas.height = canvasHeight;
+    this.setHeight(canvasHeight);
+};
+
 // WorldMorph global pixel access:
 
 WorldMorph.prototype.getGlobalPixelColor = function (point) {
@@ -12088,6 +12269,8 @@ WorldMorph.prototype.initKeyboardHandler = function () {
     kbd.world = this;
     kbd.style.zIndex = -1;
     kbd.autofocus = true;
+    kbd.style.width = '0px'
+    kbd.style.height = '0px';
     document.body.appendChild(kbd);
     this.keyboardHandler = kbd;
 
@@ -12280,6 +12463,7 @@ WorldMorph.prototype.initEventListeners = function () {
     window.addEventListener(
         "drop",
         event => {
+            this.hand.processMouseMove(event);
             this.hand.processDrop(event);
             event.preventDefault();
         },

@@ -222,6 +222,12 @@ s4aTempDict = {
         'vermell',
     'blue':
         'blau',
+    'Upload firmware on UNO boards':
+        'Actualitza el firmware de plaques UNO',
+    'More supported devices':
+        'Altres dispositus compatibles',
+    'Snap4Arduino connector required':
+        'Connector d\'Snap4Arduino requerit',
 //Llibreries
     'Libraries below this point are specific to Snap4Arduino.':
         'Les llibreries de sota són específiques per Snap4Arduino.',

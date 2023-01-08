@@ -6,7 +6,7 @@
 
     written by Jens Mönig
 
-    Copyright (C) 2022 by Jens Mönig
+    Copyright (C) 2023 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -50,7 +50,7 @@
 
 // Global stuff
 
-modules.locale = '2022-January-07';
+modules.locale = '2023-January-05';
 
 var Localizer;
 var SnapTranslator = new Localizer();
@@ -119,6 +119,8 @@ Localizer.prototype.unload = function () {
 
 Localizer.prototype.contextualize = function (string) {
     switch (string) {
+    case 'Error':
+        return 'Hmm...';
     case 'brightness':
         return SpriteMorph.prototype.penColorModel === 'hsl' ?
             'lightness' : string;
@@ -185,7 +187,7 @@ SnapTranslator.dict.de = {
     'translator_e-mail':
         'jens@moenig.org, jadga.huegle@sap.com',
     'last_changed':
-        '2021-12-10'
+        '2022-12-23'
 };
 
 SnapTranslator.dict.it = {
@@ -262,7 +264,7 @@ SnapTranslator.dict.zh_CN = {
     'translator_e-mail':
         'ubertao@qq.com/djh@rhjxx.cn/simon@snapontop.org',
     'last_changed':
-        '2021-07-12'
+        '2022-01-17'
 };
 
 SnapTranslator.dict.eo = {
@@ -328,7 +330,7 @@ SnapTranslator.dict.nl = {
     'translator_e-mail':
         'joek@xota.nl, sjoerddirk@fromScratchEd.nl, frank.sierens@telenet.be, jg.2019@xs4all.nl',
     'last_changed':
-        '2020-12-15'
+        '2022-12-01'
 };
 
 SnapTranslator.dict.pl = {
@@ -383,18 +385,18 @@ SnapTranslator.dict.el = {
     'translator_e-mail':
         'ino.samaras@berkeley.edu, aprekates@sch.gr',
     'last_changed':
-        '2020-11-23'
+        '2022-07-30'
 };
 
 SnapTranslator.dict.ca = {
     'language_name':
         'Català',
     'language_translator':
-        'Bernat Romagosa Carrasquer, Joan Guillén i Pelegay',
+        'Joan Guillén i Pelegay, Bernat Romagosa Carrasquer',
     'translator_e-mail':
-        'bernat@snap4arduino.rocks, jguille2@xtec.cat',
+        'jguille2@xtec.cat, bernat@snap4arduino.rocks',
     'last_changed':
-        '2022-01-05'
+        '2022-12-26'
 };
 
 SnapTranslator.dict.ca_VA = {
@@ -511,11 +513,11 @@ SnapTranslator.dict.hu = {
     'language_name':
         'Magyar',
     'language_translator':
-        'Makány György',
+        'Makány György, Faragó Attila',
     'translator_e-mail':
-        'makany.gyorgy@gmail.com',
+        'makany.gyorgy@gmail.com, attila.farago@sap.com',
     'last_changed':
-        '2015-07-27'
+        '2022-01-25'
 };
 
 SnapTranslator.dict.ia = {

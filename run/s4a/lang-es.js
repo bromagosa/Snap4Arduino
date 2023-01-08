@@ -209,7 +209,12 @@ s4aTempDict = {
 
     'check to allow the stage\nto be viewed\nfrom the HTTP server':
         'marcar para permitir que el escenario\nse visualice desde el servidor HTTP',
-
+    'Upload firmware on UNO boards':
+        'Actualitzar el firmware de placas UNO',
+    'More supported devices':
+        'Otros dispositivos compatibles',
+    'Snap4Arduino connector required':
+        'Conector de Snap4Arduino requerido',
 //Libraries
     'Libraries below this point are specific to Snap4Arduino.':
         'Las siguientes bibliotecas son específicas de Snap4Arduino.',

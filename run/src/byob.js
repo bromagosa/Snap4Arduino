@@ -104,13 +104,14 @@ nop, radians, BoxMorph, ArrowMorph, PushButtonMorph, contains, InputSlotMorph,
 ToggleButtonMorph, IDE_Morph, MenuMorph, ToggleElementMorph, fontHeight, isNil,
 StageMorph, SyntaxElementMorph, CommentMorph, localize, CSlotMorph, Variable,
 MorphicPreferences, SymbolMorph, CursorMorph, VariableFrame, BooleanSlotMorph,
-WatcherMorph, XML_Serializer, SnapTranslator, SnapExtensions*/
+WatcherMorph, XML_Serializer, SnapTranslator, SnapExtensions, MultiArgMorph,
+ArgLabelMorph, embedMetadataPNG*/
 
 /*jshint esversion: 6*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.byob = '2022-January-07';
+modules.byob = '2022-December-01';
 
 // Declarations
 
@@ -149,9 +150,9 @@ function CustomBlockDefinition(spec, receiver) {
     this.variableNames = [];
     this.comment = null;
     this.isHelper = false;
-    this.codeMapping = null; // experimental, generate text code
-    this.codeHeader = null; // experimental, generate text code
-    this.translations = {}; // experimental, format: {lang : spec}
+    this.codeMapping = null; // generate text code
+    this.codeHeader = null; // generate text code
+    this.translations = {}; // format: {lang : spec}
 
     // don't serialize (not needed for functionality):
     this.receiver = receiver || null; // for serialization only (pointer)
@@ -373,6 +374,56 @@ CustomBlockDefinition.prototype.parseChoices = function (string) {
     return dict;
 };
 
+CustomBlockDefinition.prototype.encodeChoices = function (list) {
+    // answer a string representing a parseable dropdown menu for an input slot
+    var encode = (dta) => dta instanceof List ?
+            encodeList(dta) : dta.toString(),
+        encodeList = (dta) => dta.length() === 2 ? encodePair(dta)
+            : dta.itemsArray().reduce(
+                (a, b) => encode(a) + '\n' + encode(b)),
+        encodePair = (dta) => encode(dta.at(1)) + '=' +
+            (dta.at(2) instanceof List ?
+                encodeSub(dta.at(2))
+                : encode(dta.at(2))),
+        encodeSub = (dta) => '{\n' + encode(dta) + '\n}';
+
+    if (list.isEmpty()) {
+        return '';
+    }
+    return list.itemsArray().reduce((a, b) => encode(a) + '\n' + encode(b));
+};
+
+CustomBlockDefinition.prototype.decodeChoices = function (choices) {
+    // answer a (nested) List representing the input slot dropdown menu
+    var list = new List(),
+        key;
+    for (key in choices) {
+        if (Object.prototype.hasOwnProperty.call(choices, key)) {
+            if (key[0] === '~') {
+                list.add(key[0]);
+            } else if (choices[key] instanceof Object &&
+                    !(choices[key] instanceof Array) &&
+                    (typeof choices[key] !== 'function')) {
+                list.add(new List([key, this.decodeChoices(choices[key])]));
+            } else if (choices[key] instanceof Array &&
+                    isString(choices[key][0])) {
+                list.add(choices[key][0] === key ? key
+                    : new List([key, choices[key][0]])
+                );
+            } else if (choices[key] instanceof Array &&
+                    choices[key][0] instanceof Object &&
+                    typeof choices[key][0] !== 'function') {
+                list.add(new List([key, this.decodeChoices(choices[key][0])]));
+            } else {
+                list.add(choices[key] === key ? key
+                    : new List([key, choices[key]])
+                );
+            }
+        }
+    }
+    return list;
+};
+
 CustomBlockDefinition.prototype.menuSearchWords = function () {
     // return a single string containing words that can be searched for
     // inside my dropdown menus
@@ -462,7 +513,7 @@ CustomBlockDefinition.prototype.isDirectlyRecursive = function () {
     return this.cachedIsRecursive;
 };
 
-// CustomBlockDefinition localizing, highly experimental
+// CustomBlockDefinition localizing
 
 CustomBlockDefinition.prototype.localizedSpec = function () {
 	if (this.cachedTranslation) {return this.cachedTranslation; }
@@ -527,6 +578,134 @@ CustomBlockDefinition.prototype.updateTranslations = function (text) {
      		this.translations[key] = val;
      	}
     });
+};
+
+// CustomBlockDefinition API
+
+CustomBlockDefinition.prototype.setBlockLabel = function (abstractSpec) {
+    // private - only to be called from a Process that also does housekeeping
+    // abstract block specs replace the inputs with underscores,
+    // e.g. "move _ steps", "say _", "_ + _"
+    var parts = abstractSpec.split(' ').filter(each => each.length && each !== ' '),
+        count = parts.filter(each => each === '_').length,
+        inputNames = this.inputNames(),
+        spec = '',
+        idx = 0;
+
+    if (count !== inputNames.length) {
+        throw new Error('expecting the number of inputs to match');
+    }
+    parts.forEach(part => {
+        if (part === '_') {
+            spec += inputNames[idx] ? '%\'' + inputNames[idx] + '\' ' : '';
+            idx += 1;
+        } else {
+            spec += (part + ' ');
+        }
+    });
+    this.spec = spec.trim();
+};
+
+CustomBlockDefinition.prototype.setBlockDefinition = function (aContext) {
+    // private - only to be called from a Process that also does housekeeping
+    var oldInputs = this.inputNames(),
+        newInputs = aContext.inputs,
+        declarations = this.declarations,
+        parts = [],
+        body = aContext,
+        idx = 0,
+        reportBlock,
+        spec;
+
+    // remove excess inputs or add missing ones
+    this.addInputs(newInputs.length - oldInputs.length);
+    spec = this.abstractBlockSpec();
+    oldInputs = this.inputNames();
+
+    // change the input names in the spec to those of the given context
+    parts = spec.split(' ').filter(each => each.length && each !== ' ');
+    spec = '';
+    parts.forEach(part => {
+        if (part === '_') {
+            spec += newInputs[idx] ? '%\'' + newInputs[idx] + '\' ' : '';
+            idx += 1;
+        } else {
+            spec += (part + ' ');
+        }
+    });
+    this.spec = spec.trim();
+
+    // change the input names in the slot declarations to those of the context
+    // copy declarations
+    this.declarations = new Map();
+    for (var [key, val] of declarations) {
+        this.declarations.set(newInputs[oldInputs.indexOf(key)], val);
+    }
+
+    // replace the definition body with the given context
+    if (body.expression instanceof Array) {
+        this.body = null;
+        return;
+    } else if (body.expression instanceof ReporterBlockMorph) {
+        // turn reporter epressions into a command stack with "report"
+        body = copy(aContext);
+        reportBlock = SpriteMorph.prototype.blockForSelector('doReport');
+        reportBlock.replaceInput(
+            reportBlock.inputs()[0],
+            body.expression.fullCopy()
+        );
+        body.expression = reportBlock;
+    }
+    this.body = body;
+};
+
+CustomBlockDefinition.prototype.addInputs = function (count) {
+    // private - only to be called from a Process that also does housekeeping
+    var inputNames, i;
+
+    if (count === 0) {
+        return;
+    } else if (count < 0) {
+        return this.removeInputs(-count);
+    }
+
+    inputNames = this.inputNames();
+
+    // create gensyms
+    for (i = 0; i < count; i += 1) {
+        inputNames.push(this.gensym(inputNames));
+    }
+
+    // add gensyms to the spec
+    this.spec = this.parseSpec(this.spec).concat(
+        inputNames.slice(-count).map(str => '%' + str)
+    ).join(' ').trim();
+
+    // add slot declarations for the gensyms
+    inputNames.slice(-count).forEach(name =>
+        this.declarations.set(name, ['%s'])
+    );
+};
+
+CustomBlockDefinition.prototype.removeInputs = function (count) {
+    // private - only to be called from a Process that also does housekeeping
+    var surplus = this.inputNames().slice(-count);
+
+    // remove the surplus input names from the spec
+    this.spec = this.parseSpec(this.spec).filter(str =>
+        !(str.length > 1 && (str[0]) === '%' && surplus.includes(str.slice(1)))
+    ).join(' ').trim();
+
+    // remove the surplus input names from the slot declarations
+    surplus.forEach(name => this.declarations.delete(name));
+};
+
+CustomBlockDefinition.prototype.gensym = function (existing) {
+    var count = 1;
+    while (contains(existing, '#' + count)) {
+        count += 1;
+    }
+    return '#' + count;
 };
 
 // CustomBlockDefinition picturing
@@ -594,25 +773,31 @@ CustomBlockDefinition.prototype.purgeCorpses = function () {
 // CustomBlockDefinition dependencies
 
 CustomBlockDefinition.prototype.collectDependencies = function (
-    excluding = [],
-    result = []
+    excluding,
+    result,
+    localReceiver // optional when exporting sprite-local blocks
 ) {
-    if (!this.isGlobal) {
-        throw new Error('collecting dependencies is only supported\n' +
-            'for global custom blocks');
+    if (!this.isGlobal && !localReceiver) {
+        throw new Error('cannot collect dependencies for local\n' +
+            'custom blocks of an unspecified sprite');
     }
     excluding.push(this);
     this.scripts.concat(
         this.body ? [this.body.expression] : []
     ).forEach(script => {
         script.forAllChildren(morph => {
-            if (morph.isCustomBlock &&
-                morph.isGlobal &&
-                !contains(excluding, morph.definition) &&
-                !contains(result, morph.definition)
-            ) {
-                result.push(morph.definition);
-                morph.definition.collectDependencies(excluding, result);
+            var def;
+            if (morph.isCustomBlock) {
+                def = morph.isGlobal ? morph.definition
+                    : localReceiver.getMethod(morph.blockSpec);
+                if (!contains(excluding, def) && !contains(result, def)) {
+                    result.push(def);
+                    def.collectDependencies(
+                        excluding,
+                        result,
+                        localReceiver
+                    );
+                }
             }
         });
     });
@@ -747,34 +932,60 @@ CustomCommandBlockMorph.prototype.refresh = function (aDefinition) {
 
 CustomCommandBlockMorph.prototype.restoreInputs = function (oldInputs) {
     // try to restore my previous inputs when my spec has been changed
-    var i = 0,
-        old;
+    var newInputs = this.inputs(),
+        len = Math.max(oldInputs.length, newInputs.length),
+        scripts = this.parentThatIsA(ScriptsMorph),
+        old,
+        inp,
+        i;
+
+    function preserve(item) {
+        // keep unused blocks around in the scripting area
+        if (item instanceof MultiArgMorph) {
+            return item.inputs().forEach(slot => preserve(slot));
+        }
+        if (item instanceof BlockMorph && scripts) {
+            scripts.add(item);
+            item.moveBy(new Point(20, 20));
+            item.fixBlockColor();
+        }
+    }
+
     if (this.isPrototype) {return; }
     this.cachedInputs = null;
-    this.inputs().forEach(inp => {
+    for (i = 0; i < len; i += 1) {
+        inp = newInputs[i];
         old = oldInputs[i];
-        if (old instanceof ReporterBlockMorph &&
+        if (old instanceof ArgLabelMorph) {
+            old = old.argMorph();
+        }
+        if (old instanceof ReporterBlockMorph && inp &&
                 (!(inp instanceof TemplateSlotMorph))) {
             this.replaceInput(inp, old.fullCopy());
-        } else if (old instanceof InputSlotMorph
-                && inp instanceof InputSlotMorph) {
+        } else if (old instanceof InputSlotMorph &&
+                inp instanceof InputSlotMorph) {
             if (old.isEmptySlot()) {
                 inp.setContents('');
             } else {
                 inp.setContents(old.evaluate());
             }
-        } else if (old instanceof BooleanSlotMorph
-                && inp instanceof BooleanSlotMorph) {
+        } else if (old instanceof BooleanSlotMorph &&
+                inp instanceof BooleanSlotMorph) {
             inp.setContents(old.evaluate());
-        } else if (old instanceof TemplateSlotMorph
-                && inp instanceof TemplateSlotMorph) {
+        } else if (old instanceof TemplateSlotMorph &&
+                inp instanceof TemplateSlotMorph) {
             inp.setContents(old.evaluate());
-        } else if (old instanceof CSlotMorph
-                && inp instanceof CSlotMorph) {
+        } else if (old instanceof CSlotMorph &&
+                inp instanceof CSlotMorph) {
             inp.nestedBlock(old.evaluate());
+        } else if (old instanceof MultiArgMorph &&
+                inp instanceof MultiArgMorph &&
+                (old.slotSpec === inp.slotSpec)) {
+            this.replaceInput(inp, old.fullCopy());
+        } else {
+            preserve(old);
         }
-        i += 1;
-    });
+    }
     this.cachedInputs = null;
 };
 
@@ -1143,21 +1354,33 @@ CustomCommandBlockMorph.prototype.userMenu = function () {
         menu.addItem(
             "script pic...",
             function () {
-                var ide = this.world().children[0];
-                ide.saveCanvasAs(
-                    this.topBlock().scriptPic(),
-                    (ide.projectName || localize('untitled')) + ' ' +
+                var ide = this.world().children[0],
+                    top = this.topBlock(),
+                    xml = ide.blocksLibraryXML(
+                        [top.definition].concat(
+                            top.definition.collectDependencies(
+                                [],
+                                [],
+                                top.scriptTarget()
+                            )
+                        ),
+                        null,
+                        true
+                    );
+                ide.saveFileAs(
+                    embedMetadataPNG(top.scriptPic(), xml),
+                    'image/png',
+                    (ide.getProjectName() || localize('untitled')) + ' ' +
                         localize('script pic')
                 );
             },
-            'open a new window\nwith a picture of this script'
+            'save a picture\nof this script'
         );
         menu.addItem(
             "translations...",
             function () {
                 hat.parentThatIsA(BlockEditorMorph).editTranslations();
-            },
-            'experimental -\nunder construction'
+            }
         );
         if (this.isGlobal) {
             if (hat.inputs().length < 2) {
@@ -1165,16 +1388,14 @@ CustomCommandBlockMorph.prototype.userMenu = function () {
                     "block variables...",
                     function () {
                         hat.enableBlockVars();
-                    },
-                    'experimental -\nunder construction'
+                    }
                 );
             } else {
                 menu.addItem(
                     "remove block variables...",
                     function () {
                         hat.enableBlockVars(false);
-                    },
-                    'experimental -\nunder construction'
+                    }
                 );
             }
         }
@@ -1185,8 +1406,16 @@ CustomCommandBlockMorph.prototype.userMenu = function () {
             'uncheck to\nhide in palette',
             'check to\nshow in palette'
         );
+        menu.addItem(
+            "export...",
+            () => hat.exportBlockDefinition(),
+            'including dependencies'
+        );
     } else {
         menu = this.constructor.uber.userMenu.call(this);
+        if (rcvr.parentThatIsA(IDE_Morph).config.noOwnBlocks) {
+            return menu;
+        }
         dlg = this.parentThatIsA(DialogBoxMorph);
         if (dlg && !(dlg instanceof BlockEditorMorph)) {
             return menu;
@@ -1250,13 +1479,11 @@ CustomCommandBlockMorph.prototype.userMenu = function () {
                 "duplicate block definition...",
                 'duplicateBlockDefinition'
             );
-            if (this.isGlobal) {
-                menu.addItem(
-                    "export block definition...",
-                    'exportBlockDefinition',
-                    'including dependencies'
-                );
-            }
+            menu.addItem(
+                "export block definition...",
+                'exportBlockDefinition',
+                'including dependencies'
+            );
         } else { // inside a script
             // if global or own method - let the user delete the definition
             if (this.isGlobal ||
@@ -1281,10 +1508,14 @@ CustomCommandBlockMorph.prototype.userMenu = function () {
 };
 
 CustomCommandBlockMorph.prototype.exportBlockDefinition = function () {
-    var ide = this.parentThatIsA(IDE_Morph);
+    var rcvr = this.scriptTarget(),
+        ide = rcvr.parentThatIsA(IDE_Morph),
+        def = this.isGlobal || this instanceof PrototypeHatBlockMorph ?
+            this.definition
+                : rcvr.getMethod(this.blockSpec);
     new BlockExportDialogMorph(
         ide.serializer,
-        [this.definition].concat(this.definition.collectDependencies()),
+        [def].concat(def.collectDependencies([], [], rcvr)),
         ide
     ).popUp(this.world());
 };
@@ -1328,7 +1559,13 @@ CustomCommandBlockMorph.prototype.duplicateBlockDefinition = function () {
 
     ide.flushPaletteCache();
     ide.refreshPalette();
-    ide.recordUnsavedChanges();
+    rcvr.recordUserEdit(
+        'palette',
+        'custom block',
+        this.isGlobal ? 'global' : 'local',
+        'duplicate definition',
+        dup.abstractBlockSpec()
+    );
     new BlockEditorMorph(dup, rcvr).popUp();
 };
 
@@ -1370,8 +1607,14 @@ CustomCommandBlockMorph.prototype.deleteBlockDefinition = function () {
                 ide.flushPaletteCache();
                 ide.categories.refreshEmpty();
                 ide.refreshPalette();
-                ide.recordUnsavedChanges();
             }
+            rcvr.recordUserEdit(
+                'palette',
+                'custom block',
+                this.isGlobal ? 'global' : 'local',
+                'delete definition',
+                this.abstractBlockSpec()
+            );
         },
         this
     ).askYesNo(
@@ -1392,6 +1635,7 @@ CustomCommandBlockMorph.prototype.deleteBlockDefinition = function () {
 
 CustomCommandBlockMorph.prototype.relabel = function (alternatives) {
     var menu = new MenuMorph(this),
+        oldSpec = this.abstractBlockSpec(),
         oldInputs = this.inputs().map(each => each.fullCopy());
     alternatives.forEach(def => {
         var block = def.blockInstance();
@@ -1402,10 +1646,15 @@ CustomCommandBlockMorph.prototype.relabel = function (alternatives) {
             block.doWithAlpha(1, () => block.fullImage()),
             () => {
                 this.definition = def;
+                this.isGlobal = def.isGlobal;
                 this.refresh();
-                this.scriptTarget().parentThatIsA(
-                    IDE_Morph
-                ).recordUnsavedChanges();
+                this.scriptTarget().recordUserEdit(
+                    'scripts',
+                    'block',
+                    'relabel',
+                    oldSpec,
+                    this.abstractBlockSpec()
+                );
             }
         );
     });
@@ -1422,7 +1671,7 @@ CustomCommandBlockMorph.prototype.alternatives = function () {
         type = this instanceof CommandBlockMorph ? 'command'
             : (this.isPredicate ? 'predicate' : 'reporter');
     return allDefs.filter(each =>
-        each !== this.definition && each.type === type
+        each !== this.definition && each.type === type && !each.isHelper
     );
 };
 
@@ -1955,7 +2204,7 @@ BlockDialogMorph.prototype.fixCategoriesLayout = function () {
             col = Math.ceil((i + 1) / 4);
         } else if (i < 10) {
             row = 4;
-            col = 10 - i;
+            col = 3 - (10 - i);
         } else {
             row = i - 5;
             col = 1;
@@ -2486,13 +2735,45 @@ BlockEditorMorph.prototype.refreshAllBlockInstances = function (oldSpec) {
     var def = this.definition,
         template = this.target.paletteBlockInstance(def);
 
-    if (this.definition.isGlobal) {
-        this.target.allBlockInstances(this.definition).reverse().forEach(
+    function isMajorTypeChange(oldType) {
+        var rep = ['reporter', 'predicate'],
+            type = def.type;
+        return (type === 'command' && rep.includes(oldType)) ||
+            (oldType == 'command' && rep.includes(type));
+    }
+
+    if (def.isGlobal) {
+        this.target.allBlockInstances(def).reverse().forEach(
             block => block.refresh()
+        );
+        this.target.parentThatIsA(StageMorph).allContextsUsing(def).forEach(
+            context => {
+                if (context.expression.isCustomBlock &&
+                    context.expression.isUnattached() &&
+                    isMajorTypeChange(context.expression.type())
+                ) {
+                    context.expression = def.blockInstance();
+                }
+                context.changed();
+            }
         );
     } else {
         this.target.allDependentInvocationsOf(oldSpec).reverse().forEach(
             block => block.refresh(def)
+        );
+        this.target.parentThatIsA(StageMorph).allContextsInvoking(
+            def.blockSpec(),
+            this.target
+        ).forEach(
+            context => {
+                if (context.expression.isCustomBlock &&
+                    context.expression.isUnattached() &&
+                    isMajorTypeChange(context.expression.type())
+                ) {
+                    context.expression = def.blockInstance();
+                }
+                context.changed();
+            }
         );
     }
     if (template) {
@@ -2505,7 +2786,7 @@ BlockEditorMorph.prototype.updateDefinition = function () {
         oldSpec = this.definition.blockSpec(),
         pos = this.body.contents.position(),
         count = 1,
-        element;
+        spec, element;
 
     this.definition.receiver = this.target; // only for serialization
     this.definition.spec = this.prototypeSpec();
@@ -2547,9 +2828,10 @@ BlockEditorMorph.prototype.updateDefinition = function () {
     this.definition.body = this.context(head);
 
     // make sure the spec is unique
+    spec = this.definition.spec;
     while (this.target.doubleDefinitionsFor(this.definition).length > 0) {
         count += 1;
-        this.definition.spec = this.definition.spec + ' (' + count + ')';
+        this.definition.spec = spec + ' (' + count + ')';
     }
 
     this.refreshAllBlockInstances(oldSpec);
@@ -2557,7 +2839,13 @@ BlockEditorMorph.prototype.updateDefinition = function () {
     ide.flushPaletteCache();
     ide.categories.refreshEmpty();
     ide.refreshPalette();
-    ide.recordUnsavedChanges();
+    this.target.recordUserEdit(
+        'scripts',
+        'custom block',
+        this.definition.isGlobal ? 'global' : 'local',
+        'update',
+        this.definition.abstractBlockSpec()
+    );
 };
 
 BlockEditorMorph.prototype.context = function (prototypeHat) {
@@ -2754,6 +3042,9 @@ PrototypeHatBlockMorph.prototype.mouseClickLeft = function () {
 PrototypeHatBlockMorph.prototype.userMenu = function () {
     return this.parts()[0].userMenu();
 };
+
+PrototypeHatBlockMorph.prototype.exportBlockDefinition =
+    CustomCommandBlockMorph.prototype.exportBlockDefinition;
 
 // PrototypeHatBlockMorph zebra coloring
 
@@ -4208,6 +4499,7 @@ BlockExportDialogMorph.prototype.buildContents = function () {
                         } else {
                             this.blocks.push(definition);
                         }
+                        this.collectDependencies();
                     },
                     null,
                     () => contains(this.blocks, definition),
@@ -4274,23 +4566,39 @@ BlockExportDialogMorph.prototype.selectNone = function () {
     });
 };
 
+// BlockExportDialogMorph dependency management
+
+BlockExportDialogMorph.prototype.collectDependencies = function () {
+    // add dependencies to the blocks:
+    this.dependencies().forEach(def => {
+        if (!contains(this.blocks, def)) {
+            this.blocks.push(def);
+        }
+    });
+    // refresh the checkmarks
+    this.body.contents.children.forEach(checkBox => {
+        checkBox.refresh();
+    });
+};
+
+BlockExportDialogMorph.prototype.dependencies = function () {
+    var deps = [];
+    this.blocks.forEach(def => def.collectDependencies(
+        [],
+        deps,
+        def.receiver
+    ));
+    return deps;
+};
+
 // BlockExportDialogMorph ops
 
 BlockExportDialogMorph.prototype.exportBlocks = function () {
-    var str = this.serializer.serialize(this.blocks, true), // for library
-        ide = this.world().children[0];
+    var ide = this.world().children[0];
 
-    if (this.blocks.length > 0) {
-        str = '<blocks app="'
-            + this.serializer.app
-            + '" version="'
-            + this.serializer.version
-            + '">'
-            + this.paletteXML()
-            + str
-            + '</blocks>';
+    if (this.blocks.length) {
         ide.saveXMLAs(
-            str,
+            ide.blocksLibraryXML(this.blocks, null, true), // as file
             (ide.getProjectName() || localize('untitled')) +
                 ' ' +
                 localize('blocks'
@@ -4303,19 +4611,6 @@ BlockExportDialogMorph.prototype.exportBlocks = function () {
             this.world()
         );
     }
-};
-
-BlockExportDialogMorph.prototype.paletteXML = function () {
-    var palette = new Map();
-    this.blocks.forEach(def => {
-        if (SpriteMorph.prototype.customCategories.has(def.category)) {
-            palette.set(
-                def.category,
-                SpriteMorph.prototype.customCategories.get(def.category)
-            );
-        }
-    });
-    return this.serializer.paletteToXML(palette);
 };
 
 // BlockExportDialogMorph layout
@@ -4389,9 +4684,15 @@ BlockImportDialogMorph.prototype.importBlocks = function (name) {
     if (!ide) {return; }
     if (this.blocks.length > 0) {
         this.blocks.forEach(def => {
-            def.receiver = ide.stage;
-            ide.stage.globalBlocks.push(def);
-            ide.stage.replaceDoubleDefinitionsFor(def);
+            if (def.isGlobal) {
+                def.receiver = ide.stage;
+                ide.stage.globalBlocks.push(def);
+                ide.stage.replaceDoubleDefinitionsFor(def);
+            } else {
+                def.receiver = ide.currentSprite;
+                ide.currentSprite.customBlocks.push(def);
+                ide.currentSprite.replaceDoubleDefinitionsFor(def);
+            }
         });
         ide.flushPaletteCache();
         ide.categories.refreshEmpty();
@@ -4419,7 +4720,7 @@ BlockImportDialogMorph.prototype.fixLayout
 // BlockRemovalDialogMorph inherits from DialogBoxMorph
 // and pseudo-inherits from BlockExportDialogMorph:
 
-BlockRemovalDialogMorph.prototype = new DialogBoxMorph();
+BlockRemovalDialogMorph.prototype = new DialogBoxMorph(); // +++
 BlockRemovalDialogMorph.prototype.constructor = BlockImportDialogMorph;
 BlockRemovalDialogMorph.uber = DialogBoxMorph.prototype;
 
@@ -4472,6 +4773,14 @@ BlockRemovalDialogMorph.prototype.selectAll
 
 BlockRemovalDialogMorph.prototype.selectNone
     = BlockExportDialogMorph.prototype.selectNone;
+
+// BlockRemovelDialogMorph dependency management
+
+BlockRemovalDialogMorph.prototype.collectDependencies =
+    BlockExportDialogMorph.prototype.collectDependencies;
+
+BlockRemovalDialogMorph.prototype.dependencies =
+    BlockExportDialogMorph.prototype.dependencies;
 
 // BlockRemovalDialogMorph ops
 
@@ -4693,7 +5002,10 @@ BlockVisibilityDialogMorph.prototype.hideBlocks = function () {
     ide.flushBlocksCache();
     ide.refreshPalette();
     ide.categories.refreshEmpty();
-    ide.recordUnsavedChanges();
+    this.target.recordUserEdit(
+        'palette',
+        'hide block'
+    );
 };
 
 // BlockVisibilityDialogMorph layout

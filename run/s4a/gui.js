@@ -20,6 +20,7 @@ SpriteIconMorph.prototype.userMenu = function () {
 
 // Snap! menus
 // Adding Snap4Arduino extra options to snapMenu, projectMenu and settingsMenu
+
 IDE_Morph.prototype.originalSnapMenu = IDE_Morph.prototype.snapMenu;
 IDE_Morph.prototype.snapMenu = function () {
     this.originalSnapMenu();
@@ -46,12 +47,11 @@ IDE_Morph.prototype.snapMenu = function () {
 IDE_Morph.prototype.originalSettingsMenu = IDE_Morph.prototype.settingsMenu;
 IDE_Morph.prototype.settingsMenu = function () {
     this.originalSettingsMenu();
+    var menu = this.world().activeMenu,
+        pos = this.controlBar.settingsButton.bottomLeft();
 
     // adding extra s4a items only for Desktop version
-    if (document.title == '') {
-        var menu = this.world().activeMenu,
-            pos = this.controlBar.settingsButton.bottomLeft();
-
+    if (typeof process === 'object') {
         menu.addLine();
         // http server option
         menu.addItem(
@@ -80,8 +80,35 @@ IDE_Morph.prototype.settingsMenu = function () {
             Arduino.prototype.networkPortsEnabled ? 'uncheck to disable\nserial ports over\nnetwork' : 'check to enable\nserial ports over\nnetwork'
         );
 
-        menu.popup(this.world(), pos);
     }
+    //Uploading firmware menus for all versions
+    var iframe = document.getElementById('firmwareUploader'),
+        toneButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Tone'),
+        irButton = iframe.contentWindow.document.getElementById('UNO_FirmataSA5Ir'),
+        npButton = iframe.contentWindow.document.getElementById('UNO_FirmataNeopixel'),
+        stButton = iframe.contentWindow.document.getElementById('UNO_FirmataSt'),
+        firmwaresMenu = function () {
+            var menu = new MenuMorph(this, "Firmwares");
+            menu.addItem('FirmataSA5 tone (recomended)', function() {toneButton.click()});
+            menu.addItem('FirmataSA5 ir', function() {irButton.click()});
+            menu.addItem('Firmata neopixel', function() {npButton.click()});
+            menu.addItem('Firmata Standard', function() {stButton.click()});
+            return menu;
+        };
+
+    menu.addLine();
+    menu.addMenu('Upload firmware on UNO boards', firmwaresMenu());
+    menu.addItem('More supported devices', 
+        function() {
+            window.open('https://snap4arduino.rocks/#devices', 'Snap4ArduinoWebsite'); 
+    });
+    if (typeof process !== 'object') {
+        menu.addItem('Snap4Arduino connector required',
+            function() {
+                window.open('https://snap4arduino.rocks/#install', 'Snap4ArduinoWebsite');
+        });
+    }
+    menu.popup(this.world(), pos);
 };
 
 IDE_Morph.prototype.originalProjectMenu = IDE_Morph.prototype.projectMenu;
@@ -157,13 +184,14 @@ IDE_Morph.prototype.fileImport = function () {
     inp.click();
 };
 
-//Not decorated to show original Snap! logo
+//Not decorated because we want to show original Snap! logo
+// Only two lines (marked) are changed from original repo
 IDE_Morph.prototype.aboutSnap = function () {
     var dlg, aboutTxt, noticeTxt, creditsTxt, versions = '', translations,
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 7.0.4\nBuild Your Own Blocks\n\n'
+    aboutTxt = 'Snap! 8.1.0-dev\nBuild Your Own Blocks\n\n'//Sn4A mod
         + 'Copyright \u24B8 2008-2022 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
@@ -212,14 +240,24 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\n"Ava" Yuan Yuan, Dylan Servilla: Graphic Effects'
         + '\nKyle Hotchkiss: Block search design'
         + '\nBrian Broll: Many bugfixes and optimizations'
+        + '\nEckart Modrow: SciSnap! Extension'
+        + '\nBambi Brewer: Birdbrain Robotics Extension Support'
+        + '\nGlen Bull & team: TuneScope Music Extension'
         + '\nIan Reynolds: UI Design, Event Bindings, '
         + 'Sound primitives'
         + '\nJadga Hügle: Icons and countless other contributions'
+        + '\nSimon Walters & Xavier Pi: MQTT extension'
         + '\nIvan Motyashov: Initial Squeak Porting'
         + '\nLucas Karahadian: Piano Keyboard Design'
         + '\nDavide Della Casa: Morphic Optimizations'
         + '\nAchal Dave: Web Audio'
-        + '\nJoe Otto: Morphic Testing and Debugging';
+        + '\nJoe Otto: Morphic Testing and Debugging'
+        + '\n\n'
+        + 'Jahrd, Derec, and Jamet costumes are watercolor paintings'
+        + '\nby Meghan Taylor and represent characters from her'
+        + '\nwebcomic Prophecy of the Circle, licensed to us only'
+        + '\nfor use in Snap! projects. Meghan also painted the Tad'
+        + '\ncostumes, but that character is in the public domain.';
 
     for (module in modules) {
         if (Object.prototype.hasOwnProperty.call(modules, module)) {
@@ -264,7 +302,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         return tm;
     }
 
-    dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //changed in Snap4Arduino
+    dlg.inform('About Snap', aboutTxt, world, this.snapLogo); //Sn4A mod
     btn1 = dlg.buttons.children[0];
     translatorsBtn = dlg.addButton(
         () => {
@@ -386,12 +424,12 @@ IDE_Morph.prototype.aboutSnap4Arduino = function () {
         aboutTxt = 'Snap4Arduino ' + version +'\n'
         + 'http://snap4arduino.rocks\n\n'
 
-        + 'Copyright \u24B8 2018-2022 Bernat Romagosa and Joan Guillén\n'
+        + 'Copyright \u24B8 2018-2023 Joan Guillén and Bernat Romagosa\n'
         + 'https://github.com/bromagosa/snap4arduino\n\n'
 
         + 'Copyright \u24B8 2016-2017 Bernat Romagosa and Arduino.org\n\n'
 
-        + 'Copyright \u24B8 2015 Citilab\n'
+        + 'Copyright \u24B8 2015 Bernat Romagosa and Citilab\n'
         + 'edutec@citilab.eu\n\n'
 
         + 'Snap4Arduino is a modification of Snap! originally developed\n'
@@ -856,7 +894,7 @@ IDE_Morph.prototype.createNewProject = function () {
             );
 };
 
-IDE_Morph.prototype.version = function () {
+IDE_Morph.prototype.sn4a_version = function () {
     return require('fs').readFileSync('version').toString();
 };
 
@@ -1189,4 +1227,48 @@ IDE_Morph.prototype.flushBlocksCache = function (category) {
         this.originalFlushBlocksCache('other');
     }
     this.originalFlushBlocksCache(category);
+};
+
+//Replacing window title
+IDE_Morph.prototype.snap4arduinoTitle = function () {
+    document.title = "Snap4Arduino " +
+        (this.getProjectName() ? this.getProjectName() : this.sn4a_version());
+};
+IDE_Morph.prototype.original_setProjectName = IDE_Morph.prototype.setProjectName;
+IDE_Morph.prototype.setProjectName = function (string) {
+   this.original_setProjectName (string);
+   this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_setProjectNotes = IDE_Morph.prototype.setProjectNotes;
+IDE_Morph.prototype.setProjectNotes = function (string) {
+    this.original_setProjectNotes(string);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_updateChanges = IDE_Morph.prototype.updateChanges;
+IDE_Morph.prototype.updateChanges = function (spriteName, details) {
+    this.original_updateChanges(spriteName, details);
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToUserMode = IDE_Morph.prototype.switchToUserMode;
+IDE_Morph.prototype.switchToUserMode = function () {
+    this.original_switchToUserMode();
+    this.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_switchToDevMode = IDE_Morph.prototype.switchToDevMode;
+IDE_Morph.prototype.switchToDevMode = function () {
+    this.original_switchToDevMode();
+    this.snap4arduinoTitle();
+};
+SceneIconMorph.prototype.original_renameScene = SceneIconMorph.prototype.renameScene;
+SceneIconMorph.prototype.renameScene = function () {
+    var ide = this.parentThatIsA(IDE_Morph);
+    this.original_renameScene();
+    ide.snap4arduinoTitle();
+};
+IDE_Morph.prototype.original_fixLayout = IDE_Morph.prototype.fixLayout;
+IDE_Morph.prototype.fixLayout = function (situation) {
+    this.original_fixLayout(situation);
+    if (situation !== 'refreshPalette') {
+        this.snap4arduinoTitle();
+    }
 };
