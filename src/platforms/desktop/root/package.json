@@ -13,6 +13,17 @@
         "min_width": 960,
         "min_height": 640
     },
+    "build": {
+        "linux": {
+            "icon": "s4a/icon-128.png"
+        },
+        "win": {
+            "icon": "s4a.ico"
+        },
+        "mac": {
+            "icon": "s4a/icon-128.png"
+        }
+    },
     "dependencies": {
         "firmata": ">=0.3.3",
         "serialport": ">=0.7.5"
@@ -25,16 +36,15 @@
     ],
     "maintainers":[
         {
-            "name": "Bernat Romagosa",
-            "email": "bernat@snap4arduino.rocks",
-            "web": "http://romagosa.work"
-        },
-        {
             "name": "Joan Guillén",
             "email": "jguille2@xtec.cat",
             "web": "https://github.com/jguille2"
+        },
+        {
+            "name": "Bernat Romagosa",
+            "email": "bernat@snap4arduino.rocks",
+            "web": "http://romagosa.work"
         }
-
     ],
     "repositories": [
        {
