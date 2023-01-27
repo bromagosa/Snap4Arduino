@@ -19,9 +19,6 @@
         },
         "win": {
             "icon": "s4a.ico"
-        },
-        "mac": {
-            "icon": "s4a/icon-128.png"
         }
     },
     "dependencies": {
