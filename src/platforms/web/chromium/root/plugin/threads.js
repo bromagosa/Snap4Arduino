@@ -37,10 +37,10 @@ Process.prototype.reportDigitalReading = function (pin) {
 
         if (board.pins[pin].mode != board.MODES.INPUT) {
             board.pinMode(pin, board.MODES.INPUT);
-            board.reportDigitalPin(pin, 1);
             board.pins[pin].report = -1;
         } else {
             if (board.pins[pin].report == -1) {
+                board.reportDigitalPin(pin, 1);
                 board.pins[pin].report = 1;
             }else if (board.pins[pin].report == 1) {
                 board.pins[pin].report = 0;
