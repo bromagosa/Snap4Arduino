@@ -44,7 +44,7 @@ Dispatcher.prototype.getBoard = function (boardId) {
 
 Dispatcher.prototype.closeSerial = function (boardId) {
     Boards[boardId].reset();
-    Boards[boardId].sp.close();
+    if (Boards[boardId].connectionId >= 0) {Boards[boardId].sp.close();}
     Boards[boardId] = null;
 };
 
@@ -564,27 +564,27 @@ function SerialPort(path, options, openImmediately, callback) {
   this.options = convertOptions(options);
 
   this.options.serial.onReceiveError.addListener(function(info){
+    if (self.connectionId == info.connectionId) {
+      switch (info.error) {
 
-    switch (info.error) {
-
-      case 'disconnected':
-      case 'device_lost':
-      case 'system_error':
-        err = new Error('Disconnected');
-        // send notification of disconnect
-        if (self.options.disconnectedCallback) {
-          self.options.disconnectedCallback(err);
-        } else {
-          self.emit('disconnect', err);
-        }
-        if(self.connectionId >= 0){
-          self.close();
-        }
-        break;
-      case 'timeout':
-        break;
+        case 'disconnected':
+        case 'device_lost':
+        case 'system_error':
+          err = new Error('Disconnected');
+          // send notification of disconnect
+          if (self.options.disconnectedCallback) {
+            self.options.disconnectedCallback(err);
+          } else {
+            self.emit('disconnect', err);
+          }
+          if(self.connectionId >= 0){
+            self.close();
+          }
+          break;
+        case 'timeout':
+          break;
+      }
     }
-
   });
 
   this.path = path;
@@ -8029,6 +8029,7 @@ function Board(port, options, callback) {
   }.bind(this));
 
   this.transport.on("disconnect", function() {
+    this.version.major = null;
     this.emit("disconnect");
   }.bind(this));
 

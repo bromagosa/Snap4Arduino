@@ -1,7 +1,7 @@
 {
     "name": "Snap4Arduino connector",
     "description": "Connect Berkeley Snap! to Arduino boards",
-    "version": "7.0",
+    "version": "8.0",
     "manifest_version": 2,
     "app": {
         "background": {
@@ -26,7 +26,8 @@
             "https://educaciodigital.cat/*",
             "https://cesire.cat/*",
             "https://www.robolot.online/*",
-            "https://campus.innovadidactic.com/*"
+            "https://campus.innovadidactic.com/*",
+            "https://snap2make.click/*"
         ],
         "accepts_tls_channel_id": false
     },
