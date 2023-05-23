@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Snap4Arduino @AppVersion</title>
+        <link rel="shortcut icon" href="s4a.ico" type="image/ico">
+        <script>
+            require = function () {};
+        </script>
+        <script type="text/javascript" src="s4a/arduino.js"></script>
+        <script type="text/javascript" src="plugin/arduino.js"></script>
+        <script type="text/javascript" src="plugin/plugin.js"></script>
+        <script type="text/javascript" src="src/morphic.js"></script>
+        <script type="text/javascript" src="s4a/morphic.js"></script>
+        <script type="text/javascript" src="plugin/morphic.js"></script>
+        <script type="text/javascript" src="src/widgets.js"></script>
+        <script type="text/javascript" src="src/blocks.js"></script>
+        <script type="text/javascript" src="s4a/blocks.js"></script>
+        <script type="text/javascript" src="src/threads.js"></script>
+        <script type="text/javascript" src="s4a/threads.js"></script>
+        <script type="text/javascript" src="plugin/threads.js"></script>
+        <script type="text/javascript" src="src/objects.js"></script>
+        <script type="text/javascript" src="s4a/objects.js"></script>
+        <script type="text/javascript" src="plugin/objects.js"></script>
+        <script type="text/javascript" src="src/gui.js"></script>
+        <script type="text/javascript" src="s4a/gui.js"></script>
+        <script type="text/javascript" src="plugin/gui.js"></script>
+        <script type="text/javascript" src="src/paint.js"></script>
+        <script type="text/javascript" src="src/lists.js"></script>
+        <script type="text/javascript" src="s4a/lists.js"></script>
+        <script type="text/javascript" src="src/byob.js"></script>
+        <script type="text/javascript" src="s4a/byob.js"></script>
+        <script type="text/javascript" src="src/tables.js"></script>
+        <script type="text/javascript" src="src/symbols.js"></script>
+        <script type="text/javascript" src="src/sketch.js"></script>
+        <script type="text/javascript" src="src/video.js"></script>
+        <script type="text/javascript" src="src/maps.js"></script>
+        <script type="text/javascript" src="src/xml.js"></script>
+        <script type="text/javascript" src="src/store.js"></script>
+        <script type="text/javascript" src="s4a/store.js"></script>
+        <script type="text/javascript" src="src/locale.js"></script>
+        <script type="text/javascript" src="src/cloud.js"></script>
+        <script type="text/javascript" src="s4a/cloud.js"></script>
+        <script type="text/javascript" src="src/sha512.js"></script>
+        <script type="text/javascript" src="src/FileSaver.min.js"></script>
+        <script type="text/javascript">
+            var world,
+                ide;
+
+            window.onload = function () {
+                world = new WorldMorph(document.getElementById('world'));
+
+                // keepAlive should be handled at the plugin side
+                world.Arduino.keepAlive = false;
+
+                ide = new IDE_Morph();
+                ide.openIn(world);
+
+                ide.getURL('version', function (response) { document.title = document.title.replace("@AppVersion", response); });
+
+                ide.inform = function(title, message, callback) { 
+                    var myself = this;
+                    if (!myself.informing) {
+                        var box = new DialogBoxMorph();
+                        myself.informing = true;
+                        box.ok = function() { 
+                            myself.informing = false;
+                            if (callback) { callback() };
+                            this.accept();
+                        };
+                        box.inform(title, message, world)
+                    }
+                };
+
+                setInterval(loop, 1); // fast version, current calls "loop();"
+            };
+
+
+            function loop() {
+                // fast version. Currant has "requestAnimationFrame(loop);"
+                world.doOneCycle();
+            };
+            
+        </script>
+        </head>
+        <body style="margin: 0;">
+            <canvas id="world" tabindex="1" style="position: absolute;" />
+        </body>
+    </html>

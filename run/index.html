@@ -66,8 +66,8 @@
                 }
                 world = new WorldMorph(document.getElementById('world'));
 
-                // keepAlive should be handled at the plugin side
-                world.Arduino.keepAlive = false;
+                // keeping Alive... we need to ask to the plugin side continuosly
+                world.Arduino.keepAlive = true;
 
                 ide = new IDE_Morph();
                 ide.openIn(world);
