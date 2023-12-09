@@ -9,7 +9,7 @@
     written by Jens Mönig
     jens@moenig.org
 
-    Copyright (C) 2022 by Jens Mönig
+    Copyright (C) 2023 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -161,7 +161,7 @@ SVG_Costume, embedMetadataPNG, ThreadManager*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.blocks = '2022-December-23';
+modules.blocks = '2023-March-13';
 
 var SyntaxElementMorph;
 var BlockMorph;
@@ -310,7 +310,7 @@ SyntaxElementMorph.prototype.labelParts = {
         Input slots
 
         type: 'input'
-        tags: 'numeric read-only unevaluated landscape static'
+        tags: 'numeric alphanum read-only unevaluated landscape static'
         menu: dictionary or selector
         react: selector
         value: string, number or Array for localized strings / constants
@@ -456,7 +456,7 @@ SyntaxElementMorph.prototype.labelParts = {
     },
     '%ida': {
         type: 'input',
-        tags: 'numeric',
+        tags: 'alphanum',
         menu: {
             '1' : 1,
             last : ['last'],
@@ -466,11 +466,20 @@ SyntaxElementMorph.prototype.labelParts = {
     },
     '%idx': {
         type: 'input',
+        tags: 'alphanum',
+        menu: {
+            '1' : 1,
+            last : ['last'],
+            random : ['random']
+        }
+    },
+    '%ix': {
+        type: 'input',
         tags: 'numeric',
         menu: {
             '1' : 1,
             last : ['last'],
-            any : ['any']
+            random : ['random']
         }
     },
     '%la': {
@@ -484,6 +493,7 @@ SyntaxElementMorph.prototype.labelParts = {
             'flatten' : ['flatten'],
             'columns' : ['columns'],
             // 'transpose' : ['transpose'],
+            'distribution' : ['distribution'],
             'reverse' : ['reverse'],
             '~' : null,
             'lines' : ['lines'],
@@ -540,7 +550,7 @@ SyntaxElementMorph.prototype.labelParts = {
         type: 'input',
         tags: 'read-only',
         menu: 'userEditMenu',
-        value: ['any']
+        value: ['anything']
     },
     '%col': { // collision detection
         type: 'input',
@@ -1158,6 +1168,69 @@ SyntaxElementMorph.prototype.labelParts = {
         min: 2,
         infix: 'max',
         collapse: 'maximum'
+    },
+    '%all': {
+        type: 'multi',
+        slots: '%b',
+        min: 2,
+        infix: 'and',
+        collapse: 'all'
+    },
+    '%any': {
+        type: 'multi',
+        slots: '%b',
+        min: 2,
+        infix: 'or',
+        collapse: 'any'
+    },
+    '%all<': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '<',
+        collapse: 'all <'
+    },
+    '%all>': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '>',
+        collapse: 'all >'
+    },
+    '%all<=': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '\u2264',
+        collapse: 'all \u2264'
+    },
+    '%all>=': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '\u2265',
+        collapse: 'all \u2265'
+    },
+    '%all=': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '=',
+        collapse: 'all ='
+    },
+    '%all!=': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: '\u2260',
+        collapse: 'neighbors \u2260'
+    },
+    '%all==': {
+        type: 'multi',
+        slots: '%s',
+        min: 2,
+        infix: 'identical to',
+        collapse: 'all identical'
     }
 };
 
@@ -1764,7 +1837,7 @@ SyntaxElementMorph.prototype.labelPart = function (spec) {
 
         // apply the tags
         // ---------------
-        // input: numeric, read-only, unevaluated, landscape, static
+        // input: numeric, alphanum, read-only, unevaluated, landscape, static
         // text entry: monospace
         // boolean: unevaluated, static
         // symbol: static, fading, protected
@@ -1784,6 +1857,10 @@ SyntaxElementMorph.prototype.labelPart = function (spec) {
                     switch (tag) {
                     case 'numeric':
                         part.isNumeric = true;
+                        break;
+                    case 'alphanum':
+                        part.isNumeric = true;
+                        part.isAlphanumeric = true;
                         break;
                     case 'read-only':
                         part.isReadOnly = true;
@@ -1918,6 +1995,7 @@ SyntaxElementMorph.prototype.fixLayout = function () {
         ico = this instanceof BlockMorph && this.hasLocationPin() ?
         	this.methodIconExtent().x + space : 0,
         bottomCorrection,
+        rightCorrection = 0,
         rightMost,
         hasLoopCSlot = false,
         hasLoopArrow = false;
@@ -2090,6 +2168,7 @@ SyntaxElementMorph.prototype.fixLayout = function () {
             blockWidth,
             maxX - this.left() + this.rounding
         );
+        rightCorrection = space;
     } else if ((this instanceof MultiArgMorph && this.slotSpec !== '%cs')
             || this instanceof ArgLabelMorph) {
         blockWidth = Math.max(
@@ -2101,16 +2180,19 @@ SyntaxElementMorph.prototype.fixLayout = function () {
             blockWidth,
             maxX - this.left() + this.labelPadding - this.edge
         );
-        // adjust right padding if rightmost input has arrows
-        rightMost = parts[parts.length - 1];
-        if (rightMost instanceof MultiArgMorph && rightMost.isVisible &&
-                (lines.length === 1)) {
-            blockWidth -= space;
-        }
-        // adjust width to hat width
-        if (this instanceof HatBlockMorph) {
-            blockWidth = Math.max(blockWidth, this.hatWidth * 1.5);
-        }
+        rightCorrection = space;
+    }
+
+    // adjust right padding if rightmost input has arrows
+    rightMost = parts[parts.length - 1];
+    if (rightMost instanceof MultiArgMorph && rightMost.isVisible &&
+            (lines.length === 1)) {
+        blockWidth -= rightCorrection;
+    }
+
+    // adjust width to hat width
+    if (this instanceof HatBlockMorph) {
+        blockWidth = Math.max(blockWidth, this.hatWidth * 1.5);
     }
 
     // set my extent (silently, because we'll redraw later anyway):
@@ -2687,7 +2769,7 @@ BlockSymbolMorph.prototype.getShadowRenderColor = function () {
     %dir    - white roundish type-in slot with drop-down for directions
     %inst   - white roundish type-in slot with drop-down for instruments
     %ida    - white roundish type-in slot with drop-down for list indices
-    %idx    - white roundish type-in slot for indices incl. "any"
+    %idx    - white roundish type-in slot for indices incl. "random"
     %dim    - white roundish type-in slot for dimensinos incl. "current"
     %obj    - specially drawn slot for object reporters
     %rel    - chameleon colored rectangular drop-down for relation options
@@ -3017,15 +3099,27 @@ BlockMorph.prototype.userMenu = function () {
     }
 
     function renameVar() {
-        var blck = myself.fullCopy();
+        var blck = myself.fullCopy(),
+            frag = myself.parent instanceof BlockInputFragmentMorph ?
+                myself.parent.fragment
+                : null;
         blck.addShadow();
+
         new DialogBoxMorph(
             myself,
-            myself.userSetSpec,
+            frag ?
+                newName => {
+                    myself.userSetSpec(newName);
+                    myself.instantiationSpec = newName;
+                    myself.parent.fragment.labelString = newName;
+                }
+                : myself.userSetSpec,
             myself
         ).prompt(
             "Variable name",
-            myself.blockSpec,
+            frag ?
+                frag.labelString
+                : myself.blockSpec,
             world,
             blck.doWithAlpha(1, () => blck.fullImage()), // pic
             InputSlotMorph.prototype.getVarNamesDict.call(myself)
@@ -4120,7 +4214,11 @@ BlockMorph.prototype.toXMLString = function (receiver) {
     var ide = this.parentThatIsA(IDE_Morph),
         blockEditor = this.parentThatIsA(BlockEditorMorph),
         isReporter = this instanceof ReporterBlockMorph,
-        dependencies;
+        varNames = [],
+        dependencies,
+        localVarNames,
+        globalData,
+        localData;
 
     if (!ide && blockEditor) {
         ide = blockEditor.target.parentThatIsA(IDE_Morph);
@@ -4132,12 +4230,34 @@ BlockMorph.prototype.toXMLString = function (receiver) {
     // collect custom block definitions referenced in this script:
     dependencies = this.dependencies(false, receiver); // both global and local
 
+    // collect variables referenced by included custom block definitions:
+    dependencies.forEach(def =>
+        def.dataDependencies().forEach(name => {
+            if (!varNames.includes(name)) {
+                varNames.push(name);
+            }
+        })
+    );
+    localData = (receiver || ide.currentSprite).variables.fork(varNames);
+    localVarNames = localData.names(true); // include hidden
+    varNames = varNames.filter(name => !localVarNames.includes(name));
+    globalData = ide.globalVariables.fork(varNames);
+
     return '<script app="' +
         ide.serializer.app +
         '" version="' +
         ide.serializer.version +
         '">' +
-        (dependencies.length ? ide.blocksLibraryXML(dependencies) : '') +
+        (dependencies.length ?
+            ide.blocksLibraryXML(
+                dependencies,
+                null, // more categories
+                false, // as file
+                globalData,
+                localData
+            )
+            : ''
+        ) +
         (isReporter ? '<script>' : '') +
         ide.serializer.serialize(this) +
         (isReporter ? '</script>' : '') +
@@ -4795,6 +4915,10 @@ BlockMorph.prototype.refactorInlineTemplate = function () {
         // rename the template
         myself.changed();
         myself.setSpec(newName);
+        myself.instantiationSpec = newName;
+        if (myself.parent instanceof BlockInputFragmentMorph) {
+            myself.parent.fragment.labelString = newName;
+        }
         myself.fixLabelColor();
         myself.changed();
         // rename the following blocks in the lexical scope
@@ -5389,7 +5513,7 @@ BlockMorph.prototype.activeProcess = function () {
 BlockMorph.prototype.mouseEnterBounds = function (dragged) {
     var rcvr, vName, dec;
 
-    if (dragged) {return; }
+    if (dragged && !MorphicPreferences.isTouchDevice) {return; }
 
     // slightly increase my opacity if block-fading is active
     if (this.alpha < 1) {
@@ -5451,7 +5575,9 @@ BlockMorph.prototype.mouseLeaveBounds = function (dragged) {
         this.rerender();
     }
 
-    if (Process.prototype.enableSingleStepping && !dragged) {
+    if (Process.prototype.enableSingleStepping &&
+            (!dragged || MorphicPreferences.isTouchDevice)
+    ) {
         // highlight the lexical scope of a variable declaration when visible
         // stepping is turned on in the IDE.
         if (this.selector === 'reportGetVar' &&
@@ -5698,7 +5824,7 @@ BlockMorph.prototype.fullScopeFor = function (varName, afterThis) {
         return scope;
     }
 
-    return select(this.unwind().slice(afterThis ? 1 : 0)).flat();
+    return select(this.unwind().slice(afterThis ? 1 : 0)).flat(Infinity);
 };
 
 // BlockMorph op-sequence analysis
@@ -5779,16 +5905,18 @@ BlockMorph.prototype.unwindAfter = function (element) {
     return this.inputs()[idx + 1].unwind();
 };
 
-BlockMorph.prototype.rewind = function () {
+BlockMorph.prototype.rewind = function (scriptOnly = false) {
     // return an array of blocks and inputs roughly mimicking the visible
     // sequence of operations leading up to this block. Used to trace
     // variable accessors back to their nearest variable declaration within
     // lexical scope.
+    // scriptOnly is optional, if set to <true> scanning stops at the script's
+    // top block, excluding sprite-local and global variable declarations
 
-    var ide = this.scriptTarget().parentThatIsA(IDE_Morph),
-        current = this,
+    var current = this,
         trace = [],
-        declarations;
+        declarations,
+        ide;
 
     function log(block) {
         if (trace.includes(block)) {return; }
@@ -5839,11 +5967,14 @@ BlockMorph.prototype.rewind = function () {
         current = current.parent?.parentThatIsA(BlockMorph);
     }
 
-    if (ide) {
-        declarations = ide.palette.contents.children.filter(morph =>
-            morph instanceof BlockMorph && morph.selector === 'reportGetVar'
-        ).reverse();
-        declarations.forEach(block => trace.push(block));
+    if (!scriptOnly) {
+        ide = this.scriptTarget().parentThatIsA(IDE_Morph);
+        if (ide) {
+            declarations = ide.palette.contents.children.filter(morph =>
+                morph instanceof BlockMorph && morph.selector === 'reportGetVar'
+            ).reverse();
+            declarations.forEach(block => trace.push(block));
+        }
     }
 
     return trace;
@@ -8404,29 +8535,20 @@ ScriptsMorph.prototype.exportScriptsPicture = function () {
         ide = this.world().children[0],
         xml = this.scriptsXML();
 
-    function fallback() {
-        ide.saveCanvasAs(
-            pic,
-            (ide.getProjectName() || localize('untitled')) + ' ' +
-                localize('script pic')
-        );
-    }
-
     if (pic) {
         if (xml) {
-            try {
-                ide.saveFileAs(
-                    embedMetadataPNG(pic, xml),
-                    'image/png',
-                    (ide.getProjectName() || localize('untitled')) + ' ' +
-                        localize('script pic')
-                );
-            } catch (err) {
-                console.log(err);
-                fallback();
-            }
+            ide.saveFileAs(
+                embedMetadataPNG(pic, xml),
+                'image/png',
+                (ide.getProjectName() || localize('untitled')) + ' ' +
+                    localize('script pic')
+            );
         } else {
-            fallback();
+            ide.saveCanvasAs(
+                pic,
+                (ide.getProjectName() || localize('untitled')) + ' ' +
+                    localize('script pic')
+            );
         }
     }
 };
@@ -10303,6 +10425,7 @@ InputSlotMorph.prototype.init = function (
     this.choices = choiceDict || null; // object, function or selector
     this.oldContentsExtent = contents.extent();
     this.isNumeric = isNumeric || false;
+    this.isAlphanumeric = false; // temporary override for allowing text
     this.isReadOnly = isReadOnly || false;
     this.minWidth = 0; // can be chaged for text-type inputs ("landscape")
     this.constant = null;
@@ -10357,6 +10480,10 @@ InputSlotMorph.prototype.setContents = function (data) {
 	}
 
     if (isConstant) {
+        // migrate old "any" constants
+        if (dta[0] === 'any') {
+            dta[0] = 'random';
+        }
         if (dta[0] === '__shout__go__') {
             this.symbol = this.labelPart('%greenflag');
             this.add(this.symbol);
@@ -10368,11 +10495,14 @@ InputSlotMorph.prototype.setContents = function (data) {
     } else if (dta instanceof BlockMorph) {
     	this.selectedBlock = dta;
       	dta = ''; // make sure the contents text emptied
-    } else { // assume dta is a localizable choice if it's a key in my choices
+    } else {
         cnts.isItalic = false;
+        /*
+        // assume dta is a localizable choice if it's a key in my choices
         if (!isNil(this.choices) && this.choices[dta] instanceof Array) {
             return this.setContents(this.choices[dta]);
         }
+        */
     }
     cnts.text = dta;
     if (isNil(dta)) {
@@ -11185,9 +11315,12 @@ InputSlotMorph.prototype.audioMenu = function (searching) {
 
 InputSlotMorph.prototype.scenesMenu = function (searching) {
     var dict = {},
-        scenes;
+        ide, scenes;
     if (!searching) {
-        scenes = this.parentThatIsA(IDE_Morph).scenes;
+        ide = this.parentThatIsA(IDE_Morph) ||
+            this.parentThatIsA(BlockEditorMorph)
+                .target.parentThatIsA(IDE_Morph);
+        scenes = ide.scenes;
         if (scenes.length() > 1) {
             scenes.itemsArray().forEach(scn => {
                 if (scn.name) {
@@ -11230,7 +11363,7 @@ InputSlotMorph.prototype.fixLayout = function () {
         arrow = this.arrow(),
         tp = this.topBlock();
 
-    contents.isNumeric = this.isNumeric;
+    contents.isNumeric = this.isNumeric && !this.isAlphanumeric;
     contents.isEditable = (!this.isReadOnly);
     if (this.isReadOnly) {
         contents.disableSelecting();
@@ -11471,7 +11604,7 @@ InputSlotMorph.prototype.evaluate = function () {
     answer my contents, which can be a "wish", i.e. a block that refers to
     another sprite's local method, or a text string. If I am numerical convert
     that string to a number. If the conversion fails answer the string
-    (e.g. for special choices like 'any', 'all' or 'last') otherwise
+    (e.g. for special choices like 'random', 'all' or 'last') otherwise
     the numerical value.
 */
     var num, contents;
@@ -12124,20 +12257,22 @@ BooleanSlotMorph.prototype.toggleValue = function () {
         return this.toggleValue.call(target);
     }
     this.value = this.nextValue();
-    sprite = block.scriptTarget();
-    if (!block.isTemplate) {
-        sprite.recordUserEdit(
-            'scripts',
-            'boolean slot',
-            'toggle',
-            block.abstractBlockSpec(),
-            this.value
-        );
-    }
-    ide = sprite.parentThatIsA(IDE_Morph);
-    if (ide && !ide.isAnimating) {
-        this.rerender();
-        return;
+    if (block) {
+        sprite = block.scriptTarget();
+        if (!block.isTemplate) {
+            sprite.recordUserEdit(
+                'scripts',
+                'boolean slot',
+                'toggle',
+                block.abstractBlockSpec(),
+                this.value
+            );
+        }
+        ide = sprite.parentThatIsA(IDE_Morph);
+        if (ide && !ide.isAnimating) {
+            this.rerender();
+            return;
+        }
     }
     this.progress = 3;
     this.rerender();
@@ -13351,7 +13486,7 @@ MultiArgMorph.prototype.insertNewInputBefore = function (anInput, contents) {
     }
     newPart.parent = this;
     if (this.infix !== '') {
-        infix = this.labelPart(this.infix);
+        infix = this.labelPart(localize(this.infix));
         infix.parent = this;
         this.children.splice(idx, 0, newPart, infix);
     } else {
@@ -13415,7 +13550,7 @@ MultiArgMorph.prototype.addInput = function (contents) {
 
 MultiArgMorph.prototype.addInfix = function () {
     var infix,
-        label = this.infix ? this.infix
+        label = this.infix ? localize(this.infix)
         : (this.labelText instanceof Array ?
             this.labelText[this.inputs().length]
             : '');

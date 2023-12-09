@@ -6,7 +6,7 @@
 
     written by Jens Mönig
 
-    Copyright (C) 2020 by Jens Mönig
+    Copyright (C) 2023 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -185,7 +185,7 @@ SnapTranslator.dict.ca = {
     'translator_e-mail':
         'jguille2@xtec.cat, bernat@snap4arduino.rocks', // optional
     'last_changed':
-        '2022-12-26', // this, too, will appear in the Translators tab
+        '2023-02-27', // this, too, will appear in the Translators tab
 
     // GUI
     // control bar:
@@ -575,7 +575,7 @@ SnapTranslator.dict.ca = {
         'digues a %spr que faci %cmdRing %inputs',
     'ask %spr for %repRing %inputs':
         'pregunta a %spr per %repRing %inputs',
-    'When %edit is edited %message':
+    'when %edit is edited %message':
         'Quan %edit sigui editat %message',
     'anything':
         'qualsevol element',
@@ -701,10 +701,10 @@ SnapTranslator.dict.ca = {
         '%fun de %n',
     'pick random %n to %n':
         'nombre a l\'atzar entre %n i %n',
-    '%b and %b':
-        '%b i %b',
-    '%b or %b':
-        '%b o %b',
+    'and':
+        'i',
+    'or':
+        'o',
     'not %b':
         'no %b',
     'true':
@@ -719,8 +719,8 @@ SnapTranslator.dict.ca = {
         'hola',
     'world':
         'món',
-    'letter %idx of %s':
-        'lletra %idx de %s',
+    'letter %ix of %s':
+        'lletra %ix de %s',
     'length of %s':
         'longitud del text %s',
     'unicode of %s':
@@ -729,8 +729,24 @@ SnapTranslator.dict.ca = {
         'lletra amb valor Unicode %n',
     'is %s a %typ ?':
         'és %s un %typ ?',
-    'is %s identical to %s ?':
-        'és %s idèntic a %s ?',
+    'is %all== ?':
+        'és %all== ?',
+    'identical to':
+        'idèntic a',
+    'all identical':
+        'tot idèntic',
+    'all <':
+        'tot < en',
+    'all >':
+        'tot > en',
+    'all \u2264':
+        'tot \u2264 en',
+    'all \u2265':
+        'tot \u2265 en',
+    'all =':
+        'tots =',
+    'neighbors \u2260':
+        'tots els veïns \u2260 en',
 
     'type of %s':
         'tipus de %s',
@@ -782,6 +798,8 @@ SnapTranslator.dict.ca = {
         'aplanament',
     'columns':
         'columnes',
+    'distribution':
+        'distribució',
     'reverse':
         'revers',
     'lines':
@@ -1728,7 +1746,7 @@ SnapTranslator.dict.ca = {
 
     // attributes
     'neighbors':
-        'veins',
+        'veïns',
     'self':
         'un mateix',
     'other sprites':

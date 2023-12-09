@@ -16,18 +16,20 @@ SpriteMorph.prototype.reportAnalogReading = function (pin) {
 };
 
 SpriteMorph.prototype.reportDigitalReading = function (pin) {
-    if (this.arduino.isBoardReady()) {
+    if (this.arduino.isBoardReady() && pin) {
         var board = this.arduino.board;
-
-        if (!pin) { return false };
-
         if (board.pins[pin].mode != board.MODES.INPUT) {
             board.pinMode(pin, board.MODES.INPUT);
-            board.reportDigitalPin(pin, 1);
+            board.pins[pin].watcherReport = 1;
+        } else {
+            if (board.pins[pin].watcherReport == 1) {
+                board.reportDigitalPin(pin, 1);
+                board.pins[pin].watcherReport = 0;
+            } else {
+                board.getDigitalPinValue(pin);
+                return board.pins[pin].value == 1;
+            }
         }
-        board.getDigitalPinValue(pin);
-        return board.pins[pin].value == 1;
-    } else {
-        return false;
     }
+    return false;
 };

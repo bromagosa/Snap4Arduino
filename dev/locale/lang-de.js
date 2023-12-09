@@ -6,7 +6,7 @@
 
     written by Jens Mönig
 
-    Copyright (C) 2022 by Jens Mönig
+    Copyright (C) 2023 by Jens Mönig
 
     This file is part of Snap!.
 
@@ -185,7 +185,7 @@ SnapTranslator.dict.de = {
     'translator_e-mail':
         'jens@moenig.org, jadga.huegle@sap.com', // optional
     'last_changed':
-        '2022-12-33', // this, too, will appear in the Translators tab
+        '2023-02-27', // this, too, will appear in the Translators tab
 
     // GUI
     // control bar:
@@ -613,7 +613,7 @@ SnapTranslator.dict.de = {
         'lasse %spr %cmdRing tun %inputs',
     'ask %spr for %repRing %inputs':
         'frage %spr nach %repRing %inputs',
-    'When %edit is edited %message':
+    'when %edit is edited %message':
         'Wenn %edit bearbeitet wird %message',
     'anything':
         'beliebiges',
@@ -789,10 +789,12 @@ SnapTranslator.dict.de = {
         '%fun von %n',
     'pick random %n to %n':
         'Zufallszahl von %n bis %n',
-    '%b and %b':
-        '%b und %b',
-    '%b or %b':
-        '%b oder %b',
+    'and':
+        'und',
+    'or':
+        'oder',
+    'any':
+        'irgendein',
     'not %b':
         'nicht %b',
     'true':
@@ -807,8 +809,8 @@ SnapTranslator.dict.de = {
         'Hallo',
     'world':
         'Welt',
-    'letter %idx of %s':
-        'Zeichen %idx von %s',
+    'letter %ix of %s':
+        'Zeichen %ix von %s',
     'length of %s':
         'L\u00e4nge von Text %s',
     'unicode of %s':
@@ -817,8 +819,24 @@ SnapTranslator.dict.de = {
         'Unicode %n als Buchstabe',
     'is %s a %typ ?':
         'ist %s ein(e) %typ ?',
-    'is %s identical to %s ?':
-        'ist %s identisch mit %s ?',
+    'is %all== ?':
+        'ist %all== ?',
+    'identical to':
+        'identisch mit',
+    'all identical':
+        'alles identisch in',
+    'all <':
+        'alle <',
+    'all >':
+        'alle >',
+    'all \u2264':
+        'alle \u2264',
+    'all \u2265':
+        'alle \u2265',
+    'all =':
+        'alle =',
+    'neighbors \u2260':
+        'benachbarte \u2260',
     'JavaScript function ( %mult%s ) { %code }':
         'JavaScript Funktion ( %mult%s ) { %code }',
     'compile %repRing':
@@ -871,6 +889,8 @@ SnapTranslator.dict.de = {
         'Auflistung',
     'columns':
         'Spalten',
+    'distribution':
+        'Verteilung',
     'reverse':
         'Umkehrung',
     'lines':
@@ -2068,8 +2088,6 @@ SnapTranslator.dict.de = {
     // list indices
     'last':
         'letztes',
-    'any':
-        'beliebig',
 
     // attributes
     'my':

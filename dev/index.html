@@ -66,9 +66,12 @@
                 }
                 world = new WorldMorph(document.getElementById('world'));
 
-                // keepAlive should be handled at the plugin side
-                world.Arduino.keepAlive = false;
-
+                // keeping Alive... we need to ask to the plugin side continuosly
+                //if (window.location.protocol === 'https') {
+                    world.Arduino.keepAlive = false;
+                //} else {
+                //    world.Arduino.keepAlive = true;
+                //}
                 ide = new IDE_Morph();
                 ide.openIn(world);
 

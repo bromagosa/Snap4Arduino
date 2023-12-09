@@ -118,11 +118,11 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.reportRound.transpilable = true;
     this.blocks.reportMonadic.transpilable = true;
     this.blocks.reportRandom.transpilable = true;
-    this.blocks.reportLessThan.transpilable = true;
-    this.blocks.reportEquals.transpilable = true;
-    this.blocks.reportGreaterThan.transpilable = true;
-    this.blocks.reportAnd.transpilable = true;
-    this.blocks.reportOr.transpilable = true;
+    this.blocks.reportVariadicLessThan.transpilable = true;
+    this.blocks.reportVariadicEquals.transpilable = true;
+    this.blocks.reportVariadicGreaterThan.transpilable = true;
+    this.blocks.reportVariadicAnd.transpilable = true;
+    this.blocks.reportVariadicOr.transpilable = true;
     this.blocks.reportNot.transpilable = true;
     this.blocks.reportBoolean.transpilable = true;
     this.blocks.doSetVar.transpilable = true;
@@ -153,11 +153,11 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['reportRound'] = 'round(<#1>)';
     StageMorph.prototype.codeMappings['reportMonadic'] = 's4a.math(<#1>,<#2>)';
     StageMorph.prototype.codeMappings['reportRandom'] = 'random(<#1>, <#2>+1)';
-    StageMorph.prototype.codeMappings['reportLessThan'] = '(<#1> < <#2>)';
-    StageMorph.prototype.codeMappings['reportEquals'] = '(<#1> == <#2>)';
-    StageMorph.prototype.codeMappings['reportGreaterThan'] = '(<#1> > <#2>)';
-    StageMorph.prototype.codeMappings['reportAnd'] = '(<#1> && <#2>)';
-    StageMorph.prototype.codeMappings['reportOr'] = '(<#1> || <#2>)';
+    StageMorph.prototype.codeMappings['reportVariadicLessThan'] = '(<#1> < <#2>)';
+    StageMorph.prototype.codeMappings['reportVariadicEquals'] = '(<#1> == <#2>)';
+    StageMorph.prototype.codeMappings['reportVariadicGreaterThan'] = '(<#1> > <#2>)';
+    StageMorph.prototype.codeMappings['reportVariadicAnd'] = '(<#1> && <#2>)';
+    StageMorph.prototype.codeMappings['reportVariadicOr'] = '(<#1> || <#2>)';
     StageMorph.prototype.codeMappings['reportNot'] = '!(<#1>)';
     StageMorph.prototype.codeMappings['reportBoolean'] = '<#1>';
 
@@ -528,19 +528,21 @@ SpriteMorph.prototype.reportAnalogReading = function (pin) {
 };
 
 SpriteMorph.prototype.reportDigitalReading = function (pin) {
-    if (this.arduino.isBoardReady()) {
+    if (this.arduino.isBoardReady() && pin) {
         var board = this.arduino.board;
-
-        if (!pin) { return false };
-
         if (board.pins[pin].mode != board.MODES.INPUT) {
             board.pinMode(pin, board.MODES.INPUT);
-            board.reportDigitalPin(pin, 1);
+            board.pins[pin].report = 1;
+        } else {
+            if (board.pins[pin].report == 1) {
+                board.reportDigitalPin(pin, 1);
+                board.pins[pin].report = 0;
+            } else {
+                return board.pins[pin].value == 1;
+            }
         }
-        return board.pins[pin].value == 1;
-    } else {
-        return false;
     }
+    return false;
 };
 
 SpriteMorph.prototype.arduinoWatcher = function (selector, label, color, pin) {
