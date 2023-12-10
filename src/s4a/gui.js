@@ -812,30 +812,6 @@ IDE_Morph.prototype.newArduinoProject = function() {
     StageMorph.prototype.enableCodeMapping = true;
     this.currentSprite.primitivesCache.variables = null;
 
-    // UI changes
-    // Ok, these decorator names are getting silly
-    if (!this.isArduinoTranslationMode) {
-        SpriteMorph.prototype.notSoOriginalBlockTemplates = SpriteMorph.prototype.blockTemplates;
-        SpriteMorph.prototype.blockTemplates = function (category) {
-            var blocks = this.notSoOriginalBlockTemplates(category);
-            if (category === 'variables') {
-                blocks = blocks.splice(1);
-                blocks = blocks.splice(0, blocks.length - 1);
-            }
-            return blocks;
-        }
-
-        StageMorph.prototype.notSoOriginalBlockTemplates = StageMorph.prototype.blockTemplates;
-        StageMorph.prototype.blockTemplates = function (category) {
-            var blocks = this.notSoOriginalBlockTemplates(category);
-            if (category === 'variables') {
-                blocks = blocks.splice(1);
-                blocks = blocks.splice(0, blocks.length - 1);
-            }
-            return blocks;
-        }
-    }
-
     // toggle unusable blocks
     var defs = SpriteMorph.prototype.blocks;
    
@@ -848,52 +824,9 @@ IDE_Morph.prototype.newArduinoProject = function() {
         myself.flushBlocksCache(category) 
     });
 
-    // hide empty categories
-    if (!this.isArduinoTranslationMode) {
-        this.categories.children.forEach(function (each) { each.originalPosition = each.position() });
-        this.categories.children[9].setPosition(this.categories.children[4].position());
-        this.categories.children[8].setPosition(this.categories.children[3].position());
-        this.categories.children[7].setPosition(this.categories.children[2].position());
-        this.categories.children[5].setPosition(this.categories.children[1].position());
-        this.categories.children[1].setPosition(this.categories.children[0].position());
-
-        this.categories.children[0].hide(); // Motion
-        this.categories.children[2].hide(); // Looks
-        this.categories.children[3].hide(); // Sensing
-        this.categories.children[4].hide(); // Sound
-        this.categories.children[6].hide(); // Pen
-
-        this.categories.setHeight(this.categories.height() - 30);
-    }
-
-    this.isArduinoTranslationMode = true;
-
     this.currentSprite.paletteCache.variables = null;
+    this.currentCategory = 'control';
     this.refreshPalette();
-};
-
-IDE_Morph.prototype.createNewProject = function () {
-    var myself = this;
-    this.confirm(
-            'Replace the current project with a new one?',
-            'New Project',
-            function () {
-                if (myself.isArduinoTranslationMode) {
-                    StageMorph.prototype.blockTemplates = StageMorph.prototype.notSoOriginalBlockTemplates;
-                    SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
-                    myself.isArduinoTranslationMode = false;
-                    // show all categories
-                    
-                    myself.categories.children.forEach(function (each) {
-                        each.setPosition(each.originalPosition);
-                        each.show();
-                    });
-                    
-                    myself.categories.setHeight(myself.categories.height() + 30);
-                }
-                myself.newProject();
-            }
-            );
 };
 
 IDE_Morph.prototype.sn4a_version = function () {
