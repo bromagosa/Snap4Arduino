@@ -191,7 +191,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 8.2.4\nBuild Your Own Blocks\n\n'//Sn4A mod
+    aboutTxt = 'Snap! 9.1.1\nBuild Your Own Blocks\n\n'//Sn4A mod
         + 'Copyright \u24B8 2008-2023 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
@@ -254,11 +254,12 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\nAchal Dave: Web Audio'
         + '\nJoe Otto: Morphic Testing and Debugging'
         + '\n\n'
-        + 'Jahrd, Derec, and Jamet costumes are watercolor paintings'
-        + '\nby Meghan Taylor and represent characters from her'
-        + '\nwebcomic Prophecy of the Circle, licensed to us only'
-        + '\nfor use in Snap! projects. Meghan also painted the Tad'
-        + '\ncostumes, but that character is in the public domain.';
+        + 'Jahrd, Derec, Jamet, Sarron, and Aleassa costumes are'
+        + '\nwatercolor paintings by Meghan Taylor and represent'
+        + '\n characters from her webcomic Prophecy of the Circle,'
+        + '\nlicensed to us only for use in Snap! projects.'
+        + '\nMeghan also painted the Tad costumes,'
+        + '\nbut that character is in the public domain.';
 
     for (module in modules) {
         if (Object.prototype.hasOwnProperty.call(modules, module)) {
