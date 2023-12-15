@@ -74,7 +74,7 @@
 
                 ide.getURL('version', function (response) { document.title = document.title.replace("@AppVersion", response); });
 
-                ide.inform = function(title, message, callback) { 
+                /*ide.inform = function(title, message, callback) { 
                     var myself = this;
                     if (!myself.informing) {
                         var box = new DialogBoxMorph();
@@ -86,7 +86,7 @@
                         };
                         box.inform(title, message, world)
                     }
-                };
+                };*/
 
                 loop();
             };
