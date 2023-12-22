@@ -59,11 +59,11 @@ localize, SVG_Costume, MorphicPreferences, Process, isSnapObject, Variable,
 SyntaxElementMorph, BooleanSlotMorph, normalizeCanvas, contains, Scene,
 Project*/
 
-/*jshint esversion: 6*/
+/*jshint esversion: 11*/
 
 // Global stuff ////////////////////////////////////////////////////////
 
-modules.store = '2023-March-05';
+modules.store = '2023-July-27';
 
 // XML_Serializer ///////////////////////////////////////////////////////
 /*
@@ -259,7 +259,7 @@ SnapSerializer.uber = XML_Serializer.prototype;
 
 // SnapSerializer constants:
 
-SnapSerializer.prototype.app = 'Snap! 8.2, https://snap.berkeley.edu';
+SnapSerializer.prototype.app = 'Snap! 9.0, https://snap.berkeley.edu';
 
 SnapSerializer.prototype.thumbnailSize = new Point(160, 120);
 
@@ -909,6 +909,16 @@ SnapSerializer.prototype.loadObject = function (object, model) {
 
     // note: the dispatches cache isn't cleared until after
     // *all* objects are loaded
+
+    // load the "solution" sprite if it exists
+    node = model.childNamed('solution');
+    if (node) {
+        node = node.childNamed('sprite');
+        if (node) {
+            object.solution = this.loadValue(node, object, true); // silently
+        }
+    }
+
 };
 
 SnapSerializer.prototype.loadInheritanceInfo = function (object, model) {
@@ -1059,7 +1069,9 @@ SnapSerializer.prototype.loadCustomBlocks = function (
                             (child.contents ? child.contents === 'true' : null)
                                 : child.contents,
                         options ? options.contents : undefined,
-                        child.attributes.readonly === 'true'
+                        child.attributes.readonly === 'true',
+                        child.attributes.irreplaceable === 'true',
+                        child.attributes.separator
                     ]
                 );
             });
@@ -1116,6 +1128,7 @@ SnapSerializer.prototype.populateCustomBlocks = function (
                 object
             );
             definition.body.inputs = definition.names.slice(0);
+            definition.body.comment = definition.comment?.text();
         }
         scripts = child.childNamed('scripts');
         if (scripts) {
@@ -1362,7 +1375,7 @@ SnapSerializer.prototype.obsoleteBlock = function (isReporter) {
 
 SnapSerializer.prototype.loadInput = function (model, input, block, object) {
     // private
-    var inp, val;
+    var inp, val, i;
     if (isNil(input)) {
         return;
     }
@@ -1398,6 +1411,9 @@ SnapSerializer.prototype.loadInput = function (model, input, block, object) {
             );
         });
         input.fixLayout();
+        for (i = input.inputs().length; i < input.minInputs; i += 1) {
+            input.addInput();
+        }
     } else if (model.tag === 'block' || model.tag === 'custom-block') {
         if (input.slotSpec === '%rcv') {
             // special case for migrating former SEND block inputs to
@@ -1424,7 +1440,7 @@ SnapSerializer.prototype.loadInput = function (model, input, block, object) {
     }
 };
 
-SnapSerializer.prototype.loadValue = function (model, object) {
+SnapSerializer.prototype.loadValue = function (model, object, silently) {
     // private
     var v, i, lst, items, el, center, image, name, audio, option, bool, origin,
     	wish, def,
@@ -1547,7 +1563,9 @@ SnapSerializer.prototype.loadValue = function (model, object) {
         if (model.attributes.pan) {
             v.pan = +model.attributes.pan;
         }
-        this.scene.stage.add(v);
+        if (!silently) {
+            this.scene.stage.add(v);
+        }
         v.scale = parseFloat(model.attributes.scale || '1');
         v.rotationStyle = parseFloat(
             model.attributes.rotation || '1'
@@ -1555,7 +1573,9 @@ SnapSerializer.prototype.loadValue = function (model, object) {
         v.isDraggable = model.attributes.draggable !== 'false';
         v.isVisible = model.attributes.hidden !== 'true';
         v.heading = parseFloat(model.attributes.heading) || 0;
-        v.gotoXY(+model.attributes.x || 0, +model.attributes.y || 0);
+        if (!silently) {
+            v.gotoXY(+model.attributes.x || 0, +model.attributes.y || 0);
+        }
         this.loadObject(v, model);
         v.fixLayout();
 
@@ -1563,6 +1583,7 @@ SnapSerializer.prototype.loadValue = function (model, object) {
     case 'context':
         v = new Context(null);
         record();
+        v.comment = model.childNamed('remark')?.contents;
         el = model.childNamed('origin');
         if (el) {
             el = el.childNamed('ref') || el.childNamed('sprite');
@@ -1985,6 +2006,7 @@ SpriteMorph.prototype.toXML = function (serializer) {
             ' draggable="@"' +
             '%' +
             ' costume="@" color="@,@,@,@" pen="@" ~>' +
+            '%' + // solution info
             '%' + // inheritance info
             '%' + // nesting info
             '%' + // current costume
@@ -2014,6 +2036,11 @@ SpriteMorph.prototype.toXML = function (serializer) {
         this.color.b,
         this.color.a,
         this.penPoint,
+
+        // solution info
+        this.solution
+            ? '<solution>' + serializer.store(this.solution) + '</solution>'
+            : '',
 
         // inheritance info
         this.exemplar
@@ -2317,10 +2344,17 @@ CustomBlockDefinition.prototype.toXML = function (serializer) {
         Array.from(this.declarations.keys()).reduce((xml, decl) => {
             // to be refactored now that we've moved to ES6 Map:
                 return xml + serializer.format(
-                    '<input type="@"$>$%</input>',
+                    '<input type="@"$$$>$%</input>',
                     this.declarations.get(decl)[0],
                     this.declarations.get(decl)[3] ?
                             ' readonly="true"' : '',
+                    this.declarations.get(decl)[4] ?
+                            ' irreplaceable="true"' : '',
+                    this.declarations.get(decl)[5] ?
+                            ' separator="' +
+                                this.declarations.get(decl)[5] +
+                                '"'
+                            : '',
                     this.declarations.get(decl)[1],
                     this.declarations.get(decl)[2] ?
                             serializer.format(
@@ -2490,15 +2524,20 @@ Context.prototype.toXML = function (serializer) {
         return '';
     }
     return serializer.format(
-        '<context ~><inputs>%</inputs><variables>%</variables>' +
+        '<context ~><inputs>%</inputs><variables>%</variables>%' +
             '%<receiver>%</receiver><origin>%</origin>%</context>',
         this.inputs.reduce(
-                (xml, input) => {
-                    return xml + serializer.format('<input>$</input>', input);
-                },
+                (xml, input) => xml + (input.toXML ?
+                    serializer.format(
+                        '<input>%</input>',
+                        input.toXML(serializer)
+                    ) : serializer.format('<input>$</input>', input)),
                 ''
             ),
         this.variables ? serializer.store(this.variables) : '',
+        this.comment ?
+            '<remark>' + serializer.escape(this.comment) + '</remark>'
+            : '',
         this.expression ? serializer.store(this.expression) : '',
         this.receiver ? serializer.store(this.receiver) : '',
         this.receiver ? serializer.store(this.origin) : '',
