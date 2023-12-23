@@ -34,7 +34,7 @@ SVG_Costume, newCanvas, WatcherMorph, BlockMorph, HatBlockMorph*/
 
 /*jshint esversion: 11, bitwise: false*/
 
-modules.extensions = '2023-February-01';
+modules.extensions = '2023-May-09';
 
 // Global stuff
 
@@ -328,6 +328,18 @@ SnapExtensions.primitives.set(
     */
     function (name, txt) {
         return Process.prototype.reportTextFunction(name, txt);
+    }
+);
+
+SnapExtensions.primitives.set(
+    'txt_export(txt, name)',
+    function (txt, name, proc) {
+        var ide = this.parentThatIsA(IDE_Morph);
+        proc.assertType(txt, ['text', 'number']);
+        name = name || localize('data');
+        proc.assertType(name, ['text', 'number']);
+        name = name.toString();
+        ide.saveFileAs(txt.toString(), 'text/txt', name);
     }
 );
 
@@ -1057,6 +1069,29 @@ SnapExtensions.primitives.set(
                 new List([SnapTranslator.languageName(lang), lang])
             )
         );
+    }
+);
+
+SnapExtensions.primitives.set(
+    'ide_translation_dict',
+    function () {
+        var dict = SnapTranslator.dict[SnapTranslator.language];
+        return new List(
+            Object.keys(dict).slice().sort().map(key =>
+                new List([key, dict[key]]))
+        );
+    }
+);
+
+SnapExtensions.primitives.set(
+    'ide_set_translation_dict(data)',
+    function (data, proc) {
+        var ide = this.parentThatIsA(IDE_Morph),
+            dict = {};
+        proc.assertType(data, 'list');
+        data.map(eachRow => dict[eachRow.at(1)] = eachRow.at(2));
+        SnapTranslator.dict[SnapTranslator.language] = dict;
+        ide.reflectLanguage(SnapTranslator.language);
     }
 );
 

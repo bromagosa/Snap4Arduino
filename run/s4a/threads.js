@@ -100,6 +100,8 @@ Process.prototype.servoWrite = function (pin, value) {
         if (board.pins[pin].mode != board.MODES.SERVO) {
             board.pinMode(pin, board.MODES.SERVO);
             board.servoConfig(pin, 600, 2400);
+            this.pushContext('doYield');
+            this.pushContext();
         }
 
         switch (value[0]) {
@@ -182,6 +184,8 @@ Process.prototype.digitalWrite = function (pin, booleanValue) {
 
         if (board.pins[pin].mode != board.MODES.OUTPUT) {
             board.pinMode(pin, board.MODES.OUTPUT);
+            this.pushContext('doYield');
+            this.pushContext();
         }
         board.digitalWrite(pin, val);
         this.doWait(0);
@@ -199,6 +203,8 @@ Process.prototype.pwmWrite = function (pin, value) {
 
         if (board.pins[pin].mode != board.MODES.PWM) {
             board.pinMode(pin, board.MODES.PWM);
+            this.pushContext('doYield');
+            this.pushContext();
         }
         board.analogWrite(pin, value);
         this.doWait(0);

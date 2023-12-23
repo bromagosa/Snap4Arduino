@@ -1,6 +1,6 @@
 # The Snap! API
 
-Jens Mönig, Bernat Romagosa, February 08, 2023
+Jens Mönig, Bernat Romagosa, July 17, 2023
 
 This document describes how Snap! can be accessed from an outside program to start scripts, send and retrieve information. The model use case is embedding interactive Snap! projects in other websites such as MOOCs or other adaptive learning platforms.
 
@@ -10,54 +10,54 @@ Currently the API consists of the following methods:
 
 #### Navigate Scenes
 
-* IDE_Morph.prototype.getScenes()
-* IDE_Morph.prototype.getCurrentScene()
-* IDE_Morph.prototype.switchTo()
+* `IDE_Morph.prototype.getScenes()`
+* `IDE_Morph.prototype.getCurrentScene()`
+* `IDE_Morph.prototype.switchTo()`
 
 #### Control Processes
 
-* IDE_Morph.prototype.isRunning()
-* IDE_Morph.prototype.stop()
+* `IDE_Morph.prototype.isRunning()`
+* `IDE_Morph.prototype.stop()`
 
 #### Broadcast Messages (and optionally wait)
 
-* IDE_Morph.prototype.broadcast()
+* `IDE_Morph.prototype.broadcast()`
 
 #### Listen to Messages
 
-* IDE_Morph.prototype.addMessageListenerForAll()
-* IDE_Morph.prototype.addMessageListener()
-* IDE_Morph.prototype.getMessages()
+* `IDE_Morph.prototype.addMessageListenerForAll()`
+* `IDE_Morph.prototype.addMessageListener()`
+* `IDE_Morph.prototype.getMessages()`
 
 #### Access Global Variables
 
-* IDE_Morph.prototype.getVarNames()
-* IDE_Morph.prototype.getVar()
-* IDE_Morph.prototype.setVar()
+* `IDE_Morph.prototype.getVarNames()`
+* `IDE_Morph.prototype.getVar()`
+* `IDE_Morph.prototype.setVar()`
 
 #### Create and Modify Lists
 
-* IDE_Morph.prototype.newList()
+* `IDE_Morph.prototype.newList()`
 
 #### Access the Serialized Project
 
-* IDE_Morph.prototype.getProjectXML()
-* IDE_Morph.prototype.loadProjectXML()
-* IDE_Morph.prototype.unsavedChanges()
+* `IDE_Morph.prototype.getProjectXML()`
+* `IDE_Morph.prototype.loadProjectXML()`
+* `IDE_Morph.prototype.unsavedChanges()`
 
 #### Synchronize Scripts
 
-* IDE_Morph.prototype.getSpriteScriptsXML()
-* IDE_Morph.prototype.loadSpriteScriptsXML()
+* `IDE_Morph.prototype.getSpriteScriptsXML()`
+* `IDE_Morph.prototype.loadSpriteScriptsXML()`
 
 #### Highlight Blocks
 
-* IDE_Morph.prototype.flashSpriteScripts()
-* IDE_Morph.prototype.unflashSpriteScripts
+* `IDE_Morph.prototype.flashSpriteScripts()`
+* `IDE_Morph.prototype.unflashSpriteScripts`
 
 #### Set the Language
 
-* IDE_Morph.prototype.setTranslation()
+* `IDE_Morph.prototype.setTranslation()`
 
 ## Referencing the IDE
 
@@ -118,6 +118,8 @@ You can configure the looks and behavior of the IDE by passing it a configuratio
 |mode:		|str	|currently `"presentation"` or `"edit"`|
 |hideControls:	|bool	|hide/show the tool bar|
 |hideCategories:	|bool	|hide/show the palette block category buttons|
+|noDefaultCat:	|bool	|hide/show the default built-in category buttons|
+|noSpriteEdits:	|bool	|hide/show the corral & sprite controls/menus|
 |noSprites:	|bool	|hide/show the stage, corral, sprite editor|
 |noPalette:	|bool	|hide/show the palette including the categories|
 |noImports:	|bool	|disable/allow importing files via drag&drop|

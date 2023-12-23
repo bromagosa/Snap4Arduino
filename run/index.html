@@ -67,17 +67,14 @@
                 world = new WorldMorph(document.getElementById('world'));
 
                 // keeping Alive... we need to ask to the plugin side continuosly
-                if (window.location.protocol === 'https') {
-                    world.Arduino.keepAlive = false;
-                } else {
-                    world.Arduino.keepAlive = true;
-                }
+                world.Arduino.keepAlive = true;
+
                 ide = new IDE_Morph();
                 ide.openIn(world);
 
                 ide.getURL('version', function (response) { document.title = document.title.replace("@AppVersion", response); });
 
-                ide.inform = function(title, message, callback) { 
+                /*ide.inform = function(title, message, callback) { 
                     var myself = this;
                     if (!myself.informing) {
                         var box = new DialogBoxMorph();
@@ -89,7 +86,7 @@
                         };
                         box.inform(title, message, world)
                     }
-                };
+                };*/
 
                 loop();
             };
