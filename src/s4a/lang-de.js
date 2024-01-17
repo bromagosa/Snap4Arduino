@@ -13,7 +13,7 @@ s4aTempDict = {
     'It seems that someone pulled the cable!': 'Scheinbar hat jemand das Kabel gezogen!',
     'PWM': 'PWM',
     'There is already a board connected to this sprite': 'Es ist bereits ein Board mit diesem Sprite verbunden',
-    'analog reading  _': 'lies analogen Pin  _',
+    'analog reading _': 'lies analogen Pin _',
     'angle (0-180)': 'Winkel (0-180)',
     'clockwise (1500-1000)': 'im Uhrzeigersinn (1500-1000)',
     'clockwise': 'im Uhrzeigersinn',

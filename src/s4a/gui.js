@@ -191,7 +191,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 9.1.1\nBuild Your Own Blocks\n\n'//Sn4A mod
+    aboutTxt = 'Snap! 9.2.1\nBuild Your Own Blocks\n\n'//Sn4A mod
         + 'Copyright \u24B8 2008-2023 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
