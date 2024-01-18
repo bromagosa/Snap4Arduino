@@ -1,4 +1,4 @@
-var s4aVersion = '9.1.1',
+var s4aVersion = '9.2.1',
     cacheName = `snap4arduino-pwa-${s4aVersion}`,
     filesToCache = [
         'index.html',

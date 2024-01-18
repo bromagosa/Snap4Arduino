@@ -1,0 +1,4 @@
+<blocks app="Snap4Arduino 5.0
+, http://snap4arduino.rocks" version="1">
+<block-definition s="---" type="reporter" category="other"><header></header><code></code><translations></translations><inputs></inputs><script><block s="doReport"><l>---</l></block></script></block-definition>
+</blocks>
