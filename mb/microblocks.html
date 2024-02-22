@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>MicroBlocks</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="icons/Bunny512.png">
+    <meta name="theme-color" content="white"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="MicroBlocks">
+    <meta name="msapplication-TileImage" content="icons/Bunny192.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+
+    <style>
+      body {
+        font-family: arial;
+        margin: 0;
+      }
+
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      div.emscripten { text-align: center; }
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten { border: 0px none; margin-left: 0px; margin-top: -18px }
+
+      .spinner {
+        height: 30px;
+        width: 30px;
+        margin: 0;
+        margin-top: 5px;
+        margin-left: 20px;
+        display: inline-block;
+        vertical-align: top;
+
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+
+        border-left: 5px solid rgb(235, 235, 235);
+        border-right: 5px solid rgb(235, 235, 235);
+        border-bottom: 5px solid rgb(235, 235, 235);
+        border-top: 5px solid rgb(120, 120, 120);
+
+        border-radius: 100%;
+        background-color: rgb(189, 215, 46);
+      }
+
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+
+      #status {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 15px;
+        margin-left: 15px;
+        font-weight: bold;
+        color: rgb(120, 120, 120);
+      }
+
+      #progress {
+        height: 20px;
+        width: 30px;
+      }
+
+      #controls {
+        display: inline-block;
+        float: left;
+        vertical-align: top;
+        margin-top: 5px;
+        margin-bottom: 7px;
+        margin-left: 5px;
+      }
+
+      #output {
+        width: 100%;
+        height: 200px;
+        margin: 0 auto;
+        margin-top: 10px;
+        display: block;
+        background-color: black;
+        color: white;
+        font-family: 'Lucida Console', Monaco, monospace;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+	<script>
+		// Force HTTPS. Otherwise WebSerial can't be accessed.
+		if (location.protocol === 'http:') { location.protocol = 'https:'; }
+	</script>
+	<span id='controls' style="display: none">
+	  <input type="button" value="Keyboard" id="KeyboardButton">
+	  <input type="button" value="Backspace" id="BackspaceButton">
+	  <input type="button" value="Toggle Fullscreen" id="FullscreenButton">
+	  <input type="button" value="Upload" id="UploadButton">
+	  <input type="button" value="Enable Microphone" id="EnableMicrophoneButton">
+	  <input type="button" value="See Inside" id="SeeInsideButton">
+	  <input type="button" value="Present" id="PresentButton">
+	  <input type="button" value="Go" id="GoButton">
+	  <input type="button" value="Stop" id="StopButton">
+	  <input type="file" id="FileUploader" multiple style="display:none">
+	</span>
+
+    <div class="spinner" id='spinner'></div>
+    <div class="emscripten" id="status">Downloading...</div>
+
+    <div class="emscripten">
+      <progress value="0" max="100" id="progress" hidden=1></progress>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" width="100px" height="100px"></canvas>
+    </div>
+
+    <script type="text/javascript" src="emModule.js"></script>
+    <script type="text/javascript" src="gpSupport.js"></script>
+    <script type="text/javascript" src="FileSaver.js"></script>
+    <script type="text/javascript" src="gp_wasm.js"></script>
+
+  </body>
+</html>
