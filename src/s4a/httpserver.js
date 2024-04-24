@@ -182,7 +182,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
 
                 case 'stage':
                     if (myself.isStagePublic) {
-                        var contents = '<html><img id="stage" src="' + myself.stage.fullImageClassic().toDataURL() + '" /><script>' +
+                        var contents = '<html><img id="stage" src="' + myself.stage.fullImage().toDataURL() + '" /><script>' +
                             'var ajax = new XMLHttpRequest();' +
                             'function getData() {' + 
                             'var time = new Date();' +
@@ -201,7 +201,7 @@ IDE_Morph.prototype.handleHTTPRequest = function (request, response) {
                 case 'stageimg':
                     if (myself.isStagePublic) {
                         response.setHeader('Cache-Control', 'no-cache');
-                        response.write(myself.stage.fullImageClassic().toDataURL());
+                        response.write(myself.stage.fullImage().toDataURL());
                     } else {
                         response.writeHead(200, {'Content-Type': 'text/plain; charset=utf-8'});
                         response.write('Stage is not public');

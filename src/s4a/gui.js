@@ -191,7 +191,7 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 8.2.4\nBuild Your Own Blocks\n\n'//Sn4A mod
+    aboutTxt = 'Snap! 9.2.1\nBuild Your Own Blocks\n\n'//Sn4A mod
         + 'Copyright \u24B8 2008-2023 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
@@ -254,11 +254,12 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\nAchal Dave: Web Audio'
         + '\nJoe Otto: Morphic Testing and Debugging'
         + '\n\n'
-        + 'Jahrd, Derec, and Jamet costumes are watercolor paintings'
-        + '\nby Meghan Taylor and represent characters from her'
-        + '\nwebcomic Prophecy of the Circle, licensed to us only'
-        + '\nfor use in Snap! projects. Meghan also painted the Tad'
-        + '\ncostumes, but that character is in the public domain.';
+        + 'Jahrd, Derec, Jamet, Sarron, and Aleassa costumes are'
+        + '\nwatercolor paintings by Meghan Taylor and represent'
+        + '\n characters from her webcomic Prophecy of the Circle,'
+        + '\nlicensed to us only for use in Snap! projects.'
+        + '\nMeghan also painted the Tad costumes,'
+        + '\nbut that character is in the public domain.';
 
     for (module in modules) {
         if (Object.prototype.hasOwnProperty.call(modules, module)) {
@@ -812,30 +813,6 @@ IDE_Morph.prototype.newArduinoProject = function() {
     StageMorph.prototype.enableCodeMapping = true;
     this.currentSprite.primitivesCache.variables = null;
 
-    // UI changes
-    // Ok, these decorator names are getting silly
-    if (!this.isArduinoTranslationMode) {
-        SpriteMorph.prototype.notSoOriginalBlockTemplates = SpriteMorph.prototype.blockTemplates;
-        SpriteMorph.prototype.blockTemplates = function (category) {
-            var blocks = this.notSoOriginalBlockTemplates(category);
-            if (category === 'variables') {
-                blocks = blocks.splice(1);
-                blocks = blocks.splice(0, blocks.length - 1);
-            }
-            return blocks;
-        }
-
-        StageMorph.prototype.notSoOriginalBlockTemplates = StageMorph.prototype.blockTemplates;
-        StageMorph.prototype.blockTemplates = function (category) {
-            var blocks = this.notSoOriginalBlockTemplates(category);
-            if (category === 'variables') {
-                blocks = blocks.splice(1);
-                blocks = blocks.splice(0, blocks.length - 1);
-            }
-            return blocks;
-        }
-    }
-
     // toggle unusable blocks
     var defs = SpriteMorph.prototype.blocks;
    
@@ -848,52 +825,9 @@ IDE_Morph.prototype.newArduinoProject = function() {
         myself.flushBlocksCache(category) 
     });
 
-    // hide empty categories
-    if (!this.isArduinoTranslationMode) {
-        this.categories.children.forEach(function (each) { each.originalPosition = each.position() });
-        this.categories.children[9].setPosition(this.categories.children[4].position());
-        this.categories.children[8].setPosition(this.categories.children[3].position());
-        this.categories.children[7].setPosition(this.categories.children[2].position());
-        this.categories.children[5].setPosition(this.categories.children[1].position());
-        this.categories.children[1].setPosition(this.categories.children[0].position());
-
-        this.categories.children[0].hide(); // Motion
-        this.categories.children[2].hide(); // Looks
-        this.categories.children[3].hide(); // Sensing
-        this.categories.children[4].hide(); // Sound
-        this.categories.children[6].hide(); // Pen
-
-        this.categories.setHeight(this.categories.height() - 30);
-    }
-
-    this.isArduinoTranslationMode = true;
-
     this.currentSprite.paletteCache.variables = null;
+    this.currentCategory = 'control';
     this.refreshPalette();
-};
-
-IDE_Morph.prototype.createNewProject = function () {
-    var myself = this;
-    this.confirm(
-            'Replace the current project with a new one?',
-            'New Project',
-            function () {
-                if (myself.isArduinoTranslationMode) {
-                    StageMorph.prototype.blockTemplates = StageMorph.prototype.notSoOriginalBlockTemplates;
-                    SpriteMorph.prototype.blockTemplates = SpriteMorph.prototype.notSoOriginalBlockTemplates;
-                    myself.isArduinoTranslationMode = false;
-                    // show all categories
-                    
-                    myself.categories.children.forEach(function (each) {
-                        each.setPosition(each.originalPosition);
-                        each.show();
-                    });
-                    
-                    myself.categories.setHeight(myself.categories.height() + 30);
-                }
-                myself.newProject();
-            }
-            );
 };
 
 IDE_Morph.prototype.sn4a_version = function () {
