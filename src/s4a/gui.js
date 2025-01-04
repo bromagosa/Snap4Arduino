@@ -191,8 +191,8 @@ IDE_Morph.prototype.aboutSnap = function () {
         module, btn1, btn2, btn3, btn4, licenseBtn, translatorsBtn,
         world = this.world();
 
-    aboutTxt = 'Snap! 9.2.1\nBuild Your Own Blocks\n\n'//Sn4A mod
-        + 'Copyright \u24B8 2008-2023 Jens M\u00F6nig and '
+    aboutTxt = 'Snap! 10.3.6\nBuild Your Own Blocks\n\n'//Sn4A mod
+        + 'Copyright \u24B8 2008-2025 Jens M\u00F6nig and '
         + 'Brian Harvey\n'
         + 'jens@moenig.org, bh@cs.berkeley.edu\n\n'
         + '        Snap! is developed by the University of California, '
@@ -231,11 +231,13 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\nBernat Romagosa: Countless contributions'
         + '\nBartosz Leper: Retina Display Support'
         + '\nDariusz Dorożalski: Web Serial Support'
+        + '\ncountless bugfixes and optimizations'
         + '\nZhenlei Jia and Dariusz Dorożalski: IME text editing'
         + '\nKen Kahn: IME support and countless other contributions'
         + '\nJosep Ferràndiz: Video Motion Detection'
         + '\nJoan Guillén: Countless contributions'
         + '\nKartik Chandra: Paint Editor'
+        + '\nMichael Aschauer: Embroidery machine support'
         + '\nCarles Paredes: Initial Vector Paint Editor'
         + '\n"Ava" Yuan Yuan, Deborah Servilla: Graphic Effects'
         + '\nKyle Hotchkiss: Block search design'
@@ -248,8 +250,10 @@ IDE_Morph.prototype.aboutSnap = function () {
         + '\nJadga Hügle: Icons and countless other contributions'
         + '\nSimon Walters & Xavier Pi: MQTT extension'
         + '\nVictoria Phelps: Reporter results tracing'
+        + '\nSimon Mong: Custom blocks palette arrangement'
         + '\nIvan Motyashov: Initial Squeak Porting'
         + '\nLucas Karahadian: Piano Keyboard Design'
+        + '\nego-lay-atman-bay: Piano Keyboard Octave Switching'
         + '\nDavide Della Casa: Morphic Optimizations'
         + '\nAchal Dave: Web Audio'
         + '\nJoe Otto: Morphic Testing and Debugging'
