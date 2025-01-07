@@ -1,0 +1,248 @@
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "blankLib.xml",
+    "name": "--- Snap4Arduino ---",
+    "description": "Libraries below this point are specific to Snap4Arduino.",
+    "translations": {
+      "ca": {
+        "description": "Les llibreries de sota són específiques per Snap4Arduino."
+      },
+      "es": {
+        "description": "Las siguientes bibliotecas son específicas de Snap4Arduino."
+      }
+    }
+  },
+  {
+    "fileName": "scale.xml",
+    "name": "Scale between ranges",
+    "description": "Scale a value from a range to another. Useful to map sensor values into stage coordinates, or to map sensors into actuators.",
+    "searchData": [
+      "constrain _ between _ and _",
+      "escale _ from [ _ , _ ] to [ _ , _ ]"
+    ],
+    "categories": [
+      "operators"
+    ],
+    "translations": {
+      "ca": {
+        "name": "Escala entre intervals",
+        "description": "Escala un valor d'un interval a un altre. Útil per mapejar els valors dels sensors a les coordenades de l'escenari o per passar valors dels sensors directament als actuadors.",
+        "searchData": [
+          "constreny _ entre _ i _",
+          "escala _ des de [ _ , _ ] fins [ _ , _ ]"
+        ]
+      },
+      "es": {
+        "name": "Escala entre intervalos",
+        "description": "Escala un valor de un intervalo a otro. Útil para mapear valores de sensores a las coordenadas del escenario o para pasar directamente valores de sensores a actuadores.",
+        "searchData": [
+          "constreñir _ entre _ y _",
+          "escala _ desde [ _ , _ ] hasta [ _ , _ ]"
+        ]
+      }
+    }
+  },
+  {
+    "fileName": "snapJrLib.xml",
+    "name": "SnapJunior Blocks",
+    "description": "Icon-based blocks for the youngest programmers.",
+    "translations": {
+      "ca": {
+        "name": "Blocs de l'Snap Junior",
+        "description": "Blocs amb icones per als programadors i programadores més joves."
+      },
+      "es": {
+        "name": "Bloques del Snap Junior",
+        "description": "Bloques con iconos para los programadores y programadoras más jóvenes."
+      }
+    }
+  },
+  {
+    "fileName": "snapJrPlusLib.xml",
+    "name": "SnapJuniorPlus Blocks",
+    "description": "Extra blocks for SnapJunior.",
+    "translations": {
+      "ca": {
+        "name": "Més blocs per l'Snap Junior",
+        "description": "Blocs per afegir funcionalitats a l'Snap Junior"
+      },
+      "es": {
+        "name": "Más bloques para el Snap Junior",
+        "description": "Bloques para añadir funcionalidades al Snap Junior"
+      }
+    }
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "i2c.xml",
+    "name": "I2C",
+    "description": "Send and receive data from I2C-enabled sensors and actuators.",
+    "translations": {
+      "ca": {
+        "description": "Envia i rep dades pel protocol I2C de sensors i actuadors."
+      },
+      "es": {
+        "description": "Envía y recibe datos por el protocolo I2C de sensores y actuadores."
+      }
+    }
+  },
+  {
+    "fileName": "SA5Firmata_tone.xml",
+    "name": "SA5Firmata",
+    "description": "Adding extra features to StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck and dht11 blocks. It requires SA5Firmata_tone firmware.",
+    "translations": {
+      "ca": {
+        "description": "Afegeix funcionalitats al StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck i dht11. Requereix que el dispositiu tingui el firmware SA5Firmata_tone."
+      },
+      "es": {
+        "description": "Añade funcionalidades al StandardFirmata: tone, pulseIn, pulseOut, ping, nunchuck i dht11. Necesita que el dispositivo tenga el firmware SA5Firmata_tone."
+      }
+    }
+  },
+  {
+    "fileName": "SA5Firmata_ir.xml",
+    "name": "SA5FirmataIR",
+    "description": "SA5Firmata with IR features at the expense of simplifying the tone function. It requires SA5Firmata_ir firmware.",
+    "translations": {
+      "ca": {
+        "description": "SA5Firmata amb funcionalitats IR, limitant les funcionalitats del tone. Requereix que el dispositiu tingui el firmware SA5Firmata_IR."
+      },
+      "es": {
+        "description": "SA5Firmata con funcionalidades IR, limitando las funcionalidades del tone. Necesita que el dispositivo tinga el firmware SA5Firmata_IR."
+      }
+    }
+  },
+  {
+    "fileName": "NeoPixel.xml",
+    "name": "NeoPixel",
+    "description": "NeoPixel LED strips let you address RGB LEDs in large strips or grids, and change their color individually. You need to install Jay Hayes' NeoPixelFirmata into the board before being able to use this library.",
+    "translations": {
+      "ca": {
+        "description": "Les tires de LED de NeoPíxel permeten connectar llargues tires o matrius de LEDs i canviar el seu color individualment. Requereix que el dispositiu tingui el NeoPixelFirmata de Jay Hayes."
+      },
+      "es": {
+        "description": "Las tiras de LED de NeoPíxel permiten conectar largas tiras o matrices de LEDs i cambiar su color individualmente. Necesita que el dispositivo tenga el NeoPixelFirmata de Jay Hayes."
+      }
+    }
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "TdRSTEAMv1.xml",
+    "name": "TdR STEAM v1",
+    "description": "Blocks for the TdRSTEAM shield v1. Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.",
+    "translations": {
+      "ca": {
+        "description": "Blocs per la TdRSTEAM v1. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitas del brunzidor (tone)."
+      },
+      "es": {
+        "description": "Bloques para la TdRSTEAM v1. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone)."
+      }
+    }
+  },
+  {
+    "fileName": "TdRSTEAMv2.xml",
+    "name": "TdR STEAM v2",
+    "description": "Blocks for the TdRSTEAM shield v2, Use StandardFirmata or SA5Firmata_tone firmware to add buzzer features.",
+    "translations": {
+      "ca": {
+        "description": "Blocs per la TdRSTEAM v2. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitas del brunzidor (tone)."
+      },
+      "es": {
+        "description": "Bloques para la TdRSTEAM v2. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone)."
+      }
+    }
+  },
+  {
+    "fileName": "imagina.xml",
+    "name": "Imagina Shield",
+    "description": "Blocks for the Imagina shield. Use StandardFirmata, SA5Firmata_tone to add buzzer features or SA5Firmata_IR for buzzer and IR features.",
+    "translations": {
+      "ca": {
+        "name": "Placa Imagina",
+        "description": "Blocs per la placa Imagina. Utilitza el StandardFirmata, el S5AFirmata_tone per afegir les funcionalitats del brunzidor (tone) o el SA5Firmata_IR per tenir brunzidor (simplificat) i funcionalitats IR."
+      },
+      "es": {
+        "name": "Placa Imagina",
+        "description": "Bloques para la placa Imagina. Utiliza el StandardFirmata, el S5AFirmata_tone para añadir las funcionalidades del zumbador (tone) o el SA5Firmata_IR para tener zumbador (simplificado) y funcionalidades IR."
+      }
+    }
+  },
+  {
+    "fileName": "echidna.xml",
+    "name": "Echidna Boards",
+    "description": "Blocks for the Echidna boards. Use StandarFirmata or SA5Firmata_tone to add more buzzer features.",
+    "translations": {
+      "ca": {
+        "name": "Plaques Echidna",
+        "description": "Blocs per les plaques Echidna. Utilitza el StandardFirmata o el SA5Firmata_tone per afegir les funcionalitats del brunzidor (tone)."
+      },
+      "es": {
+        "name": "Placas Echidna",
+        "description": "Bloques para las placas Echidna. Utiliza el StandardFirmata o el SA5Firmata_tone para añadir las funcionalidades del zumbador (tone)."
+      }
+    }
+  },
+  {
+    "fileName": "nodeMCU.xml",
+    "name": "NodeMCU",
+    "description": "Blocks for the NodeMCU board using StandardFirmata. It has also blocks for a motor shield.",
+    "translations": {
+      "ca": {
+        "description": "Blocs per la placa NodeMCU utilitzant el StandardFirmata. També incorpora blocs per la placa de motors."
+      },
+      "es": {
+        "description": "Bloques para la placa NodeMCU utilitzando el StandardFirmata. También incorpora bloques para la placa de motores."
+      }
+    }
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "~",
+    "name": "~"
+  },
+  {
+    "fileName": "phiro.xml",
+    "name": "Phiro robot",
+    "description": "Control the Phiro robotic car."
+  },
+  {
+    "fileName": "braccio.xml",
+    "name": "Braccio arm",
+    "description": "The Braccio robotic arm is an educational simple arm with a grip on its end. You need to install BraccioFirmata into the board before being able to use this library."
+  },
+  {
+    "fileName": "Creative_Robotix.xml",
+    "name": "Creative Robotix Platform",
+    "description": "Creative Robotix is a project by the Creative Science Foundation. It is a fully customizable robotics platform, with body parts that can be 3D printed and constructed with low cost open hardware."
+  }
+]
+

@@ -1,0 +1,38 @@
+  },
+  {
+    "fileName": "Bumpy Cat.xml",
+    "name": "LED-triggering virtual cat"
+  },
+  {
+    "fileName": "Force Meter.xml",
+    "name": "Pressure sensor force meter"
+  },
+  {
+    "fileName": "Line Tracer.xml",
+    "name": "Line tracer robot"
+  },
+  {
+    "fileName": "Simon.xml",
+    "name": "Simon game"
+  },
+  {
+    "fileName": "Etch-a-Sketch.xml",
+    "name": "Etch a Sketch"
+  },
+  {
+    "fileName": "Gauge.xml",
+    "name": "Analog sensor gauge"
+  },
+  {
+    "fileName": "MeArm.xml",
+    "name": "MeArm robotic arm example"
+  },
+  {
+    "fileName": "Robotic eye.xml",
+    "name": "Robotic eye"
+  },
+  {
+    "fileName": "Theremin.xml",
+    "name": "Analog sensor theremin"
+  }
+]

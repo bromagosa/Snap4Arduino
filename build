@@ -110,17 +110,25 @@ build() {
 
         echo "Fetching Snap4Arduino examples..."
         cp -R src/Examples/*.xml tmp/Examples
-        cat src/Examples/EXAMPLES >> tmp/Examples/EXAMPLES
+        head -n -2 tmp/Examples/EXAMPLES.json > tmp/Examples/EXAMPLES_temp.txt
+        mv tmp/Examples/EXAMPLES_temp.txt tmp/Examples/EXAMPLES.json
+        cat src/Examples/EXAMPLES_s4a.json >> tmp/Examples/EXAMPLES.json
 
         echo "Fetching Snap4Arduino libraries..."
         cp -R src/libraries/*.xml tmp/libraries
-        cat src/libraries/LIBRARIES >> tmp/libraries/LIBRARIES
+        head -n -2 tmp/libraries/LIBRARIES.json > tmp/libraries/LIBRARIES_temp.txt
+        mv tmp/libraries/LIBRARIES_temp.txt tmp/libraries/LIBRARIES.json
+        cat src/libraries/LIBRARIES_s4a.json >> tmp/libraries/LIBRARIES.json
 
         echo "Fetching Snap4Arduino Costumes..."
         cp -R src/Costumes/*.png tmp/Costumes
         cp -R src/Costumes/*.svg tmp/Costumes
-        cat src/Costumes/COSTUMES >> tmp/Costumes/COSTUMES
-        cat src/Costumes/COSTUMES >> tmp/Costumes/COSTUMES-full
+        head -n -2 tmp/Costumes/COSTUMES.json > tmp/Costumes/COSTUMES_temp.txt
+        head -n -2 tmp/Costumes/COSTUMES-full.json > tmp/Costumes/COSTUMES-full_temp.txt
+        mv tmp/Costumes/COSTUMES_temp.txt tmp/Costumes/COSTUMES.json
+        mv tmp/Costumes/COSTUMES-full_temp.txt tmp/Costumes/COSTUMES-full.json
+        cat src/Costumes/COSTUMES_s4a.json >> tmp/Costumes/COSTUMES.json
+        cat src/Costumes/COSTUMES_s4a.json >> tmp/Costumes/COSTUMES-full.json
 
         echo "Fetching Snap4Arduino core..."
         if ! cp -R src/s4a tmp; then
