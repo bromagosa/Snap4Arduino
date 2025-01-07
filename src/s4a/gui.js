@@ -637,12 +637,12 @@ function homePath() {
  */
 
 IDE_Morph.prototype.originalSetLanguage = IDE_Morph.prototype.setLanguage;
-IDE_Morph.prototype.setLanguage = function(lang, callback) {
+IDE_Morph.prototype.setLanguage = function(lang, callback, noSave) {
     var myself = this;
 
     myself.originalSetLanguage(lang, function() {
         myself.setLanguageS4A(lang, callback);
-    });
+    }, noSave);
 };
 
 IDE_Morph.prototype.setLanguageS4A = function (lang, callback) {
@@ -652,9 +652,6 @@ IDE_Morph.prototype.setLanguageS4A = function (lang, callback) {
         myself = this;
     if (s4aTranslation) {
         document.head.removeChild(s4aTranslation);
-    }
-    if (lang === 'en') {
-        return this.reflectLanguage('en', callback);
     }
     s4aTranslation = document.createElement('script');
     s4aTranslation.id = 's4a-language';
