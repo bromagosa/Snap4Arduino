@@ -178,14 +178,14 @@ SnapTranslator.dict.es = {
 */
 
     // translations meta information
-    'language_name':
-        'Espa\u00F1ol', // the name as it should appear in the language menu
-    'language_translator':
-        'V\u00EDctor Manuel Muratalla Morales / Cristi\u00E1n Rizzi Iribarren / Alfonso Ruzafa / David Mart\u00EDn', // your name for the Translators tab
-    'translator_e-mail':
-        'victor.muratalla@yahoo.com / rizzi.cristian@gmail.com', // optional
-    'last_changed':
-        '2023-11-20', // this, too, will appear in the Translators tab
+    "language_name":
+        "Espa\u00F1ol", // the name as it should appear in the language menu
+    "language_translator":
+        "V\u00EDctor Manuel Muratalla Morales / Cristi\u00E1n Rizzi Iribarren / Alfonso Ruzafa / David Mart\u00EDn", // your name for the Translators tab
+    "translator_e-mail":
+        "victor.muratalla@yahoo.com / rizzi.cristian@gmail.com", // optional
+    "last_changed":
+        "2023-11-20", // this, too, will appear in the Translators tab
 
     //ADDING jadga's newest commits
     "0": "0",
@@ -483,7 +483,7 @@ SnapTranslator.dict.es = {
     "Plain prototype labels": "Etiquetas planas",
     "Play": "Reproducir",
     "Play sound": "reproduce este sonido",
-    "Please make sure your web browser is up to date and your camera is properly configured. Some browsers also require you to access Snap! through HTTPS to use the camera. Plase replace the \"http://\" part of the address in your browser by \"https://\" and try again.": "Por favor, comprueba que tu navegador esté actualizado y tu cámara configurada correctamente. Algunos navegadores necesitan que accedas a Snap! a través de HTTPS para usar la cámara. Por favor, reemplaza el «http://» en la barra de direcciones de tu navegador por «https://» y vuelve a intentarlo.",
+    "Please make sure your web browser is up to date and your camera is properly configured. Some browsers also require you to access Snap! through HTTPS to use the camera. Please replace the \"http://\" part of the address in your browser by \"https://\" and try again.": "Por favor, comprueba que tu navegador esté actualizado y tu cámara configurada correctamente. Algunos navegadores necesitan que accedas a Snap! a través de HTTPS para usar la cámara. Por favor, reemplaza el «http://» en la barra de direcciones de tu navegador por «https://» y vuelve a intentarlo.",
     "Please use the verification link that was sent to your email address when you signed up.": "",
     "Polygon": "polígono",
     "Predicate": "Predicado",
@@ -758,7 +758,7 @@ SnapTranslator.dict.es = {
     "change _ by _": "incrementar _ en _",
     "change _ effect by _": "cambiar efecto _ en _",
     "change background _ by _": "aumenta _ del fondo en _",
-    "change balance by _": "aumenta el balance en _", 
+    "change balance by _": "aumenta el balance en _",
     "change pen _ by _": "cambiar _ del lápiz en _",
     "change pen color by _": "cambiar color de lápiz en _",
     "change pen shade by _": "cambiar brillo de lápiz en _",
@@ -891,7 +891,7 @@ SnapTranslator.dict.es = {
     "delete _ of _": "borrar _ de _",
     "delete a category...": "eliminar una categoría…",
     "delete block": "eliminar bloque",
-    "delete block _": "eliminar bloque",
+    "delete block _": "eliminar bloque _",
     "delete block definition...": "eliminar definición de bloque…",
     "delete slot": "eliminar una ranura",
     "delete solution": "eliminar solución",

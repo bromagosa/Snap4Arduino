@@ -12,94 +12,78 @@ SpriteMorph.prototype.categories.push('arduino');
 SpriteMorph.prototype.blockColor['arduino'] = new Color(24, 167, 181);
 
 SpriteMorph.prototype.originalInitBlocks = SpriteMorph.prototype.initBlocks;
-SpriteMorph.prototype.initArduinoBlocks = function () {
-
-    this.blocks.reportAnalogReading = 
-    {
+SpriteMorph.prototype.originalPrimitiveBlocks = SpriteMorph.prototype.primitiveBlocks;
+SpriteMorph.prototype.primitiveArduinoBlocks = function () {
+  return {
+    reportAnalogReading: {
         only: SpriteMorph,
         type: 'reporter',
         category: 'arduino',
         spec: 'analog reading %analogPin',
         transpilable: true
-    };
-
-    this.blocks.reportDigitalReading = 
-    {
+    },
+    reportDigitalReading: {
         only: SpriteMorph,
         type: 'predicate',
         category: 'arduino',
         spec: 'digital reading %digitalPin',
         transpilable: true
-    };
-
-    this.blocks.connectArduino =
-    {
+    },
+    connectArduino: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'connect arduino at %s'
-    };
-
-    this.blocks.disconnectArduino =
-    {
+    },
+    disconnectArduino: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'disconnect arduino'
-    };
-
+    },
     // Keeping this block spec, although it's not used anymore!
-    this.blocks.setPinMode =
-    {
+    setPinMode: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'setup digital pin %digitalPin as %pinMode',
         defaults: [null, localize('servo')],
         transpilable: true
-    };
-
-    this.blocks.digitalWrite =
-    {
+    },
+    digitalWrite: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'set digital pin %digitalPin to %b',
         transpilable: true
-    };
-
-    this.blocks.servoWrite =
-    {
+    },
+    servoWrite: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'set servo %digitalPin to %servoValue',
         defaults: [null, ['clockwise']],
         transpilable: true
-    };
-
-    this.blocks.pwmWrite =
-    {
+    },
+    pwmWrite: {
         only: SpriteMorph,
         type: 'command',
         category: 'arduino',
         spec: 'set pin %pwmPin to value %n',
 	defaults: [null, 128],
         transpilable: true
-    };
-
-    this.blocks.reportConnected =
-    {
+    },
+    reportConnected: {
         only: SpriteMorph,
         type: 'predicate',
         category: 'arduino',
         spec: 'arduino connected?',
         transpilable: false
-    };
+    }
+  }
+};
 
-    // Ardui... nization? 
-    // Whatever, let's dumb this language down:
-
+SpriteMorph.prototype.initArduinoBlocks = function () {
     this.blocks.receiveGo.transpilable = true;
     this.blocks.receiveMessage.transpilable = true;
     this.blocks.doBroadcastAndWait.transpilable = true;
@@ -171,14 +155,23 @@ SpriteMorph.prototype.initArduinoBlocks = function () {
     StageMorph.prototype.codeMappings['digitalWrite'] = '  s4a.digitalWrite(<#1>, <#2>);';
     StageMorph.prototype.codeMappings['servoWrite'] = '  s4a.servoWrite(<#1>, <#2>);';
     StageMorph.prototype.codeMappings['pwmWrite'] = '  s4a.analogWrite(<#1>, <#2>);';
-}
+};
 
-SpriteMorph.prototype.initBlocks =  function() {
-    this.originalInitBlocks();
+SpriteMorph.prototype.primitiveBlocks = function () {
+  return Object.assign(SpriteMorph.prototype.originalPrimitiveBlocks(), SpriteMorph.prototype.primitiveArduinoBlocks());
+}
+SpriteMorph.prototype.preInitBlocks =  function() {
+    SpriteMorph.prototype.blocks = this.primitiveBlocks();
     this.initArduinoBlocks();
 };
 
-SpriteMorph.prototype.initBlocks();
+SpriteMorph.prototype.initBlocks =  function() {
+    SpriteMorph.prototype.blocks = this.primitiveBlocks();
+    this.initArduinoBlocks();
+    this.initHyperZip();
+};
+
+SpriteMorph.prototype.preInitBlocks();
 
 // blockTemplates decorator
 
@@ -697,3 +690,4 @@ WatcherMorph.prototype.valueExporter = function (format) {
             );
     };
 };
+//SpriteMorph.prototype.initBlocks();

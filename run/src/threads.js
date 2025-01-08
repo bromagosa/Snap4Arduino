@@ -61,11 +61,12 @@ StageMorph, SpriteMorph, StagePrompterMorph, Note, modules, isString, copy, Map,
 isNil, WatcherMorph, List, ListWatcherMorph, alert, console, TableMorph, BLACK,
 TableFrameMorph, ColorSlotMorph, isSnapObject, newCanvas, Symbol, SVG_Costume,
 SnapExtensions, AlignmentMorph, TextMorph, Cloud, HatBlockMorph, InputSlotMorph,
-StagePickerMorph, CustomBlockDefinition, CommentMorph*/
+StagePickerMorph, CustomBlockDefinition, CommentMorph, BooleanSlotMorph,
+CustomHatBlockMorph*/
 
 /*jshint esversion: 11, bitwise: false, evil: true*/
 
-modules.threads = '2024-January-15';
+modules.threads = '2024-December-23';
 
 var ThreadManager;
 var Process;
@@ -149,7 +150,7 @@ function invoke(
 
     if (action instanceof Context) {
         if (receiver) { // optional
-            action = proc.reportContextFor(receiver);
+            action = proc.reportContextFor(action, receiver);
         }
         proc.initializeFor(action, contextArgs || new List());
     } else if (action instanceof BlockMorph) {
@@ -236,11 +237,11 @@ ThreadManager.prototype.startProcess = function (
     isClicked,
     rightAway,
     atomic, // special option used (only) for "onStop" scripts
-    variables // optional variable frame, used for WHEN hats
+    variables, // optional variable frame, used for WHEN hats
+    noHalo
 ) {
     var top = block.topBlock(),
         active = this.findProcess(top, receiver),
-        glow,
         newProc;
     if (active) {
         if (isThreadSafe) {
@@ -267,16 +268,16 @@ ThreadManager.prototype.startProcess = function (
         );
     }
 
+    // in case the optional variable frame is an InputList,
+    // evaluate all inputs and then copy them into the new
+    // outer context
+    else if (variables instanceof InputList) {
+        newProc.pushContext(variables);
+    }
+
     // show a highlight around the running stack
-    // if there are more than one active processes
-    // for a block, display the thread count
-    // next to it
-    glow = top.getHighlight();
-    if (glow) {
-        glow.threadCount = this.processesForBlock(top).length + 1;
-        glow.updateReadout();
-    } else {
-        top.addHighlight();
+    if (!noHalo) {
+        this.highlight(newProc);
     }
 
     this.processes.push(newProc);
@@ -284,6 +285,22 @@ ThreadManager.prototype.startProcess = function (
         newProc.runStep();
     }
     return newProc;
+};
+
+ThreadManager.prototype.highlight = function (aProcess, adjustCount = 0) {
+    // show a highlight around the running stack
+    // if there are more than one active processes
+    // for a block, display the thread count
+    // next to it
+    var top = aProcess.topBlock,
+        glow = top.getHighlight();
+    if (glow) {
+        glow.threadCount = this.processesForBlock(top).length + 1 + adjustCount;
+        glow.updateReadout();
+    } else {
+        top.addHighlight();
+    }
+    this.wantsHalo = false;
 };
 
 ThreadManager.prototype.stopAll = function (excpt) {
@@ -350,6 +367,7 @@ ThreadManager.prototype.step = function () {
     if (Process.prototype.enableSingleStepping) {
         this.processes.forEach(proc => {
             if (proc.isInterrupted) {
+                if (proc.wantsHalo) { this.highlight(proc, -1); }
                 proc.runStep();
                 isInterrupted = true;
             } else {
@@ -367,6 +385,7 @@ ThreadManager.prototype.step = function () {
 
     this.processes.forEach(proc => {
         if (!proc.homeContext.receiver.isPickedUp() && !proc.isDead) {
+            if (proc.wantsHalo) { this.highlight(proc, -1); }
             proc.runStep();
         }
     });
@@ -425,7 +444,7 @@ ThreadManager.prototype.removeTerminatedProcesses = function () {
                     }
                 }
             } else if (proc.onComplete instanceof Function) {
-                proc.onComplete();
+                proc.onComplete(proc.homeContext.inputs[0]);
             }
         } else {
             remaining.push(proc);
@@ -449,56 +468,6 @@ ThreadManager.prototype.processesForBlock = function (block, only) {
             each.isRunning() &&
                 !each.isDead
     );
-};
-
-ThreadManager.prototype.doWhen = function (block, receiver, stopIt) {
-    if (this.pauseCustomHatBlocks) {return; }
-    if ((!block) || this.findProcess(block, receiver)) {
-        return;
-    }
-    var pred = block.inputs()[0], world, test;
-    if (block.removeHighlight()) {
-        world = block.world();
-        if (world) {
-            world.hand.destroyTemporaries();
-        }
-    }
-    if (stopIt) {return; }
-    try {
-        test = invoke(
-            pred,
-            null,
-            receiver,
-            50, // timeout in msecs
-            'the predicate takes\ntoo long for a\ncustom hat block',
-            true, // suppress errors => handle them right here instead
-            null, // caller process for JS-functions
-            true // return the whole home context instead of just he result
-        );
-    } catch (error) {
-        block.addErrorHighlight();
-        block.showBubble(
-            error.name
-            + '\n'
-            + error.message
-        );
-    }
-    // since we're asking for the whole context instead of just the result
-    // of the computation, we need to look at the result-context's first
-    // input to find out whether the condition is met
-    if (test === true || (test && test.inputs && test.inputs[0] === true)) {
-        this.startProcess(
-            block,
-            receiver,
-            null, // isThreadSafe
-            null, // exportResult
-            null, // callback
-            null, // isClicked
-            true,  // rightAway
-            null, // atomic
-            test.variables // make the test-context's variables available
-        );
-    }
 };
 
 ThreadManager.prototype.toggleSingleStepping = function () {
@@ -618,6 +587,7 @@ function Process(topBlock, receiver, onComplete, yieldFirst) {
     this.isDead = false;
     this.isClicked = false;
     this.isShowingResult = false;
+    this.wantsHalo = false;
     this.errorFlag = false;
     this.context = null;
     this.homeContext = new Context(null, null, null, receiver);
@@ -794,7 +764,7 @@ Process.prototype.evaluateContext = function () {
     if (exp instanceof ArgMorph || (exp && exp.bindingID)) {
         return this.evaluateInput(exp);
     }
-    if (exp instanceof BlockMorph) {
+    if (exp instanceof BlockMorph || exp instanceof InputList) {
         return this.evaluateBlock(exp, exp.inputs().length);
     }
     if (isString(exp)) {
@@ -858,6 +828,8 @@ Process.prototype.evaluateBlock = function (block, argCount) {
 };
 
 // Process: Primitive Extensions (for libraries etc.)
+
+Process.prototype.doPrimitive = nop;
 
 Process.prototype.doApplyExtension = function (prim, args) {
     this.reportApplyExtension(prim, args);
@@ -1013,7 +985,7 @@ Process.prototype.doReport = function (block) {
 Process.prototype.evaluateMultiSlot = function (multiSlot, argCount) {
     // first evaluate all subslots, then return a list of their values
     var inputs = this.context.inputs,
-        ans;
+        ans, i;
     if (multiSlot.bindingID) {
         if (this.isCatchingErrors) {
             try {
@@ -1031,6 +1003,39 @@ Process.prototype.evaluateMultiSlot = function (multiSlot, argCount) {
             // this.evaluateNextInput(multiSlot);
             this.evaluateNextInputSet(multiSlot); // frame-optimized version
         } else {
+            // declare a new script var in the current context for every
+            // variable template, excluding formal ring parameters
+            if (['%t', '%upvar'].includes(multiSlot.slotSpec) && // var template
+                !(multiSlot.parentThatIsA(BlockMorph) instanceof RingMorph)
+            ) {
+                inputs.forEach(vname =>
+                    this.context.outerContext.variables.addVar(vname)
+                );
+            } else if (multiSlot.slotSpec instanceof Array) { // input group
+                if (multiSlot.slotSpec.includes('%t') ||
+                    multiSlot.slotSpec.includes('%upvar')
+                ) { // identify and declare every upvar
+                    for (i = 0; i < inputs.length; i += 1) {
+                        if (['%t', '%upvar'].includes(
+                            multiSlot.slotSpec[i % multiSlot.slotSpec.length]
+                        )) {
+                            this.context.outerContext.variables.addVar(
+                                inputs[i]
+                            );
+                        }
+                    }
+                }
+                if (inputs.length &&
+                    !['%receive', '%send'].includes(multiSlot.elementSpec)
+                ) {
+                    // format the inputs as 2D table, unless it's a "built-in"
+                    // group, e.g. for broadcast, scene changes etc.
+                    ans = new List(inputs);
+                    inputs = this.reportNumbers(1, ans.length()).reshape(
+                        new List([0, multiSlot.slotSpec.length])
+                    ).map(indices => ans.query(indices)).itemsArray();
+                }
+            }
             this.returnValueToParentContext(new List(inputs));
             this.popContext();
         }
@@ -1064,18 +1069,37 @@ Process.prototype.evaluateInput = function (input) {
         }
     } else {
         ans = input.evaluate();
-        if (ans) {
-            if (input.constructor === CommandSlotMorph ||
-                    input.constructor === ReporterSlotMorph ||
-                    (input instanceof CSlotMorph &&
-                        (!input.isStatic || input.isLambda))) {
-                // I know, this still needs yet to be done right....
-                ans = this.reify(ans, new List());
-            }
+        if (ans && this.isAutoLambda(input)) {
+            ans = this.reify(ans, new List());
         }
+
     }
     this.returnValueToParentContext(ans);
     this.popContext();
+};
+
+Process.prototype.isAutoLambda = function (inputSlot) {
+    if ([
+        'doForever',
+        'doRepeat',
+        'doUntil',
+        'doIfElse',
+        'doWarp',
+        'doFor',
+        'doForEach'
+    ].includes(inputSlot.parent?.selector)) {
+        // special cases when overloading those primitives
+        // with custom block definitions
+        return false;
+    }
+    return inputSlot.constructor === CommandSlotMorph ||
+        inputSlot.constructor === ReporterSlotMorph ||
+        (inputSlot instanceof CSlotMorph && (
+            !inputSlot.isStatic ||
+            inputSlot.isLambda ||
+            inputSlot.parentThatIsA(BlockMorph)?.isCustomBlock
+        )
+    );
 };
 
 Process.prototype.evaluateSequence = function (arr) {
@@ -1141,6 +1165,8 @@ Process.prototype.evaluateNextInput = function (element) {
             */
             if (sel === 'reify' || sel === 'reportScript') {
                 this.context.addInput(exp);
+            } else if (sel === 'doUntil' || sel === 'doWaitUntil') {
+                this.pushContext(exp, outer);
             } else {
                 this.context.addInput(this.reify(exp, new List()));
             }
@@ -1168,6 +1194,9 @@ Process.prototype.evaluateNextInputSet = function (element) {
             if (exp.isUnevaluated === true || exp.isUnevaluated()) {
                 if (sel === 'reify' || sel === 'reportScript') {
                     this.context.addInput(exp);
+                } else if (sel === 'doUntil' || sel === 'doWaitUntil') {
+                    this.pushContext(exp, outer);
+                    break;
                 } else {
                     this.context.addInput(this.reify(exp, new List()));
                 }
@@ -1194,13 +1223,8 @@ Process.prototype.evaluateNextInputSet = function (element) {
                     }
                 } else {
                     ans = exp.evaluate();
-                    if (ans) {
-                        if (exp.constructor === CommandSlotMorph ||
-                                exp.constructor === ReporterSlotMorph ||
-                                (exp instanceof CSlotMorph &&
-                                    (!exp.isStatic || exp.isLambda))) {
-                            ans = this.reify(ans, new List());
-                        }
+                    if (ans && this.isAutoLambda(exp)) {
+                        ans = this.reify(ans, new List());
                     }
                 }
                 this.context.addInput(ans);
@@ -1288,7 +1312,8 @@ Process.prototype.errorBubble = function (error, element) {
             // if I am a single variable, show my caller in the output.
             blockToShow = blockToShow.parent || blockToShow;
         }
-        errorMorph.children[0].text += `\n${localize('The question came up at')}`;
+        errorMorph.children[0].text +=
+            `\n${localize('The question came up at')}`;
         errorMorph.children[0].fixLayout();
         errorMorph.add(blockToShow.fullCopy());
     }
@@ -1301,7 +1326,7 @@ Process.prototype.variableError = function (varName) {
     throw new Error(
         localize('a variable of name')
             + ' \''
-            + varName
+            + varName.toString()
             + '\'\n'
             + localize('does not exist in this context')
     );
@@ -1415,7 +1440,11 @@ Process.prototype.evaluate = function (
         expr,
         parms = args.itemsArray(),
         i,
-        value;
+        value,
+        csym = Symbol.for('caller'),
+        lastCaller = this.context.variables.silentFind(csym)?.vars[csym].value,
+        isRecursiveCall = () => lastCaller instanceof Context &&
+            this.context.expression === lastCaller.expression;
 
     if (!outer.receiver) {
         outer.receiver = context.receiver; // for custom blocks
@@ -1437,11 +1466,13 @@ Process.prototype.evaluate = function (
     // assign a self-reference for introspection and recursion
     outer.variables.addVar(Symbol.for('self'), context);
 
-    // capture the dynamic scope in "this caller"
-    outer.variables.addVar(Symbol.for('caller'), this.context);
-
     // capture the current continuation
     outer.variables.addVar(Symbol.for('continuation'), cont);
+
+    // capture the dynamic scope in "this caller"
+    // only capture the caller once in repeating recursive calls
+    // to prevent TCO memory leaks
+    outer.variables.addVar(csym, isRecursiveCall() ? lastCaller : this.context);
 
     // assign arguments to parameters
 
@@ -1449,46 +1480,41 @@ Process.prototype.evaluate = function (
     // parameter ID Symbol.for('arguments'), to be used for variadic inputs
     outer.variables.addVar(Symbol.for('arguments'), args);
 
-    // assign arguments that are actually passed
-    if (parms.length > 0) {
-
-        // assign formal parameters
-        for (i = 0; i < context.inputs.length; i += 1) {
-            value = 0;
-            if (!isNil(parms[i])) {
-                value = parms[i];
-            }
-            outer.variables.addVar(context.inputs[i], value);
+    // assign formal parameters
+    for (i = 0; i < context.inputs.length; i += 1) {
+        value = 0;
+        if (!isNil(parms[i])) {
+            value = parms[i];
         }
+        outer.variables.addVar(context.inputs[i], value);
+    }
 
-        // assign implicit parameters if there are no formal ones
-        if (context.inputs.length === 0) {
-            // in case there is only one input
-            // assign it to all empty slots...
-            if (parms.length === 1) {
-                // ... unless it's an empty reporter ring,
-                // in which special case it gets treated as the ID-function;
-                // experimental feature jens is not at all comfortable with
-                if (!context.emptySlots) {
-                    expr = context.expression;
-                    if (expr instanceof Array &&
-                            expr.length === 1 &&
-                            expr[0].selector &&
-                            expr[0].selector === 'reifyReporter' &&
-                            !expr[0].contents()) {
-                        runnable.expression = new Variable(parms[0]);
-                    }
-                } else {
-                    for (i = 1; i <= context.emptySlots; i += 1) {
-                        outer.variables.addVar(i, parms[0]);
-                    }
+    // assign implicit parameters if there are no formal ones
+    if (context.inputs.length === 0) {
+        // in case there is only one input
+        // assign it to all empty slots...
+        if (parms.length === 1) {
+            // ... unless it's an empty reporter ring,
+            // in which special case it gets treated as the ID-function;
+            if (!context.emptySlots) {
+                expr = context.expression;
+                if (expr instanceof Array &&
+                        expr.length === 1 &&
+                        expr[0].selector &&
+                        expr[0].selector === 'reifyReporter' &&
+                        !expr[0].contents()) {
+                    runnable.expression = new Variable(parms[0]);
                 }
-            // otherwise match the inputs sequentially to the empty slots,
-            // disregard unmatched or excess inputs or slots
             } else {
-                for (i = 1; i <= parms.length; i += 1) {
-                    outer.variables.addVar(i, parms[i - 1]);
+                for (i = 1; i <= context.emptySlots; i += 1) {
+                    outer.variables.addVar(i, parms[0]);
                 }
+            }
+        // otherwise match the inputs sequentially to the empty slots,
+        // disregard unmatched or excess inputs or slots
+        } else {
+            for (i = 1; i <= parms.length; i += 1) {
+                outer.variables.addVar(i, parms[i - 1]);
             }
         }
     }
@@ -1630,6 +1656,8 @@ Process.prototype.reportEnvironment = function (choice, trgt = this.context) {
         return this.reportContinuation(trgt);
     case 'inputs':
         return this.reportInputs(trgt);
+    case 'object':
+        return this.reportData(trgt);
     default:
         return this.reportSelf(trgt);
     }
@@ -1647,6 +1675,13 @@ Process.prototype.reportSelf = function (trgt) {
     ctx.outerContext = trgt.outerContext;
     if (ctx.outerContext) {
         ctx.variables.parentFrame = ctx.outerContext.variables;
+    }
+    if (!this.isAtomic &&
+        this.context.expression.parent?.selector === 'doRun'
+    ) {
+        // assume direct recursion of a command block,
+        // yield to ensure smooth animations
+        this.readyToYield = true;
     }
     return ctx;
 };
@@ -1692,6 +1727,54 @@ Process.prototype.reportInputs = function (trgt) {
     var sym = Symbol.for('arguments'),
         frame = trgt.variables.silentFind(sym);
     return frame ? frame.vars[sym].value : new List();
+};
+
+Process.prototype.reportData = function (trgt) {
+    var data = trgt.variables;
+    while (!isNil(data)) {
+        if (data instanceof List) {
+            return data;
+        }
+        if (isSnapObject(data.owner)) {
+            return data.owner;
+        }
+        data = data.parentFrame;
+    }
+    return data;
+};
+
+// Process custom block slot primitives
+
+Process.prototype.doSetSlot = function(name, value) {
+    var sym = Symbol.for('block'),
+        frame, block, slot, subslots;
+    if (!name) {return; }
+    frame = this.context.variables.silentFind(sym);
+    if (!frame) {return; }
+    block = frame.getVar(sym);
+    if (block.isCustomBlock) {
+        slot = block.inputSlotNamed(name);
+        if (slot instanceof InputSlotMorph) {
+            slot.setContents(value.toString());
+        } else if (slot instanceof BooleanSlotMorph) {
+            slot.setContents(value);
+        } else if (slot instanceof MultiArgMorph) {
+            if (!(value instanceof List)) {
+                value = new List([value]);
+            }
+            slot.expandTo(value.length());
+            subslots = slot.inputs();
+            value.itemsArray().forEach((item, i) => {
+                if (subslots[i] instanceof InputSlotMorph) {
+                    subslots[i].setContents(
+                        isNil(item) ? '' : item.toString()
+                    );
+                } else if (subslots[i] instanceof BooleanSlotMorph) {
+                    subslots[i].setContents(item);
+                }
+            });
+        }
+    }
 };
 
 // Process stopping blocks primitives
@@ -1762,6 +1845,12 @@ Process.prototype.runContinuation = function (aContext, args) {
 // Process custom block primitives
 
 Process.prototype.evaluateCustomBlock = function () {
+    if (this.context.expression instanceof CustomHatBlockMorph &&
+        !this.context.accumulator
+    ) {
+        return this.evaluateCustomHatBlock();
+    }
+
     var caller = this.context.parentContext,
         block = this.context.expression,
         method = block.isGlobal ? block.definition
@@ -1775,7 +1864,18 @@ Process.prototype.evaluateCustomBlock = function () {
         exit,
         i,
         value,
-        outer;
+        outer,
+        csym = Symbol.for('caller'),
+        lastCaller = this.context.variables.silentFind(csym)?.vars[csym].value,
+        isRecursiveCall = () => {
+            var clrBlock = lastCaller?.expression,
+                clr;
+            if (clrBlock instanceof BlockMorph && clrBlock.isCustomBlock) {
+                clr = clrBlock.isGlobal ? clrBlock.definition
+                        : this.blockReceiver().getMethod(clrBlock.semanticSpec);
+            }
+            return clr === method;
+        };
 
     if (!context) {return null; }
     this.procedureCount += 1;
@@ -1867,9 +1967,12 @@ Process.prototype.evaluateCustomBlock = function () {
 
     // keep track of the environment for recursion and introspection
     outer.variables.addVar(Symbol.for('self'), context);
-    outer.variables.addVar(Symbol.for('caller'), this.context);
     outer.variables.addVar(Symbol.for('continuation'), cont);
     outer.variables.addVar(Symbol.for('arguments'), args);
+
+    // only capture the caller once in repeating recursive calls
+    // to prevent TCO memory leaks
+    outer.variables.addVar(csym, isRecursiveCall() ? lastCaller : this.context);
 
     runnable.expression = runnable.expression.blockSequence();
 };
@@ -1877,10 +1980,41 @@ Process.prototype.evaluateCustomBlock = function () {
 // Process variables primitives
 
 Process.prototype.doDeclareVariables = function (varNames) {
+    // create script variable entries for the given names.
+    // this method is no longer needed, because script variables
+    // are now automatically created for every variadic variable
+    // template. See evaluateMultiSlot().
+    // This method is currently only retained for its selector and
+    // is marked for deprecation in v10.
+    nop(varNames);
+
+    // former code - retained for documentation
+    /*
     var varFrame = this.context.outerContext.variables;
     varNames.itemsArray().forEach(name =>
         varFrame.addVar(name)
     );
+    */
+};
+
+Process.prototype.mergeVariables = function () {
+    this.context.outerContext.variables.addVar(
+        Symbol.for('block'),
+        this.context.expression.block // expression is an InputList
+    );
+    // bind a copy of the block instance to "this caller"
+    // not entirely convinced about the benefits, but let's play with it
+    this.context.outerContext.variables.addVar(
+        Symbol.for('caller'),
+        this.context.expression.block.fullCopy().reify()
+    );
+    this.context.expression.names.forEach((name, i) =>
+        this.context.outerContext.variables.addVar(name, this.context.inputs[i])
+    );
+    this.context.expression.block.variables.parentFrame =
+        this.context.outerContext.variables.parentFrame;
+    this.context.outerContext.variables.parentFrame =
+        this.context.expression.block.variables;
 };
 
 Process.prototype.doSetVar = function (varName, value) {
@@ -1908,7 +2042,7 @@ Process.prototype.doSetVar = function (varName, value) {
 Process.prototype.doChangeVar = function (varName, value) {
     var varFrame = this.context.variables,
         name = varName;
-    this.assertType(value, 'number', '');
+    this.assertType(value, ['number', 'list'], '');
     if (name instanceof Context) {
         if (name.expression.selector === 'reportGetVar') {
             name.variables.changeVar(
@@ -1925,7 +2059,8 @@ Process.prototype.doChangeVar = function (varName, value) {
 Process.prototype.reportGetVar = function () {
     // assumes a getter block whose blockSpec is a variable name
     return this.context.variables.getVar(
-        this.context.expression.blockSpec
+        this.context.expression.blockSpec,
+        this // fallback for OOP 2.0 List environments
     );
 };
 
@@ -2134,6 +2269,8 @@ Process.prototype.doDeleteFromList = function (index, list) {
     }
     if (this.inputOption(index) === 'last') {
         idx = list.length();
+    } else if (this.inputOption(index) === 'parent') {
+        idx = '...';
     }
     list.forget(idx);
 };
@@ -2153,11 +2290,16 @@ Process.prototype.doInsertInList = function (element, index, list) {
             idx = this.reportBasicRandom(1, list.length() + 1);
         } else if (index[0] === 'last') {
             idx = list.length() + 1;
+        } else if (index[0] === 'parent') {
+            idx = '...';
         } else {
             idx = list.length() + 1;
         }
     }
     if (parseFloat(idx) !== +idx) { // treat as alphanumerical index
+        if (element instanceof Context) { // OOP 2.0: treat ring as method
+            element = this.reportContextFor(element, list);
+        }
         return list.bind(idx, element);
     }
     list.add(element, idx);
@@ -2178,9 +2320,15 @@ Process.prototype.doReplaceInList = function (index, list, element) {
             idx = this.reportBasicRandom(1, list.length() + 1);
         } else if (index[0] === 'last') {
             idx = list.length();
+        } else if (index[0] === 'parent') {
+            idx = '...';
         } else {
             idx = 0;
         }
+    }
+    if (element instanceof Context && (parseFloat(idx) !== +idx)) {
+        // OOP 2.0: treat ring as method
+        element = this.reportContextFor(element, list);
     }
     list.bind(idx, element);
 };
@@ -2205,6 +2353,7 @@ Process.prototype.shadowListAttribute = function (list) {
 // Process accessing list elements - hyper dyadic
 
 Process.prototype.reportListItem = function (index, list) {
+    var value;
     this.assertType(list, 'list');
     if (index === '') {
         return '';
@@ -2216,12 +2365,22 @@ Process.prototype.reportListItem = function (index, list) {
         if (index[0] === 'last') {
             return list.at(list.length());
         }
-        return '';
+        if (index[0] === 'parent') {
+            index = '...';
+        } else {
+            return '';
+        }
     }
     if (index instanceof List && this.enableHyperOps) {
         return list.query(index);
     }
-    return list.lookup(index);
+    value = list.lookup(index);
+    if (value instanceof Context && (parseFloat(index) !== +index)) {
+        // treat the ring as macro and bind it to the list as environment
+        // for OOP 2.0
+        value = this.reportContextFor(value, list);
+    }
+    return value;
 };
 
 // Process - tabular list ops
@@ -2318,8 +2477,14 @@ Process.prototype.reportListAttribute = function (choice, list) {
     case 'reverse':
         this.assertType(list, 'list');
         return list.reversed();
+    case '\u03a3':
+        this.assertType(list, 'list');
+        return list.ssum();
     case 'text':
         this.assertType(list, 'list');
+        if (this.isAST(list)) {
+            return this.toTextSyntax(list).encode(0, 0);
+        }
         if (list.canBeWords()) {
             return list.asWords();
         }
@@ -2328,6 +2493,9 @@ Process.prototype.reportListAttribute = function (choice, list) {
         );
     case 'lines':
         this.assertType(list, 'list');
+        if (this.isAST(list)) {
+            return this.toTextSyntax(list).encode();
+        }
         if (list.canBeTXT()) {
             return list.asTXT();
         }
@@ -2548,13 +2716,13 @@ Process.prototype.reportNumbers = function (start, end) {
 Process.prototype.reportBasicNumbers = function (start, end) {
     // answer a new arrayed list containing an linearly ascending progression
     // of integers beginning at start to end.
+    this.assertType(start, 'number');
+    this.assertType(end, 'number');
+
     var result, len, i,
         s = +start,
         e = +end,
         n = s;
-
-    this.assertType(s, 'number');
-    this.assertType(e, 'number');
 
     if (e > s) {
         len = Math.floor(e - s);
@@ -2692,12 +2860,82 @@ Process.prototype.doIf = function () {
 };
 */
 
+Process.prototype.receiveCondition = function (bool) {
+    var nb = this.context.expression.nextBlock(),
+        outer = this.context.outerContext;
+    this.popContext();
+    if ((bool === true || this.isClicked) && nb) {
+        this.pushContext(nb.blockSequence(), outer);
+        this.wantsHalo = true;
+    }
+    this.pushContext();
+};
+
+Process.prototype.receiveConditionEvent = function (bool) {
+    var hatBlock = this.context.expression,
+        next = hatBlock.nextBlock(),
+        outer = this.context.outerContext;
+    this.popContext();
+    if (next) {
+        if ((bool === true && hatBlock.isLoaded) || this.isClicked) {
+            hatBlock.isLoaded = this.enableSingleStepping; // false;
+            this.pushContext(next.blockSequence(), outer);
+            this.wantsHalo = true;
+        } else if (!bool) {
+            hatBlock.isLoaded = true;
+        }
+    }
+    this.pushContext();
+};
+
+Process.prototype.evaluateCustomHatBlock = function () {
+    var hatBlock = this.context.expression,
+        runnable = new Context(
+            this.context.parentContext,
+            hatBlock.semantics === 'rule' ? 'dispatchRule' :'dispatchEvent',
+            this.context.outerContext
+        );
+    runnable.addInput(hatBlock);
+    this.context.parentContext = runnable;
+    this.context.accumulator = true;
+    this.evaluateCustomBlock();
+};
+
+Process.prototype.dispatchRule = function (hatBlock, bool) {
+    var outer = this.context.outerContext,
+        next = hatBlock.nextBlock();
+    this.popContext();
+    if ((bool === true || this.isClicked) && next) {
+        this.pushContext(next.blockSequence(), outer);
+        this.wantsHalo = true;
+    }
+    this.pushContext();
+};
+
+Process.prototype.dispatchEvent = function (hatBlock, bool) {
+    var outer = this.context.outerContext,
+        next = hatBlock.nextBlock();
+    this.popContext();
+    if (next) {
+        if ((bool === true && hatBlock.isLoaded) || this.isClicked) {
+            hatBlock.isLoaded = this.enableSingleStepping; // false;
+            this.pushContext(next.blockSequence(), outer);
+            this.wantsHalo = true;
+        } else if (!bool) {
+            hatBlock.isLoaded = true;
+        }
+    }
+    this.pushContext();
+};
+
 Process.prototype.doIfElse = function () {
+    // version with trancending variable scope, i.e. the C-slots are
+    // not full lambdas, letting you e.g. declare script variables inside
+    // them that can be accessed later outside of the C-slot
     var args = this.context.inputs,
         outer = this.context.outerContext, // for tail call elimination
         isCustomBlock = this.context.isCustomBlock;
 
-    // this.assertType(args[0], ['Boolean']);
     this.popContext();
     if (args[0]) {
         if (args[1]) {
@@ -2718,7 +2956,9 @@ Process.prototype.doIfElse = function () {
 };
 
 Process.prototype.doIf = function (block) {
-    // special form - experimental
+    // variadic version with trancending variable scope, i.e. the C-slots are
+    // not full lambdas, letting you e.g. declare script variables inside
+    // them that can be accesses later outside of the C-slot
     var args = this.context.inputs,
         inps = block.inputs(),
         outer = this.context.outerContext,
@@ -3044,6 +3284,10 @@ Process.prototype.doPauseAll = function () {
 // Process loop primitives
 
 Process.prototype.doForever = function (body) {
+    // non-special-form version, requires the C-slot input to
+    // be marked as non-unevaluated (applicative order), which makes it
+    // return its plain nested block without reifying it into a Context
+    // (lambda)
     this.context.inputs = []; // force re-evaluation of C-slot
     this.pushContext('doYield');
     if (body) {
@@ -3053,6 +3297,10 @@ Process.prototype.doForever = function (body) {
 };
 
 Process.prototype.doRepeat = function (counter, body) {
+    // non-special-form version, requires the C-slot input to
+    // be marked as non-unevaluated (applicative order), which makes it
+    // return its plain nested block without reifying it into a Context
+    // (lambda)
     var block = this.context.expression,
         outer = this.context.outerContext, // for tail call elimination
         isCustomBlock = this.context.isCustomBlock;
@@ -3073,7 +3321,10 @@ Process.prototype.doRepeat = function (counter, body) {
 };
 
 Process.prototype.doUntil = function (goalCondition, body) {
-    // this.assertType(goalCondition, ['Boolean']);
+    // non-special-form version, requires the C-slot input to
+    // be marked as non-unevaluated (applicative order), which makes it
+    // return its plain nested block without reifying it into a Context
+    // (lambda)
     if (goalCondition) {
         this.popContext();
         this.pushContext('doYield');
@@ -3088,7 +3339,9 @@ Process.prototype.doUntil = function (goalCondition, body) {
 };
 
 Process.prototype.doWaitUntil = function (goalCondition) {
-    // this.assertType(goalCondition, ['Boolean']);
+    // non-special-form version, directly evaluates the
+    // condition slot each time without requiring it to be marked as
+    // "unevaluated"
     if (goalCondition) {
         this.popContext();
         this.pushContext('doYield');
@@ -3130,10 +3383,24 @@ Process.prototype.doForEach = function (upvar, list, script) {
         next = this.context.accumulator.source.at(this.context.accumulator.idx);
     }
     this.pushContext('doYield');
-    this.pushContext();
+
+    // optimize running the body script for speed:
+    // don't reify the C-slot contents, see: isAutoLambda()
+    // and put the script directly on the stack.
+    // below is the alternative - more correct (scope) code,
+    // retained in case of issues with the optimized version
+    // -------------------
+    // this.pushContext();
+    // this.context.outerContext.variables.addVar(upvar);
+    // this.context.outerContext.variables.setVar(upvar, next);
+    // this.evaluate(script, new List(/*[next]*/), true);
+
+    if (script) {
+        this.pushContext(script.blockSequence());
+    }
     this.context.outerContext.variables.addVar(upvar);
     this.context.outerContext.variables.setVar(upvar, next);
-    this.evaluate(script, new List(/*[next]*/), true);
+    this.pushContext();
 };
 
 Process.prototype.doFor = function (upvar, start, end, script) {
@@ -3161,8 +3428,20 @@ Process.prototype.doFor = function (upvar, start, end, script) {
     }
     if (dta.test()) {return; }
     this.pushContext('doYield');
+
+    // optimize running the body script for speed:
+    // don't reify the C-slot contents, see: isAutoLambda()
+    // and put the script directly on the stack.
+    // below is the alternative - more correct (scope) code,
+    // retained in case of issues with the optimized version
+    // -------------------
+    // this.pushContext();
+    // this.evaluate(script, dta.parms, true);
+
+    if (script) {
+        this.pushContext(script.blockSequence());
+    }
     this.pushContext();
-    this.evaluate(script, dta.parms, true);
 };
 
 // Process interpolated HOF primitives
@@ -4486,16 +4765,25 @@ Process.prototype.reportTypeOf = function (thing) {
             if (exp instanceof ReporterBlockMorph) {
                 return 'reporter';
             }
+            if (exp instanceof HatBlockMorph) {
+                return 'hat';
+            }
             if (exp instanceof CommandBlockMorph) {
                 return 'command';
             }
             return 'reporter'; // 'ring';
         }
 
+        if (thing.expression instanceof HatBlockMorph) {
+            return 'hat';
+        }
         if (thing.expression instanceof CommandBlockMorph) {
             return 'command';
         }
         return 'reporter'; // 'ring';
+    }
+    if (thing instanceof Array && isString(thing[0])) {
+        return 'selector';
     }
     return 'undefined';
 };
@@ -4569,6 +4857,60 @@ Process.prototype.hyperZip = function (baseOp, a, b, zipa, zipb) {
     return b.map(each => this.hyperZip(baseOp, a, each, zipa, zipb));
 };
 
+Process.prototype.hyperChangeBy = function (data, delta) {
+    // mutate (!) a data structure the same way as performing a hyper-dyadic
+    // operation on it. Experimental for v10.
+    this.assertType(data, 'list');
+    var match = Math.min(
+        this.reportQuickRank(data),
+        this.reportQuickRank(delta)
+    );
+    this.hyperMutate(
+        this.reportBasicSum,
+        data,
+        delta,
+        match,
+        match
+    );
+};
+
+Process.prototype.hyperMutate = function (baseOp, a, b, zipa, zipb) {
+    // enable dyadic operations to be performed on lists and tables
+    // allowing to specify the ranks that are to be matched.
+    // note that this mutates (!) the first argument in place.
+    // Highly experimental for v10.
+    var arank = this.reportQuickRank(a),
+        brank = this.reportQuickRank(b),
+        len, i, k, elem;
+    if (arank === brank || (arank <= zipa && brank <= zipb)) {
+        // zip both arguments ignoring out-of-bounds indices
+        len = Math.min(a.length(), b.length());
+        for (i = 1; i <= len; i += 1) {
+            elem = a.at(i);
+            if (this.reportQuickRank(elem) === 0) {
+                a.put(this.hyperZip(baseOp, elem, b.at(i), zipa, zipb), i);
+            } else {
+                this.hyperMutate(baseOp, elem, b.at(i), zipa, zipb);
+            }
+        }
+        len = a.length();
+        // remove non-matching items
+        for (k = i; k <= len; k += 1) {
+            a.remove(i);
+        }
+        return;
+    }
+    len = a.length();
+    for (i = 1; i <= len; i += 1) {
+        elem = a.at(i);
+        if (this.reportQuickRank(elem) === 0) {
+            a.put(this.hyperZip(baseOp, elem, b, zipa, zipb), i);
+        } else {
+            this.hyperMutate(baseOp, elem, b, zipa, zipb);
+        }
+    }
+};
+
 Process.prototype.packCoordinates = function (list) {
     // convert all numerical 2-item sub-lists into a variable to they
     // can be handled as atomic by hyperDyadic(),
@@ -4587,6 +4929,7 @@ Process.prototype.packCoordinates = function (list) {
 */
 
 Process.prototype.reportVariadicSum = function (numbers) {
+    if (!isNaN(+numbers)) {return +numbers; }
     this.assertType(numbers, 'list');
     return this.reportListAggregation(numbers, 'reportSum');
 };
@@ -4972,9 +5315,14 @@ Process.prototype.reportBasicMonadic = function (fname, n) {
 Process.prototype.reportTextFunction = function (fname, string) {
     // currently in dev mode only, not hyper-monadic
     var x = (isNil(string) ? '' : string).toString(),
-        result = '';
+        result = x;
 
     switch (this.inputOption(fname)) {
+    case 'select':
+        result = [x];
+        break;
+    case 'unselect':
+        break;
     case 'encode URI':
         result = encodeURI(x);
         break;
@@ -5126,7 +5474,10 @@ Process.prototype.reportBasicUnicodeAsLetter = function (num) {
 
 Process.prototype.reportTextSplit = function (string, delimiter) {
     if (this.inputOption(delimiter) === 'blocks') {
-        this.assertType(string, ['command', 'reporter', 'predicate']);
+        if (isString(string) && '(;'.includes(string.trim()[0])) {
+            return this.parseCode(string);
+        }
+        this.assertType(string, ['command', 'reporter', 'predicate', 'hat']);
         return string.components();
     }
     return this.hyper(
@@ -5184,12 +5535,6 @@ Process.prototype.reportBasicTextSplit = function (string, delimiter) {
         return this.parseCSV(string);
     case 'json':
         return this.parseJSON(string);
-    /*
-    case 'csv records':
-        return this.parseCSVrecords(string);
-    case 'csv fields':
-        return this.parseCSVfields(string);
-    */
     default:
         del = delimiter.toString();
         if (this.isCaseInsensitive) {
@@ -5316,6 +5661,12 @@ Process.prototype.parseJSON = function (string) {
     return listify(JSON.parse(string));
 };
 
+Process.prototype.parseCode = function (string) {
+    var data = new List();
+    data.parse(string);
+    return this.toBlockSyntax(data);
+};
+
 // Process syntax analysis
 
 Process.prototype.assemble = function (blocks) {
@@ -5337,6 +5688,198 @@ Process.prototype.assemble = function (blocks) {
     }
     return blocks.map(each => this.assemble(each)).itemsArray().reduce(
         (a, b) => a.copyWithNext(b)
+    );
+};
+
+// Process - generating syntax trees from parsed text
+
+Process.prototype.toBlockSyntax = function (list) {
+    var head, data;
+    if (list.isEmpty()) {
+        return list;
+    }
+    head = list.at(1);
+    if (snapEquals(head, 'items')) { // reserved token for data
+        data = this.toInputSyntax(list.cdr());
+        return list.cons(data.length(), data);
+    }
+    return this.variadify(
+        list.cons(
+            head instanceof List ? this.toBlockSyntax(head)
+                : this.blockMatching(head),
+            this.toInputSyntax(list.cdr())
+        )
+    );
+};
+
+Process.prototype.blockMatching = function (string) {
+    // allow caching the palette for bulk-bootstrapping
+    var pal = this.context.accumulator || this.reportGet('blocks'),
+        block,
+        lbl,
+        i;
+    if (pal) { // when bootstrapping the palette at first launch it can be empty
+        for (i = 1; i <= pal.length(); i += 1) {
+            block = pal.at(i);
+            if (block.expression && block.expression.isCustomBlock) {
+                lbl = this.reportBasicBlockAttribute('label', block);
+                if (snapEquals(string, lbl)) {
+                    return block;
+                }
+            }
+        }
+    }
+    return (SpriteMorph.prototype.blockForSelector(
+        this.blockAlias(string)
+    ) || SpriteMorph.prototype.variableBlock(' ')).reify();
+};
+
+Process.prototype.toInputSyntax = function (list) {
+    var head;
+    if (list.isEmpty()) {
+        return list;
+    }
+    head = list.at(1);
+    return list.cons(
+        head instanceof List ? this.toBlockSyntax(head)
+            : this.parseInputValue(head),
+        this.toInputSyntax(list.cdr())
+    );
+};
+
+Process.prototype.parseInputValue = function (data) {
+    if (snapEquals(data, 't')) {
+        return true;
+    }
+    if (snapEquals(data, 'f')) {
+        return false;
+    }
+    return data;
+};
+
+Process.prototype.variadify = function (list) {
+    var ring = list.at(1),
+        slot, idx, syntax, items;
+    if (ring instanceof List) {
+        return list;
+    }
+    slot = ring.expression.inputs().find(any =>
+        any instanceof MultiArgMorph);
+    if (slot) {
+        idx = ring.expression.inputs().indexOf(slot) + 1;
+        slot.collapseAll();
+        items = list.itemsArray();
+        syntax = new List(items.slice(0, idx));
+        if (list.at(idx + 1) === ':') {
+            syntax.add(list.at(idx + 2));
+            if (list.length() > idx + 2) {
+                // add following tokens as ring parameters, if any
+                for (idx = idx + 3; idx <= list.length(); idx += 1) {
+                    syntax.add(list.at(idx));
+                }
+            }
+        } else {
+            syntax.add(new List(
+                [list.cons(
+                    list.length() - idx,
+                    new List(items.slice(idx))
+                )]
+            ));
+        }
+        return syntax;
+    }
+    return list;
+};
+
+Process.prototype.blockAlias = function (string) {
+    return snapEquals(string, 'get') ? 'reportGetVar'
+        : Object.keys(SpriteMorph.prototype.blocks).find(key =>
+            snapEquals(SpriteMorph.prototype.blocks[key]?.code, string)) || string;
+};
+
+Process.prototype.selectorAlias = function (string) {
+    return string === 'reportGetVar' ? 'get'
+        : SpriteMorph.prototype.blocks[string]?.code || string;
+};
+
+// Process - replacing blocks in syntax trees with text
+
+Process.prototype.toTextSyntax = function (list) {
+    var head, syn;
+    if (list.isEmpty()) {
+        return list;
+    }
+    syn = this.devariadify(list);
+    head = syn.at(1);
+    return syn.cons(
+        head instanceof List ? this.toTextSyntax(head)
+            : (head === Symbol.for('items') ? 'items' // reserved token for data
+                : this.blockToken(head)),
+        this.toInputTextSyntax(syn.cdr())
+    );
+};
+
+Process.prototype.devariadify = function (list) {
+    var ring = list.at(1),
+        slot, idx, syntax,
+        arr, slots, inps, slotInputs;
+    if (ring instanceof List) {
+        return list;
+    }
+    slot = ring.expression?.inputs().find(any =>
+        any instanceof MultiArgMorph);
+
+    if (slot) {
+        if (!slot.inputs().length) {
+            // "with input list"
+            idx = ring.expression.inputs().indexOf(slot) + 1;
+            syntax = list.map(each => each); // shallow copy
+            if (syntax.length() === (idx + 1) && syntax.at(idx + 1) === '') {
+                syntax.remove(idx + 1);
+                return syntax;
+            }
+            syntax.add(':', idx + 1);
+            return syntax;
+        }
+        inps = slot.inputs();
+        slots = ring.expression.inputs();
+        if (inps.length + slots.length < list.length()) {
+            // special case: the first expression has a variadic slot
+            // that conflicts with surplus ring parameters
+            // solution: collect the slot inputs in a separate data list
+            arr = list.itemsArray();
+            idx = slots.indexOf(slot) + 1;
+            syntax = new List(arr.slice(0, idx));
+            slotInputs = arr.slice(idx, idx + inps.length);
+            slotInputs.unshift(Symbol.for('items'));
+            syntax.add(':');
+            syntax.add(new List(slotInputs));
+            arr.slice(idx + inps.length, list.length()).forEach(each =>
+                syntax.add(each));
+            return syntax;
+        }
+    }
+    return list;
+};
+
+Process.prototype.blockToken = function (ring) {
+    var block = ring.expression;
+    return isNil(block) ? 'ring'
+        : block.isCustomBlock &&
+            !(block.isGlobal && block.definition.isBootstrapped()) ?
+                this.reportBasicBlockAttribute('label', ring)
+                : this.selectorAlias(block.selector);
+};
+
+Process.prototype.toInputTextSyntax = function (list) {
+    var head;
+    if (list.isEmpty()) {
+        return list;
+    }
+    head = list.at(1);
+    return list.cons(
+        head instanceof List ? this.toTextSyntax(head) : head,
+        this.toInputTextSyntax(list.cdr())
     );
 };
 
@@ -5703,6 +6246,8 @@ Process.prototype.newClone = function (name) {
     if (thisObj) {
         if (this.inputOption(name) === 'myself') {
             return thisObj.newClone(!this.isFirstStep);
+        } else if (this.inputOption(name) === 'Turtle sprite') {
+            return thisObj.newTurtleSprite();
         }
         thatObj = this.getOtherObject(name, thisObj);
         if (thatObj) {
@@ -6369,6 +6914,12 @@ Process.prototype.reportBasicAttributeOf = function (attribute, name) {
                 : thatObj).variables.allNames()
             );
         }
+        if (this.inputOption(attribute) === 'input names') {
+            return new List(thatObj instanceof Context ?
+                thatObj.inputs.slice()
+                : []
+            );
+        }
     }
     return '';
 };
@@ -6474,7 +7025,7 @@ Process.prototype.reportGet = function (query) {
                         each => each instanceof BlockMorph
                     ).map(
                         each => new List([
-                            each?.comment.text() || '',
+                            each?.comment?.text() || '',
                             each.fullCopy().reify()
                         ])
                     )
@@ -6537,6 +7088,23 @@ Process.prototype.reportGet = function (query) {
             stage = thisObj.parentThatIsA(StageMorph);
             return stage ? thisObj.height() / stage.scale : 0;
         }
+    }
+    if ([
+            'other sprites',
+            'parts',
+            'children',
+            'clones',
+            'other clones',
+            'neighbors',
+            'scripts',
+            'solutions',
+            'blocks',
+            'categories',
+            'costumes',
+            'sounds'
+        ].includes(this.inputOption(query))
+    ) {
+        return new List();
     }
     return '';
 };
@@ -6704,6 +7272,12 @@ Process.prototype.reportContextFor = function (context, otherObj) {
     var result = copy(context),
         receiverVars,
         rootVars;
+
+    if (otherObj instanceof List) { // OOP 2.0
+        result.outerContext = new Context();
+        result.outerContext.variables.parentFrame = otherObj;
+        return result;
+    }
 
     if (otherObj instanceof Context) {
         result.outerContext = otherObj.outerContext;
@@ -7157,7 +7731,10 @@ Process.prototype.reportNewCostumeStretched = function (name, xP, yP) {
     }
     cst = this.costumeNamed(name);
     if (!cst) {
-        return new Costume();
+        throw new Error(
+            'expecting a costume\nbut getting none'
+        );
+        // return new Costume();
     }
     if (!isFinite(+xP * +yP) || isNaN(+xP * +yP)) {
         throw new Error(
@@ -7168,6 +7745,19 @@ Process.prototype.reportNewCostumeStretched = function (name, xP, yP) {
         Math.round(cst.width() * +xP / 100),
         Math.round(cst.height() * +yP / 100)
     );
+};
+
+Process.prototype.reportNewCostumeSkewed = function (name, angle, factor) {
+    var cst = this.costumeNamed(name);
+    if (!cst) {
+        return new Costume();
+    }
+    if (!isFinite(+angle * +factor) || isNaN(+angle * +factor)) {
+        throw new Error(
+            'expecting a finite number\nbut getting Infinity or NaN'
+        );
+    }
+    return cst.skewed(+angle, +factor);
 };
 
 Process.prototype.costumeNamed = function (name) {
@@ -7441,8 +8031,8 @@ Process.prototype.reportBlockAttribute = function (attribute, block) {
 
 Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
     var choice = this.inputOption(attribute),
-        expr, body, slots, def, info, loc, cmt;
-    this.assertType(block, ['command', 'reporter', 'predicate']);
+        expr, body, slots, data, def, info, loc, cmt, prim;
+    this.assertType(block, ['command', 'reporter', 'predicate', 'hat']);
     expr = block.expression;
     switch (choice) {
     case 'label':
@@ -7465,19 +8055,61 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
     case 'definition':
         if (expr.isCustomBlock) {
             if (expr.isGlobal) {
-                body = expr.definition.body || new Context();
+                def = expr.definition;
+                if (def.primitive && !def.body) {
+                    prim = SpriteMorph.prototype.blockForSelector(
+                        'doPrimitive'
+                    );
+                    prim.inputs()[0].setContents(true);
+                    prim.inputs()[1].setContents(def.primitive);
+                    body = prim.reify();
+                }
             } else {
-                body = this.blockReceiver().getMethod(expr.semanticSpec).body ||
-                    new Context();
+                def = this.blockReceiver().getMethod(expr.semanticSpec);
+            }
+            if (!body) {
+                body = def.body;
+                if (!body) {
+                    body = new Context();
+                    def.inputNames().forEach(name => body.addInput(name));
+                }
             }
         } else {
-            body = new Context();
+            prim = SpriteMorph.prototype.blocks[expr.selector].src;
+            if (prim) {
+                this.context.accumulator = this.reportGet('blocks');
+                body = this.assemble(this.parseCode(prim));
+            } else {
+                prim = SpriteMorph.prototype.blockForSelector('doPrimitive');
+                prim.inputs()[0].setContents(true);
+                prim.inputs()[1].setContents(expr.selector);
+                body = prim.reify();
+            }
+            if (body instanceof Context &&
+                (!body.expression || prim) &&
+                !body.inputs.length
+            ) {
+                // make sure the definition has the same number of inputs as the
+                // block prototype (i.e. the header)
+                expr.inputs().forEach((inp, i) => body.addInput('#' + (i + 1)));
+            }
         }
         if (body.expression && body.expression.selector === 'doReport' &&
                 body.expression.inputs()[0] instanceof BlockMorph) {
             return body.expression.inputs()[0].reify(body.inputs);
         }
         return body;
+    case 'primitive':
+        if (expr.isCustomBlock) {
+            if (expr.isGlobal) {
+                prim = expr.definition.body?.expression;
+                if (prim && prim.selector === 'doPrimitive') {
+                    return prim.inputs()[0].value || false;
+                }
+            }
+            return false;
+        }
+        return true;
     case 'category':
         return expr ?
             SpriteMorph.prototype.allCategories().indexOf(expr.category) + 1
@@ -7487,11 +8119,15 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
     case 'global?':
         return (expr && expr.isCustomBlock) ? !!expr.isGlobal : true;
     case 'type':
-        return ['command', 'reporter', 'predicate'].indexOf(
+        return ['command', 'reporter', 'predicate', 'hat'].indexOf(
             this.reportTypeOf(block)
         ) + 1;
     case 'scope':
         return expr.isCustomBlock ? (expr.isGlobal ? 1 : 2) : 0;
+    case 'selector':
+        return expr.isCustomBlock ?
+            (expr.isGlobal ? expr.definition.selector || '' : '')
+            : expr.selector;
     case 'slots':
         if (expr.isCustomBlock) {
             slots = [];
@@ -7517,11 +8153,33 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
             def = (expr.isGlobal ?
                 expr.definition
                 : this.blockReceiver().getMethod(expr.semanticSpec));
-            def.declarations.forEach(value => slots.add(value[1]));
+            // def.declarations.forEach(value => slots.add(value[1]));
+            def.declarations.forEach(value => {
+                if((value[0] || '').toString().startsWith('%mult') ||
+                    (value[0] || '').toString().startsWith('%group')
+                ) {
+                    data = (value[1] || '').split('\n').map(each =>
+                        each.trim()).filter(each =>
+                            each.length);
+                    slots.add(data.length > 1 ? new List(data) : data[0]);
+                } else {
+                    slots.add(value[1]);
+                }
+            });
         } else {
             info = SpriteMorph.prototype.blocks[expr.selector];
             if (!info) {return slots; }
-            slots = new List(info.defaults);
+            slots = (info.defaults || []).map(v => this.inputOption(v));
+            // adjust structure if the last input is variadic
+            // and the default values overshoot the number of input slots
+            if (expr.inputs().slice(-1)[0] instanceof MultiArgMorph &&
+                slots.length > expr.inputs().length
+            ) {
+                data = slots.slice(expr.inputs().length - 1);
+                slots = slots.slice(0, expr.inputs().length - 1);
+                slots.push(new List(data));
+            }
+            slots = new List(slots);
         }
         return slots;
     case 'menus':
@@ -7530,11 +8188,21 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
             def = (expr.isGlobal ?
                 expr.definition
                 : this.blockReceiver().getMethod(expr.semanticSpec));
-            def.declarations.forEach(value => slots.add(
-                isString(value[2]) ?
+            def.declarations.forEach((value, key) => {
+                var dta = isString(value[2]) ?
                     def.decodeChoices(def.parseChoices(value[2]))
-                    : ''
-            ));
+                        : '',
+                    script;
+                if (dta instanceof List && dta.at(1) === '§_dynamicMenu') {
+                    script = detect(def.scripts, each =>
+                        each.selector === 'receiveSlotEvent' &&
+                            each.inputs()[0].evaluate() === key &&
+                            each.inputs()[1].evaluateOption() === 'menu');
+                    slots.add(script ? script.fullCopy().reify() : dta);
+                } else {
+                    slots.add(dta);
+                }
+            });
         } else {
             expr.inputs().forEach(slot => {
                 if (slot instanceof ReporterBlockMorph) {
@@ -7543,7 +8211,7 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
                     );
                 }
                 slots.add(slot instanceof InputSlotMorph ?
-                    (isString(slot.choices) ? slot.choices
+                    (isString(slot.choices) ? '§_' + slot.choices
                         : CustomBlockDefinition.prototype.decodeChoices(
                             slot.choices
                         ))
@@ -7596,7 +8264,7 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
             def = (expr.isGlobal ?
                 expr.definition
                 : this.blockReceiver().getMethod(expr.semanticSpec));
-            def.declarations.forEach(value => slots.add(value[5]));
+            def.declarations.forEach(value => slots.add(value[5] || ''));
         } else {
             expr.inputs().forEach(slot => {
                 if (slot instanceof ReporterBlockMorph) {
@@ -7606,6 +8274,117 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
                 }
                 slots.add(slot instanceof MultiArgMorph ?
                     slot.infix : ''
+                );
+            });
+        }
+        return slots;
+    case 'collapses':
+        slots = new List();
+        if (expr.isCustomBlock) {
+            def = (expr.isGlobal ?
+                expr.definition
+                : this.blockReceiver().getMethod(expr.semanticSpec));
+            def.declarations.forEach(value => slots.add(value[6] || ''));
+        } else {
+            expr.inputs().forEach(slot => {
+                if (slot instanceof ReporterBlockMorph) {
+                    slot = SyntaxElementMorph.prototype.labelPart(
+                        slot.getSlotSpec()
+                    );
+                }
+                slots.add(slot instanceof MultiArgMorph ?
+                    slot.collapse : ''
+                );
+            });
+        }
+        return slots;
+    case 'expands':
+        slots = new List();
+        if (expr.isCustomBlock) {
+            def = (expr.isGlobal ?
+                expr.definition
+                : this.blockReceiver().getMethod(expr.semanticSpec));
+            def.declarations.forEach(value => {
+                data = (value[7] || '').split('\n').map(each =>
+                    each.trim()).filter(each =>
+                        each.length);
+                slots.add(data.length > 1 ? new List(data) : data[0] || '');
+            });
+        } else {
+            expr.inputs().forEach(slot => {
+                if (slot instanceof ReporterBlockMorph) {
+                    slot = SyntaxElementMorph.prototype.labelPart(
+                        slot.getSlotSpec()
+                    );
+                }
+                if (slot instanceof MultiArgMorph) {
+                    data = slot.labelText instanceof Array ?
+                        new List(slot.labelText.map(item =>
+                            item.replaceAll('\n', ' ')))
+                        : (slot.labelText || '').replaceAll('\n', ' ');
+                    slots.add(data);
+                } else {
+                    slots.add('');
+                }
+            });
+        }
+        return slots;
+    case 'initial slots':
+        slots = new List();
+        if (expr.isCustomBlock) {
+            def = (expr.isGlobal ?
+                expr.definition
+                : this.blockReceiver().getMethod(expr.semanticSpec));
+            def.declarations.forEach(value => slots.add(+value[8] || 0));
+        } else {
+            expr.inputs().forEach(slot => {
+                if (slot instanceof ReporterBlockMorph) {
+                    slot = SyntaxElementMorph.prototype.labelPart(
+                        slot.getSlotSpec()
+                    );
+                }
+                slots.add(slot instanceof MultiArgMorph ?
+                    slot.initialSlots : ''
+                );
+            });
+        }
+        return slots;
+    case 'min slots':
+        slots = new List();
+        if (expr.isCustomBlock) {
+            def = (expr.isGlobal ?
+                expr.definition
+                : this.blockReceiver().getMethod(expr.semanticSpec));
+            def.declarations.forEach(value => slots.add(+value[9] || 0));
+        } else {
+            expr.inputs().forEach(slot => {
+                if (slot instanceof ReporterBlockMorph) {
+                    slot = SyntaxElementMorph.prototype.labelPart(
+                        slot.getSlotSpec()
+                    );
+                }
+                slots.add(slot instanceof MultiArgMorph ?
+                    +slot.minInputs : ''
+                );
+            });
+        }
+        return slots;
+    case 'max slots':
+        slots = new List();
+        if (expr.isCustomBlock) {
+            def = (expr.isGlobal ?
+                expr.definition
+                : this.blockReceiver().getMethod(expr.semanticSpec));
+            def.declarations.forEach(value => slots.add(+value[10] || 0));
+        } else {
+            expr.inputs().forEach(slot => {
+                if (slot instanceof ReporterBlockMorph) {
+                    slot = SyntaxElementMorph.prototype.labelPart(
+                        slot.getSlotSpec()
+                    );
+                }
+                slots.add(slot instanceof MultiArgMorph ?
+                    +slot.maxInputs || 0 : ''
                 );
             });
         }
@@ -7621,7 +8400,7 @@ Process.prototype.reportBasicBlockAttribute = function (attribute, block) {
             );
             return loc;
         }
-        return '';
+        return new List();
     }
     return '';
 };
@@ -7630,6 +8409,14 @@ Process.prototype.slotType = function (spec) {
     // answer a number indicating the shape of a slot represented by its spec.
     // Note: you can also use it to translate mnemonics into slot type numbers
     if (spec instanceof Array) {
+        // first check for a bunch of special cases
+        if (spec[0] === '%rcv') {
+            return 16;
+        } else if (spec[0] === '%msgSend') {
+            return 17;
+        } else if (spec[0] === '%b') {
+            return 18;
+        }
         return new List(spec.map(each => this.slotType(each)));
     }
 
@@ -7642,6 +8429,14 @@ Process.prototype.slotType = function (spec) {
         if (key.startsWith('mult')) {
             shift = 100;
             key = key.slice(5);
+            if (key === 't') {
+                shift = 0;
+                key = 'variables';
+            }
+        } else if (key.startsWith('group')) {
+            return new List(
+                key.split('%').slice(1).map(each => this.slotType(each))
+            );
         }
     } else if (spec.endsWith('...')) {
         shift = 100;
@@ -7649,92 +8444,121 @@ Process.prototype.slotType = function (spec) {
     }
 
     num =  {
-        '0':        0,
-        's':        0, // spec
+        '0':            0,
+        's':            0, // spec
         // mnemonics:
-        ' ':        0,
-        '_':        0,
-        'a':        0,
-        'any':      0,
+        ' ':            0,
+        '_':            0,
+        'a':            0,
+        'any':          0,
 
-        '1':        1,
-        'n':        1, // spec
+        '1':            1,
+        'n':            1, // spec
         // mnemonics:
-        '#':        1,
-        'num':      1,
-        'number':   1,
+        '#':            1,
+        'num':          1,
+        'number':       1,
 
-        '2':        2,
-        'b':        2, // spec
+        '2':            2,
+        'b':            2, // spec
         // mnemonics:
-        '?':        2,
-        'tf':       2,
-        'bool':     2,
-        'boolean':  2,
+        '?':            2,
+        'tf':           2,
+        'bool':         2,
+        'boolean':      2,
 
-        '3':        3,
-        'l':        3, // spec
+        '3':            3,
+        'l':            3, // spec
         // mnemonics:
-        ':':        3,
-        'lst':      3,
-        'list':     3,
+        ':':            3,
+        'lst':          3,
+        'list':         3,
 
-        '4':        4,
-        'txt':      4, // spec
-        'mlt':      4, // spec
-        'code':     4, // spec
+        '4':            4,
+        'txt':          4, // spec
+        'mlt':          4, // spec
+        'code':         4, // spec
         // mnemonics:
-        'x':        4,
-        'text':     4,
-        'abc':      4,
+        'x':            4,
+        'text':         4,
+        'abc':          4,
 
-        '5':        5,
-        'c':        5, // spec
-        'cs':       5, // spec
-        'loop':     5, // spec
-        'ca':       5, // spec
+        '5':            5,
+        'c':            5, // spec
+        'cs':           5, // spec
         // mnemonics:
-        'script':   5,
+        'script':       5,
         
-        '6':        6,
-        'cmdring':  6, // spec
+        '6':            6,
+        'cmdring':      6, // spec
         // mnemonics:
-        'cmd':      6,
-        'command':  6,
+        'cmd':          6,
+        'command':      6,
 
-        '7':        7,
-        'repring':  7, // spec
+        '7':            7,
+        'repring':      7, // spec
         // mnemonics:
-        'rep':      7,
-        'reporter': 7,
+        'ring':         7,
+        'rep':          7,
+        'reporter':     7,
 
-        '8':        8,
-        'predring': 8, // spec
+        '8':            8,
+        'predring':     8, // spec
         // mnemonics:
-        'pred':     8,
-        'predicate': 8,
+        'pred':         8,
+        'predicate':    8,
 
-        '9':        9,
-        'anyue':    9, // spec
+        '9':            9,
+        'anyue':        9, // spec
         // mnemonics:
-        'unevaluated': 9,
+        'unevaluated':  9,
 
-        '10':       10,
-        'boolue':   10, // spec
+        '10':           10,
+        'boolue':       10, // spec
         // mnemonics: none
 
-        '11':       11,
-        'obj':      11, // spec
+        '11':           11,
+        'obj':          11, // spec
         // mnemonics:
-        'o':        11,
-        'object':   11,
+        'o':            11,
+        'object':       11,
 
-        '12':       12,
-        't':        12, // spec
-        'upvar':    12, // spec
+        '12':           12,
+        't':            12, // spec
+        'upvar':        12, // spec
         // mnemonics:
-        'v':        12,
-        'var':      12
+        'v':            12,
+        'var':          12,
+        'variable':     12,
+
+        '13':           13,
+        'clr':          13, // spec
+        // mnemonics:
+        'color':        13,
+
+        '14':           14,
+        'scriptvars':   14, // spec
+        // mnemonics:
+        'vars':         14,
+        'variables':    14,
+
+        '15':           15,
+        'ca':           15, // spec
+        'loop':         15, // spec
+
+        '16':           16,
+        'receive':      16, // spec
+        // mnemonics:
+        'receivers':    16,
+
+        '17':           17,
+        'send':         17, // spec
+
+        '18':           18,
+        'elseif':       18, // spec
+        // mnemonics:
+        'conditionals': 18
+
     }[key];
     if (num === undefined) {
         return spec;
@@ -7749,18 +8573,33 @@ Process.prototype.slotSpec = function (num) {
         id = this.reportIsA(num, 'text') ? this.slotType(num) : +num,
         spec;
 
+    if (num instanceof List) { // input group
+        return '%group' + num.itemsArray().map(each =>
+            this.slotSpec(each)
+        ).join('');
+    }
+
     if (id >= 100) {
         prefix = '%mult';
         id -= 100;
     }
 
     spec = ['s', 'n', 'b', 'l', 'mlt', 'cs', 'cmdRing', 'repRing', 'predRing',
-    'anyUE', 'boolUE', 'obj', 'upvar'][id];
+    'anyUE', 'boolUE', 'obj', 'upvar', 'clr', 'scriptVars', 'loop', 'receive',
+    'send', 'elseif'][id];
 
     if (spec === undefined) {
         return null;
     }
     if (spec === 'upvar' && id > 100) {
+        return null;
+    }
+    if (num > 100 && [
+        'loop', 'scriptVars', 'receive', 'send', 'elseif'
+        ].includes(spec) && num > 100)
+    {
+        // guard against unimaginative metaprogramming fetishist assholes
+        // badmouthing Snap! "bugs" in the forums
         return null;
     }
     return prefix + '%' + spec;
@@ -7770,16 +8609,28 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
     var choice = this.inputOption(attribute),
         rcvr = this.blockReceiver(),
         ide = rcvr.parentThatIsA(IDE_Morph),
-        types = ['command', 'reporter', 'predicate'],
+        types = ['command', 'reporter', 'predicate', 'hat'],
         scopes = ['global', 'local'],
-        idx, oldSpec, expr, def, inData, template, oldType, type, loc;
+        idx, oldSpec, expr, def, inData, template, oldType, type, loc, prim;
 
     this.assertType(block, types);
     expr = block.expression;
-    if (!expr.isCustomBlock) {
-        throw new Error('expecting a custom block\nbut getting a primitive');
+    if (expr instanceof RingMorph) {
+        throw new Error(
+            'expecting a custom block\nbut getting a ring'
+        );
     }
-    def = expr.isGlobal ? expr.definition : rcvr.getMethod(expr.semanticSpec);
+    if (!expr.isCustomBlock) {
+        if (choice === 'primitive' && [true, 1, '1'].includes(val)) {
+            return; // already a primitive, do nothing
+        }
+        rcvr.customizePrimitive(expr.selector, choice !== 'definition');
+        def = SpriteMorph.prototype.blocks[expr.selector].definition;
+    } else {
+        def = expr.isGlobal ?
+            expr.definition
+            : rcvr.getMethod(expr.semanticSpec);
+    }
     oldSpec = def.blockSpec();
 
     function isInUse() {
@@ -7808,19 +8659,37 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
             (oldType == 'command' && rep.includes(type));
     }
 
+    function labelFromList(list) {
+        return list.map(each => each instanceof List ? each.asWords()
+            : each).asTXT().replaceAll('\n', ' $nl ');
+    }
+
     switch (choice) {
     case 'label':
+        if (val instanceof List) {
+            val = labelFromList(val);
+        }
         def.setBlockLabel(val);
         break;
     case 'comment':
-        def.comment = new CommentMorph(val);
+        def.comment = val ? new CommentMorph(val) : null;
         if (def.body) {
-            def.body.comment = val;
+            def.body.comment = val || null;
         }
         break;
     case 'definition':
         this.assertType(val, types);
         def.setBlockDefinition(val);
+        break;
+    case 'primitive':
+        prim = def.body?.expression;
+        val = [true, 1, '1'].includes(val);
+        if (prim && prim.selector === 'doPrimitive' && prim.nextBlock()) {
+            prim.inputs()[0].setContents(val);
+            def.setPrimitive(
+                val ? prim.inputs()[1].contents().text || null : null
+            );
+        }
         break;
     case 'category':
         this.assertType(val, ['number', 'text']);
@@ -7898,10 +8767,14 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
             context.changed();
         });
         break;
+    case 'selector':
+        this.assertType(val, 'text');
+        def.selector = val || null;
+        break;
     case 'slots':
         this.assertType(val, ['list', 'number', 'text']);
         if (!(val instanceof List)) {
-            val = new List([val]);
+            val = new List(new Array(def.inputNames().length).fill(val));
         }
         def.inputNames().forEach((name, idx) => {
             var info = def.declarations.get(name),
@@ -7915,12 +8788,19 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
     case 'defaults':
         this.assertType(val, ['list', 'Boolean', 'number', 'text']);
         if (!(val instanceof List)) {
-            val = new List([val]);
+            val = new List(new Array(def.inputNames().length).fill(val));
         }
         def.inputNames().forEach((name, idx) => {
             var info = def.declarations.get(name),
                 options = val.at(idx + 1);
-            this.assertType(options, ['Boolean', 'number', 'text']);
+            this.assertType(
+                options,
+                ['list', 'Boolean', 'number', 'text', 'selector']
+            );
+            if (options instanceof List) {
+                options = options.itemsArray().map(v =>
+                    v.toString().trim()).join('\n');
+            }
             info[1] = options;
             def.declarations.set(name, info);
         });
@@ -7928,12 +8808,39 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
     case 'menus':
         this.assertType(val, ['list', 'text', 'number']);
         if (!(val instanceof List)) {
-            val = new List([val.toString()]);
+            val = new List(new Array(def.inputNames().length).fill(val));
         }
         def.inputNames().forEach((name, idx) => {
             var info = def.declarations.get(name),
-                options = val.at(idx + 1);
+                options = val.at(idx + 1),
+                block;
             if (options !== '') {
+                if (options instanceof Context) {
+                    expr = options.expression;
+                    if (expr instanceof ReporterBlockMorph) {
+                        block = SpriteMorph.prototype.blockForSelector(
+                            'doReport'
+                        );
+                        block.replaceInput(block.inputs()[0], expr.fullCopy());
+                        expr = block;
+                    }
+                    if (expr instanceof CommandBlockMorph) {
+                        block = SpriteMorph.prototype.blockForSelector(
+                            'receiveSlotEvent'
+                        );
+                        block.inputs()[0].setContents(name);
+                        block.inputs()[1].setContents(['menu']);
+                        block.nextBlock(expr);
+                        expr = block;
+                        expr.setPosition(new Point(20, 120));
+                        def.scripts = def.scripts.filter(each =>
+                            !(each.selector === 'receiveSlotEvent' &&
+                                each.inputs()[0].evaluate() === name &&
+                                each.inputs()[1].evaluateOption() === 'menu'));
+                        def.scripts.push(expr);
+                    }
+                    options = '§_dynamicMenu';
+                }
                 if (!(options instanceof List)) {
                     options = new List([options]);
                 }
@@ -7945,7 +8852,7 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
     case 'editables':
         this.assertType(val, ['list', 'Boolean', 'number']);
         if (!(val instanceof List)) {
-            val = new List([val]);
+            val = new List(new Array(def.inputNames().length).fill(val));
         }
         def.inputNames().forEach((name, idx) => {
             var info = def.declarations.get(name),
@@ -7960,7 +8867,7 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
     case 'replaceables':
         this.assertType(val, ['list', 'Boolean', 'number']);
         if (!(val instanceof List)) {
-            val = new List([val]);
+            val = new List(new Array(def.inputNames().length).fill(val));
         }
         def.inputNames().forEach((name, idx) => {
             var info = def.declarations.get(name),
@@ -7981,6 +8888,75 @@ Process.prototype.doSetBlockAttribute = function (attribute, block, val) {
             var info = def.declarations.get(name),
                 options = val.at(idx + 1);
             info[5] = options.toString();
+            def.declarations.set(name, info);
+        });
+        break;
+    case 'collapses':
+        this.assertType(val, ['list', 'text', 'number']);
+        if (!(val instanceof List)) {
+            val = new List([val]);
+        }
+        def.inputNames().forEach((name, idx) => {
+            var info = def.declarations.get(name),
+                options = val.at(idx + 1);
+            info[6] = options.toString();
+            def.declarations.set(name, info);
+        });
+        break;
+    case 'expands':
+        this.assertType(val, ['list', 'text', 'number']);
+        if (!(val instanceof List)) {
+            val = new List([val]);
+        }
+        def.inputNames().forEach((name, idx) => {
+            var info = def.declarations.get(name),
+                options = val.at(idx + 1),
+                data;
+            if (options instanceof List) {
+                data = options.itemsArray().map(each =>
+                    each.replaceAll('\n', ' ').trim()).filter(each =>
+                        each.length).join('\n');
+            } else {
+                data = options.toString();
+            }
+
+            info[7] = data;
+            def.declarations.set(name, info);
+        });
+        break;
+    case 'initial slots':
+        this.assertType(val, ['list', 'text', 'number']);
+        if (!(val instanceof List)) {
+            val = new List([val]);
+        }
+        def.inputNames().forEach((name, idx) => {
+            var info = def.declarations.get(name),
+                options = val.at(idx + 1);
+            info[8] = +options;
+            def.declarations.set(name, info);
+        });
+        break;
+    case 'min slots':
+        this.assertType(val, ['list', 'text', 'number']);
+        if (!(val instanceof List)) {
+            val = new List([val]);
+        }
+        def.inputNames().forEach((name, idx) => {
+            var info = def.declarations.get(name),
+                options = val.at(idx + 1);
+            info[9] = +options;
+            def.declarations.set(name, info);
+        });
+        break;
+    case 'max slots':
+        this.assertType(val, ['list', 'text', 'number']);
+        if (!(val instanceof List)) {
+            val = new List([val]);
+        }
+        def.inputNames().forEach((name, idx) => {
+            var info = def.declarations.get(name),
+                options = val.at(idx + 1);
+            info[10] = +options;
             def.declarations.set(name, info);
         });
         break;
@@ -8038,12 +9014,32 @@ Process.prototype.doDefineBlock = function (upvar, label, context) {
         vars = this.context.outerContext.variables,
         type = this.reportTypeOf(context),
         count = 1,
-        matches, spec, def;
+        spec, def;
 
+    function newName(name, elements) {
+        var count = 1,
+            newName = name,
+            exist = e => snapEquals(e, newName);
+
+        while (elements.some(exist)) {
+            count += 1;
+            newName = name + ' (' + count + ')';
+        }
+        return newName;
+    }
+
+    function labelFromList(list) {
+        return list.map(each => each instanceof List ? each.asWords()
+            : each).asTXT().replaceAll('\n', ' $nl ');
+    }
+
+    if (label instanceof List) {
+        label = labelFromList(label);
+    }
     this.assertType(label, 'text');
     label = label.trim();
     if (label === '') {return ''; }
-    this.assertType(context, ['command', 'reporter', 'predicate']);
+    this.assertType(context, ['command', 'reporter', 'predicate', 'hat']);
 
     // replace upvar self references inside the definition body
     // with "reportEnvironment" reporters
@@ -8051,28 +9047,12 @@ Process.prototype.doDefineBlock = function (upvar, label, context) {
         this.compileBlockReferences(context, upvar);
     }
 
-    // identify global custom block matching the specified label
-    matches = ide.stage.globalBlocks.filter(def =>
-        def.abstractBlockSpec() === label
+    // avoid using a label that matches an existing global custom block def
+    // even if technically it's not (yet) a collision case
+    label = newName(
+        label,
+        ide.stage.globalBlocks.map(def => def.abstractBlockSpec())
     );
-    if (matches.length > 1) {
-        throw new Error(
-            'several block definitions\nalready match this label'
-        );
-    } else if (matches.length === 1) {
-        // update the existing global definition with the context body
-        def = matches[0];
-        this.doSetBlockAttribute(
-            'definition',
-            def.blockInstance().reify(),
-            context
-        );
-
-        // create the reference to the new block
-        vars.addVar(upvar);
-        vars.setVar(upvar, def.blockInstance().reify());
-        return;
-    }
 
     // make a new custom block definition
     def = new CustomBlockDefinition('BYOB'); // haha!
@@ -8167,30 +9147,34 @@ Process.prototype.doDeleteBlock = function (context) {
         stage = ide.stage,
         expr, def, method, idx;
 
-    this.assertType(context, ['command', 'reporter', 'predicate']);
+    this.assertType(context, ['command', 'reporter', 'predicate', 'hat']);
     expr = context.expression;
     if (!expr.isCustomBlock) {
         throw new Error('expecting a custom block\nbut getting a primitive');
     }
     def = expr.isGlobal ? expr.definition : rcvr.getMethod(expr.semanticSpec);
-    rcvr.deleteAllBlockInstances(def);
-    if (def.isGlobal) {
-        idx = stage.globalBlocks.indexOf(def);
-        if (idx !== -1) {
-            stage.globalBlocks.splice(idx, 1);
-        }
+    if (def.isBootstrapped()) {
+        rcvr.restorePrimitive(def);
     } else {
-        // delete local definition
-        idx = rcvr.customBlocks.indexOf(def);
-        if (idx !== -1) {
-            rcvr.customBlocks.splice(idx, 1);
-        }
-        // refresh instances of inherited method, if any
-        method = rcvr.getMethod(def.blockSpec);
-        if (method) {
-            rcvr.allDependentInvocationsOf(method.blockSpec).forEach(
-                block => block.refresh(method)
-            );
+        rcvr.deleteAllBlockInstances(def);
+        if (def.isGlobal) {
+            idx = stage.globalBlocks.indexOf(def);
+            if (idx !== -1) {
+                stage.globalBlocks.splice(idx, 1);
+            }
+        } else {
+            // delete local definition
+            idx = rcvr.customBlocks.indexOf(def);
+            if (idx !== -1) {
+                rcvr.customBlocks.splice(idx, 1);
+            }
+            // refresh instances of inherited method, if any
+            method = rcvr.getMethod(def.blockSpec);
+            if (method) {
+                rcvr.allDependentInvocationsOf(method.blockSpec).forEach(
+                    block => block.refresh(method)
+                );
+            }
         }
     }
 
@@ -9011,6 +9995,9 @@ VariableFrame.prototype.silentFind = function (name) {
         return this;
     }
     if (this.parentFrame) {
+        if (this.parentFrame instanceof List) {
+            return this.parentFrame;
+        }
         return this.parentFrame.silentFind(name);
     }
     return null;
@@ -9027,6 +10014,11 @@ VariableFrame.prototype.setVar = function (name, value, sender) {
 
     var frame = this.find(name);
     if (frame) {
+        if (frame instanceof List) { // OOP 2.0
+            frame.lookup(name, () => this.variableError(name));
+            frame.bind(name, value);
+            return;
+        }
         if (sender instanceof SpriteMorph &&
                 (frame.owner instanceof SpriteMorph) &&
                 (sender !== frame.owner)) {
@@ -9050,8 +10042,21 @@ VariableFrame.prototype.changeVar = function (name, delta, sender) {
         value,
         newValue;
     if (frame) {
-        value = parseFloat(frame.vars[name].value);
-        newValue = isNaN(value) ? +delta : value + (+delta);
+        if (frame instanceof List) { // OOP 2.0
+            value = frame.lookup(name, () => this.variableError(name));
+            // hypermutation is not supported for use inside dictionaries
+            newValue = isNaN(parseFloat(value)) ? delta
+                : Process.prototype.reportSum(value, delta);
+            frame.bind(name, newValue);
+            return;
+        }
+        value = frame.vars[name].value;
+        if (value instanceof List) {
+            Process.prototype.hyperChangeBy(value, delta);
+            return; // do not shadow in this case (problematic, experimental)
+        }
+        newValue = !(value instanceof List) && isNaN(parseFloat(value)) ? delta
+            : Process.prototype.reportSum(value, delta);
         if (sender instanceof SpriteMorph &&
                 (frame.owner instanceof SpriteMorph) &&
                 (sender !== frame.owner)) {
@@ -9059,14 +10064,26 @@ VariableFrame.prototype.changeVar = function (name, delta, sender) {
         } else {
             frame.vars[name].value = newValue;
         }
-
     }
 };
 
-VariableFrame.prototype.getVar = function (name) {
+VariableFrame.prototype.getVar = function (name, proc) {
     var frame = this.silentFind(name),
         value;
+
     if (frame) {
+        if (frame instanceof List) { // OOP 2.0
+            value = frame.lookup(
+                name,
+                proc ?
+                    () => proc.blockReceiver().globalVariables().getVar(name)
+                    : () => this.variableError(name)
+            );
+            if (value instanceof Context) {
+                value = Process.prototype.reportContextFor(value, frame);
+            }
+            return value;
+        }
         value = frame.vars[name].value;
         return (value === 0 ? 0
                 : value === false ? false
@@ -9145,6 +10162,18 @@ VariableFrame.prototype.allNames = function (upTo, includeHidden) {
         }
     }
     return answer;
+};
+
+// InputList ////////////////////////////////////////////////////////////////
+
+function InputList(block, names = []) {
+    this.block = block;
+    this.names = names;
+    this.selector = 'mergeVariables';
+}
+
+InputList.prototype.inputs = function () {
+    return this.block.inputs();
 };
 
 // JSCompiler ////////////////////////////////////////////////////////////////

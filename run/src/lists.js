@@ -59,13 +59,13 @@ Color, Point, WatcherMorph, StringMorph, SpriteMorph, ScrollFrameMorph, isNil,
 CellMorph, ArrowMorph, MenuMorph, snapEquals, localize, isString, IDE_Morph,
 MorphicPreferences, TableDialogMorph, SpriteBubbleMorph, SpeechBubbleMorph,
 TableFrameMorph, TableMorph, Variable, isSnapObject, Costume, contains, detect,
-Context, ZERO, WHITE*/
+Context, ZERO, WHITE, ReadStream, Process*/
 
 /*jshint esversion: 6*/
 
 // Global settings /////////////////////////////////////////////////////
 
-modules.lists = '2024-January-10';
+modules.lists = '2024-November-14';
 
 var List;
 var ListWatcherMorph;
@@ -125,6 +125,7 @@ var ListWatcherMorph;
     columns()               - answer a 2D list with rows turned into columns
     transpose()             - answer the matrix transpose over all dimensions
     reversed()              - answer a reversed shallow copy of the list
+    ssum()                  - answer the sum of all number leafs
     reshape()               - answer a new list formatted to the given dimensions.
     crossproduct()          - answer a new list of all possible sublist tuples
     query()                 - answer a part of a list or multidimensionel struct
@@ -331,17 +332,33 @@ List.prototype.indexOf = function (element) {
 
 // List key-value accessing (experimental in v8.1):
 
-List.prototype.lookup = function (key) {
-    var rec;
+List.prototype.lookup = function (key, ifNone = '') {
+    // look up the value of a given key, return optional ifNone value,
+    // which can also be a niladic callback, or an empty string
+    var rec, parent;
     if (parseFloat(key) === +key) { // treat as numerical index
         return this.at(key);
     }
     rec = this.itemsArray().find(elem => elem instanceof List &&
         elem.length() > 0 &&
         snapEquals(elem.at(1), key));
-    return rec ?
-        (rec.length() > 2 ? rec.cdr() : rec.at(2))
-        : '';
+    if (rec) {
+        return rec.length() > 2 ? rec.cdr() : rec.at(2);
+    }
+    if (snapEquals(key, '...')) {
+        if (typeof ifNone === 'function') {
+            return ifNone();
+        }
+        return ifNone;
+    }
+    parent = this.lookup('...');
+    if (parent instanceof List) {
+        return parent.lookup(key, ifNone);
+    } else if (isSnapObject(parent)) {
+        Process.prototype.assertAlive(parent);
+        return parent.variables.getVar(key);
+    }
+    return typeof ifNone === 'function' ? ifNone() : ifNone;
 };
 
 List.prototype.bind = function (key, value) {
@@ -351,12 +368,14 @@ List.prototype.bind = function (key, value) {
     if (key instanceof List) {
         return; // cannot use lists as key because of hyperization
     }
-    this.forget(key); // ensure unique entry
-    this.add(new List([key, value]));
+    this.add(new List([key, value]), this.forget(key) + 1);
 };
 
 List.prototype.forget = function (key) {
+    // remove all records indicated by the key
+    // and return the index of the first match, if any
     var idx = 0,
+        match = this.length(),
         query = rec =>
             snapEquals(rec, key) || (
                 rec instanceof List &&
@@ -365,14 +384,17 @@ List.prototype.forget = function (key) {
             );
 
     if (parseFloat(key) === +key) { // treat as numerical index
-        return this.remove(key);
+        this.remove(key);
+        return key;
     }
     while (idx > -1) {
         idx = this.itemsArray().findIndex(query);
         if (idx > -1) {
+            match = Math.min(match, idx);
             this.remove(idx + 1);
         }
     }
+    return match;
 };
 
 // List table (2D) accessing (for table morph widget):
@@ -644,6 +666,13 @@ List.prototype.ravel = function () {
     return new List(all);
 };
 
+List.prototype.ssum = function () {
+    // answer the sum of all number leafs
+    var ss = 0;
+    this.deepMap(leaf => ss += (+leaf || 0));
+    return ss;
+};
+
 List.prototype.rank = function () {
     // answer the number of my dimensions
     // traverse the whole structure for irregularly shaped nested lists
@@ -818,14 +847,15 @@ List.prototype.fillDimensionsFor = function (dimensions, leafCount) {
     // values adjusted to accomodate the given overall leaf count from
     // left to right, e.g. for leaf count of 10 the given dimensions
     // (0,3) become (4,3)
-    var factor,
+    var product, factor,
         already = -1;
     if (dimensions.contains(0) ||
         dimensions.contains('') ||
         dimensions.contains(false)
     ) {
-        factor = Math.ceil(leafCount / dimensions.itemsArray().reduce((a, b) =>
-            Math.max(a, 1) * Math.max(b, 1)));
+        product = dimensions.itemsArray().reduce((a, b) =>
+            Math.max(a, 1) * Math.max(b, 1));
+        factor = Math.ceil(leafCount / Math.max(product, 1));
         return dimensions.map(each =>
             each ? each : (already++ ? factor : 1));
     }
@@ -1160,6 +1190,123 @@ List.prototype.asWords = function () {
     return this.itemsArray().map(each =>
         each instanceof List ? each.asWords() : each.toString().trim()
     ).filter(word => word.length).join(' ');
+};
+
+// List to blocks parsing and encoding, highly experimental for v10
+
+List.prototype.parse = function (string) {
+    var stream = new ReadStream(string);
+    stream.upTo('(');
+    stream.skip();
+    this.parseStream(stream);
+};
+
+List.prototype.parseStream = function (stream) {
+    var item = '',
+        quoted = false,
+        ch, child;
+    while (!stream.atEnd()) {
+        ch = stream.next();
+        if (ch === ';' && !quoted) { // comment
+            stream.upTo('\n');
+        } else if (ch === '(' && !quoted) {
+            child = new List();
+            child.parseStream(stream);
+            this.add(child);
+        } else if ((ch === ')' || !ch.trim().length) && !quoted) {
+            if (item.length) {
+                if (snapEquals(item, 'nil')) {
+                    item = '';
+                }
+                this.add(item);
+                item = '';
+            }
+            if (ch === ')') {
+                return;
+            }
+        } else if (ch === '"') {
+            quoted = !quoted;
+            if (!quoted) {
+                if (!item.length) {
+                    this.add('');
+                } else if (snapEquals(item, 'nil')) {
+                    this.add(item);
+                }
+            }
+        } else if (ch === '\\') {
+            item += stream.next();
+        } else {
+            item += ch;
+        }
+    }
+};
+
+List.prototype.encode = function (level = 0, indent = 4) {
+    var str = '(',
+        len = this.length(),
+        hasBranch = false,
+        item,
+        i;
+    for (i = 1; i <= len; i += 1) {
+        item = this.at(i);
+        if (item instanceof List && !(item.at(1) instanceof List)) {
+            hasBranch = true;
+        }
+        str += this.encodeItem(item, level, indent);
+        if (i < len) {
+            str += ' ';
+        }
+    }
+    str += hasBranch && indent ?
+        '\n' + this.indentation(level, indent) + ')'
+        : ')';
+    return str;
+};
+
+List.prototype.encodeItem = function (data, level = 0, indent = 4) {
+    if (data instanceof List) {
+        if (!(data.at(1) instanceof List) && indent) {
+            return '\n' +
+                this.indentation(level + 1, indent) +
+                data.encode(level + 1, indent);
+        }
+        return data.encode(level, indent);
+    }
+    return isString(data) ? this.escape(data)
+        : (typeof data === 'boolean' ? this.encodeBoolean(data) : data);
+};
+
+List.prototype.escape = function (string) {
+    var str = '',
+        quoted = false,
+        len = string.length,
+        i, ch;
+    if (string.trim().length && 'tf'.includes(string.toLowerCase())) {
+        return '\\' + string;
+    } else if (snapEquals(string, 'nil')) {
+        return '"' + string + '"';
+    }
+    for (i = 0; i < len; i += 1) {
+        ch = string[i];
+        if (ch === '"' || (ch === ';')) {
+            ch = '\\' + ch;
+        } else if (!ch.trim().length || '()'.includes(ch)) {
+            if (!quoted) {
+                str = '"' + str;
+                quoted = true;
+            }
+        }
+        str += ch;
+    }
+    return quoted ? str + '"' : str || 'nil';
+};
+
+List.prototype.encodeBoolean = function (data) {
+    return (data === true) ? 't' : 'f';
+};
+
+List.prototype.indentation = function (level = 0, amount = 4) {
+    return new Array(level * amount + 1).join(' ') || '';
 };
 
 // List testing
