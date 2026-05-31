@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="135.89166"
+   height="84.870262"
+   viewBox="-1 -1 135.89166 84.870262"
+   id="svg18"
+   sodipodi:docname="cloud.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview20"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs12">
+    <linearGradient
+       id="grad_1"
+       y2="271.28366"
+       gradientTransform="scale(1.3784568,0.72544891)"
+       x1="137.23222"
+       y1="186.8911"
+       x2="221.62479"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#FFFFFF"
+         stop-opacity="1"
+         id="stop2" />
+      <stop
+         offset="1"
+         stop-color="#CCCCCC"
+         stop-opacity="1"
+         id="stop4" />
+    </linearGradient>
+    <radialGradient
+       id="grad_2"
+       cx="186.96451"
+       cy="224.58218"
+       r="60.433597"
+       gradientTransform="scale(1.3799838,0.72464618)"
+       fx="186.96451"
+       fy="224.58218"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#FFFFFF"
+         stop-opacity="1"
+         id="stop7" />
+      <stop
+         offset="1"
+         stop-color="#CCCCCC"
+         stop-opacity="1"
+         id="stop9" />
+    </radialGradient>
+  </defs>
+  <!-- Exported by Scratch - http://scratch.mit.edu/ -->
+  <g
+     id="ID0.5991008533164859"
+     transform="translate(-170.72582,-136.09899)">
+    <path
+       id="ID0.20794556522741914"
+       fill="url(#grad_1)"
+       stroke="none"
+       stroke-linecap="round"
+       d="m 249,137.5 c 10.214,-2.137 21.897,-3.139 32,0.5 3.55,1.453 -1.186,8.8 1.25,11.9 1.343,1.708 4.737,-2.733 6.45,-1.05 6.854,5.816 16.756,12.22 16.8,21.4 0.046,9.434 -7.922,19.121 -16.559,23.152 -12.094,5.633 -26.717,2.753 -40.041,1.948 -12.451,-0.752 -24.547,-4.42 -36.85,-6.5 -6.102,-0.802 -13,0.829 -18.4,-2.15 -3.287,-1.813 -5.165,-6.658 -4.25,-10.45 1.334,-4.407 9.61,-4.208 11.1,-8.65 1.523,-4.547 -5.241,-9.943 -3.4,-14.8 1.394,-3.297 6.836,-3.04 10.7,-3.6 6.622,-0.951 13.664,1.716 20.1,0 7.751,-2.095 13.236,-10.055 21.1,-11.7 z"
+       transform="matrix(1.1681416,0,0,1.3862596,-51.25,-52.85)"
+       style="fill:url(#grad_1)" />
+    <path
+       id="path15"
+       fill="url(#grad_2)"
+       stroke="none"
+       stroke-linecap="round"
+       d="m 249,137.5 c 4.71,-1.401 9.907,-1.545 13.45,1 2.99,1.824 1.041,6.599 2.4,9.6 1.047,2.317 2.544,5.255 4.9,6.95 2.196,1.22 4.994,0.909 7.75,1.15 4.393,0.355 9.442,-2.315 13.25,-0.35 6.281,3.098 15.271,7.557 14.75,14.4 -0.728,9.55 -12.219,14.766 -17.95,22.5 -1.222,1.987 3.358,0.502 1.391,0.652 -7.862,0.597 -14.53,1.989 -21.941,1.698 -9.123,-0.564 -17.878,-1.663 -27.4,-4.25 -6.859,-1.93 -12.075,-8.137 -19.15,-9.6 -7.157,-1.481 -15.376,2.739 -21.95,0.35 -3.044,-1.116 -5.86,-6.138 -4.1,-8.85 2.445,-3.696 10.681,-0.538 13.7,-4.2 1.923,-2.432 -2.113,-5.812 -1.8,-8.85 -0.41,-3.564 -1.789,-9.009 1.5,-10.5 6.09,-2.766 13.664,1.716 20.1,0 7.751,-2.095 13.404,-9.396 21.1,-11.7 z"
+       transform="matrix(1.0951059,0,0,1.2995864,-30.9,-34.05)"
+       style="fill:url(#grad_2)" />
+  </g>
+</svg>
